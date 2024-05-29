@@ -14,7 +14,3 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
 - Medical image quality enhancing, low-level medical vision
 
 
-
-{% include_relative _includes/publications.md %}
-
-{% include_relative _includes/services.md %}
