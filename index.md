@@ -14,6 +14,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
 ## Research Interests
 
 - Few-shot medical image segmentation
+- Low-level medical vision
 
 
 ## Publications
