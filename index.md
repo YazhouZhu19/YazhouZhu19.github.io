@@ -18,7 +18,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
 
 ## Publications
 
-- **Partition-a-medical-image: Extracting multiple representative sub-regions for few-shot medical image segmentation**
+- **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
   <br>
   **Yazhou Zhu**, Shidong Wang, Tong Xin, Zheng Zhang, Haofeng Zhang
   <br>
@@ -26,7 +26,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   [[Paper](https://ieeexplore.ieee.org/abstract/document/10478981/)] [[Code](https://github.com/YazhouZhu19/Partition-A-Medical-Image)]
 
-- **Few-shot medical image segmentation via a region-enhanced prototypical transformer**
+- **Few-shot Medical Image Segmentation via a Region-enhanced Prototypical Transformer**
   <br>
   **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang
   <br>
@@ -42,13 +42,13 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
 
-- **Multi-scale strategy based 3d dual-encoder brain tumor segmentation network with attention mechanism**
+- **Multi-scale Strategy based 3d Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
   <br>
   **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li
   <br>
   **IEEE-BIBM 2020**
 
-- **DESN: An unsupervised MR image denoising network with deep image prior**
+- **DESN: An Unsupervised MR Image Denoising Network with Deep Image Prior**
   <br>
   **Yazhou Zhu**, Xiang Pan, Tianxu Lv, Yuan Liu, Lihua Li
   <br>
