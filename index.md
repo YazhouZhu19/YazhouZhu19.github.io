@@ -23,7 +23,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   **Yazhou Zhu**, Shidong Wang, Tong Xin, Zheng Zhang, Haofeng Zhang
   <br>
-  **IEEE Transactions on Instrumentation and Measurement 2024**.
+  **IEEE Transactions on Instrumentation and Measurement 2024**
   <br>
   [[Paper](https://ieeexplore.ieee.org/abstract/document/10478981/)] [[Code](https://github.com/YazhouZhu19/Partition-A-Medical-Image)]
 
@@ -31,7 +31,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang
   <br>
-  **Pattern Recognition Letters 2024**.
+  **Pattern Recognition Letters 2024**
   <br>
   [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
 
@@ -39,7 +39,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang
   <br>
-  **MICCAI 2023**.
+  **MICCAI 2023**
   <br>
   [[Paper](https://link.springer.com/chapter/10.1007/978-3-031-43901-8_26)] [[Code](https://github.com/YazhouZhu19/RPT)]
 
