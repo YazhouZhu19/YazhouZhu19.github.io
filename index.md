@@ -49,7 +49,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   **Theoretical Computer Science 2021**
 
-- **Multi-scale Strategy based 3d Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
+- **Multi-scale Strategy based 3D Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
   <br>
   **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li
   <br>
