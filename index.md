@@ -46,19 +46,19 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li
   <br>
-  ""IEEE BIBM 2020""
+  **IEEE-BIBM 2020**
 
 - **DESN: An unsupervised MR image denoising network with deep image prior**
   <br>
   **Yazhou Zhu**, Xiang Pan, Tianxu Lv, Yuan Liu, Lihua Li
   <br>
-  ""Theoretical Computer Science 2021""
+  **Theoretical Computer Science 2021**
 
 - **Denoising of Magnetic Resonance Images with Deep Neural Regularizer Driven by Image Prior**
   <br>
   **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li, Yuan Liu
   <br>
-  ""IEEE DSAA 2020""
+  **IEEE-DSAA 2020**
 
 
 
