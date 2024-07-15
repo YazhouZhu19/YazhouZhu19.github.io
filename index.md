@@ -42,17 +42,17 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
 
-- **Multi-scale Strategy based 3d Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
-  <br>
-  **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li
-  <br>
-  **IEEE-BIBM 2020**
-
 - **DESN: An Unsupervised MR Image Denoising Network with Deep Image Prior**
   <br>
   **Yazhou Zhu**, Xiang Pan, Tianxu Lv, Yuan Liu, Lihua Li
   <br>
   **Theoretical Computer Science 2021**
+
+- **Multi-scale Strategy based 3d Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
+  <br>
+  **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li
+  <br>
+  **IEEE-BIBM 2020**
 
 - **Denoising of Magnetic Resonance Images with Deep Neural Regularizer Driven by Image Prior**
   <br>
