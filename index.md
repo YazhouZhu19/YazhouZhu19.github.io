@@ -22,7 +22,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   **Yazhou Zhu**, Shidong Wang, Tong Xin, Zheng Zhang, Haofeng Zhang
   <br>
-  **IEEE Transactions on Instrumentation and Measurement**.
+  **IEEE Transactions on Instrumentation and Measurement 2024**.
   <br>
   [[Paper](https://ieeexplore.ieee.org/abstract/document/10478981/)] [[Code](https://github.com/YazhouZhu19/Partition-A-Medical-Image)]
 
@@ -38,10 +38,27 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang
   <br>
-  **Pattern Recognition Letters**.
+  **Pattern Recognition Letters 2024**.
   <br>
   [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
 
+- **Multi-scale strategy based 3d dual-encoder brain tumor segmentation network with attention mechanism**
+  <br>
+  **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li
+  <br>
+  ""IEEE BIBM 2020""
+
+- **DESN: An unsupervised MR image denoising network with deep image prior**
+  <br>
+  **Yazhou Zhu**, Xiang Pan, Tianxu Lv, Yuan Liu, Lihua Li
+  <br>
+  ""Theoretical Computer Science 2021""
+
+- **Denoising of Magnetic Resonance Images with Deep Neural Regularizer Driven by Image Prior**
+  <br>
+  **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li, Yuan Liu
+  <br>
+  ""IEEE DSAA 2020""
 
 
 
