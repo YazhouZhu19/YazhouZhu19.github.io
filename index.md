@@ -26,17 +26,17 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   [[Paper](https://ieeexplore.ieee.org/abstract/document/10478981/)] [[Code](https://github.com/YazhouZhu19/Partition-A-Medical-Image)]
 
-  - **Few-shot medical image segmentation via a region-enhanced prototypical transformer**
-    <br>
-    **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang
-    <br>
-    [[Paper](https://link.springer.com/chapter/10.1007/978-3-031-43901-8_26)] [[Code](https://github.com/YazhouZhu19/RPT)]
+- **Few-shot medical image segmentation via a region-enhanced prototypical transformer**
+  <br>
+  **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang
+  <br>
+  [[Paper](https://link.springer.com/chapter/10.1007/978-3-031-43901-8_26)] [[Code](https://github.com/YazhouZhu19/RPT)]
 
-  - **Learning De-biased Prototypes for Few-Shot Medical Image Segmentation**
-    <br>
-    **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang
-    <br>
-    [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
+- **Learning De-biased Prototypes for Few-Shot Medical Image Segmentation**
+  <br>
+  **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang
+  <br>
+  [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
 
 
 
