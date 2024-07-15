@@ -38,7 +38,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
   <br>
   **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang
   <br>
-  **Pattern Recognition Letters**
+  **Pattern Recognition Letters**.
   <br>
   [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
 
