@@ -75,7 +75,7 @@ I am a Ph.D. student in Computer Science at Nanjing University of Science and Te
 
 ## Hobbies
 
-  Rock Music & Cooking
+- **Rock Music & Cooking**
 
 
 
