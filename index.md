@@ -3,7 +3,7 @@ layout: homepage
 ---
 
 ## About Me
-PhD. Student
+Ph.D. Student
 
 
 
