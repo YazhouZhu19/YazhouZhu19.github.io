@@ -25,7 +25,7 @@ Ph.D. Student
   <br>
   [[Paper](https://ieeexplore.ieee.org/abstract/document/10478981/)] [[Code](https://github.com/YazhouZhu19/Partition-A-Medical-Image)]
 
-- **Learning De-biased Prototypes for Few-Shot Medical Image Segmentation**
+- **Learning De-biased Prototypes for Few-shot Medical Image Segmentation**
   <br>
   **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang
   <br>
@@ -73,7 +73,7 @@ Ph.D. Student
 
 ## Hobbies
 
-- **Rock Music & Cooking**
+- **Rock Music & Cooking & Swimmming**
 
 
 
