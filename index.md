@@ -68,8 +68,6 @@ Ph.D. Student
 
   IEEE Transactions on Instrumentation and Measurement (IEEE-TIM)
 
-  Artificial Intelligence In Medicine
-
   Medical Physics
 
 
