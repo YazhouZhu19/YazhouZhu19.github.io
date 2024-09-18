@@ -73,7 +73,7 @@ Ph.D. Student
 
 ## Hobbies
 
-- **Rock Music & Cooking & Swimmming**
+- **Rock Music & Cooking & Swimming**
 
 
 
