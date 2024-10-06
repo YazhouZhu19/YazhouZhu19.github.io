@@ -55,18 +55,24 @@ Ph.D. Student
   **Yazhou Zhu**, Xiang Pan, Tianxu Lv, Yuan Liu, Lihua Li
   <br>
   **Theoretical Computer Science 2021**
+  <br>
+  [[Paper](https://www.sciencedirect.com/science/article/pii/S0304397521003522)]
 
 - **Multi-scale Strategy based 3D Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
   <br>
   **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li
   <br>
   **IEEE-BIBM 2020**
+  <br>
+  [[Paper](https://ieeexplore.ieee.org/document/9313089)]
 
 - **Denoising of Magnetic Resonance Images with Deep Neural Regularizer Driven by Image Prior**
   <br>
   **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li, Yuan Liu
   <br>
   **IEEE-DSAA 2020**
+  <br>
+  [[Paper](https://ieeexplore.ieee.org/document/9260029)]
 
 
 
