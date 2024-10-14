@@ -24,7 +24,7 @@ A PhD Student
   <br>
   **Preprint**
   <br>
-  [[Paper](https://arxiv.org/abs/2410.01110)] [[Code](https://github.com/YazhouZhu19/RobustEMD)]
+  [[Paper](https://arxiv.org/pdf/2410.01110v2)] [[Code](https://github.com/YazhouZhu19/RobustEMD)]
 
 - **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
   <br>
