@@ -11,6 +11,7 @@ A PhD Student
 
 ## Research Interests
 
+- Medical image analysis
 - Few-shot medical image segmentation
 - Inverse problems in medical imaging
 
