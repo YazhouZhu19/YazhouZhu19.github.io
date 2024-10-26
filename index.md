@@ -64,7 +64,7 @@ A PhD Student
   <br>
   **IEEE-BIBM 2020**
   <br>
-  [[Paper](https://ieeexplore.ieee.org/document/9313089)]
+  [[Paper](https://ieeexplore.ieee.org/document/9313089)] [[Code](https://github.com/YazhouZhu19/3D-Dual-Encoder)]
 
 - **Denoising of Magnetic Resonance Images with Deep Neural Regularizer Driven by Image Prior**
   <br>
