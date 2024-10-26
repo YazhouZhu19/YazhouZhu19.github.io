@@ -12,7 +12,7 @@ A PhD Student
 ## Research Interests
 
 - Few-shot medical image segmentation
-- Low-level medical vision
+- Inverse problems in medical imaging
 
 
 
