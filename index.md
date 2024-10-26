@@ -56,7 +56,7 @@ A PhD Student
   <br>
   **Theoretical Computer Science 2021**
   <br>
-  [[Paper](https://www.sciencedirect.com/science/article/pii/S0304397521003522)]
+  [[Paper](https://www.sciencedirect.com/science/article/pii/S0304397521003522)] [[Code](https://github.com/YazhouZhu19/DESN)]
 
 - **Multi-scale Strategy based 3D Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
   <br>
