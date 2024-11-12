@@ -19,6 +19,14 @@ Student
 
 ## Publications
 
+- **RobustEMD: Domain Robust Matching for Cross-domain Few-shot Medical Image Segmentation**
+  <br>
+  **Yazhou Zhu**, Minxian Li, Qiaolin Ye, Shidong Wang, Tong Xin, Haofeng Zhang
+  <br>
+  **arXiv**
+  <br>
+  [[Paper](https://arxiv.org/pdf/2410.01110)] [[Code](https://github.com/YazhouZhu19/RobustEMD)]
+
 
 - **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
   <br>
