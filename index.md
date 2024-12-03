@@ -16,8 +16,7 @@ Student
 - Inverse problems in medical imaging
 
 
-
-## Publications
+## Preprints
 
 - **RobustEMD: Domain Robust Matching for Cross-domain Few-shot Medical Image Segmentation**
   <br>
@@ -27,6 +26,9 @@ Student
   <br>
   [[Paper](https://arxiv.org/pdf/2410.01110)] [[Code](https://github.com/YazhouZhu19/RobustEMD)]
 
+
+
+## Publications
 
 - **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
   <br>
