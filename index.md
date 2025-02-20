@@ -14,8 +14,8 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 ## Research Interests
 
 - Medical image analysis
-- Few-shot Learning
-- MR Image Denoising
+- Few-shot Medical Image Segmentation
+- Low-level Medical Vision
 
 
 ## Preprints
