@@ -18,16 +18,6 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 - Low-level Medical Vision
 
 
-## Preprints
-
-- **RobustEMD: Domain Robust Matching for Cross-domain Few-shot Medical Image Segmentation**
-  <br>
-  **Yazhou Zhu**, Minxian Li, Qiaolin Ye, Shidong Wang, Tong Xin, Haofeng Zhang
-  <br>
-  **arXiv**
-  <br>
-  [[Paper](https://arxiv.org/pdf/2410.01110)] [[Code](https://github.com/YazhouZhu19/RobustEMD)]
-
 
 
 ## Publications
