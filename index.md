@@ -74,11 +74,13 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - **Reviewer:**
 
-  IEEE Transactions on Instrumentation and Measurement (IEEE-TIM)
+  IEEE Transactions on Instrumentation and Measurement (IEEE-TIM) 
 
   Artificial Intelligence in Medicine
 
   Medical Physics
+
+  MICCAI 2025
 
 
 
