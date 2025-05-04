@@ -81,9 +81,6 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   Medical Physics
 
 
-## Hobbies
-
-- **Rock Music & Cooking & Swimming**
 
 
 
