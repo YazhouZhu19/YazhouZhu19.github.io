@@ -3,7 +3,7 @@ layout: homepage
 ---
 
 ## About Me
-I am a third-year Ph.D. student in Nanjing University of Science and Technology (NJUST) under the supervision of [Prof. Haofeng Zhang](https://scholar.google.com/citations?user=BRFfdhcAAAAJ&hl=en&oi=ao).
+I am a third-year Ph.D. student in Nanjing University of Science and Technology (NJUST) under the supervision of [Prof. Haofeng Zhang](https://scholar.google.com/citations?user=BRFfdhcAAAAJ&hl=en&oi=ao). Before that, I recieved master degree from Jiangnan University under the supervision of [Prof. Xiang Pan](https://scholar.google.com/citations?user=EAgGMqkAAAAJ&hl=en&oi=ao) and bechalor degree from Changzhou University.
 
 
      
