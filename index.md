@@ -26,14 +26,14 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   
 - **RobustEMD: Domain Robust Matching for Cross-domain Few-shot Medical Image Segmentation**
   <br>
-  **Yazhou Zhu**, Minxian Li, Qiaolin Ye, Shidong Wang, Tong Xin, Haofeng Zhang
+  **Yazhou Zhu**, Minxian Li, Qiaolin Ye, Shidong Wang, Tong Xin, Haofeng Zhang*
   <br>
   **Artificial Intelligence in Medicine 2025**
   <br>
 
 - **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
   <br>
-  **Yazhou Zhu**, Shidong Wang, Tong Xin, Zheng Zhang, Haofeng Zhang
+  **Yazhou Zhu**, Shidong Wang, Tong Xin, Zheng Zhang, Haofeng Zhang*
   <br>
   **IEEE Transactions on Instrumentation and Measurement 2024**
   <br>
@@ -41,7 +41,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - **Learning De-biased Prototypes for Few-shot Medical Image Segmentation**
   <br>
-  **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang
+  **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang*
   <br>
   **Pattern Recognition Letters 2024**
   <br>
@@ -49,7 +49,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - **Few-shot Medical Image Segmentation via a Region-enhanced Prototypical Transformer**
   <br>
-  **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang
+  **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang*
   <br>
   **MICCAI 2023**
   <br>
@@ -57,7 +57,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - **DESN: An Unsupervised MR Image Denoising Network with Deep Image Prior**
   <br>
-  **Yazhou Zhu**, Xiang Pan, Tianxu Lv, Yuan Liu, Lihua Li
+  **Yazhou Zhu**, Xiang Pan*, Tianxu Lv, Yuan Liu, Lihua Li
   <br>
   **Theoretical Computer Science 2021**
   <br>
@@ -65,7 +65,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - **Multi-scale Strategy based 3D Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
   <br>
-  **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li
+  **Yazhou Zhu**, Xiang Pan*, Jing Zhu, Lihua Li
   <br>
   **IEEE-BIBM 2020**
   <br>
@@ -73,7 +73,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - **Denoising of Magnetic Resonance Images with Deep Neural Regularizer Driven by Image Prior**
   <br>
-  **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li, Yuan Liu
+  **Yazhou Zhu**, Xiang Pan*, Jing Zhu, Lihua Li, Yuan Liu
   <br>
   **IEEE-DSAA 2020**
   <br>
