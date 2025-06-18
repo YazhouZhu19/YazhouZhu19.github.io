@@ -19,7 +19,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 ## Publications
 - **MAUP: Training-free Multi-Center Adaptive Uncertainty-aware Prompting for Cross-domain Few-shot Medical Image Segmentation**
   <br>
-  **Yazhou Zhu**, Haofeng Zhang
+  **Yazhou Zhu**, Haofeng Zhang*
   <br>
   **MICCAI 2025**
   <br>
