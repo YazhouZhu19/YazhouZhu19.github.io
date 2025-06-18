@@ -17,6 +17,19 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 
 ## Publications
+- **MAUP: Training-free Multi-Center Adaptive Uncertainty-aware Prompting for Cross-domain Few-shot Medical Image Segmentation**
+  <br>
+  **Yazhou Zhu**, Haofeng Zhang
+  <br>
+  **MICCAI 2025**
+  <br>
+  
+- **RobustEMD: Domain Robust Matching for Cross-domain Few-shot Medical Image Segmentation**
+  <br>
+  **Yazhou Zhu**, Minxian Li, Qiaolin Ye, Shidong Wang, Tong Xin, Haofeng Zhang
+  <br>
+  **Artificial Intelligence in Medicine 2025**
+  <br>
 
 - **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
   <br>
