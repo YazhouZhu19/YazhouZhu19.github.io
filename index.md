@@ -56,6 +56,12 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 
 ## Academic Service
+- **AAAI 2025**
+- **MICCAI 2025**
+- **IEEE Transactions on Instrumentation and Measurement**
+- **Artificial Intelligence in Medicine**
+- **IEEE Transactions on Radiation and Plasma Medical Sciences**
+   
 
 
 
