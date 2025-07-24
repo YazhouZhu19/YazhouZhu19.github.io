@@ -11,7 +11,6 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - Medical image analysis
 - Few-shot Medical Image Segmentation
-- Low-level Medical Vision
 
 
 
