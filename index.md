@@ -56,7 +56,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 
 ## Academic Service
-#### Reviewer:
+  Reviewer:
 - **AAAI 2025**
 - **MICCAI 2025**
 - **Artificial Intelligence in Medicine**
