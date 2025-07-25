@@ -28,6 +28,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   <br>
   **Artificial Intelligence in Medicine 2025**
   <br>
+  [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0933365725001320)] [[Code](https://github.com/YazhouZhu19/RobustEMD)]
 
 - **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
   <br>
