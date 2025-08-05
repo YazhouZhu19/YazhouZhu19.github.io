@@ -39,7 +39,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   <br>
   [[Paper](https://ieeexplore.ieee.org/abstract/document/10478981/)] [[Code](https://github.com/YazhouZhu19/Partition-A-Medical-Image)]
 
-- **Learning de-biased prototypes for few-shot medical image segmentation**
+- **Learning De-biased Prototypes for Few-shot Medical Image Segmentation**
   <br>
   **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang*
   <br>
@@ -55,7 +55,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   <br>
   [[Paper](https://link.springer.com/chapter/10.1007/978-3-031-43901-8_26)] [[Code](https://github.com/YazhouZhu19/RPT)]
 
-- **DESN: An unsupervised MR image denoising network with deep image prior**
+- **DESN: An Unsupervised MR Image Denoising Network with Deep Image Prior**
   <br>
   **Yazhou Zhu**, Xiang Pan*, Tianxu Lv, Yuan Liu, Lihua Li
   <br>
