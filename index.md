@@ -41,7 +41,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - **Learning de-biased prototypes for few-shot medical image segmentation**
   <br>
-  **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang
+  **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang*
   <br>
   **Pattern Recognition Letters**
   <br>
@@ -57,7 +57,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - **DESN: An unsupervised MR image denoising network with deep image prior**
   <br>
-  **Yazhou Zhu**, Xiang Pan, Tianxu Lv, Yuan Liu, Lihua Li
+  **Yazhou Zhu**, Xiang Pan*, Tianxu Lv, Yuan Liu, Lihua Li
   <br>
   **Theoretical Computer Science**
   <br>
@@ -73,7 +73,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
 
 - **Denoising of Magnetic Resonance Images with Deep Neural Regularizer Driven by Image Prior**
   <br>
-  **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li, Yuan Liu
+  **Yazhou Zhu**, Xiang Pan*, Jing Zhu, Lihua Li, Yuan Liu
   <br>
   **IEEE-DSAA 2020**
   <br>
