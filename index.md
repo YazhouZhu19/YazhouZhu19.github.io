@@ -47,7 +47,6 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   <br>
   [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
 
-
 - **Few-shot Medical Image Segmentation via a Region-enhanced Prototypical Transformer**
   <br>
   **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang*
@@ -55,6 +54,14 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   **MICCAI 2023**
   <br>
   [[Paper](https://link.springer.com/chapter/10.1007/978-3-031-43901-8_26)] [[Code](https://github.com/YazhouZhu19/RPT)]
+
+- **DESN: An unsupervised MR image denoising network with deep image prior**
+  <br>
+  **Yazhou Zhu**, Xiang Pan, Tianxu Lv, Yuan Liu, Lihua Li
+  <br>
+  **Theoretical Computer Science**
+  <br>
+  [[Paper](https://www.sciencedirect.com/science/article/pii/S0304397521003522)]
 
 - **Multi-scale Strategy based 3D Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
   <br>
