@@ -38,6 +38,15 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   <br>
   [[Paper](https://ieeexplore.ieee.org/abstract/document/10478981/)] [[Code](https://github.com/YazhouZhu19/Partition-A-Medical-Image)]
 
+- **Learning de-biased prototypes for few-shot medical image segmentation**
+  <br>
+  **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang
+  <br>
+  **Pattern Recognition Letters**
+  <br>
+  [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
+
+
 - **Few-shot Medical Image Segmentation via a Region-enhanced Prototypical Transformer**
   <br>
   **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang*
@@ -53,6 +62,15 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   **IEEE-BIBM 2020**
   <br>
   [[Paper](https://ieeexplore.ieee.org/document/9313089)] [[Code](https://github.com/YazhouZhu19/3D-Dual-Encoder)]
+
+- **Denoising of Magnetic Resonance Images with Deep Neural Regularizer Driven by Image Prior**
+  <br>
+  **Yazhou Zhu**, Xiang Pan, Jing Zhu, Lihua Li, Yuan Liu
+  <br>
+  **IEEE-DSAA 2020**
+  <br>
+  [[Paper](https://drive.google.com/file/d/1Sg9mUTG0lJuRpfBl1KT2lp742E9HwPUN/view)]
+
 
 
 ## Academic Service
