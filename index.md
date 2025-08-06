@@ -21,7 +21,7 @@ I am a third-year Ph.D. student in Nanjing University of Science and Technology 
   <br>
   **MICCAI 2025**
   <br>
-  [[Code](https://github.com/YazhouZhu19/MAUP)]
+  [[Paper](https://arxiv.org/abs/2508.03511)] [[Code](https://github.com/YazhouZhu19/MAUP)]
   
 - **RobustEMD: Domain Robust Matching for Cross-domain Few-shot Medical Image Segmentation**
   <br>
