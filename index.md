@@ -43,7 +43,7 @@ I am a final-year Ph.D. student in Nanjing University of Science and Technology 
   <br>
   **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang*
   <br>
-  **Pattern Recognition Letters**
+  **Pattern Recognition Letters 2023**
   <br>
   [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
 
@@ -59,7 +59,7 @@ I am a final-year Ph.D. student in Nanjing University of Science and Technology 
   <br>
   **Yazhou Zhu**, Xiang Pan*, Tianxu Lv, Yuan Liu, Lihua Li
   <br>
-  **Theoretical Computer Science**
+  **Theoretical Computer Science 2021**
   <br>
   [[Paper](https://www.sciencedirect.com/science/article/pii/S0304397521003522)]
 
