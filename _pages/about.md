@@ -30,6 +30,9 @@ My research interest includes few-shot medical image segmentation and computer v
 
 # 📝 Publications
 
+- ``MICCAI 2025`` [MAUP: Training-free Multi-center Adaptive Uncertainty-aware Prompting for Cross-domain Few-shot Medical Image Segmentation](https://www.arxiv.org/abs/2508.03511), **Yazhou Zhu**, Haofeng Zhang*.
+
+
 
 
 # 📖 Educations
