@@ -31,18 +31,50 @@ My research interest includes few-shot medical image segmentation and computer v
 # 📝 Publications
 
 **Cross-domain Few-shot Medical Image Segmentation**
-</div>
 
+- **MAUP: Training-free Multi-center Adaptive Uncertainty-aware Prompting for Cross-domain Few-shot Medical Image Segmentation**
+  <br>
+  **Yazhou Zhu**, Haofeng Zhang*
+  <br>
+  **MICCAI 2025**
+  <br>
+  [[Paper](https://arxiv.org/abs/2508.03511)] [[Code](https://github.com/YazhouZhu19/MAUP)]
 
-- `MICCAI 2025` [MAUP: Training-free Multi-center Adaptive Uncertainty-aware Prompting for Cross-domain Few-shot Medical Image Segmentation](https://www.arxiv.org/abs/2508.03511), **Yazhou Zhu**, Haofeng Zhang*.
-- ``Artificial Intelligence in Medicine`` [RobustEMD: Domain Robust Matching for Cross-domain Few-shot Medical Image Segmentation](https://www.sciencedirect.com/science/article/abs/pii/S0933365725001320), **Yazhou Zhu**, Minxian Li, Qiaolin Ye, Shidong Wang, Tong Xin, Haofeng Zhang*.
+- **RobustEMD: Domain Robust Matching for Cross-domain Few-shot Medical Image Segmentation**
+  <br>
+  **Yazhou Zhu**, Minxian Li, Qiaolin Ye, Shidong Wang, Tong Xin, Haofeng Zhang*
+  <br>
+  **Artificial Intelligence in Medicine 2025**
+  <br>
+  [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0933365725001320)] [[Code](https://github.com/YazhouZhu19/RobustEMD)]
 
 
 **Few-shot Medical Image Segmentation**
-- ``Pattern Recognition Letters`` [Learning De-biased Prototypes for Few-shot Medical Image Segmentation](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417), **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang*.
-- ``IEEE TIM``[Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation](https://arxiv.org/abs/2309.11172), **Yazhou Zhu**, Shidong Wang, Tong Xin, Zheng Zhang, Haofeng Zhang*.
-- ``MICCAI 2023`` [Few-Shot Medical Image Segmentation via a Region-enhanced Prototypical Transformer](https://arxiv.org/abs/2309.04825), **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang*.
- 
+
+- **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
+  <br>
+  **Yazhou Zhu**, Shidong Wang, Tong Xin, Zheng Zhang, Haofeng Zhang*
+  <br>
+  **IEEE Transactions on Instrumentation and Measurement 2024**
+  <br>
+  [[Paper](https://ieeexplore.ieee.org/abstract/document/10478981/)] [[Code](https://github.com/YazhouZhu19/Partition-A-Medical-Image)]
+
+- **Learning De-biased Prototypes for Few-shot Medical Image Segmentation**
+  <br>
+  **Yazhou Zhu**, Ziming Cheng, Shidong Wang, Haofeng Zhang*
+  <br>
+  **Pattern Recognition Letters 2023**
+  <br>
+  [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0167865524001417)] [[Code](https://github.com/YazhouZhu19/DMAP)]
+
+- **Few-shot Medical Image Segmentation via a Region-enhanced Prototypical Transformer**
+  <br>
+  **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang*
+  <br>
+  **MICCAI 2023**
+  <br>
+  [[Paper](https://link.springer.com/chapter/10.1007/978-3-031-43901-8_26)] [[Code](https://github.com/YazhouZhu19/RPT)]
+
 
 
 
