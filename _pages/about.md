@@ -120,7 +120,21 @@ My research interest includes few-shot medical image segmentation and computer v
   <br>
   [[Paper](https://arxiv.org/abs/2412.09319)] [[Code](https://github.com/primebo1/FAMNet)]
 
+- **Cascaded Alternating Refinement Transformer for Few-shot Medical Image Segmentation**
+  <br>
+  Ziming Cheng, **Yazhou Zhu**, Shidong Wang, Tong Xin, Haofeng Zhang*
+  <br>
+  **ACM Transactions on Intelligent Systems and Technology 2025**
+  <br>
+  [[Paper](https://dl.acm.org/doi/abs/10.1145/3709145)] [[Code](https://github.com/zmcheng9/CART)]
 
+- **Class Concentration with Twin Variational Autoencoders for Unsupervised Cross-modal Hashing**
+  <br>
+  Yang Zhao, **Yazhou Zhu**, Shengbin Liao, Qiaolin Ye, Haofeng Zhang*
+  <br>
+  **ACCV 2022**
+  <br>
+  [[Paper](https://openaccess.thecvf.com/content/ACCV2022/html/Zhao_Class_Concentration_with_Twin_Variational_Autoencoders_for_Unsupervised_Cross-modal_Hashing_ACCV_2022_paper.html)] [[Code](https://github.com/theusernamealreadyexists/CCTV)]
 
 
 # 📖 Educations
