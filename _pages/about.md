@@ -81,7 +81,33 @@ My research interest includes few-shot medical image segmentation and computer v
   <br>
   [[Paper](https://link.springer.com/chapter/10.1007/978-3-031-43901-8_26)] [[Code](https://github.com/YazhouZhu19/RPT)]
 
+## ⚓️MRI Image Denoising
 
+- **DESN: An Unsupervised MR Image Denoising Network with Deep Image Prior**
+  <br>
+  **Yazhou Zhu**, Xiang Pan*, Tianxu Lv, Yuan Liu, Lihua Li
+  <br>
+  **Theoretical Computer Science 2021**
+  <br>
+  [[Paper](https://www.sciencedirect.com/science/article/pii/S0304397521003522)]
+
+- **Denoising of Magnetic Resonance Images with Deep Neural Regularizer Driven by Image Prior**
+  <br>
+  **Yazhou Zhu**, Xiang Pan*, Jing Zhu, Lihua Li, Yuan Liu
+  <br>
+  **IEEE-DSAA 2020**
+  <br>
+  [[Paper](https://drive.google.com/file/d/1Sg9mUTG0lJuRpfBl1KT2lp742E9HwPUN/view)]
+
+## ⛽️Medical Image Segmentation
+
+- **Multi-scale Strategy based 3D Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
+  <br>
+  **Yazhou Zhu**, Xiang Pan*, Jing Zhu, Lihua Li
+  <br>
+  **IEEE-BIBM 2020**
+  <br>
+  [[Paper](https://ieeexplore.ieee.org/document/9313089)] [[Code](https://github.com/YazhouZhu19/3D-Dual-Encoder)]
 
 
 
