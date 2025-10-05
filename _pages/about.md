@@ -110,6 +110,18 @@ My research interest includes few-shot medical image segmentation and computer v
   [[Paper](https://ieeexplore.ieee.org/document/9313089)] [[Code](https://github.com/YazhouZhu19/3D-Dual-Encoder)]
 
 
+# 👻Co-author Publications
+
+- **Famnet: Frequency-aware Matching Network for Cross-domain Few-shot Medical Image Segmentation**
+  <br>
+  Yuntian Bo, **Yazhou Zhu**, Lunbo Li, Haofeng Zhang*
+  <br>
+  **AAAI 2025**
+  <br>
+  [[Paper](https://arxiv.org/abs/2412.09319)] [[Code](https://github.com/primebo1/FAMNet)]
+
+
+
 
 # 📖 Educations
 - *2022.03 - now*, Ph.D. student, Nanjing University of Science and Technology.
