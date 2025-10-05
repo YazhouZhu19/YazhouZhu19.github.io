@@ -136,6 +136,16 @@ My research interest includes few-shot medical image segmentation and computer v
   <br>
   [[Paper](https://openaccess.thecvf.com/content/ACCV2022/html/Zhao_Class_Concentration_with_Twin_Variational_Autoencoders_for_Unsupervised_Cross-modal_Hashing_ACCV_2022_paper.html)] [[Code](https://github.com/theusernamealreadyexists/CCTV)]
 
+- **Unsupervised Medical Images Denoising via Graph Attention Dual Adversarial Network**
+  <br>
+  Tianxu Lv, Xiang Pan*, **Yazhou Zhu**, Lihua Li
+  <br>
+  **Applied Intelligence 2021**
+  <br>
+  [[Paper](https://link.springer.com/article/10.1007/s10489-020-02016-4)]
+
+  
+
 
 # 📖 Educations
 - *2022.03 - now*, Ph.D. student, Nanjing University of Science and Technology.
