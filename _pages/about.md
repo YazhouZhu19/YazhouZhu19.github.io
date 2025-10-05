@@ -30,7 +30,7 @@ My research interest includes few-shot medical image segmentation and computer v
 
 # 📝 Publications
 
-## 🚘Cross-domain Few-shot Medical Image Segmentation
+## 🚘 Cross-domain Few-shot Medical Image Segmentation
 
 - **Cross-domain Few-shot Medical Image Segmentation via Dynamic Semantic Matching**
   <br>
@@ -55,7 +55,7 @@ My research interest includes few-shot medical image segmentation and computer v
   [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0933365725001320)] [[Code](https://github.com/YazhouZhu19/RobustEMD)]
 
 
-## 🚖Few-shot Medical Image Segmentation
+## 🚖 Few-shot Medical Image Segmentation
 
 - **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
   <br>
@@ -81,7 +81,7 @@ My research interest includes few-shot medical image segmentation and computer v
   <br>
   [[Paper](https://link.springer.com/chapter/10.1007/978-3-031-43901-8_26)] [[Code](https://github.com/YazhouZhu19/RPT)]
 
-## ⚓️MRI Image Denoising
+## ⚓️ MRI Image Denoising
 
 - **DESN: An Unsupervised MR Image Denoising Network with Deep Image Prior**
   <br>
@@ -99,7 +99,7 @@ My research interest includes few-shot medical image segmentation and computer v
   <br>
   [[Paper](https://drive.google.com/file/d/1Sg9mUTG0lJuRpfBl1KT2lp742E9HwPUN/view)]
 
-## ⛽️Medical Image Segmentation
+## ⛽️ Medical Image Segmentation
 
 - **Multi-scale Strategy based 3D Dual-encoder Brain Tumor Segmentation Network with Attention Mechanism**
   <br>
@@ -110,7 +110,7 @@ My research interest includes few-shot medical image segmentation and computer v
   [[Paper](https://ieeexplore.ieee.org/document/9313089)] [[Code](https://github.com/YazhouZhu19/3D-Dual-Encoder)]
 
 
-# 👻Co-author Publications
+# 👻 Co-author Publications
 
 - **Famnet: Frequency-aware Matching Network for Cross-domain Few-shot Medical Image Segmentation**
   <br>
