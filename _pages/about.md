@@ -17,7 +17,7 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-I am a Ph.D. student in Nanjing University of Science and Technology (NJUST), under the supervision of Prof. [[Haofeng Zhang](https://scholar.google.com/citations?user=BRFfdhcAAAAJ&hl=en&oi=ao)]. 
+I am a Ph.D. student in Nanjing University of Science and Technology (NJUST), under the supervision of Prof. [Haofeng Zhang](https://scholar.google.com/citations?user=BRFfdhcAAAAJ&hl=en&oi=ao). 
 
 My research interest includes few-shot medical image segmentation and computer vision. 
 
