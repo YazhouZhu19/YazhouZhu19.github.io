@@ -30,13 +30,13 @@ My research interest includes few-shot medical image segmentation and computer v
 
 # 📝 Publications
 
-**Cross-domain Few-shot Medical Image Segmentation**
+**🚘Cross-domain Few-shot Medical Image Segmentation**
 
 - **Cross-domain Few-shot Medical Image Segmentation via Dynamic Semantic Matching**
   <br>
   **Yazhou Zhu**, Shidong Wang, Tao Zhou, Zechao Li, Haofeng Zhang*, Ling Shao
   <br>
-  **IEEE Transactions on Image Processing**
+  **IEEE Transactions on Image Processing 2025**
 
 - **MAUP: Training-free Multi-center Adaptive Uncertainty-aware Prompting for Cross-domain Few-shot Medical Image Segmentation**
   <br>
@@ -55,7 +55,7 @@ My research interest includes few-shot medical image segmentation and computer v
   [[Paper](https://www.sciencedirect.com/science/article/abs/pii/S0933365725001320)] [[Code](https://github.com/YazhouZhu19/RobustEMD)]
 
 
-**Few-shot Medical Image Segmentation**
+**🚖Few-shot Medical Image Segmentation**
 
 - **Partition-A-Medical-Image: Extracting Multiple Representative Sub-regions for Few-shot Medical Image Segmentation**
   <br>
