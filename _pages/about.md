@@ -28,7 +28,7 @@ My research interest includes few-shot medical image segmentation and computer v
 - *2025.06*: &nbsp;🎉🎉 One paper is accepted by Artificial Intelligence in Medicine.
 - *2025.06*: &nbsp;🎉🎉 One paper is accepted by MICCAI 2025. 
 
-# 📝 Publications 
+# 📝 Publications
 
 
 
