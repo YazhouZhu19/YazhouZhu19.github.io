@@ -148,7 +148,7 @@ My research interest includes few-shot medical image segmentation and computer v
 
 
 # 📖 Educations
-- *2022.03 - now*, Ph.D. student, Nanjing University of Science and Technology.
-- *2018.09 - 2021.06*, Master, Jiangnan University. 
-- *2014.09 - 2018.06*, Undergraduate, Changzhou University. 
+- *2022.03 - now*, PhD, Nanjing University of Science and Technology.
+- *2018.09 - 2021.06*, MSc, Jiangnan University. 
+- *2014.09 - 2018.06*, BEng, Changzhou University. 
 
