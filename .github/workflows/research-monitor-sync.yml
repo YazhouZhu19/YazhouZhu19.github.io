@@ -1,0 +1,192 @@
+name: Research monitor sync
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+# No checkout, external Actions, package installation, or AI/model calls.
+permissions: {}
+
+concurrency:
+  group: medical-research-monitor-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Sync EPMC, arXiv, and medRxiv
+        env:
+          MEDICAL_MONITOR_SYNC_TOKEN: ${{ secrets.MEDICAL_MONITOR_SYNC_TOKEN }}
+        # This inline copy intentionally makes the workflow self-contained.
+        shell: python3 {0}
+        run: |
+          #!/usr/bin/env python3
+          """Trigger deterministic source ingestion with Python's standard library only."""
+          
+          import errno
+          import http.client
+          import json
+          import os
+          import signal
+          import socket
+          import ssl
+          import time
+          import urllib.error
+          import urllib.request
+          
+          ENDPOINT = (
+              "https://medical-image-research-monitor.rangerzhuyazhou.chatgpt.site"
+              "/api/scheduled-sync"
+          )
+          SOURCES = ("epmc", "arxiv", "medrxiv")
+          SOURCE_LABELS = {"epmc": "Europe PMC", "arxiv": "arXiv", "medrxiv": "medRxiv"}
+          ATTEMPTS = 3
+          TIMEOUT_SECONDS = 120
+          MAX_RESPONSE_BYTES = 1024 * 1024
+          RETRY_DELAYS = (5, 15)
+          
+          
+          class Failure(Exception):
+              def __init__(self, label, retryable=False, retry_after=0):
+                  super().__init__(label)
+                  self.label = label
+                  self.retryable = retryable
+                  self.retry_after = retry_after
+          
+          
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  # Never forward the Bearer token to a redirect destination.
+                  return None
+          
+          
+          def transient_network_error(error):
+              if isinstance(error, urllib.error.URLError):
+                  error = error.reason
+              if isinstance(error, ssl.SSLError):
+                  return False
+              if isinstance(error, socket.gaierror):
+                  return error.errno == socket.EAI_AGAIN
+              if isinstance(error, (TimeoutError, http.client.IncompleteRead)):
+                  return True
+              return (isinstance(error, OSError) and error.errno in {
+                  errno.ECONNRESET, errno.ECONNABORTED, errno.ECONNREFUSED,
+                  errno.ETIMEDOUT, errno.ENETUNREACH, errno.EHOSTUNREACH,
+                  errno.EPIPE, errno.EAGAIN,
+              }) or isinstance(error, http.client.RemoteDisconnected)
+          
+          
+          def request_timeout(signum, frame):
+              raise TimeoutError()
+          
+          
+          def fetch(opener, token, source):
+              request = urllib.request.Request(
+                  ENDPOINT,
+                  data=json.dumps({"source": source}).encode("utf-8"),
+                  headers={
+                      "Authorization": "Bearer " + token,
+                      "Content-Type": "application/json",
+                      "Accept": "application/json",
+                      "User-Agent": "medical-research-monitor-scheduler/1.0",
+                  },
+                  method="POST",
+              )
+              # A wall-clock deadline also bounds DNS and slow response bodies on Linux.
+              previous_handler = signal.signal(signal.SIGALRM, request_timeout)
+              signal.setitimer(signal.ITIMER_REAL, TIMEOUT_SECONDS)
+              try:
+                  with opener.open(request, timeout=TIMEOUT_SECONDS) as response:
+                      if not 200 <= response.status < 300:
+                          raise Failure("http_" + str(response.status), 500 <= response.status < 600)
+                      raw = response.read(MAX_RESPONSE_BYTES + 1)
+              except urllib.error.HTTPError as error:
+                  code = error.code
+                  # Honor the endpoint's short Retry-After (currently 60 seconds for busy).
+                  # Cap it to preserve the workflow's overall 25-minute time budget.
+                  retry_header = error.headers.get("Retry-After", "") if error.headers else ""
+                  retry_after = min(int(retry_header), 60) if retry_header.isascii() and retry_header.isdigit() and len(retry_header) <= 5 else 0
+                  error.close()
+                  # Never print HTTP error bodies, headers, or exception strings.
+                  raise Failure("http_" + str(code), 500 <= code < 600, retry_after) from None
+              except (OSError, urllib.error.URLError, http.client.HTTPException) as error:
+                  raise Failure("network_error", transient_network_error(error)) from None
+              finally:
+                  signal.setitimer(signal.ITIMER_REAL, 0)
+                  signal.signal(signal.SIGALRM, previous_handler)
+              if len(raw) > MAX_RESPONSE_BYTES:
+                  raise Failure("response_too_large")
+              try:
+                  result = json.loads(raw)
+              except (ValueError, UnicodeError):
+                  raise Failure("invalid_json") from None
+              if not isinstance(result, dict):
+                  raise Failure("invalid_response")
+              return result
+          
+          
+          def safe_count(result, name):
+              value = result.get(name)
+              return str(value) if type(value) is int and 0 <= value <= 1_000_000_000 else "unknown"
+          
+          
+          def summarize(result, source):
+              # Failures take precedence over skip flags in any ambiguous response.
+              if result.get("busy") is True:
+                  raise Failure("server_busy")
+              if result.get("status") == "error":
+                  raise Failure("sync_error")
+              if result.get("source") not in (source, SOURCE_LABELS[source]):
+                  raise Failure("source_mismatch")
+              if result.get("skipped") is True:
+                  return "skipped"
+              status = result.get("status")
+              if status not in ("ok", "partial"):
+                  raise Failure("invalid_sync_status")
+              # Only allowlisted labels and numeric counts reach logs. Partial is successful
+              # ingestion with a limited result; do not expose server error/details fields.
+              label = "limited" if status == "partial" else "ok"
+              return label + " added=" + safe_count(result, "added") + " updated=" + safe_count(result, "updated")
+          
+          
+          def sync_source(opener, token, source):
+              for attempt in range(1, ATTEMPTS + 1):
+                  try:
+                      summary = summarize(fetch(opener, token, source), source)
+                      print(source + ": " + summary, flush=True)
+                      return True
+                  except Failure as error:
+                      if error.retryable and attempt < ATTEMPTS:
+                          print(source + ": retry " + str(attempt) + "/" + str(ATTEMPTS - 1)
+                                + " reason=" + error.label, flush=True)
+                          time.sleep(max(RETRY_DELAYS[attempt - 1], error.retry_after))
+                          continue
+                      print(source + ": failed reason=" + error.label, flush=True)
+                      return False
+                  except Exception:
+                      # Preserve failure and continue the other sources without a traceback
+                      # that could contain request data or untrusted server text.
+                      print(source + ": failed reason=unexpected_client_error", flush=True)
+                      return False
+              return False
+          
+          
+          def main():
+              token = os.environ.get("MEDICAL_MONITOR_SYNC_TOKEN", "")
+              if not token or any(char.isspace() for char in token):
+                  print("configuration_error: missing or invalid MEDICAL_MONITOR_SYNC_TOKEN", flush=True)
+                  return 1
+              opener = urllib.request.build_opener(NoRedirect())
+              failures = 0
+              for source in SOURCES:
+                  if not sync_source(opener, token, source):
+                      failures += 1
+              print("sources=" + str(len(SOURCES)) + " failed=" + str(failures), flush=True)
+              return 1 if failures else 0
+          
+          
+          if __name__ == "__main__":
+              raise SystemExit(main())
