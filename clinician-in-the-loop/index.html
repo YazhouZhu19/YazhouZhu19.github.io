@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A perspective on decidable self-assessment, selective clinician interaction, and bounded adaptation for few-shot medical image analysis."
+    />
+    <meta name="author" content="Yazhou Zhu" />
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:title"
+      content="From Few-Shot Segmentation to Clinician-in-the-Loop Medical Image Analysis"
+    />
+    <meta
+      property="og:description"
+      content="Decidable self-assessment as the precondition for interaction and adaptation."
+    />
+    <meta property="og:url" content="https://yazhouzhu19.github.io/clinician-in-the-loop/" />
+    <link rel="canonical" href="https://yazhouzhu19.github.io/clinician-in-the-loop/" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2311263d'/%3E%3Cpath d='M14 18h36v7H14zm0 14h24v7H14zm0 14h32v7H14z' fill='%23f6f2e9'/%3E%3Ccircle cx='47' cy='35' r='7' fill='%2356a3a6'/%3E%3C/svg%3E"
+    />
+    <title>From Few-Shot Segmentation to Clinician-in-the-Loop Medical Image Analysis</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="wordmark" href="#top" aria-label="Return to top">
+        <span class="wordmark-mark" aria-hidden="true"></span>
+        Yazhou Zhu
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#idea">Core idea</a>
+        <a href="#framework">Framework</a>
+        <a href="#agenda">Research agenda</a>
+        <a href="#citation">Citation</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">Perspective paper · arXiv:2609.10001 · v2</p>
+          <h1>
+            From Few-Shot Segmentation to
+            <span>Clinician-in-the-Loop Medical Image Analysis</span>
+          </h1>
+          <p class="subtitle">
+            Decidable Self-Assessment as the Precondition for Interaction and Adaptation
+          </p>
+          <div class="author-line">
+            <a href="https://yazhouzhu19.github.io/" target="_blank" rel="noreferrer">Yazhou Zhu</a>
+            <span aria-hidden="true">·</span>
+            <a href="mailto:rangerzhuyazhou@gmail.com">rangerzhuyazhou@gmail.com</a>
+          </div>
+          <div class="actions" aria-label="Paper links">
+            <a class="button button-primary" href="paper.pdf" download>Download PDF</a>
+            <a class="button" href="https://arxiv.org/abs/2609.10001" target="_blank" rel="noreferrer">View on arXiv</a>
+            <button class="button button-text" type="button" data-copy-citation>Copy BibTeX</button>
+          </div>
+        </div>
+
+        <aside class="thesis-card" aria-label="Core decision">
+          <p class="card-kicker">The decision before the interaction</p>
+          <p class="card-question">Can a bounded intervention reach a clinically better outcome?</p>
+          <div class="decision-list">
+            <div><span>Accept</span><small>Risk is sufficiently low</small></div>
+            <div class="decision-active"><span>Query</span><small>Expert input has positive net value</small></div>
+            <div><span>Defer</span><small>The error is not safely reachable</small></div>
+          </div>
+          <p class="card-note">Interaction is licensed by repairability, not uncertainty alone.</p>
+        </aside>
+      </section>
+
+      <section class="statement" id="idea">
+        <p class="section-label">Central claim</p>
+        <blockquote>
+          Scarce expert attention should be spent only where a bounded intervention is expected to
+          reach a clinically better outcome.
+        </blockquote>
+        <div class="statement-grid">
+          <p>
+            Conventional few-shot medical image segmentation asks how much can be learned from a
+            small support set. Cross-domain FSMIS asks whether that evidence transfers to unfamiliar
+            acquisition domains. Both improve the evidence already available to the model.
+          </p>
+          <p>
+            Rare, ambiguous, and shifted cases expose a different problem: the decisive evidence may
+            be missing. Before asking a clinician or changing itself, the system must determine whether
+            a permitted intervention can plausibly repair the case.
+          </p>
+        </div>
+      </section>
+
+      <section class="framework" id="framework">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">A strict dependency order</p>
+            <h2>Self-assessment comes first.</h2>
+          </div>
+          <p>
+            Promptable interfaces make interaction possible. Adaptation mechanisms make rapid change
+            possible. Neither establishes when asking or changing is warranted.
+          </p>
+        </div>
+
+        <div class="layers">
+          <article class="layer">
+            <span class="layer-number">01</span>
+            <div>
+              <h3>Decidable self-assessment</h3>
+              <p>
+                Separate low-risk outputs, correctable failures, and failures outside the reachable set
+                under the remaining interaction budget.
+              </p>
+            </div>
+            <p class="layer-output">Output: accept, query, or defer</p>
+          </article>
+          <article class="layer">
+            <span class="layer-number">02</span>
+            <div>
+              <h3>Selective interaction</h3>
+              <p>
+                Treat clinician time as a distinct, limited resource. Select clicks, boundary edits,
+                reference cases, or text only when response-conditioned value exceeds burden.
+              </p>
+            </div>
+            <p class="layer-output">Virtue: parsimony</p>
+          </article>
+          <article class="layer">
+            <span class="layer-number">03</span>
+            <div>
+              <h3>Bounded adaptation</h3>
+              <p>
+                Update approved components within a trust region, reassess with an independent safety
+                monitor, and roll back when benefit or capability retention fails.
+              </p>
+            </div>
+            <p class="layer-output">Virtue: reversibility</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="figure-section" aria-labelledby="trajectory-title">
+        <div class="figure-copy">
+          <p class="section-label">Conceptual trajectory</p>
+          <h2 id="trajectory-title">From preserving evidence to diagnosing what is missing.</h2>
+          <p>
+            Sparse support representation and cross-domain robustness improve what the support set
+            retains. Decidable self-assessment governs what happens when the evidence needed for a
+            reliable decision is absent.
+          </p>
+        </div>
+        <figure class="paper-figure">
+          <img
+            src="assets/conceptual-trajectory.png"
+            alt="Four-stage trajectory from sparse support representation and robustness under shift to decidable self-assessment, selective interaction, and bounded adaptation."
+            loading="lazy"
+          />
+          <figcaption>Figure 1. The first two stages preserve available evidence; the third diagnoses missing evidence and licenses the fourth.</figcaption>
+        </figure>
+      </section>
+
+      <section class="loop-section">
+        <div class="section-heading compact">
+          <div>
+            <p class="section-label">Selective interactive adaptation</p>
+            <h2>Ask only when help is reachable.</h2>
+          </div>
+          <p>
+            A foundation model can provide the representation and prompt interface, while a separate
+            controller governs interaction, stopping, reassessment, and rollback.
+          </p>
+        </div>
+        <figure class="paper-figure paper-figure-wide">
+          <img
+            src="assets/interactive-adaptation-loop.png"
+            alt="Selective interactive adaptation loop with a reachability gate, clinician response, bounded adaptation, frozen safety monitor, and rollback."
+            loading="lazy"
+          />
+          <figcaption>Figure 2. Each update is independently reassessed against clinical risk and protected capabilities.</figcaption>
+        </figure>
+      </section>
+
+      <section class="memory-section">
+        <div class="memory-intro">
+          <p class="section-label">Two memory horizons</p>
+          <h2>Learn from a case without turning deployment into uncontrolled online training.</h2>
+        </div>
+        <div class="memory-grid">
+          <article>
+            <p class="memory-tag">Layer A · per-case episode</p>
+            <h3>Repair the current case</h3>
+            <p>
+              Support examples, confirmed masks, and interaction history remain local to the episode.
+              Updates are bounded, reversible, and discarded after the case unless separately admitted.
+            </p>
+          </article>
+          <article>
+            <p class="memory-tag">Layer B · cross-case experience</p>
+            <h3>Retain correction priors</h3>
+            <p>
+              What transfers across rare cases is not a disease-specific mask prior, but a reproducible
+              correction prior over failure modes, gated by cross-reader agreement and governance.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="agenda" id="agenda">
+        <div class="section-heading compact">
+          <div>
+            <p class="section-label">Falsifiable research program</p>
+            <h2>Six hypotheses, one dependency chain.</h2>
+          </div>
+          <p>
+            The program is sequentially abandonable. If multi-level risk and repairability cannot be
+            validated without clinicians, downstream interaction and adaptation claims should not proceed.
+          </p>
+        </div>
+
+        <figure class="paper-figure hypothesis-figure">
+          <img
+            src="assets/hypothesis-dependency.png"
+            alt="Hypothesis dependency graph from multi-level risk and repairability through query value, representation update, correction-prior transfer, and bounded adaptation."
+            loading="lazy"
+          />
+          <figcaption>Figure 3. H1 and H2 form the foundation; every downstream hypothesis presupposes them.</figcaption>
+        </figure>
+
+        <ol class="hypotheses">
+          <li><strong>Multi-level risk</strong><span>supports accept, query, and defer decisions beyond voxel entropy.</span></li>
+          <li><strong>Repairability</strong><span>is estimable, externally valid, and distinct from predicted error.</span></li>
+          <li><strong>Dynamic queries</strong><span>improve value per unit of real clinician effort.</span></li>
+          <li><strong>Feedback updates task representation</strong><span>and improves unedited regions without propagation harm.</span></li>
+          <li><strong>Correction priors transfer</strong><span>across rare presentations where case-similarity memory does not.</span></li>
+          <li><strong>Bounded adaptation</strong><span>retains benefit while reducing drift, forgetting, and unsafe personalization.</span></li>
+        </ol>
+      </section>
+
+      <section class="abstract-section" id="abstract">
+        <div>
+          <p class="section-label">Abstract</p>
+          <h2>A decision problem, not simply a stronger segmentation model.</h2>
+        </div>
+        <div class="abstract-copy">
+          <p>
+            Few-shot medical image segmentation seeks to delineate unseen structures from a small
+            support set, but its standard formulation fixes task-defining evidence before inference.
+            This assumption is fragile under acquisition shift, atypical pathology, ambiguous
+            boundaries, and poor image quality. Adding clinician interaction and rapid adaptation is
+            not sufficient: the binding constraint is deciding when asking or changing is warranted.
+          </p>
+          <p>
+            We reframe FSMIS as a three-layer sequential decision problem. Decidable self-assessment
+            separates errors that a bounded intervention can repair from those no admissible
+            intervention can reach. Selective interaction allocates a distinct expert-attention budget
+            by response-conditioned net expected value of information. Bounded adaptation emphasizes
+            reversibility and independent safety reassessment rather than speed.
+          </p>
+          <p>
+            A complementary cross-case memory stores reproducible correction priors over failure modes
+            rather than disease-specific mask priors. The framework links sparse support representation,
+            cross-domain robustness, multi-level risk estimation, clinician feedback, and governed
+            experience transfer. Six hypotheses and a minimal pilot make the foundational
+            self-assessment claim falsifiable before a clinician study.
+          </p>
+        </div>
+      </section>
+
+      <section class="citation-section" id="citation">
+        <div>
+          <p class="section-label">Citation</p>
+          <h2>Use this work.</h2>
+          <p>
+            The paper is available as arXiv:2609.10001 in Computer Vision and Pattern Recognition.
+          </p>
+        </div>
+        <div class="citation-card">
+          <pre><code id="bibtex">@article{zhu2026clinicianloop,
+  title={From Few-Shot Segmentation to Clinician-in-the-Loop Medical Image Analysis: Decidable Self-Assessment as the Precondition for Interaction and Adaptation},
+  author={Zhu, Yazhou},
+  journal={arXiv preprint arXiv:2609.10001},
+  year={2026}
+}</code></pre>
+          <button class="copy-button" type="button" data-copy-citation>
+            <span data-copy-label>Copy BibTeX</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>From Few-Shot Segmentation to Clinician-in-the-Loop Medical Image Analysis</p>
+      <div>
+        <a href="https://arxiv.org/abs/2609.10001" target="_blank" rel="noreferrer">arXiv</a>
+        <a href="paper.pdf" download>PDF</a>
+        <a href="https://yazhouzhu19.github.io/" target="_blank" rel="noreferrer">Author homepage</a>
+      </div>
+      <p class="footer-note">Yazhou Zhu · September 2026</p>
+    </footer>
+
+    <div class="toast" role="status" aria-live="polite" aria-atomic="true">BibTeX copied</div>
+  </body>
+</html>
