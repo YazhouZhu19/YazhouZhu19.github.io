@@ -40,6 +40,8 @@ The initial snapshot is a recent-paper sample. Queries have caps, tags are heuri
 
 ## Maintenance
 
+Both locale entry pages include static Open Graph and Twitter `summary_large_image` metadata. The share cover is `public/social-preview-v1.png` (1200 × 630); its editable vector source is `public/social-preview-v1.svg`. Vite copies these public assets into every deployment. The same PNG can be attached directly to a social post if the link preview is unavailable. When changing the artwork, use a new versioned filename and update both HTML entry points.
+
 Use **Actions → Research monitor sync → Run workflow** for an immediate refresh. Partial source outages publish the available result with source errors. When all sources fail, the workflow publishes validated failure metadata while retaining the library and marks the run failed. Pages output is checked against a deployment marker and public data SHA-256 before success is reported.
 
 The existing homepage publishes from `main` at the repository root. This workflow preserves that setting and unrelated homepage files. GitHub may delay schedules or disable scheduled workflows after prolonged repository inactivity; check the Actions page if updates stop.
