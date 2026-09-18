@@ -4,8 +4,14 @@ on:
   schedule:
     - cron: '23 * * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/research-monitor/**'
+      - '.github/workflows/research-monitor-sync.yml'
 
-# No checkout, external Actions, package installation, or AI/model calls.
+# Retain Pages' existing branch source: main / (root).
+# The Pages build API needs pages:write; this branch build does not need OIDC.
 permissions: {}
 
 concurrency:
@@ -14,179 +20,289 @@ concurrency:
 
 jobs:
   sync:
+    if: github.repository == 'YazhouZhu19/YazhouZhu19.github.io' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      pages: write
+    defaults:
+      run:
+        shell: bash
     steps:
-      - name: Sync EPMC, arXiv, and medRxiv
+      - name: Check out latest main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tools/research-monitor/package-lock.json
+
+      - name: Verify existing Pages configuration
         env:
-          MEDICAL_MONITOR_SYNC_TOKEN: ${{ secrets.MEDICAL_MONITOR_SYNC_TOKEN }}
-        # This inline copy intentionally makes the workflow self-contained.
-        shell: python3 {0}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          #!/usr/bin/env python3
-          """Trigger deterministic source ingestion with Python's standard library only."""
-          
-          import errno
-          import http.client
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/pages" > "$RUNNER_TEMP/research-pages-config.json"
+          jq -e '.build_type == "legacy" and .source.branch == "main" and .source.path == "/"' \
+            "$RUNNER_TEMP/research-pages-config.json" >/dev/null
+          test -f .nojekyll
+
+      - name: Collect, build, and commit only monitor data and output
+        id: refresh
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          # All resets apply only to this disposable Actions checkout. A rejected
+          # push is rebuilt from the new main; no force-push or stale JSON rebase.
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            export MONITOR_SOURCE_REVISION
+            MONITOR_SOURCE_REVISION="$(git rev-parse HEAD)"
+
+            (
+              cd tools/research-monitor
+              npm ci
+              cp data/papers.json "$RUNNER_TEMP/research-before-collect.json"
+              python3 -c 'import time; print(time.time_ns() // 1000000)' > "$RUNNER_TEMP/research-collect-start-ms"
+              collect_exit=0
+              npm run collect || collect_exit=$?
+              echo "$collect_exit" > "$RUNNER_TEMP/research-collect-exit"
+              if [ "$collect_exit" -ne 0 ]; then
+                # The CLI intentionally exits 1 after atomically recording a
+                # failed attempt for all three sources. Publish those failures,
+                # but do not treat an unchanged/invalid snapshot as publishable.
+                python3 - <<'PY'
+          import hashlib
           import json
           import os
-          import signal
-          import socket
-          import ssl
+          from datetime import datetime
+          from pathlib import Path
+
+          temp = Path(os.environ['RUNNER_TEMP'])
+          before_bytes = (temp / 'research-before-collect.json').read_bytes()
+          after_bytes = Path('data/papers.json').read_bytes()
+          before, after = json.loads(before_bytes), json.loads(after_bytes)
+          started_ms = int((temp / 'research-collect-start-ms').read_text())
+
+          def require(condition, reason):
+              if not condition:
+                  raise SystemExit('Collector failed without a publishable fresh error snapshot: ' + reason)
+
+          def timestamp(value):
+              require(isinstance(value, str), 'missing timestamp')
+              parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
+              require(parsed.tzinfo is not None, 'timestamp has no timezone')
+              return parsed.timestamp() * 1000
+
+          require((temp / 'research-collect-exit').read_text().strip() == '1', 'unexpected exit code')
+          require(hashlib.sha256(before_bytes).digest() != hashlib.sha256(after_bytes).digest(), 'snapshot was not replaced')
+          require(isinstance(after, dict) and isinstance(before, dict), 'invalid snapshot shape')
+          completed_ms = timestamp(after.get('collectedAt'))
+          require(completed_ms >= started_ms and after.get('collectedAt') != before.get('collectedAt'), 'stale collection timestamp')
+          require(after.get('status') == 'error' and isinstance(after.get('error'), str) and bool(after['error'].strip()), 'missing overall error status')
+          require(after.get('lastSuccessfulSync') == before.get('lastSuccessfulSync'), 'failed collection changed last successful sync')
+          papers = after.get('papers')
+          require(isinstance(papers, list) and after.get('totalStored') == len(papers), 'invalid paper list/count')
+          require(all(isinstance(p, dict) and isinstance(p.get('id'), str) and bool(p['id']) and isinstance(p.get('title'), str) for p in papers), 'invalid paper records')
+          before_papers = before.get('papers')
+          require(isinstance(before_papers, list) and all(isinstance(p, dict) and isinstance(p.get('id'), str) for p in before_papers), 'invalid previous paper library')
+          require({p['id'] for p in before_papers}.issubset({p['id'] for p in papers}), 'failed collection removed saved paper IDs')
+          sources = {'Europe PMC', 'arXiv', 'medRxiv'}
+          errors = after.get('errors')
+          require(isinstance(errors, list) and len(errors) == 3, 'missing source errors')
+          require(all(isinstance(e, dict) and isinstance(e.get('message'), str) and bool(e['message'].strip()) for e in errors), 'invalid source error')
+          require({e.get('source') for e in errors} == sources, 'source errors are incomplete')
+          runs = after.get('runs')
+          require(isinstance(runs, list), 'missing source runs')
+          previous_ids = {r.get('id') for r in before.get('runs', []) if isinstance(r, dict)}
+          fresh = [r for r in runs if isinstance(r, dict) and timestamp(r.get('startedAt')) >= started_ms]
+          require(len(fresh) == 3 and {r.get('source') for r in fresh} == sources, 'expected three fresh source runs')
+          for run in fresh:
+              require(isinstance(run.get('id'), str) and bool(run['id']) and run['id'] not in previous_ids, 'source run is not new')
+              require(run.get('status') == 'error' and isinstance(run.get('error'), str) and bool(run['error'].strip()), 'source run is not an error')
+              require(started_ms <= timestamp(run['startedAt']) <= timestamp(run.get('completedAt')) <= completed_ms, 'invalid source run timestamps')
+          print('::warning::All sources failed; publishing the fresh failure metadata while retaining the saved library. The job will fail after publication is verified.')
+          PY
+              fi
+              npm test
+              npm run build
+            )
+            collection_failed=false
+            if [ "$(cat "$RUNNER_TEMP/research-collect-exit")" -ne 0 ]; then
+              collection_failed=true
+            fi
+
+            python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          dist = Path('tools/research-monitor/dist')
+          if dist.is_symlink():
+              raise SystemExit('Build output must not be a symbolic link')
+          for name in ('index.html', 'en/index.html', 'data/papers.json'):
+              if not (dist / name).is_file():
+                  raise SystemExit(f'Missing build output: {name}')
+          source_data = Path('tools/research-monitor/data/papers.json').read_bytes()
+          public_data = (dist / 'data/papers.json').read_bytes()
+          json.loads(public_data)
+          if source_data != public_data:
+              raise SystemExit('Public data differs from collected data')
+          forbidden = {'node_modules', '.git', '.github', '.env', '.env.local'}
+          for path in dist.rglob('*'):
+              if path.is_symlink() or forbidden.intersection(path.parts):
+                  raise SystemExit(f'Unexpected build output: {path}')
+              if path.is_file() and (path.name.startswith('.env.') or path.suffix in {'.pem', '.key', '.ts', '.tsx', '.map'}):
+                  raise SystemExit(f'Unexpected source/credential output: {path}')
+          manifest = {
+              'schemaVersion': 1,
+              'runId': os.environ['GITHUB_RUN_ID'],
+              'runAttempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'sourceRevision': os.environ['MONITOR_SOURCE_REVISION'],
+              'papersSha256': hashlib.sha256(public_data).hexdigest(),
+          }
+          (dist / 'deployment.json').write_text(json.dumps(manifest, indent=2) + '\n')
+          PY
+
+            test ! -L research-monitor
+            mkdir -p research-monitor
+            # Delete obsolete assets only within this generated subtree.
+            rsync -a --delete tools/research-monitor/dist/ research-monitor/
+            git add -- tools/research-monitor/data/papers.json research-monitor/
+
+            python3 - <<'PY'
+          import subprocess
+          paths = subprocess.check_output(['git', 'diff', '--cached', '--name-only', '-z']).decode().split('\0')
+          for path in filter(None, paths):
+              if path != 'tools/research-monitor/data/papers.json' and not path.startswith('research-monitor/'):
+                  raise SystemExit(f'Unexpected staged file: {path}')
+          PY
+
+            if ! git diff --cached --quiet; then
+              git commit -m 'chore: refresh research monitor data and site'
+            fi
+            expected_commit="$(git rev-parse HEAD)"
+            if git push origin HEAD:main; then
+              echo "commit=$expected_commit" >> "$GITHUB_OUTPUT"
+              echo "collection_failed=$collection_failed" >> "$GITHUB_OUTPUT"
+              break
+            fi
+
+            # If the server accepted the push but the response was lost, do not
+            # throw away the accepted commit or misreport a failed publication.
+            git fetch origin main
+            if git merge-base --is-ancestor "$expected_commit" origin/main; then
+              echo "commit=$expected_commit" >> "$GITHUB_OUTPUT"
+              echo "collection_failed=$collection_failed" >> "$GITHUB_OUTPUT"
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo '::error::Could not update main after 3 attempts; no force-push was attempted.'
+              exit 1
+            fi
+            echo 'main changed concurrently; repeating collection and build from its latest revision.'
+          done
+
+      - name: Request Pages build and verify the published revision and data
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_COMMIT: ${{ steps.refresh.outputs.commit }}
+        run: |
+          set -euo pipefail
+          # GITHUB_TOKEN pushes do not trigger Pages automatically. Request the
+          # build explicitly; a successful POST alone is not publication success.
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds" > "$RUNNER_TEMP/research-pages-build-request.json"
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import subprocess
           import time
           import urllib.error
+          import urllib.parse
           import urllib.request
-          
-          ENDPOINT = (
-              "https://medical-image-research-monitor.rangerzhuyazhou.chatgpt.site"
-              "/api/scheduled-sync"
-          )
-          SOURCES = ("epmc", "arxiv", "medrxiv")
-          SOURCE_LABELS = {"epmc": "Europe PMC", "arxiv": "arXiv", "medrxiv": "medRxiv"}
-          ATTEMPTS = 3
-          TIMEOUT_SECONDS = 120
-          MAX_RESPONSE_BYTES = 1024 * 1024
-          RETRY_DELAYS = (5, 15)
-          
-          
-          class Failure(Exception):
-              def __init__(self, label, retryable=False, retry_after=0):
-                  super().__init__(label)
-                  self.label = label
-                  self.retryable = retryable
-                  self.retry_after = retry_after
-          
-          
-          class NoRedirect(urllib.request.HTTPRedirectHandler):
-              def redirect_request(self, req, fp, code, msg, headers, newurl):
-                  # Never forward the Bearer token to a redirect destination.
-                  return None
-          
-          
-          def transient_network_error(error):
-              if isinstance(error, urllib.error.URLError):
-                  error = error.reason
-              if isinstance(error, ssl.SSLError):
-                  return False
-              if isinstance(error, socket.gaierror):
-                  return error.errno == socket.EAI_AGAIN
-              if isinstance(error, (TimeoutError, http.client.IncompleteRead)):
-                  return True
-              return (isinstance(error, OSError) and error.errno in {
-                  errno.ECONNRESET, errno.ECONNABORTED, errno.ECONNREFUSED,
-                  errno.ETIMEDOUT, errno.ENETUNREACH, errno.EHOSTUNREACH,
-                  errno.EPIPE, errno.EAGAIN,
-              }) or isinstance(error, http.client.RemoteDisconnected)
-          
-          
-          def request_timeout(signum, frame):
-              raise TimeoutError()
-          
-          
-          def fetch(opener, token, source):
-              request = urllib.request.Request(
-                  ENDPOINT,
-                  data=json.dumps({"source": source}).encode("utf-8"),
-                  headers={
-                      "Authorization": "Bearer " + token,
-                      "Content-Type": "application/json",
-                      "Accept": "application/json",
-                      "User-Agent": "medical-research-monitor-scheduler/1.0",
-                  },
-                  method="POST",
-              )
-              # A wall-clock deadline also bounds DNS and slow response bodies on Linux.
-              previous_handler = signal.signal(signal.SIGALRM, request_timeout)
-              signal.setitimer(signal.ITIMER_REAL, TIMEOUT_SECONDS)
+          from pathlib import Path
+
+          expected_commit = os.environ['EXPECTED_COMMIT']
+          expected_manifest = json.loads(Path('research-monitor/deployment.json').read_text())
+          config = json.loads((Path(os.environ['RUNNER_TEMP']) / 'research-pages-config.json').read_text())
+          site_url = config.get('html_url', '')
+          if urllib.parse.urlparse(site_url).scheme != 'https':
+              raise SystemExit('Pages site did not return an HTTPS public URL')
+          monitor_url = site_url.rstrip('/') + '/research-monitor/'
+
+          def api(path):
+              result = subprocess.run(['gh', 'api', path], capture_output=True, text=True)
+              if result.returncode:
+                  raise RuntimeError('Could not read Pages build status')
+              return json.loads(result.stdout)
+
+          def read_public(path, limit):
+              # Public requests contain no token or other credentials.
+              query = urllib.parse.urlencode({'run': os.environ['GITHUB_RUN_ID'], 'attempt': os.environ['GITHUB_RUN_ATTEMPT'], 'check': time.time_ns()})
+              req = urllib.request.Request(monitor_url + path + '?' + query, headers={'Cache-Control': 'no-cache', 'User-Agent': 'research-monitor-deployment-check'})
+              with urllib.request.urlopen(req, timeout=25) as response:
+                  data = response.read(limit + 1)
+              if len(data) > limit:
+                  raise RuntimeError('Public response exceeded size limit')
+              return data
+
+          # A root-homepage push may cause a later Pages commit. It is acceptable
+          # only if that commit includes this monitor commit, and the public data
+          # and marker below still match this build.
+          build_ready = False
+          deadline = time.monotonic() + 900
+          last_status = None
+          while time.monotonic() < deadline:
               try:
-                  with opener.open(request, timeout=TIMEOUT_SECONDS) as response:
-                      if not 200 <= response.status < 300:
-                          raise Failure("http_" + str(response.status), 500 <= response.status < 600)
-                      raw = response.read(MAX_RESPONSE_BYTES + 1)
-              except urllib.error.HTTPError as error:
-                  code = error.code
-                  # Honor the endpoint's short Retry-After (currently 60 seconds for busy).
-                  # Cap it to preserve the workflow's overall 25-minute time budget.
-                  retry_header = error.headers.get("Retry-After", "") if error.headers else ""
-                  retry_after = min(int(retry_header), 60) if retry_header.isascii() and retry_header.isdigit() and len(retry_header) <= 5 else 0
-                  error.close()
-                  # Never print HTTP error bodies, headers, or exception strings.
-                  raise Failure("http_" + str(code), 500 <= code < 600, retry_after) from None
-              except (OSError, urllib.error.URLError, http.client.HTTPException) as error:
-                  raise Failure("network_error", transient_network_error(error)) from None
-              finally:
-                  signal.setitimer(signal.ITIMER_REAL, 0)
-                  signal.signal(signal.SIGALRM, previous_handler)
-              if len(raw) > MAX_RESPONSE_BYTES:
-                  raise Failure("response_too_large")
-              try:
-                  result = json.loads(raw)
-              except (ValueError, UnicodeError):
-                  raise Failure("invalid_json") from None
-              if not isinstance(result, dict):
-                  raise Failure("invalid_response")
-              return result
-          
-          
-          def safe_count(result, name):
-              value = result.get(name)
-              return str(value) if type(value) is int and 0 <= value <= 1_000_000_000 else "unknown"
-          
-          
-          def summarize(result, source):
-              # Failures take precedence over skip flags in any ambiguous response.
-              if result.get("busy") is True:
-                  raise Failure("server_busy")
-              if result.get("status") == "error":
-                  raise Failure("sync_error")
-              if result.get("source") not in (source, SOURCE_LABELS[source]):
-                  raise Failure("source_mismatch")
-              if result.get("skipped") is True:
-                  return "skipped"
-              status = result.get("status")
-              if status not in ("ok", "partial"):
-                  raise Failure("invalid_sync_status")
-              # Only allowlisted labels and numeric counts reach logs. Partial is successful
-              # ingestion with a limited result; do not expose server error/details fields.
-              label = "limited" if status == "partial" else "ok"
-              return label + " added=" + safe_count(result, "added") + " updated=" + safe_count(result, "updated")
-          
-          
-          def sync_source(opener, token, source):
-              for attempt in range(1, ATTEMPTS + 1):
-                  try:
-                      summary = summarize(fetch(opener, token, source), source)
-                      print(source + ": " + summary, flush=True)
-                      return True
-                  except Failure as error:
-                      if error.retryable and attempt < ATTEMPTS:
-                          print(source + ": retry " + str(attempt) + "/" + str(ATTEMPTS - 1)
-                                + " reason=" + error.label, flush=True)
-                          time.sleep(max(RETRY_DELAYS[attempt - 1], error.retry_after))
-                          continue
-                      print(source + ": failed reason=" + error.label, flush=True)
-                      return False
-                  except Exception:
-                      # Preserve failure and continue the other sources without a traceback
-                      # that could contain request data or untrusted server text.
-                      print(source + ": failed reason=unexpected_client_error", flush=True)
-                      return False
-              return False
-          
-          
-          def main():
-              token = os.environ.get("MEDICAL_MONITOR_SYNC_TOKEN", "")
-              if not token or any(char.isspace() for char in token):
-                  print("configuration_error: missing or invalid MEDICAL_MONITOR_SYNC_TOKEN", flush=True)
-                  return 1
-              opener = urllib.request.build_opener(NoRedirect())
-              failures = 0
-              for source in SOURCES:
-                  if not sync_source(opener, token, source):
-                      failures += 1
-              print("sources=" + str(len(SOURCES)) + " failed=" + str(failures), flush=True)
-              return 1 if failures else 0
-          
-          
-          if __name__ == "__main__":
-              raise SystemExit(main())
+                  build = api(f"repos/{os.environ['GITHUB_REPOSITORY']}/pages/builds/latest")
+                  status, commit = build.get('status'), build.get('commit')
+                  if (status, commit) != last_status:
+                      print(f'Pages build status={status} commit={commit}', flush=True)
+                      last_status = (status, commit)
+                  relevant = commit == expected_commit
+                  if commit and not relevant:
+                      subprocess.run(['git', 'fetch', 'origin', 'main'], check=True, capture_output=True)
+                      relevant = subprocess.run(['git', 'merge-base', '--is-ancestor', expected_commit, commit], capture_output=True).returncode == 0
+                  if relevant and status == 'errored':
+                      raise SystemExit('Pages build failed for the expected revision; inspect the Pages build log')
+                  if relevant and status == 'built':
+                      build_ready = True
+                      live_manifest = json.loads(read_public('deployment.json', 65536))
+                      if live_manifest == expected_manifest:
+                          live_data = read_public('data/papers.json', 100 * 1024 * 1024)
+                          json.loads(live_data)
+                          if hashlib.sha256(live_data).hexdigest() == expected_manifest['papersSha256']:
+                              for route in ('', 'en/'):
+                                  if b'<html' not in read_public(route, 2 * 1024 * 1024).lower():
+                                      raise RuntimeError('Published route did not return HTML')
+                              print('Published monitor routes, build marker, and data verified.', flush=True)
+                              with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+                                  summary.write(f'Published and verified: {monitor_url}\n\nCommit: `{expected_commit}`\n\nPublic data SHA-256: `{expected_manifest["papersSha256"]}`\n')
+                              break
+              except (RuntimeError, ValueError, OSError, subprocess.CalledProcessError) as error:
+                  # Transient API/CDN errors retry; no access-token values or
+                  # request headers are printed.
+                  print(f'Waiting for Pages publication ({type(error).__name__}).', flush=True)
+              time.sleep(15)
+          else:
+              stage = 'public data verification' if build_ready else 'Pages build'
+              raise SystemExit(f'Timed out waiting for {stage}; publication is not verified')
+          PY
+
+      - name: Mark all-source collection failure after publishing its status
+        if: steps.refresh.outputs.collection_failed == 'true'
+        run: |
+          echo '::error::All three sources failed. The site now displays the verified fresh failure status and retains its saved library.'
+          echo 'Collection failed for all three sources; the updated error status was published and verified. The saved library remains available.' >> "$GITHUB_STEP_SUMMARY"
+          exit 1
