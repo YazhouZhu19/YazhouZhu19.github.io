@@ -1,6 +1,6 @@
 # Medical Image Research Monitor / 医学影像科研观察
 
-A public bilingual research dashboard for organ/lesion segmentation and human-in-the-loop clinical diagnosis.
+A public bilingual research dashboard covering 10 medical imaging research interests, including organ/lesion segmentation, human-in-the-loop clinical diagnosis, detection, reconstruction, registration, radiomics, prognosis, image–language understanding, intervention, and foundation models. The filter is named **感兴趣方向 / Research interests**. See [INTERESTS.md](INTERESTS.md) for the bilingual scope and design sources.
 
 - Chinese: https://yazhouzhu19.github.io/research-monitor/
 - English: https://yazhouzhu19.github.io/research-monitor/en/
@@ -34,7 +34,7 @@ Tests cover source parsing, DOI/native identifier merging, version history, outa
 
 ## Data interpretation
 
-The initial snapshot is a recent-paper sample. Queries have caps, tags are heuristic, and journal/preprint versions may remain distinct. Source errors preserve old records and are visibly reported; an empty HTTP response is never counted as zero new papers. Author names may be ambiguous. Coauthorship and matches to a user-created watchlist do not establish current team membership, competitive strength, or willingness to collaborate.
+The initial snapshot is a recent-paper sample. Queries have caps, tags are heuristic, and journal/preprint versions may remain distinct. Interest labels can overlap and do not rate quality or clinical validity. Expansion from two to ten interests changes collection coverage, so increased counts may partly reflect that scope change. Source errors preserve old records and are visibly reported; an empty HTTP response is never counted as zero new papers. Author names may be ambiguous. Coauthorship and matches to a user-created watchlist do not establish current team membership, competitive strength, or willingness to collaborate.
 
 ## Maintenance
 

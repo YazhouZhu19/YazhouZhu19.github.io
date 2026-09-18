@@ -1,4 +1,4 @@
-import { TASKS, normalizedName } from "./classify";
+import { TASKS, TRACKS, normalizedName } from "./classify";
 import type { Author, MonitorData, Paper, Team } from "./types";
 
 export type DashboardFilters = { days: string; clock: "publication" | "discovery"; track: string; source: string };
@@ -20,8 +20,12 @@ export function matchesTeam(p: Paper, t: Team) {
 export function buildDashboard(data: MonitorData, teams: Team[], filters: DashboardFilters, now = new Date()) {
   const today = beijingDay(now);
   const start = filters.days === "all" ? "" : new Date(Date.parse(today) - (Number(filters.days) - 1) * dayMs).toISOString().slice(0, 10);
-  // First-seen timestamps of the initial import are preserved during subsequent source merges.
-  const isInitial = (p: Paper) => Date.parse(p.firstSeenAt) === Date.parse(data.collectedAt);
+  // collectedAt advances on each refresh; the initial import must remain anchored.
+  const firstSeenDates = data.papers.map(p => Date.parse(p.firstSeenAt)).filter(Number.isFinite);
+  const initialTime = typeof data.initialCollectedAt === "string" && Number.isFinite(Date.parse(data.initialCollectedAt))
+    ? Date.parse(data.initialCollectedAt)
+    : firstSeenDates.length ? Math.min(...firstSeenDates) : Date.parse(data.collectedAt);
+  const isInitial = (p: Paper) => Date.parse(p.firstSeenAt) === initialTime;
   const dateOf = (p: Paper) => filters.clock === "discovery" ? beijingDay(p.firstSeenAt) : p.publishedAt.slice(0, 10);
   const pool = data.papers.filter(p => (filters.track === "all" || p.tracks.includes(filters.track)) && (filters.source === "all" || p.sources.includes(filters.source)));
   const rows = pool.filter(p => {
@@ -30,8 +34,9 @@ export function buildDashboard(data: MonitorData, teams: Team[], filters: Dashbo
   });
   const initialCount = pool.filter(isInitial).length;
   const newToday = data.papers.filter(p => !isInitial(p) && beijingDay(p.firstSeenAt) === today);
-  const segmented = rows.filter(p => p.tracks.includes("segmentation"));
-  const human = rows.filter(p => p.tracks.includes("human_loop"));
+  const directions = Object.entries(TRACKS).map(([id, label]) => ({ id, label, papers: rows.filter(p => p.tracks.includes(id)) }));
+  const published = rows.filter(p => p.status === "published");
+  const preprints = rows.filter(p => p.status === "preprint");
   const teamRows = teams.map(team => ({ team, papers: rows.filter(p => matchesTeam(p, team)) })).sort((a, b) => b.papers.length - a.papers.length);
   const teamIds = new Set(teamRows.flatMap(r => r.papers.map(p => p.id)));
   const matched = rows.filter(p => teamIds.has(p.id));
@@ -44,22 +49,22 @@ export function buildDashboard(data: MonitorData, teams: Team[], filters: Dashbo
   const preprintRate = known ? status[0].count / known * 100 : null;
   const earliest = rows.reduce((min, p) => dateOf(p) < min ? dateOf(p) : min, today);
   const from = start || earliest;
-  const initialDay = beijingDay(data.collectedAt);
+  const initialDay = beijingDay(new Date(initialTime));
   const observedFrom = filters.clock === "discovery" && initialDay > from ? initialDay : from;
   const monthly = (Date.parse(today) - Date.parse(observedFrom)) / dayMs > 90;
-  const buckets = new Map<string, { date: string; all: number; segmentation: number; human_loop: number; ids: string[] }>();
+  const buckets = new Map<string, { date: string; all: number; published: number; preprint: number; ids: string[] }>();
   const cursor = new Date(monthly ? observedFrom.slice(0, 7) + "-01" : observedFrom);
   while (cursor.toISOString().slice(0, 10) <= today) {
     const key = cursor.toISOString().slice(0, monthly ? 7 : 10);
-    buckets.set(key, { date: key, all: 0, segmentation: 0, human_loop: 0, ids: [] });
+    buckets.set(key, { date: key, all: 0, published: 0, preprint: 0, ids: [] });
     if (monthly) cursor.setUTCMonth(cursor.getUTCMonth() + 1); else cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
   for (const p of rows) {
     const r = buckets.get(dateOf(p).slice(0, monthly ? 7 : 10));
     if (!r) continue;
     r.all++; r.ids.push(p.id);
-    if (p.tracks.includes("segmentation")) r.segmentation++;
-    if (p.tracks.includes("human_loop")) r.human_loop++;
+    if (p.status === "published") r.published++;
+    if (p.status === "preprint") r.preprint++;
   }
   const modalities = ["MRI", "CT", "X-ray", "超声", "PET / SPECT", "病理切片", "眼底 / OCT", "内镜", "未识别"];
   const matrix = Object.entries(TASKS).map(([task, label]) => ({ task, label, cells: modalities.map(modality => ({
@@ -74,5 +79,5 @@ export function buildDashboard(data: MonitorData, teams: Team[], filters: Dashbo
     const state = !data.storageAvailable ? "快照模式" : last?.status === "error" ? "同步失败" : stale ? "超过 24 小时" : !last ? "尚无增量同步" : last.status === "partial" ? "有限覆盖" : "窗口采集完成";
     return { name, state, updatedAt, warning: !data.storageAvailable || stale || last?.status === "error", limited: last?.status === "partial", initial: !success, count: data.papers.filter(p => p.sources.includes(name)).length };
   });
-  return { rows, start: from, observedFrom, end: today, initialCount, newToday, segmented, human, teamRows, matched, status, known, preprintRate, trend: [...buckets.values()], monthly, modalities, matrix, methods, sources, futureCount: pool.filter(p => dateOf(p) > today).length };
+  return { rows, start: from, observedFrom, end: today, initialCount, newToday, directions, published, preprints, teamRows, matched, status, known, preprintRate, trend: [...buckets.values()], monthly, modalities, matrix, methods, sources, futureCount: pool.filter(p => dateOf(p) > today).length };
 }

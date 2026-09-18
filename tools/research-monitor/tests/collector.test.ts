@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { collectAll, collectSource, sourceDateWindow, SourceRequestError, type FetchText } from "../lib/collect";
+import { canReuseArxivToday, collectAll, collectSource, sourceDateWindow, SourceRequestError, EPMC_TRACK_QUERIES, ARXIV_TRACK_QUERIES, type FetchText } from "../lib/collect";
+import { INTEREST_TAXONOMY_VERSION, TRACKS } from "../lib/classify";
 import { parseArxiv, parseEpmc, parseMedrxivPage } from "../lib/parse";
 import { applyOutcomes, mergePapers, normalizeRecord, parseMonitorData } from "../lib/record";
 import type { MonitorData, Paper, SyncRun } from "../lib/types";
@@ -131,4 +132,99 @@ test("input validator accepts legacy seed shape and rejects invalid library", ()
   assert.equal(normalized.totalStored,1); assert.deepEqual(normalized.runs,[]);
   assert.throws(() => parseMonitorData({papers:null,collectedAt:now}),/MonitorData/);
   assert.throws(() => parseMonitorData({papers:[{}],collectedAt:now}),/稳定标识/);
+});
+
+test("each direction has its own official source query and arXiv queries execute serially", async () => {
+ assert.deepEqual(Object.keys(EPMC_TRACK_QUERIES),Object.keys(TRACKS));
+ assert.deepEqual(Object.keys(ARXIV_TRACK_QUERIES),Object.keys(TRACKS));
+ const urls:string[] = []; let active = 0, peak = 0;
+ const result = await collectSource("arxiv",previous(),{now:new Date(now),fetchText:async url => {
+  urls.push(url); peak = Math.max(peak,++active);
+  await new Promise(resolve => setTimeout(resolve,1)); active--;
+  return {body:atom(),httpStatus:200,attempts:1};
+ }});
+ assert.equal(urls.length,10); assert.equal(new Set(urls).size,10); assert.equal(peak,1);
+ assert.ok(urls.every(url => new URL(url).searchParams.get("max_results") === "100"));
+ assert.deepEqual(result.requestLogs.map(log => log.track),Object.keys(TRACKS));
+ assert.equal(result.papers.length,1,"same paper from several interests is stored once");
+ assert.equal(result.papers[0].provenance.length,10);
+ assert.equal(result.taxonomyVersion,INTEREST_TAXONOMY_VERSION);
+});
+
+test("one failed direction cannot prevent remaining queries or mark taxonomy backfill complete", async () => {
+ let calls = 0;
+ const result = await collectSource("arxiv",previous(),{now:new Date(now),fetchText:async () => {
+  if(calls++ === 0) throw new Error("temporary failure");
+  return {body:atom(),httpStatus:200,attempts:1};
+ }});
+ assert.equal(calls,10); assert.equal(result.run.status,"partial");
+ assert.match(result.run.error ?? "",/segmentation: temporary failure/);
+ assert.equal(result.papers.length,1); assert.equal(result.taxonomyVersion,undefined);
+ assert.equal(result.requestLogs.filter(log => log.status === "ok").length,9);
+ const data = applyOutcomes(previous(),[result],now);
+ assert.equal((data.sourceTaxonomyVersions as Record<string,string>).arXiv,undefined);
+});
+
+test("EPMC per-direction cap is explicit and does not starve the other nine queries", async () => {
+ let segmentationPages = 0; const seen = new Set<string>();
+ const result = await collectSource("epmc",previous(),{now:new Date(now),fetchText:async url => {
+  const params = new URL(url).searchParams, query = params.get("query")!;
+  seen.add(query); assert.equal(params.get("pageSize"),"100");
+  if(!query.startsWith(EPMC_TRACK_QUERIES.segmentation)) return {body:JSON.stringify({hitCount:0,resultList:{result:[]}}),httpStatus:200,attempts:1};
+  segmentationPages++;
+  const records = Array.from({length:100},(_,i) => ({id:`${segmentationPages}-${i}`,source:"MED",title:"Brain MRI segmentation",firstPublicationDate:"2026-09-01"}));
+  return {body:JSON.stringify({hitCount:1000,nextCursorMark:`page-${segmentationPages}`,resultList:{result:records}}),httpStatus:200,attempts:1};
+ }});
+ assert.equal(segmentationPages,3); assert.equal(seen.size,10); assert.equal(result.run.received,300);
+ assert.equal(result.run.status,"partial"); assert.equal(result.run.error,undefined);
+ assert.equal(result.requestLogs.filter(log => log.track === "segmentation").at(-1)?.truncated,true);
+ assert.equal(result.taxonomyVersion,INTEREST_TAXONOMY_VERSION,"a declared cap is distinct from an unsuccessful query");
+});
+
+test("new taxonomy gets 37-day backfill independently for each source and failures retry it", () => {
+ const initial = previous(); initial.runs = [run({completedAt:"2026-09-16T08:00:00.000Z"})];
+ assert.equal(sourceDateWindow(initial,"Europe PMC",new Date(now)).since,"2026-08-11");
+ initial.sourceTaxonomyVersions = {"Europe PMC":INTEREST_TAXONOMY_VERSION};
+ assert.equal(sourceDateWindow(initial,"Europe PMC",new Date(now)).since,"2026-09-09");
+ assert.equal(sourceDateWindow(initial,"medRxiv",new Date(now)).since,"2026-08-11");
+ const failed = applyOutcomes(previous(),[{papers:[],run:run({status:"error",error:"query failed"}),requestLogs:[]}],now);
+ assert.equal(sourceDateWindow(failed,"Europe PMC",new Date(now)).since,"2026-08-11");
+});
+
+test("successful arXiv daily cache avoids requests and keeps real fetch time when other sources fail", async () => {
+ const initial = previous();
+ const actualFetch = "2026-09-17T00:30:00.000Z";
+ initial.runs = [run({id:"actual-arxiv",source:"arXiv",completedAt:actualFetch})];
+ initial.sourceTaxonomyVersions = {arXiv:INTEREST_TAXONOMY_VERSION};
+ assert.equal(canReuseArxivToday(initial,new Date(now)),true);
+ assert.equal(canReuseArxivToday(initial,new Date("2026-09-18T00:00:00.000Z")),false);
+ const urls:string[] = [];
+ const result = await collectAll(initial,{now:new Date(now),fetchText:async url => {urls.push(url); throw new Error("unavailable");}});
+ assert.ok(urls.every(url => !url.includes("arxiv.org")));
+ assert.equal(result.allFailed,false); assert.equal(result.data.status,"partial");
+ assert.equal(result.data.runs.filter(run => run.source === "arXiv").length,1);
+ assert.equal(result.data.runs.find(run => run.source === "arXiv")?.completedAt,actualFetch);
+ assert.equal(result.data.lastSuccessfulSync,initial.lastSuccessfulSync);
+ assert.equal(result.data.errors?.length,2);
+});
+
+test("bounded run history preserves cached source timestamps and last clean successes", () => {
+ const initial = previous();
+ initial.runs = [run({id:"actual-arxiv",source:"arXiv",completedAt:"2026-09-17T00:01:00.000Z"}),run({id:"last-med-success",source:"medRxiv",completedAt:"2026-09-16T00:00:00.000Z"})];
+ initial.sourceTaxonomyVersions = {arXiv:INTEREST_TAXONOMY_VERSION};
+ for(let i=0;i<60;i++) initial.runs.push(run({id:`recent-${i}`,source:i%2 ? "Europe PMC" : "medRxiv",status:"error",error:"temporary failure",completedAt:`2026-09-17T07:${String(i).padStart(2,"0")}:00.000Z`}));
+ const data = applyOutcomes(initial,[],now);
+ assert.equal(data.runs.length,45);
+ assert.equal(data.runs.find(run => run.source === "arXiv")?.completedAt,"2026-09-17T00:01:00.000Z");
+ assert.ok(data.runs.some(run => run.id === "last-med-success"));
+ assert.equal(canReuseArxivToday(data,new Date(now)),true);
+});
+
+test("reclassifying existing papers preserves their identifiers and first-seen dates", () => {
+ const original = paper({id:"doi:10.1000/existing",doi:"10.1000/existing",title:"Radiology report generation from chest radiographs",abstract:"A vision-language foundation model.",tracks:[]});
+ const data = parseMonitorData(previous([original]));
+ assert.equal(data.papers[0].id,original.id);
+ assert.equal(data.papers[0].firstSeenAt,original.firstSeenAt);
+ assert.ok(data.papers[0].tracks.includes("language"));
+ assert.ok(data.papers[0].tracks.includes("foundation"));
 });

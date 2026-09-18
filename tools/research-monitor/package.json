@@ -10,7 +10,7 @@
     "build": "tsc --noEmit && vite build && node scripts/copy-data.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "collect": "tsx scripts/collect.ts",
-    "test": "node --import tsx --test tests/collector.test.ts && node tests/run-local.mjs"
+    "test": "node --import tsx --test tests/*.test.ts && node tests/run-local.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

@@ -1,6 +1,6 @@
 # Official-source collector
 
-Copy `lib/{types,classify,record,parse,collect}.ts`, `scripts/collect.ts`, and `tests/collector.test.ts` into the static-site repository. Requires Node.js 22+ and the development dependencies `tsx`, `typescript`, and `@types/node`. The collector does not need an AI provider, account, API key, database, or proxy.
+The collector lives in `lib/{types,classify,record,parse,collect}.ts` and `scripts/collect.ts`. Requires Node.js 22.13+ and the development dependencies `tsx`, `typescript`, and `@types/node`. The collector does not need an AI provider, account, API key, database, or proxy. [INTERESTS.md](INTERESTS.md) describes the 10 research interests and their source basis.
 
 ```sh
 npx tsx scripts/collect.ts
@@ -14,11 +14,11 @@ The output is written to a temporary sibling file and atomically renamed only af
 
 ## Coverage and identity
 
-- Europe PMC: two existing segmentation / human-in-the-loop keyword queries; up to three 100-record pages per query. Date window overlaps the last clean successful source run by 7 days, starts 37 days back when no source run is available, and limits catch-up to 90 days.
-- arXiv: up to 100 matching entries, sorted by version update date, as in the old collector. This is not an exhaustive date-range search.
-- medRxiv: `radiology and imaging` category, up to eight official pages (normally 30 version records each), using the same overlap window. A HTTP 200 empty body is an explicit source error; only an official JSON response with `status: ok`, `total: 0`, and `collection: []` represents no results.
+- Europe PMC: one keyword query for each of the 10 interests; up to three 100-record pages per query. Date windows overlap the last clean successful source run by 7 days and limit catch-up to 90 days. The first run for the expanded taxonomy looks back at least 37 days so a recent run under the old two-interest scope cannot suppress backfill.
+- arXiv: one query per interest, each returning up to 100 entries sorted by version update date. Queries run serially; all actual requests, including retries, are separated by at least 3.1 seconds. Once all 10 queries succeed, later runs on the same UTC day reuse the collected records without adding source runs or request logs or changing the real fetch time. Failed collections are retried on the next run. This follows the [official API guidance](https://info.arxiv.org/help/api/user-manual.html) on request spacing and caching daily results. It is not an exhaustive date-range search.
+- medRxiv: `radiology and imaging` category, up to eight official pages (normally 30 version records each), filtered locally across all 10 interests. It uses the same overlap/backfill window as Europe PMC. This category does not cover all medically relevant papers on medRxiv. A HTTP 200 empty body is an explicit source error; only an official JSON response with `status: ok`, `total: 0`, and `collection: []` represents no results.
 
-Candidates are selected by the existing local keyword rules, never AI. Full official abstracts and author lists are retained. `originalAbstract` preserves the source text before display cleanup; `authorString` preserves unstructured author metadata where supplied. There is no summary generation, title rewriting, translation, or inferred affiliation.
+Candidates are selected by local title/abstract keyword rules with medical imaging context, never AI. A paper may match several interests; cross-query duplicates merge using the identifiers below. Interest totals therefore overlap, and the two-to-ten-interest expansion is a coverage change rather than evidence of rising publication activity. Full official abstracts and author lists are retained. `originalAbstract` preserves the source text before display cleanup; `authorString` preserves unstructured author metadata where supplied. There is no summary generation, title rewriting, translation, or inferred affiliation.
 
 Non-arXiv records deduplicate by normalized DOI and available native IDs. arXiv deduplicates by its versionless arXiv ID; its DOI can identify the journal publication, so it is preserved as a relationship without collapsing the preprint and journal record. Merging retains earliest `firstSeenAt`, nonempty abstracts/authors, combined sources/affiliations/provenance/version metadata, and updates classifications from the retained text. No title-similarity merging is performed.
 

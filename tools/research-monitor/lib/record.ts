@@ -1,10 +1,10 @@
-import { classify, normalizeDoi, textOnly } from "./classify";
+import { INTEREST_TAXONOMY_VERSION, classify, normalizeDoi, textOnly } from "./classify";
 import type { MonitorData, Paper, RequestLog, SyncRun } from "./types";
 
 type Raw = Record<string, any>;
 const unique = <T>(items: T[]) => [...new Set(items)];
 const uniqueObjects = <T>(items: T[]) => [...new Map(items.map(item => [JSON.stringify(item), item])).values()];
-export const COVERAGE = "有限范围的官方元数据采集，不代表完整文献库。Europe PMC：发表/首次收录重叠窗口，每方向最多300条；arXiv：按版本更新时间最近100条；medRxiv：radiology and imaging分类，最多240条版本记录。保留历史入库论文，不据此推断发文趋势。";
+export const COVERAGE = "有限范围的官方元数据采集，不代表完整文献库。Europe PMC：10个感兴趣方向的发表/首次收录重叠窗口，每方向最多300条；arXiv：10个方向各按版本更新时间最近100条，成功后同一UTC日复用缓存；medRxiv：radiology and imaging分类，最多240条版本记录。方向间可能重叠，关键词规则允许一文多类。保留历史入库论文，不据此推断发文趋势。";
 
 /** arXiv's journal DOI is a relationship, not the preprint's identity. */
 export function normalizeRecord(raw: Raw, firstSeenFallback: string): Paper {
@@ -120,7 +120,22 @@ export function parseMonitorData(value: unknown): MonitorData {
   };
 }
 
-export type SourceOutcome = { papers: Paper[]; run: SyncRun; requestLogs: RequestLog[] };
+export type SourceOutcome = { papers: Paper[]; run: SyncRun; requestLogs: RequestLog[]; taxonomyVersion?:string };
+
+/** Preserve actual source fetch timestamps even when a daily source is cached. */
+function retainedRuns(runs:SyncRun[]):SyncRun[] {
+ const ordered = [...runs].sort((a,b) => b.completedAt.localeCompare(a.completedAt));
+ const protectedRuns = new Set<SyncRun>();
+ const latestSources = new Set<string>(), successfulSources = new Set<string>();
+ for(const run of ordered) {
+  if(!latestSources.has(run.source)) { protectedRuns.add(run); latestSources.add(run.source); }
+  if(run.status !== "error" && !run.error && !successfulSources.has(run.source)) {
+   protectedRuns.add(run); successfulSources.add(run.source);
+  }
+ }
+ const kept = ordered.filter(run => !protectedRuns.has(run)).slice(0,Math.max(0,45-protectedRuns.size));
+ return [...protectedRuns,...kept].sort((a,b) => b.completedAt.localeCompare(a.completedAt)).slice(0,45);
+}
 
 export function applyOutcomes(previous: MonitorData, outcomes: SourceOutcome[], completedAt: string): MonitorData {
   let papers = previous.papers;
@@ -128,12 +143,17 @@ export function applyOutcomes(previous: MonitorData, outcomes: SourceOutcome[], 
     const merged = mergePapers(papers, outcome.papers); papers = merged.papers;
     return { ...outcome.run, added: merged.added, updated: merged.updated };
   });
+  const sourceTaxonomyVersions: Record<string,string> = {};
+  if(previous.sourceTaxonomyVersions && typeof previous.sourceTaxonomyVersions === "object") {
+    for(const [source,version] of Object.entries(previous.sourceTaxonomyVersions)) if(typeof version === "string") sourceTaxonomyVersions[source] = version;
+  }
+  for(const outcome of outcomes) if(outcome.taxonomyVersion && !outcome.run.error && outcome.run.status !== "error") sourceTaxonomyVersions[outcome.run.source] = outcome.taxonomyVersion;
   const errors = runs.filter(run => run.error).map(run => ({ source: run.source, message: run.error! }));
   const allFailed = runs.length > 0 && runs.every(run => run.status === "error");
   const hadSuccessfulSync = runs.some(run => run.status !== "error" && !run.error);
   return {
-    ...previous, papers, totalStored: papers.length,
-    runs: [...runs, ...previous.runs].sort((a,b) => b.completedAt.localeCompare(a.completedAt)).slice(0,45),
+    ...previous, papers, totalStored: papers.length, interestTaxonomyVersion:INTEREST_TAXONOMY_VERSION, sourceTaxonomyVersions,
+    runs: retainedRuns([...runs, ...previous.runs]),
     queryRuns: previous.queryRuns,
     requestLogs: [...(previous.requestLogs ?? []), ...outcomes.flatMap(item => item.requestLogs)].slice(-500),
     collectedAt: completedAt, lastSuccessfulSync: hadSuccessfulSync ? completedAt : previous.lastSuccessfulSync,
