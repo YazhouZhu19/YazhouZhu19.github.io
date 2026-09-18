@@ -36,6 +36,8 @@ Tests cover source parsing, DOI/native identifier merging, version history, outa
 
 ## Data interpretation
 
+Open **初步分析 / Preliminary analysis** to inspect observed research topics, direction–method combinations, and abstract-based reading leads for the selected publication-date window, interest, and source. Each aggregate opens its supporting paper records. Paper details include original objective, methods, and results excerpts when recognizable, plus quoted validation or open-resource signals. These are deterministic reading aids, not model-generated summaries, full-text reviews, novelty claims, or quality scores. Missing/negative/planned evidence must not be presented as completed validation. See [ANALYSIS.md](ANALYSIS.md) for the rules and denominators.
+
 The initial snapshot is a recent-paper sample. Queries have caps, tags are heuristic, and journal/preprint versions may remain distinct. Interest labels can overlap and do not rate quality or clinical validity. Expansion from two to ten interests changes collection coverage, so increased counts may partly reflect that scope change. Source errors preserve old records and are visibly reported; an empty HTTP response is never counted as zero new papers. Author names may be ambiguous. Coauthorship and matches to a user-created watchlist do not establish current team membership, competitive strength, or willingness to collaborate.
 
 ## Maintenance
