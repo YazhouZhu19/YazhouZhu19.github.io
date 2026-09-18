@@ -11,6 +11,8 @@ GitHub Pages serves this Vite/React static application. The repository workflow 
 
 The collector and dashboard use deterministic keyword classification and statistics. No ChatGPT, LLM, AI API key, login service, paid backend, or model token is required for operation. The previous daily Codex check is not used. GitHub Actions and source API availability remain subject to their provider limits.
 
+The **检查最新数据 / Check for updates** button checks the latest published snapshot. It shows progress and reports whether a newer snapshot was loaded, no published update was found, or the check failed; existing data and personal notes remain available on failure. It does not start source collection. The page also checks quietly every five minutes while visible. To collect sources immediately, a repository maintainer can run the GitHub workflow described below; publication takes a few minutes, and a successful check does not necessarily add papers.
+
 ## Personal data
 
 Saved papers, notes, and team/PI watchlists are stored only in localStorage under `medical-research-monitor:personal:v1`. Chinese and English pages share this browser data. Nothing personal is uploaded by the app. Use **Local data → Export backup** before clearing browser data or moving devices. **Import backup** validates the file and requests confirmation before replacing both lists. Private/incognito sessions and blocked/full storage can prevent persistence. Old-site account data is not automatically transferred.

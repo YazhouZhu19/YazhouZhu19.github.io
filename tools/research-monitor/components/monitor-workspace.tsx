@@ -1,9 +1,9 @@
 "use client";
 import { api, LOCAL_DATA_KEY, getLocalStorageStatus } from "@/lib/local-api";
+import { compareSnapshots, createSnapshotLoader, SnapshotRequestError } from "@/lib/snapshot-refresh";
 import { LocalDataControls } from "./local-data-controls";
 import { useI18n } from "./locale-provider";
-import { flushSync } from "react-dom";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Activity, ArrowUpRight, Bookmark, BookmarkCheck, ChartNoAxesCombined, LayoutDashboard, Check, ChevronRight, Database, Download, Focus, Info, Layers3, RefreshCw, Search, SlidersHorizontal, Users, Workflow, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +46,12 @@ export default function MonitorWorkspace() {
     const { locale, tr } = useI18n();
     const [view, setView] = useState("dashboard"), [track, setTrack] = useState("all"), [search, setSearch] = useState(""), [task, setTask] = useState("all"), [modality, setModality] = useState("all"), [organ, setOrgan] = useState("all"), [method, setMethod] = useState("all"), [source, setSource] = useState("all"), [status, setStatus] = useState("all"), [period, setPeriod] = useState("all"), [sort, setSort] = useState("newest"), [human, setHuman] = useState("all"), [limit, setLimit] = useState(30);
     const [data, setData] = useState<MonitorData | null>(null), [loading, setLoading] = useState(true), [error, setError] = useState("");
+    const [refreshing, setRefreshing] = useState(false);
+    const [checkResult, setCheckResult] = useState<{ kind: "same" | "updated" | "loaded" | "error"; checkedAt: string; added?: number; detail?: string } | null>(null);
+    const mounted = useRef(false);
+    const latestData = useRef<MonitorData | null>(null);
+    const snapshotLoader = useRef(createSnapshotLoader(signal => api("/api/papers", { signal })));
+    const activeLoad = useRef<{ manual: boolean; promise: Promise<MonitorData | null> | null } | null>(null);
     const [collections, setCollections] = useState<Collection[]>([]), [teams, setTeams] = useState<Team[]>([]), [selected, setSelected] = useState<Paper | null>(null), [note, setNote] = useState(""), [stage, setStage] = useState("待读"), [saving, setSaving] = useState(false);
     const [dashboardFilters, setDashboardFilters] = useState<DashboardFilters>(defaultDashboardFilters);
     const [dashboardDrill, setDashboardDrill] = useState<DashboardDrill | null>(null);
@@ -60,20 +66,57 @@ export default function MonitorWorkspace() {
         if (settled[1].status === "fulfilled") setTeams(settled[1].value.teams);
         else toast.error(tr("关注名单暂时无法读取"));
     }, [tr]);
-    const load = useCallback(async () => {
-        try {
-            const d = await api("/api/papers");
-            flushSync(() => { setData(d); setError(""); });
-            return d as MonitorData;
-        } catch (e) { setError((e as Error).message); return null; }
-        finally { await refreshPersonal(); setLoading(false); }
-    }, [refreshPersonal]);
-    useEffect(() => { void load(); }, [load]);
+    const load = useCallback((manual = false): Promise<MonitorData | null> => {
+        if (manual) { setRefreshing(true); setCheckResult(null); }
+        if (activeLoad.current) {
+            activeLoad.current.manual ||= manual;
+            return activeLoad.current.promise!;
+        }
+        const request = { manual, promise: null as Promise<MonitorData | null> | null };
+        activeLoad.current = request;
+        request.promise = (async () => {
+            try {
+                const next = await snapshotLoader.current.load();
+                if (!mounted.current || activeLoad.current !== request) return null;
+                const previous = latestData.current;
+                const comparison = compareSnapshots(previous, next);
+                latestData.current = next;
+                setData(next);
+                setError("");
+                if (request.manual) setCheckResult({
+                    kind: !previous ? "loaded" : comparison.changed ? "updated" : "same",
+                    checkedAt: new Date().toISOString(), added: comparison.added,
+                });
+                return next;
+            } catch (cause) {
+                if (!mounted.current || activeLoad.current !== request || cause instanceof SnapshotRequestError && cause.kind === "cancelled") return null;
+                const detail = cause instanceof Error ? cause.message : "公开论文数据加载失败，请稍后重试";
+                if (request.manual) setCheckResult({ kind: "error", checkedAt: new Date().toISOString(), detail });
+                else if (!latestData.current) setError(detail);
+                return null;
+            } finally {
+                if (activeLoad.current === request) {
+                    activeLoad.current = null;
+                    if (mounted.current) { setLoading(false); setRefreshing(false); }
+                }
+            }
+        })();
+        return request.promise;
+    }, []);
     useEffect(() => {
+        mounted.current = true;
+        void load();
+        void refreshPersonal();
         const onStorage = (event: StorageEvent) => { if (event.key === LOCAL_DATA_KEY || event.key === null) void refreshPersonal(); };
         window.addEventListener("storage", onStorage);
         const timer = setInterval(() => { if (document.visibilityState === "visible") void load(); }, 300000);
-        return () => { clearInterval(timer); window.removeEventListener("storage", onStorage); };
+        return () => {
+            mounted.current = false;
+            activeLoad.current = null;
+            snapshotLoader.current.cancel();
+            clearInterval(timer);
+            window.removeEventListener("storage", onStorage);
+        };
     }, [load, refreshPersonal]);
     useEffect(() => setLimit(30), [view, search, track, task, modality, organ, method, source, status, period, human]);
     const savedIds = useMemo(() => new Set(collections.map(c => c.paperId)), [collections]);
@@ -143,8 +186,9 @@ export default function MonitorWorkspace() {
                 string,
                 string
             ])]}/><Picker label={tr("数据来源")} value={source} onChange={setSource} options={[["all", "全部来源"], ["Europe PMC", "Europe PMC"], ["arXiv", "arXiv"], ["medRxiv", "medRxiv"]]}/><Picker label={tr("发表状态")} value={status} onChange={setStatus} options={[["all", "全部发表状态"], ["preprint", "预印本"], ["published", "正式发表"]]}/><Picker label={tr("记录日期范围")} value={period} onChange={setPeriod} options={[["all", "全部记录日期"], ["30", "近 30 天"], ["90", "近 90 天"], ["365", "近一年"]]}/><Button variant="ghost" size="sm" onClick={reset}>{tr("重置")}</Button></div>{track === "human_loop" && <div className="filter-row subfilters"><span>{tr("人参与线索")}</span><Picker label={tr("人参与线索")} value={human} onChange={setHuman} options={[["all", "全部线索"], ...Object.entries(HUMAN_LABELS)]}/><span className="muted">{tr("关键词线索，临床协作效果待核实")}</span></div>}</div>;
-    return <SidebarProvider style={{ "--sidebar-width": locale === "en" ? "260px" : "240px" } as React.CSSProperties}><Toaster richColors position="bottom-right"/><Sidebar><SidebarHeader className="brand"><div className="brand-symbol"><Focus size={25}/></div><div><strong>{tr("医学影像科研观察")}</strong><span>{tr("研究动态 \u00B7 团队协作")}</span></div></SidebarHeader><SidebarContent><SidebarGroup><SidebarGroupLabel>{tr("研究工作台")}</SidebarGroupLabel><SidebarMenu>{nav.map(n => <SidebarMenuItem key={n.id}><NavButton isActive={view === n.id} size="lg" onClick={() => setView(n.id)}><n.icon /><span>{tr(n.label)}</span>{n.id === "saved" && collections.length > 0 && <span className="nav-count">{collections.length}</span>}</NavButton></SidebarMenuItem>)}</SidebarMenu></SidebarGroup><SidebarGroup className="interest-nav"><SidebarGroupLabel>{tr("感兴趣方向")}</SidebarGroupLabel><SidebarMenu>{Object.entries(TRACKS).map(([id, label]) => <SidebarMenuItem key={id}><NavButton size="lg" isActive={track === id && view === "feed"} onClick={() => { setView("feed"); chooseTrack(id, true); }}><Focus /><span>{tr(label)}</span></NavButton></SidebarMenuItem>)}</SidebarMenu></SidebarGroup></SidebarContent><SidebarFooter><a className="homepage-link" href="https://yazhouzhu19.github.io/" target="_blank" rel="noreferrer">{tr("Yazhou Zhu \u00B7 个人主页 ")}<ArrowUpRight size={13}/></a><div className="sidebar-note"><Database size={16}/><span>{data ? tr("{0} 条已采集记录", [papers.length]) : tr("读取论文库")}<br /><small>{tr("最后更新 ")}{tr(fmtTime(data?.lastSuccessfulSync ?? data?.collectedAt))}</small></span></div></SidebarFooter></Sidebar><SidebarInset><header className="topbar"><div className="topbar-label"><SidebarTrigger /><span>{tr("研究工作台")}</span><span className="divider">/</span><strong>{tr(current.label)}</strong></div><div className="account-controls"><nav className="language-switch" aria-label={locale === "en" ? "Language" : "界面语言"}><a href="/research-monitor/" hrefLang="zh-CN" lang="zh-CN" aria-current={locale === "zh" ? "page" : undefined}>中文</a><a href="/research-monitor/en/" hrefLang="en" lang="en" aria-current={locale === "en" ? "page" : undefined}>EN</a></nav><span className="private-label">{tr("浏览器本地保存")}</span>{accountControl}</div></header><div className={`workspace${view === "dashboard" ? " dashboard-workspace" : ""}`}><div className="page-heading"><div>{view !== "dashboard" && <p className="eyebrow">MEDICAL IMAGE ANALYSIS</p>}<h1>{view === "dashboard" ? tr("科研监测仪表盘") : view === "feed" ? tr("与你研究相关的进展") : view === "trends" ? tr("观察研究方向的变化") : view === "teams" ? tr("理解团队，发现连接") : view === "saved" ? tr("从阅读到下一个课题") : tr("让每一条记录有据可查")}</h1><p>{view === "dashboard" ? tr("10 个感兴趣方向 · 从影像分析到临床协作") : view === "feed" ? tr("10 个感兴趣方向 · 从影像分析到临床协作") : view === "trends" ? tr("统计范围为当前已采集论文库，不代表全领域增长。") : view === "teams" ? tr("以确认的成员名单追踪研究，保留合作线索的证据。") : view === "saved" ? tr("记录阅读判断、相关问题和下一步验证。") : tr("查看数据覆盖、检索范围与同步结果。")}</p></div><Button variant="outline" onClick={() => void load()} disabled={loading}><RefreshCw size={16}/>{tr("刷新数据")}</Button></div>
- {error && <div className="notice error" role="alert">{tr(error)}<Button variant="ghost" onClick={() => void load()}>{tr("重新读取")}</Button></div>}{data?.personalStorageError && <div className="notice error" role="alert">{tr(data.personalStorageError)}</div>}{data?.error && <div className="notice error" role="alert">{tr("存在来源采集失败，已保留已有论文。详情请查看同步日志。")}</div>}{data?.totalStored && data.totalStored > papers.length ? <div className="notice">{tr("库内共 ")}{data.totalStored}{tr(" 条记录，当前展示最新 ")}{papers.length}{tr(" 条；筛选与图表基于当前展示范围。")}</div> : null}
+    return <SidebarProvider style={{ "--sidebar-width": locale === "en" ? "260px" : "240px" } as React.CSSProperties}><Toaster richColors position="bottom-right"/><Sidebar><SidebarHeader className="brand"><div className="brand-symbol"><Focus size={25}/></div><div><strong>{tr("医学影像科研观察")}</strong><span>{tr("研究动态 \u00B7 团队协作")}</span></div></SidebarHeader><SidebarContent><SidebarGroup><SidebarGroupLabel>{tr("研究工作台")}</SidebarGroupLabel><SidebarMenu>{nav.map(n => <SidebarMenuItem key={n.id}><NavButton isActive={view === n.id} size="lg" onClick={() => setView(n.id)}><n.icon /><span>{tr(n.label)}</span>{n.id === "saved" && collections.length > 0 && <span className="nav-count">{collections.length}</span>}</NavButton></SidebarMenuItem>)}</SidebarMenu></SidebarGroup><SidebarGroup className="interest-nav"><SidebarGroupLabel>{tr("感兴趣方向")}</SidebarGroupLabel><SidebarMenu>{Object.entries(TRACKS).map(([id, label]) => <SidebarMenuItem key={id}><NavButton size="lg" isActive={track === id && view === "feed"} onClick={() => { setView("feed"); chooseTrack(id, true); }}><Focus /><span>{tr(label)}</span></NavButton></SidebarMenuItem>)}</SidebarMenu></SidebarGroup></SidebarContent><SidebarFooter><a className="homepage-link" href="https://yazhouzhu19.github.io/" target="_blank" rel="noreferrer">{tr("Yazhou Zhu \u00B7 个人主页 ")}<ArrowUpRight size={13}/></a><div className="sidebar-note"><Database size={16}/><span>{data ? tr("{0} 条已采集记录", [papers.length]) : tr("读取论文库")}<br /><small>{tr("最后更新 ")}{tr(fmtTime(data?.lastSuccessfulSync ?? data?.collectedAt))}</small></span></div></SidebarFooter></Sidebar><SidebarInset><header className="topbar"><div className="topbar-label"><SidebarTrigger /><span>{tr("研究工作台")}</span><span className="divider">/</span><strong>{tr(current.label)}</strong></div><div className="account-controls"><nav className="language-switch" aria-label={locale === "en" ? "Language" : "界面语言"}><a href="/research-monitor/" hrefLang="zh-CN" lang="zh-CN" aria-current={locale === "zh" ? "page" : undefined}>中文</a><a href="/research-monitor/en/" hrefLang="en" lang="en" aria-current={locale === "en" ? "page" : undefined}>EN</a></nav><span className="private-label">{tr("浏览器本地保存")}</span>{accountControl}</div></header><div className={`workspace${view === "dashboard" ? " dashboard-workspace" : ""}`}><div className="page-heading"><div>{view !== "dashboard" && <p className="eyebrow">MEDICAL IMAGE ANALYSIS</p>}<h1>{view === "dashboard" ? tr("科研监测仪表盘") : view === "feed" ? tr("与你研究相关的进展") : view === "trends" ? tr("观察研究方向的变化") : view === "teams" ? tr("理解团队，发现连接") : view === "saved" ? tr("从阅读到下一个课题") : tr("让每一条记录有据可查")}</h1><p>{view === "dashboard" ? tr("10 个感兴趣方向 · 从影像分析到临床协作") : view === "feed" ? tr("10 个感兴趣方向 · 从影像分析到临床协作") : view === "trends" ? tr("统计范围为当前已采集论文库，不代表全领域增长。") : view === "teams" ? tr("以确认的成员名单追踪研究，保留合作线索的证据。") : view === "saved" ? tr("记录阅读判断、相关问题和下一步验证。") : tr("查看数据覆盖、检索范围与同步结果。")}</p></div><Button variant="outline" onClick={() => void load(true)} disabled={loading || refreshing} aria-busy={refreshing}><RefreshCw size={16} className={refreshing ? "animate-spin" : undefined}/>{tr(refreshing ? "正在检查…" : "检查最新数据")}</Button></div>
+ <div className="snapshot-check"><p>{tr("检查已发布的数据；来源采集由每小时定时任务执行。")}</p><div className="snapshot-check-meta"><span>{tr("数据采集时间：")}{data ? fmtTime(data.collectedAt) : tr("尚未载入")}</span><button onClick={() => setView("sources")}>{tr("查看采集状态")}<ArrowUpRight size={12}/></button></div><div className={`snapshot-check-result${checkResult?.kind === "error" ? " is-error" : ""}`} role="status" aria-live="polite" aria-label={tr("数据检查结果")}>{refreshing ? <span>{tr("正在读取最新已发布数据…")}</span> : checkResult && <><span>{tr(checkResult.kind === "same" ? "当前已是最新发布的数据。" : checkResult.kind === "updated" ? "已加载新版数据，新增 {0} 条记录。" : checkResult.kind === "loaded" ? "已加载最新发布的数据。" : data ? "检查失败，已保留当前数据。" : "检查失败，请稍后重试。", [checkResult.added ?? 0])}</span>{checkResult.kind === "error" && <span>{tr(checkResult.detail ?? "")}</span>}<time dateTime={checkResult.checkedAt}>{tr("本次检查：")}{new Date(checkResult.checkedAt).toLocaleString(locale === "en" ? "en-GB" : "zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}</time></>}</div></div>
+ {error && <div className="notice error" role="alert">{tr(error)}<Button variant="ghost" onClick={() => void load(true)} disabled={refreshing}>{tr("重新读取")}</Button></div>}{data?.personalStorageError && <div className="notice error" role="alert">{tr(data.personalStorageError)}</div>}{data?.error && <div className="notice error" role="alert">{tr("存在来源采集失败，已保留已有论文。详情请查看同步日志。")}</div>}{data?.totalStored && data.totalStored > papers.length ? <div className="notice">{tr("库内共 ")}{data.totalStored}{tr(" 条记录，当前展示最新 ")}{papers.length}{tr(" 条；筛选与图表基于当前展示范围。")}</div> : null}
  {(view === "saved" || view === "teams") && <div className="notice"><Info size={17}/><span>{tr("个人记录仅保存在当前浏览器；切换设备或清除浏览器数据前，请从右上角导出个人备份。")}</span></div>}
  {view === "feed" && <section className="interest-selector" aria-label={tr("感兴趣方向")}><div className="interest-selector-heading"><h2>{tr("感兴趣方向")}</h2><button aria-pressed={track === "all"} onClick={() => chooseTrack("all")}>{tr("全部感兴趣方向")}</button></div><div className="interest-options">{Object.entries(TRACKS).map(([id, label], index) => <button key={id} aria-pressed={track === id} onClick={() => chooseTrack(track === id ? "all" : id)}><span className="interest-order">{String(index + 1).padStart(2, "0")}</span><span>{tr(label)}</span>{track === id && <Check size={15}/>}</button>)}</div><p>{tr("基于标题与摘要自动分类；同一论文可属于多个方向。")}</p></section>}
  {view === "feed" && dashboardDrill && <div className="dash-drill-banner"><div><strong>{tr("仪表盘分析：")}{dashboardDrill.label}</strong><span>{dashboardDrill.ids.length}{tr(" 条范围记录 \u00B7 下方筛选可继续缩小范围")}</span></div><Button variant="outline" onClick={() => { setDashboardDrill(null); setView("dashboard"); }}>{tr("返回仪表盘")}</Button><Button variant="ghost" onClick={reset}>{tr("清除钻取")}</Button></div>}

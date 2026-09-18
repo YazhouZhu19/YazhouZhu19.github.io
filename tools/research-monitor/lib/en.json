@@ -477,5 +477,21 @@
   "GitHub Actions 计划每小时运行；arXiv 成功检索在同一 UTC 日内复用缓存，其他来源每小时检查。GitHub Pages 页面每 5 分钟读取最新快照，也可手动刷新。": "GitHub Actions is scheduled hourly. Successful arXiv searches are cached for the same UTC day; other sources are checked hourly. This GitHub Pages site reloads the latest snapshot every 5 minutes, or when you refresh manually.",
   "最多 45 条来源同步记录": "Up to 45 source sync records",
   "10个感兴趣方向的发表/首次收录重叠窗口；每方向最多300条，查询结果可能重叠；新分类首次至少回溯37天。": "Overlapping publication/first-indexed windows across 10 research interests; up to 300 records per interest. Queries may overlap. A new taxonomy starts with at least 37 days of backfill.",
-  "10个方向各按版本更新时间读取最近100条；方向间可能重叠。全部查询成功后同一UTC日复用缓存，未读取历史记录不计入趋势。": "Latest 100 matches per research interest, ordered by version update. Interests may overlap. After all queries succeed, results are cached for the same UTC day. Unfetched records are excluded from trends."
+  "10个方向各按版本更新时间读取最近100条；方向间可能重叠。全部查询成功后同一UTC日复用缓存，未读取历史记录不计入趋势。": "Latest 100 matches per research interest, ordered by version update. Interests may overlap. After all queries succeed, results are cached for the same UTC day. Unfetched records are excluded from trends.",
+  "检查最新数据": "Check for updates",
+  "正在检查…": "Checking…",
+  "检查已发布的数据；来源采集由每小时定时任务执行。": "Checks published data. Source collection runs on an hourly schedule.",
+  "数据采集时间：": "Data collected: ",
+  "尚未载入": "Not loaded yet",
+  "查看采集状态": "View collection status",
+  "正在读取最新已发布数据…": "Loading the latest published data…",
+  "当前已是最新发布的数据。": "You already have the latest published data.",
+  "已加载新版数据，新增 {0} 条记录。": "Loaded a new data snapshot with {0} new records.",
+  "已加载最新发布的数据。": "Loaded the latest published data.",
+  "检查失败，已保留当前数据。": "Check failed. Your current data has been retained.",
+  "检查失败，请稍后重试。": "Check failed. Please try again later.",
+  "本次检查：": "Checked: ",
+  "检查超时，请检查网络后重试": "The check timed out. Check your connection and try again.",
+  "检查已取消": "Check cancelled",
+  "数据检查结果": "Data check result"
 }
