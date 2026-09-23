@@ -1,120 +1,21 @@
-/* Core typography and colors follow jonbarron/jonbarron.github.io. */
-@font-face {
-  font-family: "Lato";
-  font-style: normal;
-  font-weight: 400;
-  src: local("Lato Regular"), local("Lato-Regular"), url("https://fonts.gstatic.com/s/lato/v15/S6uyw4BMUTPHjx4wXiWtFCc.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Lato";
-  font-style: normal;
-  font-weight: 700;
-  src: local("Lato Bold"), local("Lato-Bold"), url("https://fonts.gstatic.com/s/lato/v15/S6u9w4BMUTPHh6UVSwiPGQ3q5d0.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Lato";
-  font-style: italic;
-  font-weight: 400;
-  src: local("Lato Italic"), local("Lato-Italic"), url("https://fonts.gstatic.com/s/lato/v15/S6u8w4BMUTPHjxsAXC-qNiXg7Q.woff2") format("woff2");
-}
-
-a {
-  color: #1772d0;
-  text-decoration: none;
-}
-
-a:focus,
-a:hover {
-  color: #f09228;
-  text-decoration: none;
-}
-
-body,
-td,
-th,
-tr,
-p,
-a {
-  font-family: "Lato", Verdana, Helvetica, sans-serif;
-  font-size: 14px;
-  line-height: 1.45;
-}
-
-body {
-  margin: 0;
-  color: #222;
-  background: #fff;
-}
-
-strong {
-  font-family: "Lato", Verdana, Helvetica, sans-serif;
-  font-size: 14px;
-}
-
-h2 {
-  margin: 0;
-  font-family: "Lato", Verdana, Helvetica, sans-serif;
-  font-size: 22px;
-  font-weight: normal;
-}
-
-.papertitle {
-  font-family: "Lato", Verdana, Helvetica, sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.name {
-  padding-top: 8px;
-  margin: 0;
-  font-family: "Lato", Verdana, Helvetica, sans-serif;
-  font-size: 32px;
-}
-
-.profile-image {
-  display: block;
-  width: 140px;
-  height: 140px;
-  margin: 0 auto;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.paper-row td {
-  padding: 10px 16px;
-  vertical-align: middle;
-}
-
-.footer-note {
-  color: #777;
-  font-size: 12px;
-}
-
-@media (max-width: 620px) {
-  .intro-row,
-  .intro-row tbody,
-  .intro-row tr,
-  .intro-row td {
-    display: block;
-    width: auto !important;
-  }
-
-  .intro-copy {
-    padding: 20px 20px 8px !important;
-  }
-
-  .intro-image {
-    padding: 8px 20px 20px !important;
-  }
-
-  .profile-image {
-    width: 112px;
-    height: 112px;
-  }
-
-  .paper-row td {
-    padding: 10px 20px;
-  }
-}
+/* An accessible, responsive continuation of the original Jon Barron-inspired academic page. */
+@font-face{font-family:Lato;font-style:normal;font-weight:400;font-display:swap;src:local("Lato Regular"),local("Lato-Regular"),url("https://fonts.gstatic.com/s/lato/v15/S6uyw4BMUTPHjx4wXiWtFCc.woff2") format("woff2")}
+@font-face{font-family:Lato;font-style:normal;font-weight:700;font-display:swap;src:local("Lato Bold"),local("Lato-Bold"),url("https://fonts.gstatic.com/s/lato/v15/S6u9w4BMUTPHh6UVSwiPGQ3q5d0.woff2") format("woff2")}
+:root{color-scheme:light;--ink:#24313d;--muted:#65717b;--link:#1772b7;--line:#e4e9ed;--soft:#f6f8fa}
+*{box-sizing:border-box}
+html{scroll-padding-top:24px}
+body{margin:0;background:#fff;color:var(--ink);font-family:Lato,Verdana,Helvetica,sans-serif;font-size:15px;line-height:1.65}
+a{color:var(--link);text-decoration:none;text-underline-offset:3px}
+a:hover{color:#a65818;text-decoration:underline}
+a:focus-visible{outline:2px solid var(--link);outline-offset:4px;border-radius:2px}
+p{margin:0 0 13px}strong{font-weight:700}h1,h2,h3{line-height:1.3}h1{font-size:36px;letter-spacing:-.8px;font-weight:700;margin:0 0 4px}h1 span{display:inline-block;font-size:21px;font-weight:400;letter-spacing:0;margin-left:8px;color:#5d6973}h2{font-size:24px;letter-spacing:-.4px;font-weight:400;margin:0 0 17px}h3{font-size:16px;margin:0 0 8px}img{max-width:100%}
+.page{width:100%;max-width:928px;padding:48px 40px 26px;margin:auto}
+.intro{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:36px;align-items:center;margin-bottom:28px}.eyebrow{font-size:11px;letter-spacing:1.7px;color:var(--muted);margin-bottom:9px}.qualification{font-size:15px;color:var(--muted);margin:0 0 19px}.intro-copy>p:not(.eyebrow):not(.qualification){line-height:1.75}.profile-image{width:150px;height:150px;border-radius:50%;object-fit:cover}.profile-links{display:flex;gap:7px 15px;flex-wrap:wrap;font-size:14px;margin-top:20px}.link-format{font-size:10px;color:var(--muted);margin-left:2px}.section-nav{display:flex;flex-wrap:wrap;gap:7px 24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:34px;font-size:13px}.section-nav a{color:#4b6478}
+section{margin:0 0 42px;scroll-margin-top:24px}.research-list{padding-left:20px;margin:0}.research-list li{padding-left:3px;margin-bottom:9px}.research-vision{background:var(--soft);border-left:3px solid #aac7d9;padding:19px 21px;margin-top:22px}.research-vision h3{font-weight:700}.research-vision p{font-size:14px;line-height:1.75}.research-vision>a{font-size:13px}.section-note{color:var(--muted);font-size:14px;max-width:720px}.section-note strong{color:inherit}
+.publication-group{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;font-size:16px;font-weight:700;margin:27px 0 4px;padding-bottom:9px;border-bottom:1px solid var(--line)}.publication-group>span{font-weight:400;font-size:12px;color:var(--muted)}.publication{font-size:14px;line-height:1.6;padding:15px 0;border-bottom:1px solid #f0f2f4;overflow-wrap:anywhere}.publication:last-child{border-bottom:0}.papertitle{font-size:15px;font-weight:700;line-height:1.45;display:inline-block;margin-bottom:4px}.publication em{color:#495660}.publication>a:not(:first-child){font-size:13px}.preprint-list{background:var(--soft);padding:0 17px;border-radius:5px;margin-top:12px}
+.education-entry{margin-bottom:23px}.education-entry:last-child{margin-bottom:0}.entry-heading{display:flex;justify-content:space-between;gap:8px 24px;align-items:baseline}.entry-heading h3{margin-bottom:4px}.entry-heading p{flex-shrink:0;font-size:13px;color:var(--muted);margin:0}.education-entry>p{margin:3px 0}.muted{color:var(--muted);font-size:14px}.entry-detail{font-size:13px;color:var(--muted);line-height:1.7}.project{padding:18px 0;border-bottom:1px solid var(--line)}.project:first-of-type{padding-top:0}.project:last-child{border-bottom:0;padding-bottom:0}.project p{font-size:14px}.project-links{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin-bottom:0}.project-links span{color:var(--muted);font-size:12px}
+.skills{margin:0}.skills>div{display:grid;grid-template-columns:140px minmax(0,1fr);gap:20px;padding:10px 0;border-bottom:1px solid #f0f2f4;font-size:14px}.skills dt{font-weight:700}.skills dd{margin:0}.skills>div:last-child{border-bottom:0}.awards-list{list-style:none;padding:0;margin:0}.awards-list li{display:flex;gap:20px;font-size:14px;padding:5px 0}.awards-list time{color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 40px}footer{border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;font-size:11px;color:var(--muted)}footer a{color:inherit}
+.skip-link{position:absolute;left:16px;top:-60px;background:#fff;padding:8px 14px;z-index:10}.skip-link:focus{top:8px}
+@media(max-width:650px){body{font-size:14px}.page{padding:28px 21px 24px}.intro{grid-template-columns:minmax(0,1fr) 80px;gap:14px;align-items:start}.intro-copy{display:contents}.eyebrow,h1,.qualification{grid-column:1;margin:0}.eyebrow{font-size:9px;letter-spacing:1.2px}h1{font-size:29px}h1 span{font-size:17px;margin-left:5px}.qualification{font-size:13px;margin-top:-5px}.profile-image{grid-column:2;grid-row:1/4;width:80px;height:80px;align-self:center}.intro-copy>p:not(.eyebrow):not(.qualification),.profile-links{grid-column:1/-1;margin:0}.intro-copy>p:not(.eyebrow):not(.qualification){line-height:1.75}.profile-links{gap:8px 15px;font-size:13px;margin-top:3px}.section-nav{gap:8px 18px;font-size:12px;margin-bottom:28px}h2{font-size:22px}section{margin-bottom:34px}.research-vision{padding:16px}.entry-heading{display:block}.entry-heading p{margin:2px 0 6px}.skills>div{grid-template-columns:1fr;gap:2px}.publication{padding:14px 0;font-size:13px}.papertitle{font-size:14px}.section-note{font-size:13px}.awards-list li{gap:11px}.research-list{padding-left:18px}footer{display:block}footer>span{display:block;margin-bottom:5px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{.page{max-width:none;padding:0}.skip-link,.section-nav{display:none}a{color:inherit}.publication,.education-entry,.project{break-inside:avoid}body{font-size:11pt}}
