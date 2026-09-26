@@ -13,6 +13,8 @@ The collector and dashboard use deterministic keyword classification and statist
 
 The **检查最新数据 / Check for updates** button checks the latest published snapshot. It shows progress and reports whether a newer snapshot was loaded, no published update was found, or the check failed; existing data and personal notes remain available on failure. It does not start source collection. The page also checks quietly every five minutes while visible. To collect sources immediately, a repository maintainer can run the GitHub workflow described below; publication takes a few minutes, and a successful check does not necessarily add papers.
 
+The source status panel separates request failures from limited coverage and reports the last error-free fetch. Confirmed Europe PMC terminal pages are accepted even when the search count exceeds returned core records; count discrepancies remain recorded. If the medRxiv primary API fails, the collector uses the official alternate API and filters its all-category results locally. Recovered primary errors remain in request logs; unresolved failures name the affected source in the page warning. See [COLLECTOR.md](COLLECTOR.md) for pagination limits and fallback behavior.
+
 ## Personal data
 
 Saved papers, notes, and team/PI watchlists are stored only in localStorage under `medical-research-monitor:personal:v1`. Chinese and English pages share this browser data. Nothing personal is uploaded by the app. Use **Local data → Export backup** before clearing browser data or moving devices. **Import backup** validates the file and requests confirmation before replacing both lists. Private/incognito sessions and blocked/full storage can prevent persistence. Old-site account data is not automatically transferred.

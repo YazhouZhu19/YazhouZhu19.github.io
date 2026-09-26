@@ -517,5 +517,10 @@
   "代码开放线索": "Code availability signal",
   "数据开放线索": "Data availability signal",
   "查看初步分析": "Explore preliminary analysis",
-  "研究主题、方法组合与可追溯的论文阅读线索": "Research topics, method combinations, and reading leads linked to papers"
+  "研究主题、方法组合与可追溯的论文阅读线索": "Research topics, method combinations, and reading leads linked to papers",
+  "部分来源采集失败（{0}），已保留已有论文。": "Source collection failed or was incomplete for {0}. Existing papers are preserved.",
+  "部分失败": "Partially Failed",
+  "尚无成功同步记录": "No successful sync recorded",
+  "主接口不可用，已通过官方 api.medrxiv.org 补充；在全部分类结果中本地筛选 radiology and imaging，最多扫描60页并保留240条匹配版本记录。": "The primary endpoint was unavailable, so the official api.medrxiv.org endpoint was used. Results across all categories are filtered locally for radiology and imaging, scanning up to 60 pages and retaining up to 240 matching version records.",
+  "同步失败保留旧记录。部分请求失败时标为“部分失败”；因数量上限或来源返回数量差异而未取全时标为“有限覆盖”。": "Existing records are retained if a sync fails. Failed requests within a source are marked “Partially Failed”; retrieval limits or differences between reported and returned counts are marked “Limited Coverage”."
 }

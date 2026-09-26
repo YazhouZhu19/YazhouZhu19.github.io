@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { INTEREST_TAXONOMY_VERSION, relevant } from "./classify";
-import { parseArxiv, parseEpmc, parseJsonResponse, parseMedrxiv, parseMedrxivPage } from "./parse";
-import { applyOutcomes, mergePapers, type SourceOutcome } from "./record";
+import { parseArxiv, parseEpmc, parseMedrxiv, parseMedrxivPage } from "./parse";
+import { parseEpmcPage } from "./epmc-page";
+import { applyOutcomes, mergePapers, mergeRecord, type SourceOutcome } from "./record";
 import type { MonitorData, Paper, RequestLog, SyncRun } from "./types";
 
 export const SOURCE_NAMES = {epmc:"Europe PMC",arxiv:"arXiv",medrxiv:"medRxiv"} as const;
@@ -59,7 +60,7 @@ export class SourceRequestError extends Error {
 /** Only official hosts; redirects are checked as well, so no proxy is introduced. */
 function officialUrl(value: string): boolean {
   const url = new URL(value);
-  return url.protocol === "https:" && ["www.ebi.ac.uk","export.arxiv.org","api.biorxiv.org"].includes(url.hostname);
+  return url.protocol === "https:" && ["www.ebi.ac.uk","export.arxiv.org","api.biorxiv.org","api.medrxiv.org"].includes(url.hostname);
 }
 
 export const fetchOfficialText: FetchText = async url => {
@@ -129,15 +130,17 @@ export async function collectSource(key: SourceKey, previous: MonitorData, optio
   const request = options.fetchText ?? fetchOfficialText;
   const requestLogs: RequestLog[] = [], errors:string[] = [], incoming:Paper[] = [];
   let validPages = 0, truncated = false;
-  async function page(url:string, query:string, track:string, parse:(body:string) => {papers:Paper[];total:number;next?:string}): Promise<{papers:Paper[];total:number;next?:string} | null> {
+  type ParsedPage = {papers:Paper[];total:number;next?:string;exhausted?:boolean;received?:number};
+  async function page(url:string, query:string, track:string, parse:(body:string) => ParsedPage): Promise<ParsedPage | null> {
     const log:RequestLog = {url,source:run.source,runId:run.id,collectedAt:startedAt,query,track,status:"error"};
     requestLogs.push(log);
     try {
       const response = await request(url);
       log.httpStatus = response.httpStatus; log.attempts = response.attempts;
       const result = parse(response.body);
-      validPages++; run.received += result.papers.length; incoming.push(...result.papers);
-      log.status = "ok"; log.hitCount = result.total; log.retrieved = result.papers.length;
+      validPages++; run.received += result.received ?? result.papers.length; incoming.push(...result.papers);
+      log.status = "ok"; log.hitCount = result.total; log.retrieved = result.received ?? result.papers.length;
+      if (result.received !== undefined) log.categoryMatched = result.papers.length;
       return result;
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
@@ -157,19 +160,19 @@ export async function collectSource(key: SourceKey, previous: MonitorData, optio
       for (let index = 0; index < 3; index++) {
         const url = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?"+new URLSearchParams({query,format:"json",resultType:"core",pageSize:"100",cursorMark:cursor});
         const result = await page(url,query,track,body => {
-          const data = parseJsonResponse(body,"Europe PMC");
-          if (!Number.isSafeInteger(data.hitCount) || data.hitCount < 0 || !Array.isArray(data.resultList?.result)) throw new Error("Europe PMC 返回了无法识别的结果");
-          if (data.hitCount > received && !data.resultList.result.length) throw new Error("Europe PMC 声明仍有结果，但返回空页");
-          return {papers:data.resultList.result.map((hit:any) => parseEpmc(hit,url,startedAt,track)),total:data.hitCount,next:data.nextCursorMark};
+          const data = parseEpmcPage(body,cursor,received);
+          return {papers:data.hits.map((hit:any) => parseEpmc(hit,url,startedAt,track)),total:data.total,next:data.next,exhausted:data.exhausted};
         });
         if (!result) break;
         total = result.total; received += result.papers.length;
         requestLogs[requestLogs.length-1].truncated = received < total;
-        if (received >= total) break;
-        if (!result.next || result.next === cursor) {
-          errors.push(`${track}: Europe PMC 未提供有效的下一页游标，已保留已返回记录`); break;
+        if (result.exhausted) {
+          requestLogs[requestLogs.length-1].paginationExhausted = true;
+          requestLogs[requestLogs.length-1].countDiscrepancy = Math.max(0,total-received);
+          break;
         }
-        cursor = result.next;
+        if (received >= total) break;
+        cursor = result.next!;
       }
       run.total! += total; truncated ||= received < total;
     }
@@ -192,19 +195,62 @@ export async function collectSource(key: SourceKey, previous: MonitorData, optio
   } else {
     run.query = `radiology and imaging; ${since} → ${to}; 本地10个感兴趣方向规则筛选`;
     run.coverage = "仅 radiology and imaging 分类，最多240条版本记录；来源日期是该版本发布时间。";
+    const medPage = (url:string, track:string) => page(url,run.query,track,body => {
+      const {hits,total} = parseMedrxivPage(body);
+      // The alternate official API ignores the category query parameter.
+      // Filter BOTH hosts locally and advance cursors by raw rows, not matches.
+      const matches = hits.filter(hit => typeof hit.category === "string" && hit.category.toLowerCase().replace(/_/g," ").trim() === "radiology and imaging");
+      return {papers:matches.map(hit => parseMedrxiv(hit,url,startedAt)),total,received:hits.length};
+    });
     let cursor = 0;
     for (let index = 0; index < 8; index++) {
       const url = `https://api.biorxiv.org/details/medrxiv/${since}/${to}/${cursor}/json?category=radiology%20and%20imaging`;
-      const result = await page(url,run.query,"radiology-and-imaging",body => {
-        const {hits,total} = parseMedrxivPage(body);
-        return {papers:hits.map(hit => parseMedrxiv(hit,url,startedAt)),total};
-      });
+      const result = await medPage(url,"radiology-and-imaging");
       if (!result) break;
-      cursor += result.papers.length; run.total = result.total;
+      cursor += result.received!; run.total = result.total;
       requestLogs[requestLogs.length-1].truncated = cursor < result.total;
       if (cursor >= result.total) break;
     }
     truncated = cursor < (run.total ?? 0);
+    if (errors.length) {
+      const primaryErrors = errors.splice(0), primaryFailures = requestLogs.filter(log => log.status === "error");
+      const fallbackUrl = (offset:number) => `https://api.medrxiv.org/details/medrxiv/${since}/${to}/${offset}/json`;
+      const first = await medPage(fallbackUrl(0),"radiology-and-imaging-fallback");
+      if (!first) errors.unshift(...primaryErrors);
+      else {
+        run.coverage = "主接口不可用，已通过官方 api.medrxiv.org 补充；在全部分类结果中本地筛选 radiology and imaging，最多扫描60页并保留240条匹配版本记录。";
+        // Retain the original failure in the audit log without treating a
+        // recovered request as a current source outage.
+        primaryFailures.forEach(log => {log.recoveredBy = "https://api.medrxiv.org";});
+        let scanned = first.received!;
+        run.total = first.total;
+        const pageSize = first.received!;
+        // The API returns date-ordered rows. Read from the final page backward
+        // after discovering the actual page size, so the request budget does
+        // not consume only the oldest part of a long catch-up window.
+        let offset = pageSize ? Math.floor(Math.max(0,first.total-1)/pageSize)*pageSize : 0;
+        for (let index = 1; offset > 0 && index < 60; index++, offset -= pageSize) {
+          const result = await medPage(fallbackUrl(offset),"radiology-and-imaging-fallback");
+          if (!result) break;
+          scanned += result.received!; run.total = result.total;
+        }
+        truncated = scanned < (run.total ?? 0);
+        requestLogs[requestLogs.length-1].truncated = truncated;
+        requestLogs[requestLogs.length-1].fallbackScanned = scanned;
+      }
+    }
+    // A late primary failure makes the backup replay already received rows.
+    // Count each paper version once before applying the version-record budget,
+    // keeping provenance from both official endpoints on replayed versions.
+    const versions = new Map<string,Paper>();
+    for (const paper of incoming) {
+      const key = JSON.stringify([paper.id,paper.version]);
+      const existing = versions.get(key);
+      versions.set(key,existing ? mergeRecord(existing,paper) : paper);
+    }
+    const versionRecords = [...versions.values()].sort((a,b) => b.publishedAt.localeCompare(a.publishedAt));
+    if (versionRecords.length > 240) {versionRecords.splice(240); truncated = true;}
+    incoming.splice(0,incoming.length,...versionRecords);
   }
   const retained = incoming.filter(p => p.title && p.publishedAt && relevant(p.title,p.abstract) && p.tracks.length);
   const papers = mergePapers([],retained).papers;

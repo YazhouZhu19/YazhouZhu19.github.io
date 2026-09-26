@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { buildDashboard, defaultDashboardFilters } from "../lib/dashboard";
 import { TRACKS } from "../lib/classify";
-import type { MonitorData, Paper } from "../lib/types";
+import type { MonitorData, Paper, SyncRun } from "../lib/types";
 
 const now = new Date("2026-09-18T04:00:00Z");
 const initialAt = "2026-09-10T01:00:00Z";
@@ -75,4 +75,37 @@ test("source and interest intersection remains consistent in every date bucket",
   assert.equal(result.trend.reduce((sum, row) => sum + row.all, 0), 1);
   assert.equal(result.trend.reduce((sum, row) => sum + row.preprint, 0), 1);
   assert.equal(result.trend.reduce((sum, row) => sum + row.published, 0), 0);
+});
+
+
+test("source health distinguishes request failures from retrieval limits and preserves the last real success", () => {
+  const run = (source: string, completedAt: string, overrides: Partial<SyncRun> = {}): SyncRun => ({
+    id: `${source}-${completedAt}`, source, startedAt: completedAt, completedAt, status: "ok",
+    received: 10, kept: 10, added: 0, updated: 0, total: 10, query: "test", dateFrom: "", dateTo: "2026-09-18", coverage: "test", ...overrides,
+  });
+  const data = sample();
+  const successfulAt = "2026-09-18T01:00:00Z";
+  // Runs are deliberately not in order: the most recent attempt must determine health.
+  data.runs = [
+    run("Europe PMC", successfulAt),
+    run("Europe PMC", "2026-09-18T03:00:00Z", { status: "partial", error: "HTTP 503" }),
+    run("arXiv", "2026-09-18T03:00:00Z", { status: "partial", total: 1000, coverage: "retrieval cap" }),
+    run("medRxiv", "2026-09-18T03:00:00Z", { status: "error", error: "HTTP 503", received: 0, kept: 0 }),
+  ];
+  const sources = buildDashboard(data, [], defaultDashboardFilters, now).sources;
+  const europe = sources.find(s => s.name === "Europe PMC")!;
+  assert.equal(europe.state, "部分失败");
+  assert.equal(europe.warning, true);
+  assert.equal(europe.limited, false);
+  assert.equal(europe.updatedAt, successfulAt);
+  const arxiv = sources.find(s => s.name === "arXiv")!;
+  assert.equal(arxiv.state, "有限覆盖");
+  assert.equal(arxiv.warning, false);
+  assert.equal(arxiv.limited, true);
+  assert.equal(arxiv.updatedAt, "2026-09-18T03:00:00Z");
+  const medrxiv = sources.find(s => s.name === "medRxiv")!;
+  assert.equal(medrxiv.state, "同步失败");
+  assert.equal(medrxiv.updatedAt, null);
+  const noRuns = buildDashboard(sample(), [], defaultDashboardFilters, now).sources;
+  assert.ok(noRuns.every(s => s.updatedAt === null));
 });

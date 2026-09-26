@@ -72,12 +72,14 @@ export function buildDashboard(data: MonitorData, teams: Team[], filters: Dashbo
   })) }));
   const methods = [...new Set(rows.flatMap(p => p.methods))].map(name => ({ name, papers: rows.filter(p => p.methods.includes(name)) })).sort((a, b) => b.papers.length - a.papers.length);
   const sources = ["Europe PMC", "arXiv", "medRxiv"].map(name => {
-    const last = data.runs.find(r => r.source === name);
-    const success = data.runs.find(r => r.source === name && r.status !== "error");
-    const updatedAt = success?.completedAt ?? data.collectedAt;
-    const stale = now.getTime() - Date.parse(updatedAt) > dayMs;
-    const state = !data.storageAvailable ? "快照模式" : last?.status === "error" ? "同步失败" : stale ? "超过 24 小时" : !last ? "尚无增量同步" : last.status === "partial" ? "有限覆盖" : "窗口采集完成";
-    return { name, state, updatedAt, warning: !data.storageAvailable || stale || last?.status === "error", limited: last?.status === "partial", initial: !success, count: data.papers.filter(p => p.sources.includes(name)).length };
+    const sourceRuns = data.runs.filter(r => r.source === name).sort((a, b) => b.completedAt.localeCompare(a.completedAt));
+    const last = sourceRuns[0];
+    const success = sourceRuns.find(r => r.status !== "error" && !r.error);
+    const updatedAt = success?.completedAt ?? null;
+    const stale = !!updatedAt && now.getTime() - Date.parse(updatedAt) > dayMs;
+    const failed = last?.status === "error" || !!last?.error;
+    const state = last?.status === "error" ? "同步失败" : last?.error ? "部分失败" : !data.storageAvailable ? "快照模式" : stale ? "超过 24 小时" : !last ? "尚无增量同步" : last.status === "partial" ? "有限覆盖" : "窗口采集完成";
+    return { name, state, updatedAt, warning: !data.storageAvailable || stale || failed, limited: last?.status === "partial" && !failed, initial: !success, count: data.papers.filter(p => p.sources.includes(name)).length };
   });
   return { rows, start: from, observedFrom, end: today, initialCount, newToday, directions, published, preprints, teamRows, matched, status, known, preprintRate, trend: [...buckets.values()], monthly, modalities, matrix, methods, sources, futureCount: pool.filter(p => dateOf(p) > today).length };
 }

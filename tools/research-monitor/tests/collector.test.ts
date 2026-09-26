@@ -67,7 +67,7 @@ test("empty medRxiv HTTP-200 body is an error, while explicit zero count is a va
 test("one failed source retains all previous papers and records a real source error", async () => {
   const oldMed = paper({doi:"10.1000/old-med",source:"medRxiv"});
   const fetchText:FetchText = async url => {
-    if (url.includes("api.biorxiv.org")) return {body:"",httpStatus:200,attempts:1};
+    if (/api\.(?:bio|med)rxiv\.org/.test(url)) return {body:"",httpStatus:200,attempts:1};
     if (url.includes("arxiv")) return {body:atom(),httpStatus:200,attempts:1};
     return {body:JSON.stringify({hitCount:0,resultList:{result:[]}}),httpStatus:200,attempts:1};
   };
@@ -93,7 +93,7 @@ test("a failed later page records partial and keeps already validated records", 
   let call = 0;
   const result = await collectSource("medrxiv",previous(),{now:new Date(now),fetchText:async () => {
     if (call++ > 0) throw new Error("network unavailable");
-    return {body:JSON.stringify({messages:[{status:"ok",total:60}],collection:[{doi:"10.1000/new",title:"Medical image segmentation",abstract:"MRI brain segmentation",authors:"A; B",date:"2026-09-16",version:1}]}),httpStatus:200,attempts:1};
+    return {body:JSON.stringify({messages:[{status:"ok",total:60}],collection:[{doi:"10.1000/new",title:"Medical image segmentation",abstract:"MRI brain segmentation",authors:"A; B",date:"2026-09-16",version:1,category:"radiology and imaging"}]}),httpStatus:200,attempts:1};
   }});
   assert.equal(result.run.status,"partial"); assert.match(result.run.error ?? "",/network unavailable/);
   assert.equal(result.papers.length,1); assert.equal(result.run.received,1);
