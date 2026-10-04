@@ -32,7 +32,11 @@ npm run build
 npm run preview
 ```
 
-`data/papers.json` is the persistent public metadata snapshot. Do not replace it with an empty seed on every run. The build copies it to `dist/data/papers.json`; the workflow publishes `dist/` into the repository's `/research-monitor/` subtree. Both locale entry HTML files are built explicitly. Do not commit `node_modules`, private backups, credentials, or `.test-build`.
+`data/papers.json` is the persistent snapshot manifest. Its metadata and content-addressed `data/papers/<sha256>.json` shards preserve the complete paper library, with each file limited to 4 MiB. The collector reads legacy single-file snapshots too, and writes the sharded format atomically without dropping history. Do not replace the snapshot with an empty seed. The build copies the manifest and shards into `dist/data/`; the workflow publishes `dist/` into `/research-monitor/`. Both locale entry HTML files are built explicitly. Do not commit `node_modules`, private backups, credentials, or `.test-build`.
+
+The browser fetches the manifest fresh and loads at most four immutable shards concurrently, verifying byte lengths, SHA-256 hashes, counts and unique paper IDs before showing a complete snapshot. It retains the existing displayed data if any shard fails. One previous generation of shards is retained for clients spanning a deployment. The dashboard still loads the complete library for its existing searches and aggregate statistics.
+
+Use `npx tsx scripts/snapshot-cli.ts check data/papers.json` to verify a snapshot, `migrate data/papers.json` to convert a legacy file without fetching sources, or `export data/papers.json /tmp/papers.json` to reconstruct a single temporary JSON for inspection. Never commit the exported monolith. The workflow checks all staged files against GitHub's 100 MiB limit before committing.
 
 Tests cover source parsing, DOI/native identifier merging, version history, outages, preservation of stored papers, local CRUD, import/export, quota and malformed-data protection, and compatibility of the actual public snapshot. `COLLECTOR.md` documents search bounds and provenance.
 

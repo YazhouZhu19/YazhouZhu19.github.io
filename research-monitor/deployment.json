@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "runId": "36793822372",
+  "runId": "repair-2026-10-04",
   "runAttempt": "1",
-  "sourceRevision": "ad2d3951342471f430cf0b184225aa1476f8a0ae",
-  "papersSha256": "cd90dc9a1a3b8b16865821bda3e0d8bde20e33f9ebb09d9d3cd29f20de30e6f7"
+  "sourceRevision": "986ebba35b3461e1d458449b157f1d4f51f60f9c",
+  "papersSha256": "4df4e0bf3a7f2add032337dcb5864ef850cd11f8a6dccd2db91411ffc9e16206"
 }

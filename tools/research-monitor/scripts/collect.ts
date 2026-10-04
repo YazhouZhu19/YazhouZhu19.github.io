@@ -1,8 +1,7 @@
-import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-import { randomUUID } from "node:crypto";
+import { resolve } from "node:path";
 import { collectAll } from "../lib/collect";
 import { parseMonitorData } from "../lib/record";
+import { readSnapshotFile, writeSnapshotFile } from "./snapshot-files";
 
 function argumentsFor(argv:string[]) {
   let input = "data/papers.json", output = "data/papers.json";
@@ -21,12 +20,9 @@ function argumentsFor(argv:string[]) {
 async function main() {
   const {input,output} = argumentsFor(process.argv.slice(2));
   // Missing/invalid input is fatal. Never silently replace the public library with an empty one.
-  const previous = parseMonitorData(JSON.parse(await readFile(input,"utf8")));
+  const previous = parseMonitorData(await readSnapshotFile(input));
   const {data,allFailed,outcomes} = await collectAll(previous);
-  await mkdir(dirname(output),{recursive:true});
-  const temporary = `${output}.${randomUUID()}.tmp`;
-  try { await writeFile(temporary,JSON.stringify(data,null,2)+"\n","utf8"); await rename(temporary,output); }
-  finally { await rm(temporary,{force:true}); }
+  await writeSnapshotFile(output,data);
   for (const {run} of outcomes) {
     const stored = data.runs.find(candidate => candidate.id === run.id)!;
     console.log(JSON.stringify({source:stored.source,status:stored.status,received:stored.received,kept:stored.kept,added:stored.added,updated:stored.updated,error:stored.error ?? null}));

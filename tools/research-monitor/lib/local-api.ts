@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Collection, MonitorData, Team } from "@/lib/types";
+import { resolveSnapshot, SnapshotFormatError } from "@/lib/snapshot";
 
 // A single key keeps an import (collections and teams together) atomic.
 export const LOCAL_DATA_KEY = "medical-research-monitor:personal:v1";
@@ -191,6 +192,22 @@ async function readPublicData(init?: RequestInit): Promise<LocalMonitorData> {
     if (error instanceof Error && error.name === "AbortError") throw error;
     throw new Error(LOCAL_ERRORS.network);
   }
+  try {
+    raw = await resolveSnapshot(raw, async path => {
+      try {
+        const response = await fetch(import.meta.env.BASE_URL + "data/" + path, { cache: "force-cache", credentials: "omit", signal: init?.signal });
+        if (!response.ok) throw new Error(LOCAL_ERRORS.network);
+        return await response.text();
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") throw error;
+        throw new Error(LOCAL_ERRORS.network);
+      }
+    });
+  } catch (error) {
+    if (error instanceof SnapshotFormatError) throw new Error(LOCAL_ERRORS.publicData);
+    throw error;
+  }
+  init?.signal?.throwIfAborted();
   const result = monitorDataSchema.safeParse(raw);
   if (!result.success) throw new Error(LOCAL_ERRORS.publicData);
   knownPaperIds = new Set(result.data.papers.map(paper => paper.id));

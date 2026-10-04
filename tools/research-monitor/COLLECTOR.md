@@ -8,7 +8,7 @@ npx tsx scripts/collect.ts --input data/papers.json --output data/papers.json
 node --import tsx --test tests/collector.test.ts
 ```
 
-`--input` and `--output` each default to `data/papers.json`, relative to the current working directory. Input is required and must be a `MonitorData` object (the legacy seed `{papers, collectedAt, queryRuns}` shape also works). An absent or invalid input fails without writing; initialize the repository from the existing public library before scheduling collection. Do not initialize from an empty file on every Actions run.
+`--input` and `--output` each default to `data/papers.json`, relative to the current working directory. Input is required and can be a sharded snapshot manifest, a `MonitorData` object, or the legacy seed `{papers, collectedAt, queryRuns}`. Manifest paths resolve relative to the input file; every referenced shard is checked for byte length, checksum and count before collection. Output is a compact manifest plus content-addressed `papers/<sha256>.json` shards, each at most 4 MiB. All paper fields and history are preserved; shards are written before the manifest is atomically replaced, and one previous generation is retained. An absent, invalid or incomplete input fails without writing; initialize from the existing public library, never an empty file on every Actions run.
 
 The output is written to a temporary sibling file and atomically renamed only after every source has produced an outcome. Use GitHub Actions `concurrency` to serialize collection so two jobs cannot commit conflicting snapshots.
 

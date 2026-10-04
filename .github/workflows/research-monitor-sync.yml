@@ -71,11 +71,12 @@ jobs:
             (
               cd tools/research-monitor
               npm ci
-              cp data/papers.json "$RUNNER_TEMP/research-before-collect.json"
+              node --import tsx scripts/snapshot-cli.ts export data/papers.json "$RUNNER_TEMP/research-before-collect.json"
               python3 -c 'import time; print(time.time_ns() // 1000000)' > "$RUNNER_TEMP/research-collect-start-ms"
               collect_exit=0
               npm run collect || collect_exit=$?
               echo "$collect_exit" > "$RUNNER_TEMP/research-collect-exit"
+              node --import tsx scripts/snapshot-cli.ts export data/papers.json "$RUNNER_TEMP/research-after-collect.json"
               if [ "$collect_exit" -ne 0 ]; then
                 # The CLI intentionally exits 1 after atomically recording a
                 # failed attempt for all three sources. Publish those failures,
@@ -89,7 +90,7 @@ jobs:
 
           temp = Path(os.environ['RUNNER_TEMP'])
           before_bytes = (temp / 'research-before-collect.json').read_bytes()
-          after_bytes = Path('data/papers.json').read_bytes()
+          after_bytes = (temp / 'research-after-collect.json').read_bytes()
           before, after = json.loads(before_bytes), json.loads(after_bytes)
           started_ms = int((temp / 'research-collect-start-ms').read_text())
 
@@ -134,6 +135,7 @@ jobs:
           PY
               fi
               npm test
+              python3 -m unittest discover -s tests -p '*_test.py'
               npm run build
             )
             collection_failed=false
@@ -145,7 +147,11 @@ jobs:
           import hashlib
           import json
           import os
+          import sys
           from pathlib import Path
+
+          sys.path.insert(0, 'tools/research-monitor/scripts')
+          from snapshot_checks import verify_snapshot
 
           dist = Path('tools/research-monitor/dist')
           if dist.is_symlink():
@@ -158,6 +164,8 @@ jobs:
           json.loads(public_data)
           if source_data != public_data:
               raise SystemExit('Public data differs from collected data')
+          verify_snapshot(source_data, lambda path: (Path('tools/research-monitor/data') / path).read_bytes())
+          verify_snapshot(public_data, lambda path: (dist / 'data' / path).read_bytes())
           forbidden = {'node_modules', '.git', '.github', '.env', '.env.local'}
           for path in dist.rglob('*'):
               if path.is_symlink() or forbidden.intersection(path.parts):
@@ -178,15 +186,17 @@ jobs:
             mkdir -p research-monitor
             # Delete obsolete assets only within this generated subtree.
             rsync -a --delete tools/research-monitor/dist/ research-monitor/
-            git add -- tools/research-monitor/data/papers.json research-monitor/
+            git add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ research-monitor/
 
             python3 - <<'PY'
           import subprocess
           paths = subprocess.check_output(['git', 'diff', '--cached', '--name-only', '-z']).decode().split('\0')
           for path in filter(None, paths):
-              if path != 'tools/research-monitor/data/papers.json' and not path.startswith('research-monitor/'):
+              if path != 'tools/research-monitor/data/papers.json' and not path.startswith(('tools/research-monitor/data/papers/', 'research-monitor/')):
                   raise SystemExit(f'Unexpected staged file: {path}')
           PY
+
+            node tools/research-monitor/scripts/check-file-sizes.mjs
 
             if ! git diff --cached --quiet; then
               git commit -m 'chore: refresh research monitor data and site'
@@ -227,11 +237,15 @@ jobs:
           import json
           import os
           import subprocess
+          import sys
           import time
           import urllib.error
           import urllib.parse
           import urllib.request
           from pathlib import Path
+
+          sys.path.insert(0, 'tools/research-monitor/scripts')
+          from snapshot_checks import verify_snapshot, MAX_BYTES
 
           expected_commit = os.environ['EXPECTED_COMMIT']
           expected_manifest = json.loads(Path('research-monitor/deployment.json').read_text())
@@ -280,13 +294,14 @@ jobs:
                       build_ready = True
                       live_manifest = json.loads(read_public('deployment.json', 65536))
                       if live_manifest == expected_manifest:
-                          live_data = read_public('data/papers.json', 100 * 1024 * 1024)
+                          live_data = read_public('data/papers.json', MAX_BYTES)
                           json.loads(live_data)
                           if hashlib.sha256(live_data).hexdigest() == expected_manifest['papersSha256']:
+                              total = verify_snapshot(live_data, lambda path: read_public('data/' + path, MAX_BYTES))
                               for route in ('', 'en/'):
                                   if b'<html' not in read_public(route, 2 * 1024 * 1024).lower():
                                       raise RuntimeError('Published route did not return HTML')
-                              print('Published monitor routes, build marker, and data verified.', flush=True)
+                              print(f'Published monitor routes, build marker, and all shards verified ({total} papers).', flush=True)
                               with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
                                   summary.write(f'Published and verified: {monitor_url}\n\nCommit: `{expected_commit}`\n\nPublic data SHA-256: `{expected_manifest["papersSha256"]}`\n')
                               break
