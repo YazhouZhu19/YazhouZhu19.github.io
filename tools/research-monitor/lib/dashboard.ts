@@ -41,9 +41,9 @@ export function buildDashboard(data: MonitorData, teams: Team[], filters: Dashbo
   const teamIds = new Set(teamRows.flatMap(r => r.papers.map(p => p.id)));
   const matched = rows.filter(p => teamIds.has(p.id));
   const status = [
-    { key: "preprint", label: "预印本", color: "#4f84c5" },
-    { key: "published", label: "正式发表", color: "#119780" },
-    { key: "unknown", label: "状态未确认", color: "#a0aeb9" },
+    { key: "preprint", label: "预印本", color: "#bc7b60" },
+    { key: "published", label: "正式发表", color: "#42765b" },
+    { key: "unknown", label: "状态未确认", color: "#8c9685" },
   ].map(s => ({ ...s, count: rows.filter(p => p.status === s.key).length }));
   const known = status[0].count + status[1].count;
   const preprintRate = known ? status[0].count / known * 100 : null;

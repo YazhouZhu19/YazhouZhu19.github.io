@@ -1,0 +1,429 @@
+/* A quieter, paper-and-forest treatment for the existing analysis views. */
+.preliminary-analysis {
+  color: var(--living-ink, #243e36);
+}
+
+.analysis-controls {
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.analysis-control {
+  gap: 7px;
+}
+
+.analysis-control [data-slot="select-trigger"] {
+  height: 42px;
+  border-color: var(--living-line, #d9ded1);
+  border-radius: 12px;
+  background: var(--living-paper, #fffef8);
+  color: var(--living-ink, #243e36);
+  box-shadow: none;
+}
+
+.analysis-controls > button {
+  height: 42px;
+  border-color: var(--living-line, #d9ded1);
+  border-radius: 12px;
+  background: var(--living-paper, #fffef8);
+  color: #285a48;
+  box-shadow: none;
+}
+
+.analysis-control > label,
+.analysis-scope,
+.analysis-panel-heading p,
+.analysis-panel-heading > span,
+.analysis-topic-share,
+.analysis-panel-note,
+.analysis-combination-head,
+.analysis-combination-name > i,
+.analysis-combination-share > small,
+.analysis-signal-grid small,
+.analysis-reading-heading p,
+.analysis-reading-meta,
+.analysis-reading-reasons,
+.analysis-reading-note,
+.analysis-reading-questions > p,
+.analysis-empty p,
+.analysis-empty-inline {
+  color: #5b6f60;
+}
+
+.analysis-scope {
+  margin-bottom: 22px;
+}
+
+.analysis-observation {
+  padding: 29px 30px;
+  margin-bottom: 18px;
+  border: 1px solid #2c5142;
+  border-radius: var(--living-radius, 22px);
+  background: radial-gradient(ellipse at 100% 0%, #365c45 0%, transparent 62%), #1d4136;
+  color: #f5f6ec;
+  box-shadow: 0 9px 26px rgba(29, 65, 54, 0.06);
+}
+
+.analysis-section-kicker h2 {
+  font-weight: 600;
+  letter-spacing: -0.35px;
+}
+
+.analysis-observation .analysis-section-kicker {
+  margin-bottom: 16px;
+  color: var(--living-lime, #e3efb2);
+}
+
+.analysis-observation > p {
+  line-height: 1.95;
+}
+
+.analysis-observation .analysis-observation-next {
+  margin-top: 12px;
+  color: #c7d8cb;
+}
+
+.analysis-observation > button {
+  margin-top: 18px;
+  color: var(--living-lime, #e3efb2);
+}
+
+.analysis-observation > button:hover {
+  color: #ffffff;
+}
+
+.analysis-coverage {
+  padding: 15px 18px;
+  margin-bottom: 24px;
+  border-color: var(--living-line, #d9ded1);
+  border-radius: 15px;
+  background: #edf0e5;
+  color: #536a5d;
+}
+
+.analysis-coverage > svg,
+.analysis-coverage summary {
+  color: #285a48;
+}
+
+.analysis-topic-grid,
+.analysis-reading-list {
+  gap: 20px;
+}
+
+.analysis-topic-grid,
+.analysis-combinations {
+  margin-bottom: 22px;
+}
+
+.analysis-panel,
+.analysis-reading-card,
+.analysis-empty {
+  border-color: var(--living-line, #d9ded1);
+  border-radius: var(--living-radius, 22px);
+  background: var(--living-paper, #fffef8);
+  box-shadow: 0 3px 15px rgba(36, 62, 54, 0.025);
+}
+
+.analysis-panel-heading {
+  padding: 24px 24px 16px;
+}
+
+.analysis-panel-heading h2,
+.analysis-reading-heading .analysis-section-kicker,
+.analysis-reading-title,
+.analysis-reading-questions h2,
+.analysis-empty h2 {
+  color: var(--living-ink, #243e36);
+}
+
+.analysis-panel-heading > svg,
+.analysis-reading-heading .analysis-section-kicker > svg,
+.analysis-empty > svg {
+  color: #527d5e;
+}
+
+.analysis-topic-bars {
+  padding: 3px 24px 4px;
+  gap: 12px;
+}
+
+.analysis-topic-name,
+.analysis-signal-grid > button > span {
+  color: #486354;
+}
+
+.analysis-topic-track,
+.analysis-combination-share > i {
+  background: #e8eddf;
+  border-radius: 10px;
+}
+
+.analysis-topic-track > i,
+.analysis-combination-share > i > i {
+  background: #638467;
+  border-radius: 10px;
+}
+
+.analysis-topic-bars b,
+.analysis-combination-table > button > b,
+.analysis-signal-grid strong {
+  color: #285a48;
+}
+
+.analysis-topic-bars > button:hover .analysis-topic-name,
+.analysis-combination-table > button:hover strong,
+.analysis-reading-title:hover {
+  color: #356445;
+}
+
+.analysis-panel-note {
+  margin: 16px 24px 22px;
+}
+
+.analysis-combination-table {
+  margin: 0 24px;
+}
+
+.analysis-combination-head,
+.analysis-combination-table > button,
+.analysis-reading-actions {
+  border-color: #e2e6da;
+}
+
+.analysis-combination-table > button {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.analysis-combination-table > button:hover {
+  background: #f4f5ed;
+}
+
+.analysis-combination-name strong {
+  color: #365545;
+}
+
+.analysis-combination-name small,
+.analysis-combination-share > span {
+  color: #496f52;
+}
+
+.analysis-evidence {
+  margin-bottom: 29px;
+}
+
+.analysis-signal-grid {
+  gap: 12px;
+  margin: 4px 24px 0;
+}
+
+.analysis-signal-grid > button {
+  padding: 18px;
+  border-color: #dde3d3;
+  border-radius: 15px;
+  background: #f3f5e9;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.analysis-signal-grid strong {
+  margin: 9px 0 5px;
+  font-size: 30px;
+  letter-spacing: -0.8px;
+}
+
+.analysis-signal-grid > button > svg {
+  color: #718b70;
+}
+
+.analysis-signal-grid > button:not(:disabled):hover {
+  border-color: #a7b798;
+  background: #edf2de;
+}
+
+.analysis-signal-grid > button:disabled {
+  opacity: 1;
+  background: #f4f3ec;
+  border-style: dashed;
+}
+
+.analysis-reading-heading {
+  margin-bottom: 18px;
+}
+
+.analysis-reading-card {
+  padding: 24px 24px 21px;
+}
+
+.analysis-reading-meta {
+  margin-bottom: 12px;
+}
+
+.analysis-reading-number {
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 9px;
+  background: var(--living-sage, #e6eddb);
+  color: #3b6245;
+}
+
+.analysis-reading-title {
+  line-height: 1.7;
+}
+
+.analysis-reading-title > svg {
+  color: #69806b;
+}
+
+.analysis-reading-reasons > .analysis-reason {
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #eef1e4;
+  color: #506d4d;
+}
+
+.analysis-reading-excerpt {
+  margin: 18px 0 17px;
+  padding-left: 14px;
+  border-color: #b8c59d;
+}
+
+.analysis-reading-excerpt > span {
+  color: #687454;
+}
+
+.analysis-reading-excerpt blockquote {
+  color: #526657;
+  line-height: 1.9;
+}
+
+.analysis-reading-actions {
+  padding-top: 15px;
+  color: #356448;
+}
+
+.analysis-reading-note {
+  margin: 16px 0 26px;
+}
+
+.analysis-reading-questions {
+  padding: 23px 25px;
+  border-color: #d9decc;
+  border-radius: var(--living-radius, 22px);
+  background: #e9eddf;
+}
+
+.analysis-reading-questions ul {
+  color: #4d6455;
+  line-height: 2;
+}
+
+.preliminary-analysis button:focus-visible,
+.preliminary-analysis a:focus-visible {
+  outline-color: #527d5e;
+  outline-offset: 4px;
+}
+
+.analysis-observation button:focus-visible {
+  outline-color: var(--living-lime, #e3efb2);
+}
+
+.paper-preliminary {
+  padding: 23px 24px;
+  border-color: var(--living-line, #d9ded1);
+  border-radius: 18px;
+  background: #f3f5e9;
+}
+
+.paper-preliminary-heading,
+.paper-preliminary h4,
+.paper-extracts dt,
+.paper-signal-evidence strong {
+  color: #365e46;
+}
+
+.paper-preliminary-heading > span,
+.paper-preliminary-note,
+.paper-preliminary-missing,
+.paper-extracts dd.paper-preliminary-missing {
+  color: #5b6f60;
+}
+
+.paper-preliminary-note {
+  margin: 12px 0;
+  line-height: 1.8;
+}
+
+.paper-extracts > div + div {
+  padding-top: 16px;
+  margin-top: 16px;
+  border-color: #dce3d1;
+}
+
+.paper-extracts dd {
+  color: #3f5848;
+  line-height: 1.9;
+}
+
+.paper-signal-evidence blockquote {
+  padding-left: 13px;
+  border-color: #b8c59d;
+  color: #526657;
+  line-height: 1.85;
+}
+
+@media (max-width: 650px) {
+  .analysis-controls {
+    gap: 10px;
+  }
+
+  .analysis-observation {
+    padding: 23px 20px;
+  }
+
+  .analysis-panel-heading {
+    padding: 20px 18px 13px;
+  }
+
+  .analysis-topic-bars {
+    padding: 2px 18px 4px;
+    gap: 11px;
+  }
+
+  .analysis-panel-note {
+    margin: 14px 18px 19px;
+  }
+
+  .analysis-combination-table {
+    margin: 0 18px;
+  }
+
+  .analysis-signal-grid {
+    margin: 3px 18px 0;
+    gap: 9px;
+  }
+
+  .analysis-signal-grid > button {
+    padding: 14px 12px;
+  }
+
+  .analysis-reading-card {
+    padding: 20px 18px 18px;
+  }
+
+  .analysis-reading-questions {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .paper-preliminary {
+    padding: 18px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analysis-signal-grid > button {
+    transition: none;
+  }
+}
