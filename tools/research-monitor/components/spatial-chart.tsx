@@ -1,74 +1,59 @@
-import { memo, useId, useMemo, useState } from "react";
-import { ArrowUpRight, Box, RotateCcw } from "lucide-react";
+import { memo, useId, useMemo, useState, type CSSProperties } from "react";
+import { ArrowUpRight, CircleDot } from "lucide-react";
 import { useI18n } from "./locale-provider";
 import "@/styles/spatial-charts.css";
 
 export type SpatialDatum = { id: string; label: string; count: number; detail?: string; group?: string };
 type Props = { title: string; data: SpatialDatum[]; columns?: string[]; onOpen: (id: string) => void; compact?: boolean };
 
-/** Orthographic cuboids: only height encodes count, with a common zero and linear scale. */
+/** Circle area encodes count. Method dots use a shared linear position scale. */
 export const SpatialChart = memo(function SpatialChart({ title, data, columns, onOpen, compact }: Props) {
   const { locale } = useI18n();
   const en = locale === "en";
   const uid = useId().replace(/:/g, "");
   const [selectedId, setSelectedId] = useState("");
-  const [angle, setAngle] = useState(24);
-  const [flat, setFlat] = useState(false);
   const [group, setGroup] = useState("*");
   const groups = useMemo(() => [...new Set(data.flatMap(d => d.group ? [d.group] : []))], [data]);
   const activeGroup = groups.includes(group) ? group : "*";
   const visible = useMemo(() => activeGroup === "*" ? data : data.filter(d => d.group === activeGroup), [data, activeGroup]);
   const selected = visible.find(d => d.id === selectedId) ?? visible.find(d => d.count > 0) ?? visible[0];
+  // Keep the full-scope scale when inspecting a single task.
   const maximum = Math.max(1, ...data.map(d => d.count));
-  const ticks = [...new Set([0, Math.ceil(maximum / 2), maximum])];
-  const rowCount = columns && activeGroup === "*" ? groups.length : 1;
-  const colCount = columns?.length ?? Math.max(1, visible.length);
-  const step = Math.min(62, 500 / colCount);
-  const depthX = flat ? 0 : angle * .68;
-  const depthY = flat ? 0 : 14;
-  const barDepth = flat ? 0 : 9;
-  const height = rowCount > 1 ? 120 : 148;
-  const base = height + rowCount * depthY + 28;
-  const width = colCount * step + rowCount * depthX + 66;
-  const totalHeight = base + 43;
-  const project = (col: number, row: number, h = 0) => [42 + col * step + row * depthX, base - row * depthY - h];
-  const point = (x: number, y: number) => `${x},${y}`;
-  const geometries = visible.map((item, i) => ({ item, i, row: Math.floor(i / colCount), col: i % colCount })).sort((a, b) => b.row - a.row || a.col - b.col);
   const inspect = (id: string) => setSelectedId(id);
   const open = (item: SpatialDatum) => { inspect(item.id); if (item.count) onOpen(item.id); };
+  const accessibleLabel = (item: SpatialDatum) => en ? `View ${item.label}: ${item.count.toLocaleString(locale)} records` : `查看${item.label}：${item.count.toLocaleString(locale)}条记录`;
+  const mode = columns ? (en ? "DOT MATRIX" : "交叉点阵") : compact ? (en ? "METHOD PROFILE" : "方法比较") : (en ? "RESEARCH BUBBLES" : "气泡分布");
   return <div className={`spatial-chart${compact ? " spatial-compact" : ""}`}>
-    <div className="spatial-toolbar">
-      <span className="spatial-mode"><Box size={13} />{flat ? "2D" : "3D"}<span>{en ? "RESEARCH ATLAS" : "研究分布"}</span></span>
-      <div className="spatial-controls">
-        {!!groups.length && <select aria-label={en ? `${title}: task layer` : `${title}：任务层`} value={activeGroup} onChange={e => { setGroup(e.target.value); if (e.target.value === "*") setFlat(false); }}><option value="*">{en ? "All tasks" : "全部任务"}</option>{groups.map(g => <option key={g}>{g}</option>)}</select>}
-        <button className="spatial-toggle" onClick={() => { if (!flat && groups.length && activeGroup === "*") setGroup(groups[0]); setFlat(v => !v); }} aria-pressed={flat} title={en ? "Switch between spatial and flat views" : "切换立体与平面视图"}>{flat ? "3D" : "2D"}</button>
-        <button className="spatial-reset" aria-label={en ? `Reset ${title} view` : `重置${title}视角`} onClick={() => { setAngle(24); setFlat(false); setGroup("*"); }}><RotateCcw size={13} /></button>
+    <div className="spatial-toolbar"><span className="spatial-mode"><CircleDot size={14} />{mode}</span>
+      {!!groups.length && <select aria-label={en ? `${title}: task filter` : `${title}：任务筛选`} value={activeGroup} onChange={e => setGroup(e.target.value)}><option value="*">{en ? "All tasks" : "全部任务"}</option>{groups.map(g => <option key={g}>{g}</option>)}</select>}
+    </div>
+    {columns ? <>
+      <div className="dot-matrix-scroll" tabIndex={0} role="region" aria-label={en ? `${title}: scrollable chart` : `${title}：可横向滚动的图表`}>
+        <div className="dot-matrix" style={{ "--matrix-cols": columns.length, "--label-width": en ? "176px" : "126px" } as CSSProperties}>
+          <div className="dot-matrix-row dot-matrix-head"><span>{en ? "TASK / MODALITY" : "任务 / 模态"}</span>{columns.map(column => <span key={column} title={column}>{column}</span>)}</div>
+          {(activeGroup === "*" ? groups : [activeGroup]).map(name => <div className="dot-matrix-row" key={name}>
+            <span className="dot-row-name">{name}</span>{visible.filter(d => d.group === name).map(item => <button key={item.id} className={`dot-cell${selected?.id === item.id ? " is-selected" : ""}`} aria-label={accessibleLabel(item)} title={`${item.label} · ${item.count.toLocaleString(locale)}`} onFocus={() => inspect(item.id)} onPointerEnter={() => inspect(item.id)} onClick={() => open(item)} data-count={item.count}>
+              <svg viewBox="0 0 42 42" aria-hidden="true">{item.count ? <circle className="dot-core" cx="21" cy="21" r={17 * Math.sqrt(item.count / maximum)} /> : <circle className="dot-zero" cx="21" cy="21" r="2.5" />}</svg>
+              <span className="dot-value" aria-hidden="true">{item.count.toLocaleString(locale)}</span>
+            </button>)}
+          </div>)}
+        </div>
       </div>
-    </div>
-    <div className="spatial-stage">
-      <svg viewBox={`0 0 ${width} ${totalHeight}`} role="img" aria-label={en ? `${title}. Bar height shows record count. Use the controls below for exact values and papers.` : `${title}。柱高表示记录数，可在下方选择项目，查看精确数量与论文。`}>
-        <defs><linearGradient id={`${uid}face`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#d3e5f4" stopOpacity=".64" /><stop offset="1" stopColor="#7797b4" stopOpacity=".16" /></linearGradient><linearGradient id={`${uid}active`} x1="0" y1="0" x2="0" y2="1"><stop stopColor="#eff9ff" stopOpacity=".95" /><stop offset="1" stopColor="#a7ceee" stopOpacity=".38" /></linearGradient></defs>
-        {ticks.map(tick => { const [x, y] = project(0, 0, tick / maximum * height); const [farX, farY] = project(colCount, Math.max(0, rowCount - 1), tick / maximum * height); return <g key={tick} className="spatial-grid"><path d={`M${x - 8},${y} H${42 + colCount * step} L${farX},${farY}`} /><text x={x - 15} y={y + 3} textAnchor="end">{tick.toLocaleString(locale)}</text></g>; })}
-        {Array.from({ length: rowCount }, (_, row) => { const [x, y] = project(0, row); return <path key={row} className="spatial-floor" d={`M${x},${y} h${colCount * step}`} />; })}
-        {geometries.map(({ item, row, col }) => {
-          const [x, y] = project(col, row); const h = item.count / maximum * height; const w = step * .55;
-          const dx = barDepth * angle / 24; const dy = barDepth * .66; const active = selected?.id === item.id;
-          return <g key={item.id} className={`spatial-bar${active ? " is-selected" : ""}`} onPointerEnter={() => inspect(item.id)} onClick={() => open(item)} data-count={item.count}>
-            <title>{item.label}: {item.count.toLocaleString(locale)}{item.detail ? ` · ${item.detail}` : ""}</title>
-            <path className="spatial-bar-hit" d={`M${x - 3},${y + 3} h${w + dx + 6} v${-Math.max(h + dy + 6, 15)} h${-w - dx - 6} Z`} />
-            <polygon className="spatial-face" fill={`url(#${uid}${active ? "active" : "face"})`} points={[point(x, y), point(x + w, y), point(x + w, y - h), point(x, y - h)].join(" ")} />
-            {!flat && <><polygon className="spatial-side" points={[point(x + w, y), point(x + w + dx, y - dy), point(x + w + dx, y - h - dy), point(x + w, y - h)].join(" ")} /><polygon className="spatial-top" points={[point(x, y - h), point(x + w, y - h), point(x + w + dx, y - h - dy), point(x + dx, y - h - dy)].join(" ")} /></>}
-            {rowCount === 1 && <text className="spatial-value" x={x + w / 2} y={y - h - dy - 9} textAnchor="middle">{item.count.toLocaleString(locale)}</text>}
-          </g>;
-        })}
-        {Array.from({ length: colCount }, (_, i) => { const [x, y] = project(i, 0); return <text key={i} className="spatial-axis" x={x + step * .3} y={y + 23} textAnchor="middle">{columns ? String(i + 1).padStart(2, "0") : String(i + 1).padStart(2, "0")}</text>; })}
-      </svg>
-    </div>
-    <p className="spatial-swipe-hint">{en ? "Swipe horizontally to explore the chart" : "横向滑动查看全部柱体"}</p>
-    <div className="spatial-caption"><span>{en ? "Linear height · records" : "柱高线性对应记录数"}{rowCount > 1 && (en ? " · task layers" : " · 纵深为任务层")}</span><label>{en ? "View" : "视角"}<input type="range" min="8" max="40" value={angle} disabled={flat} aria-label={en ? `${title}: viewing angle` : `${title}：视角`} onChange={e => setAngle(Number(e.target.value))} /></label></div>
-    {columns && <div className="spatial-axis-key">{columns.map((c, i) => <span key={c}><b>{String(i + 1).padStart(2, "0")}</b>{c}</span>)}</div>}
-    {selected ? <div className="spatial-readout"><div><label htmlFor={`${uid}pick`}>{en ? "Inspect a data point" : "选择数据点"}</label><select id={`${uid}pick`} value={selected.id} onChange={e => inspect(e.target.value)}>{visible.map((item, i) => <option key={item.id} value={item.id}>{columns ? "" : `${String(i + 1).padStart(2, "0")} · `}{item.label} · {item.count.toLocaleString(locale)}</option>)}</select>{selected.detail && <small>{selected.detail}</small>}</div><strong>{selected.count.toLocaleString(locale)}<small>{en ? "records" : "条记录"}</small></strong><button disabled={!selected.count} onClick={() => onOpen(selected.id)} aria-label={en ? `View ${selected.label}: ${selected.count} records` : `查看${selected.label}：${selected.count}条记录`}>{en ? "Papers" : "查看论文"}<ArrowUpRight size={15} /></button></div> : <p className="spatial-empty">{en ? "No matching data in this range." : "当前范围暂无匹配记录。"}</p>}
-    {!columns && <div className="spatial-legend">{visible.map((item, i) => <button key={item.id} aria-pressed={selected?.id === item.id} onFocus={() => inspect(item.id)} onPointerEnter={() => inspect(item.id)} onClick={() => open(item)}><span>{String(i + 1).padStart(2, "0")}</span>{item.label}<b>{item.count.toLocaleString(locale)}</b></button>)}</div>}
+      <p className="spatial-swipe-hint">{en ? "Swipe horizontally to see every modality" : "横向滑动查看全部模态"}</p>
+      <div className="spatial-axis-key">{columns.map((c, i) => <span key={c}><b>{String(i + 1).padStart(2, "0")}</b>{c}</span>)}</div>
+    </> : compact ? <div className="method-dot-list">{visible.map(item => <button key={item.id} className={selected?.id === item.id ? "is-selected" : ""} aria-label={accessibleLabel(item)} onFocus={() => inspect(item.id)} onPointerEnter={() => inspect(item.id)} onClick={() => open(item)}>
+      <span className="method-dot-label"><span>{item.label}</span><b>{item.count.toLocaleString(locale)}</b></span>
+      <svg viewBox="0 0 320 26" preserveAspectRatio="none" aria-hidden="true"><path className="method-dot-track" d="M9,13 H311" /><path className="method-dot-stem" d={`M9,13 H${9 + item.count / maximum * 302}`} /><circle className="method-dot-end" cx={9 + item.count / maximum * 302} cy="13" r="4.5" /></svg>
+    </button>)} {!!visible.length && <div className="method-dot-scale"><span>0</span><span>{maximum.toLocaleString(locale)} {en ? "records" : "条"}</span></div>}</div> : <div className="bubble-grid" style={{ "--bubble-cols": Math.min(5, Math.max(1, Math.ceil(visible.length / 2))) } as CSSProperties}>{visible.map((item, i) => {
+      const fillId = `${uid}bubble${i}`;
+      return <button key={item.id} className={`bubble-item${selected?.id === item.id ? " is-selected" : ""}`} aria-label={accessibleLabel(item)} onFocus={() => inspect(item.id)} onPointerEnter={() => inspect(item.id)} onClick={() => open(item)} title={`${item.label} · ${item.count.toLocaleString(locale)}${item.detail ? ` · ${item.detail}` : ""}`}>
+        <span className="bubble-index">{String(i + 1).padStart(2, "0")}</span>
+        <svg viewBox="0 0 140 124" aria-hidden="true"><defs><radialGradient id={fillId} cx="32%" cy="25%" r="80%"><stop stopColor="#dcecf8" stopOpacity=".7" /><stop offset=".5" stopColor="#a4c7e3" stopOpacity=".24" /><stop offset="1" stopColor="#779cb9" stopOpacity=".06" /></radialGradient></defs>{item.count ? <circle className="bubble-core" cx="70" cy="60" r={49 * Math.sqrt(item.count / maximum)} fill={`url(#${fillId})`} /> : <circle className="dot-zero" cx="70" cy="60" r="3" />}</svg>
+        <strong>{item.count.toLocaleString(locale)}</strong><span className="bubble-label">{item.label}</span>
+      </button>;
+    })}</div>}
+    <div className="spatial-caption">{compact ? (en ? "Dot position corresponds to record count" : "圆点位置线性对应记录数") : columns ? (en ? "Circle area = records · hollow dot = zero" : "圆面积对应记录数 · 空心点表示 0") : (en ? "Circle area = records · position is for layout only" : "圆面积对应记录数 · 位置仅用于排布")}</div>
+    {selected ? <div className="spatial-readout"><div><label htmlFor={`${uid}pick`}>{en ? "Inspect a data point" : "选择数据点"}</label><select id={`${uid}pick`} value={selected.id} onChange={e => inspect(e.target.value)}>{visible.map((item, i) => <option key={item.id} value={item.id}>{columns ? "" : `${String(i + 1).padStart(2, "0")} · `}{item.label} · {item.count.toLocaleString(locale)}</option>)}</select>{selected.detail && <small>{selected.detail}</small>}</div><strong>{selected.count.toLocaleString(locale)}<small>{en ? "records" : "条记录"}</small></strong><button disabled={!selected.count} onClick={() => onOpen(selected.id)} aria-label={en ? `Open papers for ${selected.label}: ${selected.count} records` : `打开${selected.label}的论文：${selected.count}条记录`}>{en ? "Papers" : "查看论文"}<ArrowUpRight size={15} /></button></div> : <p className="spatial-empty">{en ? "No matching data in this range." : "当前范围暂无匹配记录。"}</p>}
     {columns && <details className="spatial-details"><summary>{en ? "All exact values & paper links" : "展开全部数值与论文入口"}</summary><div>{data.map(item => <button key={item.id} disabled={!item.count} onClick={() => onOpen(item.id)}><span>{item.label}</span><b>{item.count.toLocaleString(locale)}</b><ArrowUpRight size={12} /></button>)}</div></details>}
   </div>;
 });
