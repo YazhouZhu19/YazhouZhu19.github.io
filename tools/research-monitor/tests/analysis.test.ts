@@ -152,3 +152,61 @@ test("reading candidates are unique, limited to six, and expose transparent reas
   assert.ok(result.readingCandidates.every(row => result.scope.rows.includes(row.paper)));
   assert.equal(result.readingCandidates[0].reasons[0].kind, "combination");
 });
+
+test("cached abstract analysis invalidates on source text, review title and identity changes", () => {
+  const record = paper("original", {abstract: "We conducted external validation on an external cohort."});
+  const first = buildPaperAnalysis(record);
+  assert.equal(first.signals[0].id, "external_validation");
+  assert.equal(buildPaperAnalysis(record), first);
+  record.title = "A systematic review of medical imaging";
+  assert.deepEqual(buildPaperAnalysis(record).signals, []);
+  record.title = "Medical imaging research";
+  record.abstract = "Our code is publicly available at https://example.org/code.";
+  assert.deepEqual(buildPaperAnalysis(record).signals.map(signal => signal.id), ["code_availability"]);
+  record.originalAbstract = "No external validation was performed.";
+  assert.deepEqual(buildPaperAnalysis(record).signals, []);
+  record.originalAbstract = "";
+  record.id = "changed";
+  const changed = buildPaperAnalysis(record);
+  assert.equal(changed.paperId, "changed");
+  assert.deepEqual(changed.signals.map(signal => signal.id), ["code_availability"]);
+  assert.deepEqual(first.signals.map(signal => signal.id), ["external_validation"]);
+  // A newer snapshot may reuse an ID while replacing its Paper object.
+  assert.deepEqual(buildPaperAnalysis({...record, abstract: "No code is available."}).signals, []);
+});
+
+test("skipping unused people aggregates leaves every displayed analysis field unchanged", () => {
+  const team: Team = {id: "watch", name: "Watch", members: ["Alice"], institution: "", kind: "持续关注", createdAt: now.toISOString()};
+  const records = Array.from({length: 9}, (_, i) => paper(String(i), {
+    authors: [author("Alice"), author("Bob")],
+    tracks: [i % 2 ? "segmentation" : "diagnosis"], methods: [i % 3 ? "自监督" : "多模态"],
+    abstract: "We conducted external validation on an external cohort. Our code is publicly available at https://example.org/code.",
+  }));
+  const snapshot = data(records);
+  const complete = buildPreliminaryAnalysis(snapshot, filters, [team], now);
+  const fast = buildPreliminaryAnalysis(snapshot, filters, [team], now, {skipPeople: true});
+  const withoutPeople = ({authorsTop, coauthorPairs, coauthorExcludedLargePapers, watchlistMatches, ...visible}: typeof complete) => visible;
+  assert.deepEqual(withoutPeople(fast), withoutPeople(complete));
+  assert.equal(complete.authorsTop.length, 2);
+  assert.equal(complete.coauthorPairs.length, 1);
+  assert.equal(complete.watchlistMatches[0].count, 9);
+  assert.deepEqual([fast.authorsTop, fast.coauthorPairs, fast.watchlistMatches], [[], [], []]);
+  assert.equal(fast.coauthorExcludedLargePapers, 0);
+});
+
+test("six-candidate early exit preserves representative, signal and recent priorities", () => {
+  const records = [
+    paper("a", {tracks: ["segmentation"], methods: ["自监督"], abstract: "We developed an MRI model."}),
+    paper("b", {tracks: ["diagnosis"], methods: ["多模态"], abstract: "We developed a CT model."}),
+    paper("c", {abstract: "We conducted external validation on an external cohort."}),
+    paper("d", {abstract: "We developed an MRI model."}),
+    paper("e", {abstract: "We developed an MRI model."}),
+    paper("f", {abstract: "We developed an MRI model."}),
+    paper("g", {abstract: "We developed an MRI model."}),
+    paper("h"),
+  ];
+  const result = buildPreliminaryAnalysis(data(records), filters, [], now, {skipPeople: true});
+  assert.deepEqual(result.readingCandidates.map(candidate => [candidate.paper.id, candidate.reasons[0].kind]), [
+    ["a", "combination"], ["b", "combination"], ["c", "signal"], ["d", "recent"], ["e", "recent"], ["f", "recent"],
+  ]);
+});

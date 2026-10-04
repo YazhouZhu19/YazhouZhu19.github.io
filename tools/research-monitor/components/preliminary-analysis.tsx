@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
+import { SpatialChart } from "./spatial-chart";
 import { ArrowUpRight, BookOpen, CircleHelp, Filter, Layers3, Search, Telescope } from "lucide-react";
 import { useI18n } from "./locale-provider";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { TRACKS } from "@/lib/classify";
 import { buildPreliminaryAnalysis, type AnalysisCount } from "@/lib/analysis";
 import { defaultDashboardFilters, type DashboardDrill, type DashboardFilters } from "@/lib/dashboard";
 import type { MonitorData, Paper, Team } from "@/lib/types";
-import "@/styles/analysis.css";
 
 const percentage = (value: number) => value > 0 && value < 1 ? "<1" : String(Math.round(value));
 
@@ -47,9 +47,9 @@ function TopicBars({ rows, title, onDrill }: { rows: AnalysisCount[]; title: str
   </section>;
 }
 
-export function PreliminaryAnalysis({ data, teams, filters, onFilters, onDrill, onPaper }: PreliminaryAnalysisProps) {
+export const PreliminaryAnalysis = memo(function PreliminaryAnalysis({ data, teams, filters, onFilters, onDrill, onPaper }: PreliminaryAnalysisProps) {
   const { locale, tr } = useI18n();
-  const m = useMemo(() => buildPreliminaryAnalysis(data, { ...filters, clock: "publication" }, teams), [data, teams, filters.days, filters.track, filters.source]);
+  const m = useMemo(() => buildPreliminaryAnalysis(data, { ...filters, clock: "publication" }, teams, new Date(), { skipPeople: true }), [data, teams, filters.days, filters.track, filters.source]);
   const count = (value: number) => value.toLocaleString(locale);
   const change = (key: "days" | "track" | "source", value: string) => onFilters({ ...filters, clock: "publication", [key]: value });
   const clear = () => onFilters({ days: "all", clock: "publication", track: "all", source: "all" });
@@ -103,11 +103,7 @@ export function PreliminaryAnalysis({ data, teams, filters, onFilters, onDrill, 
 
       <section className="analysis-panel analysis-combinations">
         <div className="analysis-panel-heading"><div><h2>{tr("方向与方法如何组合")}</h2><p>{tr("按当前样本中的共同出现次数排列；不是新颖性证据，也不是方法效果排名。")}</p></div><Layers3 size={20} /></div>
-        {combinations.length ? <div className="analysis-combination-table"><div className="analysis-combination-head"><span>{tr("方向 × 方法")}</span><span>{tr("记录数")}</span><span>{tr("方向内比例")}</span></div>
-          {combinations.map((row, index) => <button key={row.id} onClick={() => drill(tr("方法组合：{0} × {1}", [tr(row.trackLabel), tr(row.method)]), row.paperIds)}>
-            <span className="analysis-combination-name"><i>{String(index + 1).padStart(2, "0")}</i><span><strong>{tr(row.trackLabel)}</strong><small>{tr(row.method)}</small></span></span>
-            <b>{count(row.count)}</b><span className="analysis-combination-share"><span>{percentage(row.share)}%</span><small>{count(row.count)} / {count(row.denominator)}</small><i><i style={{ width: `${row.share}%` }} /></i></span>
-          </button>)}</div> : <p className="analysis-empty-inline">{tr("当前范围没有识别到方向与方法的组合。可放宽筛选，或直接阅读论文摘要。")}</p>}
+        {combinations.length ? <SpatialChart title={tr("方向与方法如何组合")} data={combinations.map(row => ({ id: row.id, label: `${tr(row.trackLabel)} × ${tr(row.method)}`, count: row.count, detail: `${tr("方向内比例")} ${percentage(row.share)}% · ${count(row.count)} / ${count(row.denominator)}` }))} onOpen={id => { const row = combinations.find(row => row.id === id); if (row) drill(tr("方法组合：{0} × {1}", [tr(row.trackLabel), tr(row.method)]), row.paperIds); }} /> : <p className="analysis-empty-inline">{tr("当前范围没有识别到方向与方法的组合。可放宽筛选，或直接阅读论文摘要。")}</p>}
         <p className="analysis-panel-note">{tr("方向内比例 = 该组合记录数 / 同一筛选范围内该方向的记录数。每篇论文可进入多个组合。")}</p>
       </section>
 
@@ -143,4 +139,4 @@ export function PreliminaryAnalysis({ data, teams, filters, onFilters, onDrill, 
       </ul></section>
     </> : <section className="analysis-empty"><Search size={30} /><h2>{tr("当前范围暂无可分析记录")}</h2><p>{tr("试着扩大日期范围或清除方向与来源筛选；空结果不表示该领域没有研究。")}</p><Button variant="outline" onClick={clear}>{tr("清除筛选，查看全部日期")}</Button></section>}
   </div>;
-}
+});

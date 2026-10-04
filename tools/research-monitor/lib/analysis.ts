@@ -73,7 +73,14 @@ function isSignal(sentence: string, id: EvidenceSignalId): boolean {
   }
   return performed.test(sentence);
 }
+const paperAnalysisCache = new WeakMap<Paper, {
+  id: string; title: string; abstract: string; originalAbstract: Paper["originalAbstract"]; result: PaperAnalysis;
+}>();
+
+/** Snapshot records are immutable; field guards also handle a caller editing one in place. */
 export function buildPaperAnalysis(paper: Paper): PaperAnalysis {
+  const cached = paperAnalysisCache.get(paper);
+  if (cached && cached.id === paper.id && cached.title === paper.title && cached.abstract === paper.abstract && cached.originalAbstract === paper.originalAbstract) return cached.result;
   const abstract = textOnly(paper.originalAbstract?.trim() ? paper.originalAbstract : paper.abstract);
   const lines = sentences(abstract);
   const choose = (pattern: RegExp, reject?: RegExp) => {
@@ -96,7 +103,9 @@ export function buildPaperAnalysis(paper: Paper): PaperAnalysis {
     const line = lines.find(sentence => isSignal(sentence, id));
     return line ? [{id, label: SIGNAL_LABELS[id], excerpt: signalExcerpt(line, id)}] : [];
   });
-  return {paperId: paper.id, hasAbstract: !!abstract, objective, methods, results, signals};
+  const result = {paperId: paper.id, hasAbstract: !!abstract, objective, methods, results, signals};
+  paperAnalysisCache.set(paper, {id: paper.id, title: paper.title, abstract: paper.abstract, originalAbstract: paper.originalAbstract, result});
+  return result;
 }
 
 function validPublicationDay(value: string): string | null {
@@ -117,8 +126,13 @@ function authorIdentity(author: Author): {id: string; name: string; orcid: strin
   return {id: orcid ? `orcid:${orcid}` : `name:${normalized}`, name: name || orcid!, orcid, identityUncertain: !orcid};
 }
 
+export type AnalysisOptions = {
+  /** Omit unused author, coauthor and watchlist aggregates; their result arrays are empty. */
+  skipPeople?: boolean;
+};
+
 /** Always uses publication dates, even when a caller supplies a discovery-clock filter. */
-export function buildPreliminaryAnalysis(data: MonitorData, filters: DashboardFilters, teams: Team[], now = new Date()): PreliminaryAnalysis {
+export function buildPreliminaryAnalysis(data: MonitorData, filters: DashboardFilters, teams: Team[], now = new Date(), options: AnalysisOptions = {}): PreliminaryAnalysis {
   const today = beijingDay(now);
   if (!today) throw new Error("Analysis requires a valid current date");
   const days = Number(filters.days);
@@ -151,7 +165,7 @@ export function buildPreliminaryAnalysis(data: MonitorData, filters: DashboardFi
   const authorMap = new Map<string, AnalysisAuthor>();
   const pairIds = new Map<string, {a: string; b: string; papers: Set<string>}>();
   let coauthorExcludedLargePapers = 0;
-  for (const paper of rows) {
+  if (!options.skipPeople) for (const paper of rows) {
     const seen = new Set<string>();
     for (const author of paper.authors) {
       const identity = authorIdentity(author);
@@ -172,25 +186,38 @@ export function buildPreliminaryAnalysis(data: MonitorData, filters: DashboardFi
   }
   const authorsTop = [...authorMap.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)).slice(0, 12);
   const coauthorPairs: CoauthorPair[] = [...pairIds.entries()].map(([id, pair]) => ({id, a: authorMap.get(pair.a)!, b: authorMap.get(pair.b)!, count: pair.papers.size, paperIds: [...pair.papers]})).sort((a, b) => b.count - a.count || a.id.localeCompare(b.id)).slice(0, 12);
-  const watchlistMatches = teams.map(team => ({team, paperIds: rows.filter(paper => matchesTeam(paper, team)).map(paper => paper.id)})).map(row => ({...row, count: row.paperIds.length})).sort((a, b) => b.count - a.count || a.team.id.localeCompare(b.team.id));
+  const watchlistMatches = options.skipPeople ? [] : teams.map(team => ({team, paperIds: rows.filter(paper => matchesTeam(paper, team)).map(paper => paper.id)})).map(row => ({...row, count: row.paperIds.length})).sort((a, b) => b.count - a.count || a.team.id.localeCompare(b.team.id));
   const readingCandidates: ReadingCandidate[] = [];
   const chosen = new Set<string>(), represented = new Set<string>();
+  const combinationPaperIds = combinations.map(combo => new Set(combo.paperIds));
   const addCandidate = (paper: Paper, initial: ReadingCandidate["reasons"][number]) => {
     if (readingCandidates.length >= 6 || chosen.has(paper.id)) return;
     const analysis = paperAnalyses[paper.id];
     const reasons: ReadingCandidate["reasons"] = [initial];
     for (const signal of analysis.signals) if (reasons.length < 3 && !reasons.some(reason => reason.signalId === signal.id)) reasons.push({kind: "signal", label: signal.label, signalId: signal.id});
     chosen.add(paper.id);
-    for (const combo of combinations) if (combo.paperIds.includes(paper.id)) represented.add(combo.id);
+    combinations.forEach((combo, index) => { if (combinationPaperIds[index].has(paper.id)) represented.add(combo.id); });
     readingCandidates.push({paper, analysis, reasons});
   };
   // Recent representative records diversify combinations; this is not a quality ranking.
-  for (const paper of rows.filter(paper => paperAnalyses[paper.id].hasAbstract)) {
-    const combo = combinations.find(combo => combo.paperIds.includes(paper.id) && !represented.has(combo.id));
+  for (const paper of rows) {
+    if (readingCandidates.length >= 6) break;
+    if (!paperAnalyses[paper.id].hasAbstract) continue;
+    const combo = combinations.find((combo, index) => combinationPaperIds[index].has(paper.id) && !represented.has(combo.id));
     if (combo) addCandidate(paper, {kind: "combination", label: "方向与方法组合代表", trackLabel: combo.trackLabel, method: combo.method});
   }
-  for (const paper of rows.filter(paper => paperAnalyses[paper.id].signals.length)) addCandidate(paper, {kind: "signal", label: paperAnalyses[paper.id].signals[0].label, signalId: paperAnalyses[paper.id].signals[0].id});
-  for (const paper of rows.filter(paper => paperAnalyses[paper.id].hasAbstract)) addCandidate(paper, {kind: "recent", label: "近期来源记录"});
-  for (const paper of rows) addCandidate(paper, {kind: "recent", label: "近期来源记录"});
+  for (const paper of rows) {
+    if (readingCandidates.length >= 6) break;
+    const signal = paperAnalyses[paper.id].signals[0];
+    if (signal) addCandidate(paper, {kind: "signal", label: signal.label, signalId: signal.id});
+  }
+  for (const paper of rows) {
+    if (readingCandidates.length >= 6) break;
+    if (paperAnalyses[paper.id].hasAbstract) addCandidate(paper, {kind: "recent", label: "近期来源记录"});
+  }
+  for (const paper of rows) {
+    if (readingCandidates.length >= 6) break;
+    addCandidate(paper, {kind: "recent", label: "近期来源记录"});
+  }
   return {scope, directions, topics, combinations, signals, authorsTop, coauthorPairs, coauthorExcludedLargePapers, watchlistMatches, paperAnalyses, readingCandidates};
 }

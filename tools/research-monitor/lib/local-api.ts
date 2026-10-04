@@ -182,15 +182,36 @@ export function clearLocalData(): void {
 }
 
 let knownPaperIds: Set<string> | undefined;
+type VerifiedPublicData = z.infer<typeof monitorDataSchema>;
+// A manifest names immutable, checksum-verified shards. Keep only the last
+// validated snapshot, so periodic checks do not parse the same library again.
+let verifiedSnapshot: { manifestKey: string; data: VerifiedPublicData; ids: Set<string> } | undefined;
+
+function withPersonalStorage(data: VerifiedPublicData): LocalMonitorData {
+  const personal = getLocalStorageStatus();
+  return {
+    ...data, storageAvailable: true, publicDataAvailable: true,
+    personalStorageAvailable: personal.available, personalStorageReadable: personal.readable, personalStorageError: personal.error,
+  };
+}
+
 async function readPublicData(init?: RequestInit): Promise<LocalMonitorData> {
   let raw: unknown;
   try {
-    const response = await fetch(import.meta.env.BASE_URL + "data/papers.json", { cache: "no-cache", credentials: "omit", signal: init?.signal });
+    const response = await fetch(import.meta.env.BASE_URL + "data/public-papers-v2.json", { cache: "no-cache", credentials: "omit", signal: init?.signal });
     if (!response.ok) throw new Error(LOCAL_ERRORS.network);
     raw = await response.json();
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") throw error;
     throw new Error(LOCAL_ERRORS.network);
+  }
+  init?.signal?.throwIfAborted();
+  // Compare all manifest metadata and descriptors, not just its timestamp or
+  // paper count. Legacy snapshots have no small manifest and are not cached.
+  const manifestKey = raw && typeof raw === "object" && "schema" in raw ? JSON.stringify(raw) : undefined;
+  if (manifestKey && verifiedSnapshot?.manifestKey === manifestKey) {
+    knownPaperIds = verifiedSnapshot.ids;
+    return withPersonalStorage(verifiedSnapshot.data);
   }
   try {
     raw = await resolveSnapshot(raw, async path => {
@@ -211,11 +232,8 @@ async function readPublicData(init?: RequestInit): Promise<LocalMonitorData> {
   const result = monitorDataSchema.safeParse(raw);
   if (!result.success) throw new Error(LOCAL_ERRORS.publicData);
   knownPaperIds = new Set(result.data.papers.map(paper => paper.id));
-  const personal = getLocalStorageStatus();
-  return {
-    ...result.data, storageAvailable: true, publicDataAvailable: true,
-    personalStorageAvailable: personal.available, personalStorageReadable: personal.readable, personalStorageError: personal.error,
-  };
+  if (manifestKey) verifiedSnapshot = { manifestKey, data: result.data, ids: knownPaperIds };
+  return withPersonalStorage(result.data);
 }
 
 function parseBody<T extends z.ZodTypeAny>(schema: T, init?: RequestInit): z.output<T> {

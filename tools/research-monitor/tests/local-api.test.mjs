@@ -58,7 +58,7 @@ test("public data stays readable when browser storage is blocked; writes fail", 
   assert.equal(result.personalStorageAvailable, false);
   assert.equal(result.personalStorageReadable, false);
   assert.equal(result.personalStorageError, LOCAL_ERRORS.unavailable);
-  assert.equal(fetchCalls[0][0], "/research-monitor/data/papers.json");
+  assert.equal(fetchCalls[0][0], "/research-monitor/data/public-papers-v2.json");
   assert.equal(fetchCalls[0][1].credentials, "omit");
   await assert.rejects(api("/api/teams", { method: "POST", body: JSON.stringify({ name: "Team", members: ["Author"] }) }), { message: LOCAL_ERRORS.unavailable });
 });
@@ -196,7 +196,7 @@ test("shards load the complete ordered library with bounded requests and unchang
   let peak = 0;
   globalThis.fetch = async (url, options) => {
     fetchCalls.push([url, options]);
-    if (url === "/research-monitor/data/papers.json") return new Response(JSON.stringify(fixture.manifest));
+    if (url === "/research-monitor/data/public-papers-v2.json") return new Response(JSON.stringify(fixture.manifest));
     active += 1;
     peak = Math.max(peak, active);
     await new Promise(resolve => setImmediate(resolve));
@@ -229,7 +229,7 @@ test("missing shards reject the whole snapshot without accepting partial paper I
   const partialPaper = { ...paper, id: "partial:1" };
   const fixture = shardedSnapshot([[partialPaper], [{ ...paper, id: "partial:2" }]]);
   globalThis.fetch = async url => {
-    if (url === "/research-monitor/data/papers.json") return new Response(JSON.stringify(fixture.manifest));
+    if (url === "/research-monitor/data/public-papers-v2.json") return new Response(JSON.stringify(fixture.manifest));
     if (url.endsWith(fixture.manifest.shards[1].path)) return new Response("not found", { status: 404 });
     return new Response(fixture.files.get(url));
   };
@@ -241,7 +241,7 @@ test("missing shards reject the whole snapshot without accepting partial paper I
 test("shard fetch failures preserve the public network error", async () => {
   const fixture = shardedSnapshot([[paper]]);
   globalThis.fetch = async url => {
-    if (url === "/research-monitor/data/papers.json") return new Response(JSON.stringify(fixture.manifest));
+    if (url === "/research-monitor/data/public-papers-v2.json") return new Response(JSON.stringify(fixture.manifest));
     throw new TypeError("Failed to fetch");
   };
   await assert.rejects(api("/api/papers"), { message: LOCAL_ERRORS.network });
@@ -264,12 +264,12 @@ test("malformed manifests are rejected before fetching any shards", async () => 
 test("corrupt shard content and invalid assembled records report format errors", async () => {
   const corrupt = shardedSnapshot([[paper]]);
   globalThis.fetch = async url => {
-    if (url === "/research-monitor/data/papers.json") return new Response(JSON.stringify(corrupt.manifest));
+    if (url === "/research-monitor/data/public-papers-v2.json") return new Response(JSON.stringify(corrupt.manifest));
     return new Response(corrupt.files.get(url).replace('"title":"Research"', '"title":"Reseurch"'));
   };
   await assert.rejects(api("/api/papers"), { message: LOCAL_ERRORS.publicData });
   const invalidRecords = shardedSnapshot([[{ ...paper, url: "javascript:alert(1)" }]]);
-  globalThis.fetch = async url => new Response(url === "/research-monitor/data/papers.json" ? JSON.stringify(invalidRecords.manifest) : invalidRecords.files.get(url));
+  globalThis.fetch = async url => new Response(url === "/research-monitor/data/public-papers-v2.json" ? JSON.stringify(invalidRecords.manifest) : invalidRecords.files.get(url));
   await assert.rejects(api("/api/papers"), { message: LOCAL_ERRORS.publicData });
 });
 
@@ -281,7 +281,7 @@ test("aborting shard downloads propagates the caller's AbortError", async () => 
   globalThis.fetch = async (url, options) => {
     fetchCalls.push([url, options]);
     assert.equal(options.signal, controller.signal);
-    if (url === "/research-monitor/data/papers.json") return new Response(JSON.stringify(fixture.manifest));
+    if (url === "/research-monitor/data/public-papers-v2.json") return new Response(JSON.stringify(fixture.manifest));
     options.signal.throwIfAborted();
     return new Promise((resolve, reject) => {
       options.signal.addEventListener("abort", () => reject(options.signal.reason), { once: true });
@@ -301,18 +301,91 @@ test("cancellation during shard verification cannot publish the assembled snapsh
   const fixture = shardedSnapshot([[record]]);
   const controller = new AbortController();
   globalThis.fetch = async url => {
-    if (url === "/research-monitor/data/papers.json") return new Response(JSON.stringify(fixture.manifest));
+    if (url === "/research-monitor/data/public-papers-v2.json") return new Response(JSON.stringify(fixture.manifest));
     return { ok: true, text: async () => { controller.abort(); return fixture.files.get(url); } };
   };
   await assert.rejects(api("/api/papers", { signal: controller.signal }), { name: "AbortError" });
   await assert.rejects(api("/api/collections", { method: "POST", body: JSON.stringify({ paperId: record.id }) }), { message: LOCAL_ERRORS.missingPaper });
 });
 
+test("unchanged manifests reuse verified papers and recheck current personal storage", async () => {
+  const fixture = shardedSnapshot([[{ ...paper, id: "cache:unchanged" }]]);
+  globalThis.fetch = async (url, options) => {
+    fetchCalls.push([url, options]);
+    return new Response(url.endsWith("/public-papers-v2.json") ? JSON.stringify(fixture.manifest) : fixture.files.get(url));
+  };
+  const first = await api("/api/papers");
+  assert.equal(first.personalStorageAvailable, true);
+  assert.equal(fetchCalls.length, 2);
+  fetchCalls.length = 0;
+  local.quota = true;
+  const second = await api("/api/papers");
+  assert.equal(second.papers, first.papers);
+  assert.equal(second.runs, first.runs);
+  assert.equal(second.personalStorageAvailable, false);
+  assert.equal(second.personalStorageError, LOCAL_ERRORS.quota);
+  assert.equal(fetchCalls.length, 1);
+  assert.equal(fetchCalls[0][0], "/research-monitor/data/public-papers-v2.json");
+  assert.equal(fetchCalls[0][1].cache, "no-cache");
+});
+
+test("manifest metadata and shard changes invalidate cache even at the same timestamp and count", async () => {
+  let fixture = shardedSnapshot([[{ ...paper, id: "cache:changed", title: "Before" }]]);
+  globalThis.fetch = async url => {
+    fetchCalls.push(url);
+    return new Response(url.endsWith("/public-papers-v2.json") ? JSON.stringify(fixture.manifest) : fixture.files.get(url));
+  };
+  const first = await api("/api/papers");
+  fixture.manifest.metadata.coverage = "Changed coverage";
+  fetchCalls.length = 0;
+  const metadataUpdate = await api("/api/papers");
+  assert.equal(metadataUpdate.coverage, "Changed coverage");
+  assert.equal(metadataUpdate.collectedAt, first.collectedAt);
+  assert.equal(fetchCalls.length, 2);
+  fixture = shardedSnapshot([[{ ...paper, id: "cache:changed", title: "After" }]]);
+  fetchCalls.length = 0;
+  const paperUpdate = await api("/api/papers");
+  assert.equal(paperUpdate.papers[0].title, "After");
+  assert.equal(paperUpdate.collectedAt, first.collectedAt);
+  assert.equal(paperUpdate.papers.length, first.papers.length);
+  assert.equal(fetchCalls.length, 2);
+});
+
+test("cached data never turns a corrupt new manifest or failed check into success", async () => {
+  const fixture = shardedSnapshot([[{ ...paper, id: "cache:strict" }]]);
+  globalThis.fetch = async url => new Response(url.endsWith("/public-papers-v2.json") ? JSON.stringify(fixture.manifest) : fixture.files.get(url));
+  const first = await api("/api/papers");
+  const invalid = { ...fixture.manifest, totalStored: 900 };
+  globalThis.fetch = async () => new Response(JSON.stringify(invalid));
+  await assert.rejects(api("/api/papers"), { message: LOCAL_ERRORS.publicData });
+  globalThis.fetch = async () => new Response("Unavailable", { status: 503 });
+  await assert.rejects(api("/api/papers"), { message: LOCAL_ERRORS.network });
+  globalThis.fetch = async url => {
+    assert.equal(url, "/research-monitor/data/public-papers-v2.json");
+    return new Response(JSON.stringify(fixture.manifest));
+  };
+  assert.equal((await api("/api/papers")).papers, first.papers);
+});
+
+test("an aborted manifest check cannot return a cached snapshot", async () => {
+  const fixture = shardedSnapshot([[{ ...paper, id: "cache:abort" }]]);
+  globalThis.fetch = async url => new Response(url.endsWith("/public-papers-v2.json") ? JSON.stringify(fixture.manifest) : fixture.files.get(url));
+  await api("/api/papers");
+  const controller = new AbortController();
+  globalThis.fetch = async () => {
+    controller.abort();
+    return new Response(JSON.stringify(fixture.manifest));
+  };
+  await assert.rejects(api("/api/papers", { signal: controller.signal }), { name: "AbortError" });
+});
+
 test("real existing public snapshot passes validation", async () => {
   const snapshotPath = process.env.PUBLIC_SNAPSHOT_PATH ?? fileURLToPath(new URL("../data/papers.json", import.meta.url));
   const existing = JSON.parse(await readFile(snapshotPath, "utf8"));
+  let requests = 0;
   globalThis.fetch = async url => {
-    if (url === "/research-monitor/data/papers.json") return new Response(JSON.stringify(existing));
+    requests += 1;
+    if (url === "/research-monitor/data/public-papers-v2.json") return new Response(JSON.stringify(existing));
     const path = url.slice("/research-monitor/data/".length);
     return new Response(await readFile(join(dirname(snapshotPath), path), "utf8"));
   };
@@ -320,4 +393,9 @@ test("real existing public snapshot passes validation", async () => {
   const result = monitorDataSchema.safeParse(loaded);
   assert.equal(result.success, true, result.success ? "" : JSON.stringify(result.error.issues));
   assert.equal(result.data.papers.length, existing.papers?.length ?? existing.totalStored);
+  if (existing.schema) {
+    const previousRequests = requests;
+    assert.equal((await api("/api/papers")).papers, loaded.papers);
+    assert.equal(requests, previousRequests + 1);
+  }
 });

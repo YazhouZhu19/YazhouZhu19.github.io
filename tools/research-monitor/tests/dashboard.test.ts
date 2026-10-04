@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildDashboard, defaultDashboardFilters } from "../lib/dashboard";
-import { TRACKS } from "../lib/classify";
+import { beijingDay, buildDashboard, buildSourceHealth, defaultDashboardFilters } from "../lib/dashboard";
+import { TASKS, TRACKS } from "../lib/classify";
 import type { MonitorData, Paper, SyncRun } from "../lib/types";
 
 const now = new Date("2026-09-18T04:00:00Z");
@@ -108,4 +108,49 @@ test("source health distinguishes request failures from retrieval limits and pre
   assert.equal(medrxiv.updatedAt, null);
   const noRuns = buildDashboard(sample(), [], defaultDashboardFilters, now).sources;
   assert.ok(noRuns.every(s => s.updatedAt === null));
+});
+
+test("Beijing dates cross midnight independently of UTC and keep invalid dates empty", () => {
+  assert.equal(beijingDay("2026-09-17T15:59:59.999Z"), "2026-09-17");
+  assert.equal(beijingDay(new Date("2026-09-17T16:00:00.000Z")), "2026-09-18");
+  assert.equal(beijingDay("not a date"), "");
+  const data = dataset([
+    paper("initial", {firstSeenAt: "2026-09-10T00:00:00Z"}),
+    paper("before", {firstSeenAt: "2026-09-17T15:59:59.999Z"}),
+    paper("after", {firstSeenAt: "2026-09-17T16:00:00.000Z"}),
+  ]);
+  const result = buildDashboard(data, [], {...defaultDashboardFilters, clock: "discovery", days: "1"}, now);
+  assert.deepEqual(result.rows.map(row => row.id), ["after"]);
+  assert.deepEqual(result.newToday.map(row => row.id), ["after"]);
+});
+
+test("matrix keeps fixed axes, input order and single membership for repeated tags", () => {
+  const records = [
+    paper("multi", {tasks: ["diagnosis", "segmentation", "segmentation"], modalities: ["CT", "MRI", "MRI"]}),
+    paper("untagged", {tasks: ["segmentation"], modalities: []}),
+    paper("foreign-tags", {tasks: ["segmentation", "not-a-task"], modalities: ["unlisted modality", "未识别"]}),
+    paper("last", {tasks: ["segmentation"], modalities: ["MRI"]}),
+  ];
+  const result = buildDashboard(dataset(records), [], defaultDashboardFilters, now);
+  assert.deepEqual(result.matrix.map(row => row.task), Object.keys(TASKS));
+  const segmentation = result.matrix.find(row => row.task === "segmentation")!;
+  assert.deepEqual(segmentation.cells.map(cell => cell.modality), result.modalities);
+  assert.deepEqual(segmentation.cells.find(cell => cell.modality === "MRI")!.papers.map(row => row.id), ["multi", "last"]);
+  assert.deepEqual(segmentation.cells.find(cell => cell.modality === "CT")!.papers.map(row => row.id), ["multi"]);
+  assert.deepEqual(segmentation.cells.find(cell => cell.modality === "未识别")!.papers.map(row => row.id), ["untagged"]);
+  assert.equal(segmentation.cells.find(cell => cell.modality === "MRI")!.papers[0], records[0]);
+  assert.deepEqual(result.matrix.find(row => row.task === "diagnosis")!.cells.find(cell => cell.modality === "MRI")!.papers.map(row => row.id), ["multi"]);
+});
+
+test("source-only refresh preserves the strict 24-hour stale boundary within the same Beijing day", () => {
+  const completedAt = "2026-09-17T04:00:00.000Z";
+  const data = dataset([]);
+  data.runs = [{id: "success", source: "Europe PMC", startedAt: completedAt, completedAt, status: "ok", received: 0, kept: 0, added: 0, updated: 0, total: 0, query: "test", dateFrom: "", dateTo: "2026-09-17", coverage: "test"}];
+  const atBoundary = buildSourceHealth(data, new Date("2026-09-18T04:00:00.000Z"));
+  const afterBoundary = buildSourceHealth(data, new Date("2026-09-18T04:00:00.001Z"));
+  assert.equal(atBoundary[0].state, "窗口采集完成");
+  assert.equal(atBoundary[0].warning, false);
+  assert.equal(afterBoundary[0].state, "超过 24 小时");
+  assert.equal(afterBoundary[0].warning, true);
+  assert.deepEqual(atBoundary, buildDashboard(data, [], defaultDashboardFilters, now).sources);
 });

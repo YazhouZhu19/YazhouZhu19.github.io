@@ -5,10 +5,11 @@ export type DashboardFilters = { days: string; clock: "publication" | "discovery
 export type DashboardDrill = { label: string; ids: string[] };
 export const defaultDashboardFilters: DashboardFilters = { days: "30", clock: "publication", track: "all", source: "all" };
 const dayMs = 86400000;
+const beijingFormatter = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" });
 export function beijingDay(value: string | Date): string {
   const d = new Date(value);
   if (!Number.isFinite(d.getTime())) return "";
-  return new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+  return beijingFormatter.format(d);
 }
 export function matchesMember(author: Author, members: string[]) {
   const identity = (v: string) => normalizedName(v.replace(/^https?:\/\/orcid.org\//i, ""));
@@ -16,6 +17,19 @@ export function matchesMember(author: Author, members: string[]) {
 }
 export function matchesTeam(p: Paper, t: Team) {
   return p.authors.some(a => matchesMember(a, t.members) && (!t.institution || a.affiliations.some(v => v.toLowerCase().includes(t.institution.toLowerCase()))));
+}
+/** Source age changes within a day; callers can refresh this without rebuilding every chart. */
+export function buildSourceHealth(data: MonitorData, now = new Date()) {
+  return ["Europe PMC", "arXiv", "medRxiv"].map(name => {
+    const sourceRuns = data.runs.filter(r => r.source === name).sort((a, b) => b.completedAt.localeCompare(a.completedAt));
+    const last = sourceRuns[0];
+    const success = sourceRuns.find(r => r.status !== "error" && !r.error);
+    const updatedAt = success?.completedAt ?? null;
+    const stale = !!updatedAt && now.getTime() - Date.parse(updatedAt) > dayMs;
+    const failed = last?.status === "error" || !!last?.error;
+    const state = last?.status === "error" ? "同步失败" : last?.error ? "部分失败" : !data.storageAvailable ? "快照模式" : stale ? "超过 24 小时" : !last ? "尚无增量同步" : last.status === "partial" ? "有限覆盖" : "窗口采集完成";
+    return { name, state, updatedAt, warning: !data.storageAvailable || stale || failed, limited: last?.status === "partial" && !failed, initial: !success, count: data.papers.filter(p => p.sources.includes(name)).length };
+  });
 }
 export function buildDashboard(data: MonitorData, teams: Team[], filters: DashboardFilters, now = new Date()) {
   const today = beijingDay(now);
@@ -26,7 +40,16 @@ export function buildDashboard(data: MonitorData, teams: Team[], filters: Dashbo
     ? Date.parse(data.initialCollectedAt)
     : firstSeenDates.length ? Math.min(...firstSeenDates) : Date.parse(data.collectedAt);
   const isInitial = (p: Paper) => Date.parse(p.firstSeenAt) === initialTime;
-  const dateOf = (p: Paper) => filters.clock === "discovery" ? beijingDay(p.firstSeenAt) : p.publishedAt.slice(0, 10);
+  // Reuse each record's date across scope selection, buckets and exclusions in this build.
+  const dates = new Map<Paper, string>();
+  const dateOf = (p: Paper) => {
+    let date = dates.get(p);
+    if (date === undefined) {
+      date = filters.clock === "discovery" ? beijingDay(p.firstSeenAt) : p.publishedAt.slice(0, 10);
+      dates.set(p, date);
+    }
+    return date;
+  };
   const pool = data.papers.filter(p => (filters.track === "all" || p.tracks.includes(filters.track)) && (filters.source === "all" || p.sources.includes(filters.source)));
   const rows = pool.filter(p => {
     const date = dateOf(p);
@@ -67,19 +90,21 @@ export function buildDashboard(data: MonitorData, teams: Team[], filters: Dashbo
     if (p.status === "preprint") r.preprint++;
   }
   const modalities = ["MRI", "CT", "X-ray", "超声", "PET / SPECT", "病理切片", "眼底 / OCT", "内镜", "未识别"];
-  const matrix = Object.entries(TASKS).map(([task, label]) => ({ task, label, cells: modalities.map(modality => ({
-    modality, papers: rows.filter(p => p.tasks.includes(task) && (modality === "未识别" ? p.modalities.length === 0 : p.modalities.includes(modality))),
-  })) }));
+  const matrix = Object.entries(TASKS).map(([task, label]) => ({ task, label, cells: modalities.map(modality => ({ modality, papers: [] as Paper[] })) }));
+  const matrixCells = new Map(matrix.map(row => [row.task, new Map(row.cells.map(cell => [cell.modality, cell.papers]))]));
+  for (const paper of rows) {
+    const paperModalities = new Set(paper.modalities.length ? paper.modalities : ["未识别"]);
+    for (const task of new Set(paper.tasks)) {
+      const cells = matrixCells.get(task);
+      if (!cells) continue;
+      for (const modality of paperModalities) {
+        // The unknown column means no modality tags, not an explicit unknown tag.
+        if (modality === "未识别" && paper.modalities.length) continue;
+        cells.get(modality)?.push(paper);
+      }
+    }
+  }
   const methods = [...new Set(rows.flatMap(p => p.methods))].map(name => ({ name, papers: rows.filter(p => p.methods.includes(name)) })).sort((a, b) => b.papers.length - a.papers.length);
-  const sources = ["Europe PMC", "arXiv", "medRxiv"].map(name => {
-    const sourceRuns = data.runs.filter(r => r.source === name).sort((a, b) => b.completedAt.localeCompare(a.completedAt));
-    const last = sourceRuns[0];
-    const success = sourceRuns.find(r => r.status !== "error" && !r.error);
-    const updatedAt = success?.completedAt ?? null;
-    const stale = !!updatedAt && now.getTime() - Date.parse(updatedAt) > dayMs;
-    const failed = last?.status === "error" || !!last?.error;
-    const state = last?.status === "error" ? "同步失败" : last?.error ? "部分失败" : !data.storageAvailable ? "快照模式" : stale ? "超过 24 小时" : !last ? "尚无增量同步" : last.status === "partial" ? "有限覆盖" : "窗口采集完成";
-    return { name, state, updatedAt, warning: !data.storageAvailable || stale || failed, limited: last?.status === "partial" && !failed, initial: !success, count: data.papers.filter(p => p.sources.includes(name)).length };
-  });
+  const sources = buildSourceHealth(data, now);
   return { rows, start: from, observedFrom, end: today, initialCount, newToday, directions, published, preprints, teamRows, matched, status, known, preprintRate, trend: [...buckets.values()], monthly, modalities, matrix, methods, sources, futureCount: pool.filter(p => dateOf(p) > today).length };
 }

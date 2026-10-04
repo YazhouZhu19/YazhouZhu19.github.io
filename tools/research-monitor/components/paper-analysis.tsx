@@ -4,7 +4,6 @@ import { ScanText } from "lucide-react";
 import { buildPaperAnalysis } from "@/lib/analysis";
 import type { Paper } from "@/lib/types";
 import { useI18n } from "./locale-provider";
-import "@/styles/paper-analysis.css";
 
 export function PaperPreliminaryAnalysis({ paper }: { paper: Paper }) {
   const { tr } = useI18n();
