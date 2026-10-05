@@ -1,13 +1,13 @@
 import { memo, useId, useMemo, useState, type CSSProperties } from "react";
-import { ArrowUpRight, CircleDot } from "lucide-react";
+import { ArrowUpRight, ChartBar, CircleDot } from "lucide-react";
 import { useI18n } from "./locale-provider";
 import "@/styles/spatial-charts.css";
 
 export type SpatialDatum = { id: string; label: string; count: number; detail?: string; group?: string };
-type Props = { title: string; data: SpatialDatum[]; columns?: string[]; onOpen: (id: string) => void; compact?: boolean };
+type Props = { title: string; data: SpatialDatum[]; columns?: string[]; onOpen: (id: string) => void; compact?: boolean; variant?: "bubbles" | "bars" };
 
-/** Circle area encodes count. Method dots use a shared linear position scale. */
-export const SpatialChart = memo(function SpatialChart({ title, data, columns, onOpen, compact }: Props) {
+/** Bars and method dots use linear scales; circle area encodes count in bubble views. */
+export const SpatialChart = memo(function SpatialChart({ title, data, columns, onOpen, compact, variant = "bubbles" }: Props) {
   const { locale } = useI18n();
   const en = locale === "en";
   const uid = useId().replace(/:/g, "");
@@ -19,12 +19,15 @@ export const SpatialChart = memo(function SpatialChart({ title, data, columns, o
   const selected = visible.find(d => d.id === selectedId) ?? visible.find(d => d.count > 0) ?? visible[0];
   // Keep the full-scope scale when inspecting a single task.
   const maximum = Math.max(1, ...data.map(d => d.count));
+  const barStep = 10 ** Math.floor(Math.log10(maximum));
+  const barMaximum = Math.ceil(maximum / barStep) * barStep;
+  const bars = variant === "bars" && !columns && !compact;
   const inspect = (id: string) => setSelectedId(id);
   const open = (item: SpatialDatum) => { inspect(item.id); if (item.count) onOpen(item.id); };
   const accessibleLabel = (item: SpatialDatum) => en ? `View ${item.label}: ${item.count.toLocaleString(locale)} records` : `查看${item.label}：${item.count.toLocaleString(locale)}条记录`;
-  const mode = columns ? (en ? "DOT MATRIX" : "交叉点阵") : compact ? (en ? "METHOD PROFILE" : "方法比较") : (en ? "RESEARCH BUBBLES" : "气泡分布");
+  const mode = columns ? (en ? "DOT MATRIX" : "交叉点阵") : compact ? (en ? "METHOD PROFILE" : "方法比较") : bars ? (en ? "DIRECTION COUNTS" : "方向数量") : (en ? "RESEARCH BUBBLES" : "气泡分布");
   return <div className={`spatial-chart${compact ? " spatial-compact" : ""}`}>
-    <div className="spatial-toolbar"><span className="spatial-mode"><CircleDot size={14} />{mode}</span>
+    <div className="spatial-toolbar"><span className="spatial-mode">{bars ? <ChartBar size={14} /> : <CircleDot size={14} />}{mode}</span>
       {!!groups.length && <select aria-label={en ? `${title}: task filter` : `${title}：任务筛选`} value={activeGroup} onChange={e => setGroup(e.target.value)}><option value="*">{en ? "All tasks" : "全部任务"}</option>{groups.map(g => <option key={g}>{g}</option>)}</select>}
     </div>
     {columns ? <>
@@ -44,7 +47,12 @@ export const SpatialChart = memo(function SpatialChart({ title, data, columns, o
     </> : compact ? <div className="method-dot-list">{visible.map(item => <button key={item.id} className={selected?.id === item.id ? "is-selected" : ""} aria-label={accessibleLabel(item)} onFocus={() => inspect(item.id)} onPointerEnter={() => inspect(item.id)} onClick={() => open(item)}>
       <span className="method-dot-label"><span>{item.label}</span><b>{item.count.toLocaleString(locale)}</b></span>
       <svg viewBox="0 0 320 26" preserveAspectRatio="none" aria-hidden="true"><path className="method-dot-track" d="M9,13 H311" /><path className="method-dot-stem" d={`M9,13 H${9 + item.count / maximum * 302}`} /><circle className="method-dot-end" cx={9 + item.count / maximum * 302} cy="13" r="4.5" /></svg>
-    </button>)} {!!visible.length && <div className="method-dot-scale"><span>0</span><span>{maximum.toLocaleString(locale)} {en ? "records" : "条"}</span></div>}</div> : <div className="bubble-grid" style={{ "--bubble-cols": Math.min(5, Math.max(1, Math.ceil(visible.length / 2))) } as CSSProperties}>{visible.map((item, i) => {
+    </button>)} {!!visible.length && <div className="method-dot-scale"><span>0</span><span>{maximum.toLocaleString(locale)} {en ? "records" : "条"}</span></div>}</div> : bars ? <div className="direction-bars">
+      {!!visible.length && <div className="direction-bar-scale" aria-hidden="true"><span /><span><span>0</span><span>{barMaximum.toLocaleString(locale)}</span></span><span>{en ? "records" : "条"}</span></div>}
+      {visible.map(item => <button key={item.id} className={`direction-bar-row${selected?.id === item.id ? " is-selected" : ""}`} aria-label={accessibleLabel(item)} onFocus={() => inspect(item.id)} onPointerEnter={() => inspect(item.id)} onClick={() => open(item)}>
+        <span className="direction-bar-label">{item.label}</span><span className="direction-bar-track" aria-hidden="true"><span className="direction-bar-fill" style={{ width: `${item.count / barMaximum * 100}%` }} /></span><strong className="direction-bar-value">{item.count.toLocaleString(locale)}</strong>
+      </button>)}
+    </div> : <div className="bubble-grid" style={{ "--bubble-cols": Math.min(5, Math.max(1, Math.ceil(visible.length / 2))) } as CSSProperties}>{visible.map((item, i) => {
       const fillId = `${uid}bubble${i}`;
       return <button key={item.id} className={`bubble-item${selected?.id === item.id ? " is-selected" : ""}`} aria-label={accessibleLabel(item)} onFocus={() => inspect(item.id)} onPointerEnter={() => inspect(item.id)} onClick={() => open(item)} title={`${item.label} · ${item.count.toLocaleString(locale)}${item.detail ? ` · ${item.detail}` : ""}`}>
         <span className="bubble-index">{String(i + 1).padStart(2, "0")}</span>
@@ -52,7 +60,7 @@ export const SpatialChart = memo(function SpatialChart({ title, data, columns, o
         <strong>{item.count.toLocaleString(locale)}</strong><span className="bubble-label">{item.label}</span>
       </button>;
     })}</div>}
-    <div className="spatial-caption">{compact ? (en ? "Dot position corresponds to record count" : "圆点位置线性对应记录数") : columns ? (en ? "Circle area = records · hollow dot = zero" : "圆面积对应记录数 · 空心点表示 0") : (en ? "Circle area = records · position is for layout only" : "圆面积对应记录数 · 位置仅用于排布")}</div>
+    <div className="spatial-caption">{compact ? (en ? "Dot position corresponds to record count" : "圆点位置线性对应记录数") : columns ? (en ? "Circle area = records · hollow dot = zero" : "圆面积对应记录数 · 空心点表示 0") : bars ? (en ? "Bar length corresponds to record count" : "细条长度线性对应记录数") : (en ? "Circle area = records · position is for layout only" : "圆面积对应记录数 · 位置仅用于排布")}</div>
     {selected ? <div className="spatial-readout"><div><label htmlFor={`${uid}pick`}>{en ? "Inspect a data point" : "选择数据点"}</label><select id={`${uid}pick`} value={selected.id} onChange={e => inspect(e.target.value)}>{visible.map((item, i) => <option key={item.id} value={item.id}>{columns ? "" : `${String(i + 1).padStart(2, "0")} · `}{item.label} · {item.count.toLocaleString(locale)}</option>)}</select>{selected.detail && <small>{selected.detail}</small>}</div><strong>{selected.count.toLocaleString(locale)}<small>{en ? "records" : "条记录"}</small></strong><button disabled={!selected.count} onClick={() => onOpen(selected.id)} aria-label={en ? `Open papers for ${selected.label}: ${selected.count} records` : `打开${selected.label}的论文：${selected.count}条记录`}>{en ? "Papers" : "查看论文"}<ArrowUpRight size={15} /></button></div> : <p className="spatial-empty">{en ? "No matching data in this range." : "当前范围暂无匹配记录。"}</p>}
     {columns && <details className="spatial-details"><summary>{en ? "All exact values & paper links" : "展开全部数值与论文入口"}</summary><div>{data.map(item => <button key={item.id} disabled={!item.count} onClick={() => onOpen(item.id)}><span>{item.label}</span><b>{item.count.toLocaleString(locale)}</b><ArrowUpRight size={12} /></button>)}</div></details>}
   </div>;
