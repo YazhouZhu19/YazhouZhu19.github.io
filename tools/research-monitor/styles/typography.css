@@ -1,0 +1,103 @@
+/* Academic reading typography, using local fonts so no font download blocks reading. */
+:root {
+  --font-reading: Georgia, "Times New Roman", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", STSong, SimSun, serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --font-data: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* Body-level inheritance also reaches portal-based paper sheets and dialogs. */
+body {
+  font-family: var(--font-reading);
+}
+
+/* Compact controls retain the reference's clear sans-serif treatment. */
+:where(button, input, textarea, select, [data-slot="button"], [role="combobox"], [role="option"], [role="menuitem"]),
+.font-sans,
+.topbar,
+[data-sidebar="content"],
+[data-sidebar="footer"],
+.paper-meta,
+.tag-row,
+.detail-dates,
+.dash-recent-meta,
+.dash-recent-source,
+.analysis-reading-meta,
+.analysis-reading-reasons {
+  font-family: var(--font-ui);
+}
+
+.brand strong,
+.page-heading h1,
+.dashboard-workspace .page-heading h1,
+html[lang="en"] .page-heading h1 {
+  font-family: var(--font-reading);
+  font-weight: 700;
+  letter-spacing: normal;
+}
+
+h2,
+h3,
+.research-dashboard h2,
+.analysis-section-kicker h2,
+.analysis-panel-heading h2,
+[data-slot="sheet-title"],
+[data-slot="dialog-title"] {
+  font-family: var(--font-reading);
+  letter-spacing: normal;
+}
+
+.paper-title,
+.analysis-reading-title,
+.dash-recent-list > button > strong,
+.detail-body h2 {
+  font-family: var(--font-reading);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.55;
+}
+
+.paper-title {
+  font-size: 19px;
+}
+
+.analysis-reading-title,
+.dash-recent-list > button > strong {
+  font-size: 17px;
+}
+
+.abstract-preview,
+.analysis-reading-excerpt blockquote,
+.paper-signal-evidence blockquote,
+.evidence blockquote {
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.full-abstract {
+  font-size: 17px;
+  line-height: 1.85;
+}
+
+.dash-metric strong,
+.metric-row strong,
+.source-count,
+.dash-donut-center strong,
+.dash-status-legend b,
+.dash-team-list b,
+.analysis-signal-grid button > strong {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+}
+
+@media (max-width: 640px) {
+  .paper-title {
+    font-size: 18px;
+  }
+
+  .analysis-reading-title,
+  .dash-recent-list > button > strong,
+  .full-abstract {
+    font-size: 16px;
+  }
+}

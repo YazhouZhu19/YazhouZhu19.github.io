@@ -6,6 +6,7 @@ import "./styles/analysis.css";
 import "./styles/paper-analysis.css";
 import "./styles/living.css";
 import "./styles/living-analysis.css";
+import "./styles/typography.css";
 
 const locale = document.documentElement.lang === "en" ? "en" : "zh";
 createRoot(document.getElementById("root")!).render(
