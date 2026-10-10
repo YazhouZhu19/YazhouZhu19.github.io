@@ -61,7 +61,7 @@ export const ResearchDashboard = memo(function ResearchDashboard({ authenticated
     const directions = useMemo(() => m.directions.map(d => ({ id: d.id, label: tr(d.label), count: d.papers.length })), [m.directions, tr]);
     const cells = useMemo(() => m.matrix.flatMap(r => r.cells.map(c => ({ id: `${r.task}:${c.modality}`, label: `${tr(r.label)} × ${tr(c.modality)}`, group: tr(r.label), count: c.papers.length, papers: c.papers }))), [m.matrix, tr]);
     const methods = useMemo(() => m.methods.map(r => ({ id: r.name, label: tr(r.name), count: r.papers.length })), [m.methods, tr]);
-    const statusColor = (key: string) => key === "published" ? "#eef5fb" : key === "preprint" ? "#8eb8de" : "#738293";
+    const statusColor = (key: string) => key === "published" ? "var(--chart-1)" : key === "preprint" ? "var(--chart-2)" : "var(--chart-4)";
     const exportRows = () => {
         const safe = (v: string) => '"' + (/^[=+\-@\t\r]/.test(v) ? "'" + v : v).replace(/"/g, '""') + '"';
         const rows = [["记录ID", "标题", "来源日期", "首次发现", "状态", "来源", "感兴趣方向", "链接"].map(v => tr(v)), ...m.rows.map(p => [p.id, p.title, p.publishedAt, p.firstSeenAt, p.status, p.sources.join("; "), p.tracks.map(id => tr(TRACKS[id] ?? id)).join("; "), p.url])];

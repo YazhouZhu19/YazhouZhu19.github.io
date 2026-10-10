@@ -56,7 +56,7 @@ export const SpatialChart = memo(function SpatialChart({ title, data, columns, o
       const fillId = `${uid}bubble${i}`;
       return <button key={item.id} className={`bubble-item${selected?.id === item.id ? " is-selected" : ""}`} aria-label={accessibleLabel(item)} onFocus={() => inspect(item.id)} onPointerEnter={() => inspect(item.id)} onClick={() => open(item)} title={`${item.label} · ${item.count.toLocaleString(locale)}${item.detail ? ` · ${item.detail}` : ""}`}>
         <span className="bubble-index">{String(i + 1).padStart(2, "0")}</span>
-        <svg viewBox="0 0 140 124" aria-hidden="true"><defs><radialGradient id={fillId} cx="32%" cy="25%" r="80%"><stop stopColor="#dcecf8" stopOpacity=".7" /><stop offset=".5" stopColor="#a4c7e3" stopOpacity=".24" /><stop offset="1" stopColor="#779cb9" stopOpacity=".06" /></radialGradient></defs>{item.count ? <circle className="bubble-core" cx="70" cy="60" r={49 * Math.sqrt(item.count / maximum)} fill={`url(#${fillId})`} /> : <circle className="dot-zero" cx="70" cy="60" r="3" />}</svg>
+        <svg viewBox="0 0 140 124" aria-hidden="true"><defs><radialGradient id={fillId} cx="32%" cy="25%" r="80%"><stop stopColor="var(--chart-2)" stopOpacity=".2" /><stop offset=".5" stopColor="var(--chart-3)" stopOpacity=".14" /><stop offset="1" stopColor="var(--chart-1)" stopOpacity=".04" /></radialGradient></defs>{item.count ? <circle className="bubble-core" cx="70" cy="60" r={49 * Math.sqrt(item.count / maximum)} fill={`url(#${fillId})`} /> : <circle className="dot-zero" cx="70" cy="60" r="3" />}</svg>
         <strong>{item.count.toLocaleString(locale)}</strong><span className="bubble-label">{item.label}</span>
       </button>;
     })}</div>}
@@ -80,7 +80,7 @@ export function TimelineChart({ rows, onOpen }: { rows: TrendRow[]; onOpen: (row
     return Math.max(0, Math.min(rows.length - 1, Math.round((point.x - 38) / 540 * (rows.length - 1))));
   };
   const current = rows[active] ?? rows[rows.length - 1];
-  const series = [{ key: "all", color: "#7f94aa", label: "当前范围" }, { key: "published", color: "#edf5fc", label: "正式发表" }, { key: "preprint", color: "#9ac4e9", label: "预印本" }] as const;
+  const series = [{ key: "all", color: "var(--chart-3)", label: "当前范围" }, { key: "published", color: "var(--chart-1)", label: "正式发表" }, { key: "preprint", color: "var(--chart-2)", label: "预印本" }] as const;
   return <div className="light-timeline"><svg viewBox="0 0 600 215" role="img" aria-label={locale === "en" ? "Record counts by date" : "按日期统计的记录数"} onPointerMove={event => setActive(indexAt(event))} onClick={event => { const index = indexAt(event); setActive(index); if (rows[index]?.ids.length) onOpen(rows[index]); }}>
     {[...new Set([0, Math.ceil(max / 2), max])].map(t => <g className="spatial-grid" key={t}><path d={`M38,${y(t)}H578`} /><text x="30" y={y(t) + 3} textAnchor="end">{t}</text></g>)}
     {series.map(s => <g key={s.key}><polyline points={rows.map((r, i) => `${x(i)},${y(r[s.key])}`).join(" ")} fill="none" stroke={s.color} strokeWidth={s.key === "all" ? 1.5 : 2.5} strokeDasharray={s.key === "all" ? "4 5" : undefined} />{rows.length === 1 && <circle cx={x(0)} cy={y(rows[0][s.key])} r="4" fill={s.color} />}</g>)}
@@ -92,5 +92,5 @@ export function TimelineChart({ rows, onOpen }: { rows: TrendRow[]; onOpen: (row
 export function StatusRing({ preprints, known, onOpen }: { preprints: number; known: number; onOpen: (key: string) => void }) {
   const { tr } = useI18n();
   const proportion = known ? preprints / known : 0;
-  return <svg className="light-status-ring" viewBox="0 0 200 200" role="img" aria-label={tr("发表状态")}><circle cx="100" cy="100" r="75" fill="none" stroke="rgba(223,239,252,.1)" strokeWidth="16" />{!!known && <><circle cx="100" cy="100" r="75" fill="none" stroke="#eef5fb" strokeWidth="16" onClick={() => onOpen("published")}><title>{tr("正式发表")}: {known - preprints}</title></circle><circle cx="100" cy="100" r="75" fill="none" stroke="#8eb8de" strokeWidth="16" strokeDasharray={`${proportion * 471.239} 471.239`} transform="rotate(-90 100 100)" onClick={() => onOpen("preprint")}><title>{tr("预印本")}: {preprints}</title></circle></>}</svg>;
+  return <svg className="light-status-ring" viewBox="0 0 200 200" role="img" aria-label={tr("发表状态")}><circle cx="100" cy="100" r="75" fill="none" stroke="var(--living-line)" strokeWidth="16" />{!!known && <><circle cx="100" cy="100" r="75" fill="none" stroke="var(--chart-1)" strokeWidth="16" onClick={() => onOpen("published")}><title>{tr("正式发表")}: {known - preprints}</title></circle><circle cx="100" cy="100" r="75" fill="none" stroke="var(--chart-2)" strokeWidth="16" strokeDasharray={`${proportion * 471.239} 471.239`} transform="rotate(-90 100 100)" onClick={() => onOpen("preprint")}><title>{tr("预印本")}: {preprints}</title></circle></>}</svg>;
 }

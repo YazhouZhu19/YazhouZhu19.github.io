@@ -1,6 +1,6 @@
-/* Black glass analysis surfaces with quiet, ice-toned reading accents. */
+/* White analysis surfaces with quiet, neutral reading accents. */
 .preliminary-analysis {
-  color: var(--living-ink, #edf2f7);
+  color: var(--living-ink, #202124);
 }
 
 .analysis-controls {
@@ -16,8 +16,8 @@
   height: 42px;
   border-color: var(--living-line);
   border-radius: 12px;
-  background: var(--living-paper, rgba(22, 27, 34, .72));
-  color: var(--living-ink, #edf2f7);
+  background: var(--living-paper, rgba(255, 255, 255, .94));
+  color: var(--living-ink, #202124);
   box-shadow: none;
 }
 
@@ -25,7 +25,7 @@
   height: 42px;
   border-color: var(--living-line);
   border-radius: 12px;
-  background: var(--living-paper, rgba(22, 27, 34, .72));
+  background: var(--living-paper, rgba(255, 255, 255, .94));
   color: var(--living-ink);
   box-shadow: none;
 }
@@ -59,8 +59,8 @@
   margin-bottom: 18px;
   border: 1px solid var(--living-line);
   border-radius: var(--living-radius, 22px);
-  background: linear-gradient(135deg, rgba(50, 61, 76, .48), rgba(18, 23, 30, .78));
-  color: var(--living-ink, #edf2f7);
+  background: var(--living-paper, rgba(255, 255, 255, .94));
+  color: var(--living-ink, #202124);
   box-shadow: var(--glass-shadow);
 }
 
@@ -71,7 +71,7 @@
 
 .analysis-observation .analysis-section-kicker {
   margin-bottom: 16px;
-  color: #dceafa;
+  color: var(--living-ink);
 }
 
 .analysis-observation > p {
@@ -121,7 +121,7 @@
 .analysis-empty {
   border-color: var(--living-line);
   border-radius: var(--living-radius, 22px);
-  background: var(--living-paper, rgba(22, 27, 34, .72));
+  background: var(--living-paper, rgba(255, 255, 255, .94));
   box-shadow: var(--glass-shadow);
 }
 
@@ -134,7 +134,7 @@
 .analysis-reading-title,
 .analysis-reading-questions h2,
 .analysis-empty h2 {
-  color: var(--living-ink, #edf2f7);
+  color: var(--living-ink, #202124);
 }
 
 .analysis-panel-heading > svg,
@@ -155,13 +155,13 @@
 
 .analysis-topic-track,
 .analysis-combination-share > i {
-  background: rgba(200, 222, 246, .09);
+  background: var(--glass-hover, rgba(0, 0, 0, .04));
   border-radius: 10px;
 }
 
 .analysis-topic-track > i,
 .analysis-combination-share > i > i {
-  background: #b5cbe3;
+  background: var(--living-muted);
   border-radius: 10px;
 }
 
@@ -237,7 +237,7 @@
 }
 
 .analysis-signal-grid > button:not(:disabled):hover {
-  border-color: rgba(205, 228, 250, .3);
+  border-color: var(--input, var(--living-line));
   background: var(--glass-hover);
 }
 
@@ -263,7 +263,7 @@
   min-width: 28px;
   min-height: 28px;
   border-radius: 9px;
-  background: var(--living-sage, rgba(201, 222, 244, .08));
+  background: var(--living-sage, rgba(0, 0, 0, .035));
   color: var(--living-muted);
 }
 
@@ -278,14 +278,14 @@
 .analysis-reading-reasons > .analysis-reason {
   padding: 4px 8px;
   border-radius: 6px;
-  background: rgba(201, 222, 244, .06);
-  color: #bdcee1;
+  background: var(--glass-hover, rgba(0, 0, 0, .04));
+  color: var(--living-ink);
 }
 
 .analysis-reading-excerpt {
   margin: 18px 0 17px;
   padding-left: 14px;
-  border-color: rgba(193, 217, 245, .26);
+  border-color: var(--living-line);
 }
 
 .analysis-reading-excerpt > span {
@@ -293,13 +293,13 @@
 }
 
 .analysis-reading-excerpt blockquote {
-  color: #c2cfdd;
+  color: var(--living-ink);
   line-height: 1.9;
 }
 
 .analysis-reading-actions {
   padding-top: 15px;
-  color: #c7dbee;
+  color: var(--living-ink);
 }
 
 .analysis-reading-note {
@@ -361,14 +361,14 @@
 }
 
 .paper-extracts dd {
-  color: #d0dae5;
+  color: var(--living-ink);
   line-height: 1.9;
 }
 
 .paper-signal-evidence blockquote {
   padding-left: 13px;
-  border-color: rgba(193, 217, 245, .26);
-  color: #c2cfdd;
+  border-color: var(--living-line);
+  color: var(--living-ink);
   line-height: 1.85;
 }
 
