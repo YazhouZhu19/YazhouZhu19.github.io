@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { DashboardDrill } from "@/lib/dashboard";
 import type { ForesightCard, ForesightResult } from "@/lib/foresight-types";
+import type { ResearchSignal } from "@/lib/research-signals";
 import type { MonitorData, Paper } from "@/lib/types";
 import { AssessmentHistory } from "./assessment-history";
 import { AiModelSettings, AiResearchPanel } from "./ai-research-panel";
@@ -99,8 +100,9 @@ export function ForesightCards({ result, onPaper, onDrill }: EvidenceActions & {
   </div>;
 }
 
-export function ForesightView({ data, onPaper, onDrill }: EvidenceActions & {
+export function ForesightView({ data, signals, onPaper, onDrill }: EvidenceActions & {
   data: MonitorData;
+  signals?: ResearchSignal[];
   preferences?: ForesightPreferences;
   onPreferencesChange?: (preferences: ForesightPreferences) => void;
 }) {
@@ -108,8 +110,8 @@ export function ForesightView({ data, onPaper, onDrill }: EvidenceActions & {
   return <section className="foresight-view" aria-label={locale === "en" ? "AI research outlook" : "AI 方向研判"}>
     <AiModelSettings />
     <div className="ai-research-windows">
-      <AiResearchPanel papers={data.papers} mode="landscape" onPaper={onPaper} onDrill={onDrill} />
-      <AiResearchPanel papers={data.papers} mode="interest" onPaper={onPaper} onDrill={onDrill} />
+      <AiResearchPanel signals={signals} papers={data.papers} mode="landscape" onPaper={onPaper} onDrill={onDrill} />
+      <AiResearchPanel signals={signals} papers={data.papers} mode="interest" onPaper={onPaper} onDrill={onDrill} />
     </div>
   </section>;
 }

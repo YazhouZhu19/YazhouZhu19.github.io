@@ -10,6 +10,7 @@
     "build": "tsc --noEmit && vite build && tsx scripts/copy-data.ts",
     "preview": "vite preview --host 127.0.0.1",
     "collect": "tsx scripts/collect.ts",
+    "collect:signals": "tsx scripts/collect-signals.ts",
     "test": "node --import tsx --test tests/*.test.ts && node tests/run-local.mjs"
   },
   "dependencies": {

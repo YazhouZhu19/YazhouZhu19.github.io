@@ -17,6 +17,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useI18n } from "./locale-provider";
 import { AiModelSettings, AiResearchPanel } from "./ai-research-panel";
+import { findRelatedSignals } from "@/lib/signal-evidence";
+import { safeSignalUrl, type ResearchSignal } from "@/lib/research-signals";
 import { TeamsView } from "./monitor-views";
 import "@/styles/team-foresight.css";
 
@@ -31,6 +33,7 @@ export type TeamForesightPreferences = {
 };
 type Props = {
   data: MonitorData;
+  signals?: ResearchSignal[];
   teams: Team[];
   onChange: () => Promise<unknown>;
   openPaper: (paper: Paper) => void;
@@ -42,7 +45,7 @@ type Props = {
 type TrajectoryDimension = "tracks" | "methods" | "modalities";
 const WATCHLIST_KINDS = ["持续关注", "竞争观察", "合作候选"];
 
-export function TeamForesight({ data, teams, onChange, openPaper, onDrill, storageAvailable, preferences, onPreferencesChange }: Props) {
+export function TeamForesight({ data, signals, teams, onChange, openPaper, onDrill, storageAvailable, preferences, onPreferencesChange }: Props) {
   const { locale, tr } = useI18n();
   const t = (zh: string, en: string) => locale === "en" ? en : zh;
   const [localPreferences, setLocalPreferences] = useState<TeamForesightPreferences>({ teamId: "", horizon: "6–12" });
@@ -81,6 +84,9 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
     id: selectedCandidate.id, name: selectedCandidate.name, members: [selectedCandidate.member],
     institution: "", kind: "作者目录", createdAt: "",
   } : selectedSavedTeam, [selectedCandidate, selectedSavedTeam]);
+  const scopedPapers = useMemo(() => selectedCandidate?.papers ?? (selectedTeam ? data.papers.filter(paper => matchesTeam(paper, selectedTeam)) : []), [data.papers, selectedCandidate, selectedTeam]);
+  const associated = useMemo(() => findRelatedSignals(scopedPapers, signals ?? []), [scopedPapers, signals]);
+  const associatedSignals = useMemo(() => associated.map(item => item.signal), [associated]);
   const result = useMemo<ForesightResult | null>(() => selectedTeam ? buildForesight(selectedCandidate?.papers ?? data.papers, {
     team: selectedTeam, horizon, track: selectedCandidate && directoryTrack !== "all" ? directoryTrack : undefined,
     now: new Date(`${day}T12:00:00+08:00`),
@@ -187,7 +193,8 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
         {selectedTeam.institution && <p>{t("署名机构筛选：", "Affiliation filter: ")}{selectedTeam.institution}{t("；缺少该机构信息的记录不会匹配。", "; records without matching affiliation metadata are excluded.")}</p>}
       </div>
       <AiModelSettings/>
-      <AiResearchPanel key={`${selectedTeam.id}:${selectedCandidate ? directoryTrack : "saved"}`} papers={selectedCandidate?.papers ?? data.papers.filter(paper => matchesTeam(paper, selectedTeam))} mode="team" subjectId={`${selectedTeam.id}:${selectedCandidate ? directoryTrack : "saved"}`} onPaper={openPaper} onDrill={onDrill}/>
+      <div className="foresight-note"><p>{associated.length ? t(`已找到 ${associated.length} 条与这些论文存在显式 URL／DOI／arXiv 关联的仓库或新闻，可勾选加入联合研判。关联表示引用关系，不确认该 PI 拥有仓库或参与发布。`, `${associated.length} repository/news records have explicit URL, DOI or arXiv links to these papers. Select them for joint analysis. A reference link does not establish PI ownership or involvement.`) : t("暂未找到与这些论文有显式 URL／DOI／arXiv 关联的仓库或新闻。不会根据姓名、仓库 owner 或关键词推断团队身份；仍可使用论文研判。", "No repository/news records have explicit URL, DOI or arXiv links to these papers. Names, repository owners and topics do not establish team identity; paper analysis remains available.")}</p>{!!associated.length && <details><summary>{t("核对跨来源关联依据", "Inspect cross-source linkage")}</summary><ul>{associated.map(({ signal, basis }) => <li key={signal.id}>{safeSignalUrl(signal.url) && <a href={signal.url} target="_blank" rel="noreferrer">[{signal.kind === "github" ? "GitHub" : t("新闻", "News")}] {signal.title} ↗</a>}<p>{basis.join(" · ")}</p></li>)}</ul></details>}</div>
+      <AiResearchPanel key={`${selectedTeam.id}:${selectedCandidate ? directoryTrack : "saved"}`} papers={scopedPapers} signals={associatedSignals} mode="team" subjectId={`${selectedTeam.id}:${selectedCandidate ? directoryTrack : "saved"}`} onPaper={openPaper} onDrill={onDrill}/>
       <details className="team-relationships"><summary>{t("查看原始论文轨迹与既有标签", "Inspect paper trajectory and existing tags")}</summary><section className="team-trajectory" aria-labelledby="team-trajectory-title">
         <div className="foresight-toolbar"><h3 id="team-trajectory-title">{t("公开研究轨迹", "Public research trajectory")}</h3><span>{t("两个相邻的 90 天窗口", "Two adjacent 90-day windows")}</span></div>
         <label className="team-trajectory-dimension"><span>{t("观察维度", "View dimension")}</span><select value={trajectoryDimension} onChange={event => setTrajectoryDimension(event.target.value as TrajectoryDimension)}>{(["tracks", "methods", "modalities"] as const).map(dimension => <option key={dimension} value={dimension}>{dimensionLabel(dimension)}</option>)}</select></label>

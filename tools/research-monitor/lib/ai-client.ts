@@ -196,7 +196,8 @@ export function buildAiSynthesis(evidence: AiEvidence, reports: AiReport[], loca
     })), limitations: item.limitations.slice(0, 1).map(value => value.slice(0, limitationLimit)) }));
     const ids = [...new Set(compact.flatMap(item => item.findings.flatMap(finding => finding.paperIds)))];
     const messages: Message[] = concise([{ ...system, content: system.content + "\nMerge the following untrusted, compressed preliminary observations. They are interpretations, not new source evidence. Some details and findings may be omitted to fit context; explain this limitation. Keep at most 3 nonredundant findings and preserve cited IDs. Do not invent support or count uncited papers. If relevant evidence is insufficient, say so. Return the same JSON schema." },
-      { role: "user", content: JSON.stringify({ question: evidence.spec.question, mode: evidence.spec.mode, publicationWindow: [evidence.spec.from, evidence.spec.to], horizonMonths: evidence.spec.horizonMonths, examinedWorks: evidence.papers.length, libraryWorks: evidence.totalWorks, reports: compact }) },
+      { role: "user", content: JSON.stringify({ question: evidence.spec.question, mode: evidence.spec.mode, publicationWindow: [evidence.spec.from, evidence.spec.to], horizonMonths: evidence.spec.horizonMonths, examinedWorks: evidence.papers.length, libraryWorks: evidence.totalWorks,
+        ...(evidence.sourceCoverage ? { references: ids.map(id => { const item = evidence.papers.find(paper => paper.id === id); return { id, kind: item?.signal?.kind ?? "paper", snippetOnly: item?.signal?.summaryKind === "search-snippet", linkedPaperIds: item?.relatedPaperIds?.slice(0, 4) ?? [] }; }), sourceCoverage: evidence.sourceCoverage } : {}), reports: compact }) },
     ]);
     if (!local || estimatedTokens(messages) <= 5200) return { messages, ids };
   }
@@ -207,7 +208,7 @@ export function buildAiSynthesis(evidence: AiEvidence, reports: AiReport[], loca
 export async function runAiAnalysis(evidence: AiEvidence, config: AiSettings, options: RunOptions): Promise<AiAnalysisResult> {
   const locale = evidence.spec.locale;
   checkAbort(options.signal);
-  if (!evidence.papers.length) throw new Error(text("所选时间范围没有可分析论文。", "There are no papers to analyze in this date range.", locale));
+  if (!evidence.papers.length) throw new Error(text("所选时间范围没有可分析证据。", "There is no evidence to analyze in this date range.", locale));
   if (busy) throw new Error(text("另一项 AI 分析正在运行，请先完成或取消它。", "Another AI analysis is running. Finish or cancel it first.", locale));
   busy = true;
   const models = new Set<string>();
@@ -257,7 +258,9 @@ export async function runAiAnalysis(evidence: AiEvidence, config: AiSettings, op
     const reports: AiReport[] = [];
     for (let index = 0; index < batches.length; index++) {
       checkAbort(options.signal);
-      options.onProgress(text(`AI 正在阅读第 ${index + 1} / ${batches.length} 批论文…`, `AI is reading paper batch ${index + 1} of ${batches.length}…`, locale));
+      options.onProgress(evidence.sourceCoverage
+        ? text(`AI 正在阅读第 ${index + 1} / ${batches.length} 批公开证据…`, `AI is reading evidence batch ${index + 1} of ${batches.length}…`, locale)
+        : text(`AI 正在阅读第 ${index + 1} / ${batches.length} 批论文…`, `AI is reading paper batch ${index + 1} of ${batches.length}…`, locale));
       const papers = batches[index];
       const messages = concise(buildAiMessages({ ...evidence, papers, sampled: evidence.sampled || papers.length < evidence.totalWorks }));
       const raw = await infer(messages, papers.map(paper => paper.id));

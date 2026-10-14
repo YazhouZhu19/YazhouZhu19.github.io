@@ -134,6 +134,12 @@ jobs:
           print('::warning::All sources failed; publishing the fresh failure metadata while retaining the saved library. The job will fail after publication is verified.')
           PY
               fi
+              cp data/research-signals.json "$RUNNER_TEMP/research-signals-before.json"
+              signals_started_at="$(node -e 'console.log(new Date().toISOString())')"
+              signals_exit=0
+              GH_TOKEN="${{ github.token }}" npm run collect:signals || signals_exit=$?
+              echo "$signals_exit" > "$RUNNER_TEMP/research-signals-exit"
+              node --import tsx scripts/check-signal-collection.ts "$RUNNER_TEMP/research-signals-before.json" data/research-signals.json "$signals_started_at" "$signals_exit"
               npm test
               python3 -m unittest discover -s tests -p '*_test.py'
               npm run build
@@ -141,6 +147,10 @@ jobs:
             collection_failed=false
             if [ "$(cat "$RUNNER_TEMP/research-collect-exit")" -ne 0 ]; then
               collection_failed=true
+            fi
+            signals_failed=false
+            if [ "$(cat "$RUNNER_TEMP/research-signals-exit")" -ne 0 ]; then
+              signals_failed=true
             fi
 
             python3 - <<'PY'
@@ -156,12 +166,15 @@ jobs:
           dist = Path('tools/research-monitor/dist')
           if dist.is_symlink():
               raise SystemExit('Build output must not be a symbolic link')
-          for name in ('index.html', 'en/index.html', 'data/papers.json', 'data/public-papers-v2.json'):
+          for name in ('index.html', 'en/index.html', 'data/papers.json', 'data/public-papers-v2.json', 'data/research-signals.json'):
               if not (dist / name).is_file():
                   raise SystemExit(f'Missing build output: {name}')
           source_data = Path('tools/research-monitor/data/papers.json').read_bytes()
           legacy_data = (dist / 'data/papers.json').read_bytes()
           public_data = (dist / 'data/public-papers-v2.json').read_bytes()
+          signal_data = (dist / 'data/research-signals.json').read_bytes()
+          if signal_data != Path('tools/research-monitor/data/research-signals.json').read_bytes() or len(signal_data) > 4 * 1024 * 1024:
+              raise SystemExit('Public signal snapshot differs from the archive or exceeds the limit')
           if source_data != legacy_data:
               raise SystemExit('Legacy public manifest differs from the v1 archive')
           json.loads(public_data)
@@ -183,6 +196,7 @@ jobs:
               'sourceRevision': os.environ['MONITOR_SOURCE_REVISION'],
               'papersSha256': hashlib.sha256(public_data).hexdigest(),
               'legacyPapersSha256': hashlib.sha256(legacy_data).hexdigest(),
+              'signalsSha256': hashlib.sha256(signal_data).hexdigest(),
           }
           (dist / 'deployment.json').write_text(json.dumps(manifest, indent=2) + '\n')
           PY
@@ -191,13 +205,13 @@ jobs:
             mkdir -p research-monitor
             # Delete obsolete assets only within this generated subtree.
             rsync -a --delete tools/research-monitor/dist/ research-monitor/
-            git add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ research-monitor/
+            git add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ tools/research-monitor/data/research-signals.json research-monitor/
 
             python3 - <<'PY'
           import subprocess
           paths = subprocess.check_output(['git', 'diff', '--cached', '--name-only', '-z']).decode().split('\0')
           for path in filter(None, paths):
-              if path != 'tools/research-monitor/data/papers.json' and not path.startswith(('tools/research-monitor/data/papers/', 'research-monitor/')):
+              if path not in ('tools/research-monitor/data/papers.json', 'tools/research-monitor/data/research-signals.json') and not path.startswith(('tools/research-monitor/data/papers/', 'research-monitor/')):
                   raise SystemExit(f'Unexpected staged file: {path}')
           PY
 
@@ -210,6 +224,7 @@ jobs:
             if git push origin HEAD:main; then
               echo "commit=$expected_commit" >> "$GITHUB_OUTPUT"
               echo "collection_failed=$collection_failed" >> "$GITHUB_OUTPUT"
+              echo "signals_failed=$signals_failed" >> "$GITHUB_OUTPUT"
               break
             fi
 
@@ -219,6 +234,7 @@ jobs:
             if git merge-base --is-ancestor "$expected_commit" origin/main; then
               echo "commit=$expected_commit" >> "$GITHUB_OUTPUT"
               echo "collection_failed=$collection_failed" >> "$GITHUB_OUTPUT"
+              echo "signals_failed=$signals_failed" >> "$GITHUB_OUTPUT"
               break
             fi
             if [ "$attempt" -eq 3 ]; then
@@ -308,10 +324,13 @@ jobs:
                                   raise RuntimeError('Legacy public manifest does not match this deployment')
                               if verify_snapshot(legacy_data, lambda path: read_public('data/' + path, MAX_BYTES)) != total:
                                   raise RuntimeError('Legacy and current public paper counts differ')
+                              signal_data = read_public('data/research-signals.json', 4 * 1024 * 1024)
+                              if hashlib.sha256(signal_data).hexdigest() != expected_manifest['signalsSha256']:
+                                  raise RuntimeError('Public GitHub/news data does not match this deployment')
                               for route in ('', 'en/'):
                                   if b'<html' not in read_public(route, 2 * 1024 * 1024).lower():
                                       raise RuntimeError('Published route did not return HTML')
-                              print(f'Published routes, build marker, and both v1/v2 snapshot shards verified ({total} papers).', flush=True)
+                              print(f'Published routes, build marker, paper snapshots ({total} papers), and GitHub/news snapshot verified.', flush=True)
                               with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
                                   summary.write(f'Published and verified: {monitor_url}\n\nCommit: `{expected_commit}`\n\nPublic data SHA-256: `{expected_manifest["papersSha256"]}`\n')
                               break
@@ -330,4 +349,10 @@ jobs:
         run: |
           echo '::error::All three sources failed. The site now displays the verified fresh failure status and retains its saved library.'
           echo 'Collection failed for all three sources; the updated error status was published and verified. The saved library remains available.' >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+
+      - name: Mark signal collection failure after publishing its status
+        if: always() && steps.refresh.outputs.signals_failed == 'true'
+        run: |
+          echo '::error::GitHub and Google News collection failed. The signal snapshot retains existing records and records source errors.'
           exit 1

@@ -1,6 +1,7 @@
 import { readSnapshotFile } from "./snapshot-files";
 import { monitorDataSchema } from "../lib/local-api";
 import { writePublicSnapshot } from "./public-snapshot";
+import { parseResearchSignalsData, SIGNALS_MAX_BYTES } from "../lib/research-signals";
 
 // Verify the complete source snapshot before publishing any data.
 const data = await readSnapshotFile("data/papers.json");
@@ -15,5 +16,11 @@ await copyFile("data/papers.json", "dist/data/papers.json");
 assert.deepEqual(await readSnapshotFile("dist/data/papers.json"), data);
 assert.deepEqual(await readSnapshotFile("dist/data/public-papers-v2.json"), data);
 console.log(`Verified lossless public snapshot: ${manifest.totalStored} papers, ${manifest.shards.length} shards, ${manifest.queryUrls?.length ?? 0} shared query URLs; v1 endpoint retained`);
+const signalBytes = await readFile("data/research-signals.json");
+assert.ok(signalBytes.length <= SIGNALS_MAX_BYTES, "Signal snapshot exceeds publication limit");
+const signals = parseResearchSignalsData(JSON.parse(signalBytes.toString("utf8")));
+await copyFile("data/research-signals.json", "dist/data/research-signals.json");
+assert.deepEqual(await readFile("dist/data/research-signals.json"), signalBytes);
+console.log(`Verified public signal snapshot: ${signals.records.length} GitHub and news records`);
 import assert from "node:assert/strict";
-import { copyFile, readdir } from "node:fs/promises";
+import { copyFile, readFile, readdir } from "node:fs/promises";

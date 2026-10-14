@@ -61,3 +61,7 @@ Client tests use controlled responses to check the fixed API endpoint, selected 
 A local browser QA run on 2026-10-14 successfully loaded the real 1.7B WebGPU model and analyzed two real papers with output passing structure and citation-ID checks. That confirms this execution path in the tested environment, not scientific accuracy: the model still misread a comparison in the source text. A later 0.6B run completed but returned unfilled template phrases. The parser now rejects those known placeholders, and 0.6B is labeled a lightweight trial with a suggestion to choose a larger or cloud model for complex analysis. These checks cannot detect every shallow or incorrect response. The interface asks readers to verify cited passages and states that traceable citations do not validate the conclusions.
 
 Existing collector, public-snapshot, personal CRUD, backup, trajectory and legacy-history tests continue to apply. The complete archive and macro dashboard are maintained independently of optional AI runs.
+
+## Cross-source evidence
+
+Research outlook, independent questions and PI analysis now accept typed GitHub/news evidence alongside papers; source libraries also expose their own AI windows. Paper-only requests preserve the existing payload. PI external records require exact URL/DOI/arXiv linkage and do not imply ownership. Mutable snapshots observed after a selected historical end date are excluded. See [SIGNALS.md](SIGNALS.md) for source distinctions, sampling limits and collection behavior.
