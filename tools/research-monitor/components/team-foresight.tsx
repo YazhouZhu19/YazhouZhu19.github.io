@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useI18n } from "./locale-provider";
-import { ForesightCards } from "./foresight-view";
+import { AiModelSettings, AiResearchPanel } from "./ai-research-panel";
 import { TeamsView } from "./monitor-views";
 import "@/styles/team-foresight.css";
 
@@ -180,13 +180,15 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
     {!storageAvailable && <p className="foresight-note">{t("当前浏览器无法保存名单；仍可查看已有名单和论文证据。", "This browser cannot save watchlists. Existing watchlists and paper evidence remain available.")}</p>}
 
     {selectedTeam && result ? <>
-      <div className="team-assessment-heading" ref={assessmentHeading} tabIndex={-1}><div><span>{selectedCandidate ? t("作者目录 · 临时观察", "Author directory · temporary observation") : t("我的团队名单", "My watchlists")}</span><h3>{selectedTeam.name}</h3></div><label className="foresight-field"><span>{t("判断时间范围", "Outlook horizon")}</span><select value={horizon} onChange={event => changePreferences({ ...viewPreferences, listSource, horizon: event.target.value as ForesightCard["horizon"] })}>{(["3–6", "6–12", "12–24"] as const).map(value => <option key={value} value={value}>{value} {t("个月", "months")}</option>)}</select></label></div>
+      <div className="team-assessment-heading" ref={assessmentHeading} tabIndex={-1}><div><span>{selectedCandidate ? t("作者目录 · 临时观察", "Author directory · temporary observation") : t("我的团队名单", "My watchlists")}</span><h3>{selectedTeam.name}</h3></div></div>
       <div className="team-identity-note">
         <span>{selectedTeam.members.join(" · ")}</span>
         <p>{selectedCandidate ? t("本次研判仅使用当前方向下该作者候选的公开论文，未加入个人名单；姓名仍可能重名，作者目录不自动认定 PI 或真实团队身份。", "This assessment uses only this author candidate’s public papers in the selected direction and is not saved as a personal watchlist. Names may be ambiguous; the directory does not establish PI or team identity.") : t("按成员全名或 ORCID 匹配；同名可能混淆，机构和末位作者不自动认定为真实团队或 PI。", "Matches use member names or ORCIDs. Names may be ambiguous; affiliations and last authorship do not establish a team or PI role.")}</p>
         {selectedTeam.institution && <p>{t("署名机构筛选：", "Affiliation filter: ")}{selectedTeam.institution}{t("；缺少该机构信息的记录不会匹配。", "; records without matching affiliation metadata are excluded.")}</p>}
       </div>
-      <section className="team-trajectory" aria-labelledby="team-trajectory-title">
+      <AiModelSettings/>
+      <AiResearchPanel key={`${selectedTeam.id}:${selectedCandidate ? directoryTrack : "saved"}`} papers={selectedCandidate?.papers ?? data.papers.filter(paper => matchesTeam(paper, selectedTeam))} mode="team" subjectId={`${selectedTeam.id}:${selectedCandidate ? directoryTrack : "saved"}`} onPaper={openPaper} onDrill={onDrill}/>
+      <details className="team-relationships"><summary>{t("查看原始论文轨迹与既有标签", "Inspect paper trajectory and existing tags")}</summary><section className="team-trajectory" aria-labelledby="team-trajectory-title">
         <div className="foresight-toolbar"><h3 id="team-trajectory-title">{t("公开研究轨迹", "Public research trajectory")}</h3><span>{t("两个相邻的 90 天窗口", "Two adjacent 90-day windows")}</span></div>
         <label className="team-trajectory-dimension"><span>{t("观察维度", "View dimension")}</span><select value={trajectoryDimension} onChange={event => setTrajectoryDimension(event.target.value as TrajectoryDimension)}>{(["tracks", "methods", "modalities"] as const).map(dimension => <option key={dimension} value={dimension}>{dimensionLabel(dimension)}</option>)}</select></label>
         <div className="team-trajectory-periods">{[
@@ -201,8 +203,8 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
           </div>;
         })}</div>
       </section>
-      <ForesightCards result={result} onPaper={openPaper} onDrill={onDrill}/>
-      {!!result.current.length && <section className="team-recent-evidence"><div className="foresight-toolbar"><h3>{t("近期论文证据", "Recent paper evidence")}</h3><button className="foresight-button" onClick={() => openPeriod(selectedTeam.name, result.papers)}>{t("查看本次范围论文", "All papers in this scope")}<ArrowUpRight size={14}/></button></div><ul>{result.current.slice(0, 3).map(paper => <li key={paper.id}><button onClick={() => openPaper(paper)}><time dateTime={paper.publishedAt}>{paper.publishedAt.slice(0, 10)}</time><span>{paper.title}</span><ArrowUpRight size={15}/></button></li>)}</ul></section>}
+      {!!result.current.length && <section className="team-recent-evidence"><div className="foresight-toolbar"><h3>{t("近期论文证据", "Recent paper evidence")}</h3><button className="foresight-button" onClick={() => openPeriod(`${selectedTeam.name} · ${t("最近180天轨迹", "Latest 180-day trajectory")}`, result.papers)}>{t("查看最近180天轨迹论文", "View trajectory papers from the latest 180 days")}<ArrowUpRight size={14}/></button></div><ul>{result.current.slice(0, 3).map(paper => <li key={paper.id}><button onClick={() => openPaper(paper)}><time dateTime={paper.publishedAt}>{paper.publishedAt.slice(0, 10)}</time><span>{paper.title}</span><ArrowUpRight size={15}/></button></li>)}</ul></section>}
+      </details>
       {selectedSavedTeam && teams.length >= 2 && <details key={selectedSavedTeam.id} className="team-relationships" onToggle={event => setRelationshipsOpen(event.currentTarget.open)}>
         <summary>{t("关注名单之间的关系", "Relationships between watchlists")}</summary>
         <p className="foresight-note">{t("比较最近 90 天的去重论文，最多展示另外 3 份名单。公开研究交集与潜在互补线索需结合真实资源核验，不推断合作意愿或竞争强度。", "Compare distinct works from the latest 90 days for up to three other watchlists. Public research overlap and possible complementary clues require real-world resource checks; they do not establish willingness to collaborate or competitive strength.")}</p>

@@ -23,7 +23,7 @@ type Candidate = {
   abstractOnly?: boolean;
 };
 
-function publicationDay(value: string): string | null {
+export function publicationDay(value: string): string | null {
   if (!/^\d{4}-\d{2}-\d{2}(?:$|T|\s)/.test(value) || !Number.isFinite(Date.parse(value))) return null;
   const day = value.slice(0, 10), date = new Date(day + "T00:00:00Z");
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === day ? day : null;
@@ -57,7 +57,7 @@ function identityKeys(paper: Paper): string[] {
 }
 
 // Union-find handles preprint -> article -> correction/version chains without quadratic pair matching.
-function groupWorks(papers: Paper[]): Paper[][] {
+export function groupWorks(papers: Paper[]): Paper[][] {
   const parent = papers.map((_, index) => index), sizes = papers.map(() => 1), keys = new Map<string, number>();
   const root = (index: number): number => { while (parent[index] !== index) { parent[index] = parent[parent[index]]; index = parent[index]; } return index; };
   papers.forEach((paper, index) => {

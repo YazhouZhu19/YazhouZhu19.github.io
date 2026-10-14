@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
-import { TRACKS } from "@/lib/classify";
-import { beijingDay, type DashboardDrill } from "@/lib/dashboard";
-import { buildForesight } from "@/lib/foresight";
+import { useMemo, useState } from "react";
+import type { DashboardDrill } from "@/lib/dashboard";
 import type { ForesightCard, ForesightResult } from "@/lib/foresight-types";
 import type { MonitorData, Paper } from "@/lib/types";
 import { AssessmentHistory } from "./assessment-history";
+import { AiModelSettings, AiResearchPanel } from "./ai-research-panel";
 import { useI18n } from "./locale-provider";
 
 type EvidenceActions = {
@@ -14,7 +13,6 @@ type EvidenceActions = {
   onDrill: (drill: DashboardDrill) => void;
 };
 
-const HORIZONS: ForesightCard["horizon"][] = ["3–6", "6–12", "12–24"];
 export type ForesightPreferences = { track: string; modality: string; query: string; horizon: ForesightCard["horizon"] };
 
 /** Shared by the direction and team views; every drill preserves the complete evidence set. */
@@ -101,44 +99,17 @@ export function ForesightCards({ result, onPaper, onDrill }: EvidenceActions & {
   </div>;
 }
 
-export function ForesightView({ data, onPaper, onDrill, preferences, onPreferencesChange }: EvidenceActions & {
+export function ForesightView({ data, onPaper, onDrill }: EvidenceActions & {
   data: MonitorData;
   preferences?: ForesightPreferences;
   onPreferencesChange?: (preferences: ForesightPreferences) => void;
 }) {
-  const { locale, tr } = useI18n();
-  const t = (zh: string, en: string) => locale === "en" ? en : zh;
-  const fieldId = useId();
-  const [localPreferences, setLocalPreferences] = useState<ForesightPreferences>({ track: "segmentation", modality: "", query: "", horizon: "6–12" });
-  const currentPreferences = preferences ?? localPreferences;
-  const { track, modality, query, horizon } = currentPreferences;
-  const [draftQuery, setDraftQuery] = useState(currentPreferences.query);
-  useEffect(() => setDraftQuery(query), [query]);
-  const updatePreferences = (changes: Partial<ForesightPreferences>) => {
-    const next = { ...currentPreferences, ...changes };
-    setLocalPreferences(next);
-    onPreferencesChange?.(next);
-  };
-  const day = beijingDay(new Date());
-  const modalities = useMemo(() => [...new Set(data.papers.filter(paper => paper.tracks.includes(track)).flatMap(paper => paper.modalities))].sort(), [data.papers, track]);
-  const result = useMemo<ForesightResult>(() => buildForesight(data.papers, { track, modality, query, horizon, now: new Date(`${day}T12:00:00+08:00`) }), [data.papers, track, modality, query, horizon, day]);
-  const scopeLabel = `${tr(TRACKS[track])}${modality ? ` · ${tr(modality)}` : ""}${query ? ` · ${query}` : ""}`;
-
-  return <section className="foresight-view" aria-label={t("方向前瞻", "Research direction outlook")}>
-    <form className="foresight-controls" onSubmit={event => { event.preventDefault(); updatePreferences({ query: draftQuery.trim() }); }}>
-      <div className="foresight-field"><label htmlFor={`${fieldId}-track`}>{t("研究方向", "Research direction")}</label><select id={`${fieldId}-track`} value={track} onChange={event => updatePreferences({ track: event.target.value, modality: "" })}>{Object.entries(TRACKS).map(([id, label]) => <option key={id} value={id}>{tr(label)}</option>)}</select></div>
-      <div className="foresight-field"><label htmlFor={`${fieldId}-modality`}>{t("影像模态", "Imaging modality")}</label><select id={`${fieldId}-modality`} value={modality} onChange={event => updatePreferences({ modality: event.target.value })}><option value="">{t("不限模态", "Any modality")}</option>{modalities.map(value => <option key={value} value={value}>{tr(value)}</option>)}</select></div>
-      <div className="foresight-field"><label htmlFor={`${fieldId}-horizon`}>{t("判断时间跨度", "Outlook horizon")}</label><select id={`${fieldId}-horizon`} value={horizon} onChange={event => updatePreferences({ horizon: event.target.value as ForesightCard["horizon"] })}>{HORIZONS.map(value => <option key={value} value={value}>{t(`${value} 个月`, `${value} months`)}</option>)}</select></div>
-      <div className="foresight-field foresight-field-wide"><label htmlFor={`${fieldId}-query`}>{t("聚焦问题 / 关键词（可选）", "Question keywords (optional)")}</label><div className="foresight-query-row"><input id={`${fieldId}-query`} value={draftQuery} onChange={event => setDraftQuery(event.target.value)} placeholder={t("例如：domain shift", "e.g. domain shift")} aria-describedby={`${fieldId}-query-help`} /><button type="submit" className="foresight-button foresight-button-primary">{t("更新观察", "Update outlook")}</button></div><p id={`${fieldId}-query-help`} className="foresight-control-help">{t("按标题与摘要匹配所有输入词，建议使用英文术语。此处用于缩小论文范围。", "All entered words must match the title or abstract. Use English terms to narrow the paper set.")}</p></div>
-    </form>
-
-    <dl className="foresight-scope" aria-label={t("本次判断的数据范围", "Evidence scope for this assessment")}>
-      <div className="foresight-window"><dt>{t("发表窗口", "Publication windows")}</dt><dd><span>{result.from} — {result.asOf}</span><small>{t("对照", "vs.")} {result.previousFrom} — {result.previousTo}</small></dd></div>
-      <div><dt>{t("本期论文", "Current papers")}</dt><dd><button type="button" disabled={!result.current.length} onClick={() => onDrill({ label: `${scopeLabel} · ${t("本期", "Current")}`, ids: result.current.map(paper => paper.id) })}>{result.current.length}</button></dd></div>
-      <div><dt>{t("前期论文", "Previous papers")}</dt><dd><button type="button" disabled={!result.previous.length} onClick={() => onDrill({ label: `${scopeLabel} · ${t("前期", "Previous")}`, ids: result.previous.map(paper => paper.id) })}>{result.previous.length}</button></dd></div>
-      <div><dt>{t("缺少摘要", "Missing abstracts")}</dt><dd>{result.missingAbstracts}</dd></div>
-    </dl>
-    <div className="foresight-toolbar"><div><h2>{t("当前值得验证的判断", "Assessments to test next")}</h2><p>{scopeLabel}</p></div><button type="button" className="foresight-text-button" disabled={!result.papers.length} onClick={() => onDrill({ label: scopeLabel, ids: result.papers.map(paper => paper.id) })}>{t(`查看范围内 ${result.papers.length} 篇论文`, `Browse ${result.papers.length} papers in scope`)} <span aria-hidden="true">↗</span></button></div>
-    <ForesightCards result={result} onPaper={onPaper} onDrill={onDrill} />
+  const { locale } = useI18n();
+  return <section className="foresight-view" aria-label={locale === "en" ? "AI research outlook" : "AI 方向研判"}>
+    <AiModelSettings />
+    <div className="ai-research-windows">
+      <AiResearchPanel papers={data.papers} mode="landscape" onPaper={onPaper} onDrill={onDrill} />
+      <AiResearchPanel papers={data.papers} mode="interest" onPaper={onPaper} onDrill={onDrill} />
+    </div>
   </section>;
 }
