@@ -185,6 +185,43 @@ test("report parser rejects invented, empty and duplicated citations rather than
   assert.throws(() => parseAiReport(JSON.stringify(report(["a", "b"])), ["a"]), /outside the supplied evidence/);
 });
 
+test("report parser rejects observed unfilled model templates after case and whitespace normalization", () => {
+  const captured = report();
+  captured.findings[0].alternative = "Alternative explanation or limitation";
+  captured.findings[0].nextStep = "Concrete validation or experiment";
+  captured.limitations = ["scope limitation"];
+  const raw = JSON.stringify(captured);
+  assert.throws(() => parseAiReport(raw, ["a"]), { message: "The AI response contains unfilled template text" });
+  assert.equal(JSON.stringify(captured), raw);
+
+  for (const [field, text] of [
+    ["title", "  SHORT\tTITLE  "],
+    ["observation", "what the\n cited papers support"],
+    ["forecast", "conditional future hypothesis"],
+    ["alternative", "  aLTERNATIVE \n explanation  or limitation "],
+    ["alternative", "another explanation or limitation"],
+    ["nextStep", " Concrete\tvalidation or  experiment "],
+  ] as const) {
+    const value = report();
+    value.findings[0][field] = text;
+    assert.throws(() => parseAiReport(JSON.stringify(value), ["a"]), /unfilled template text/);
+  }
+  assert.throws(() => parseAiReport(JSON.stringify({ ...report(), summary: "\nBRIEF  overview\t" }), ["a"]), /unfilled template text/);
+  assert.throws(() => parseAiReport(JSON.stringify({ ...report(), limitations: ["\t Scope\n limitation  "] }), ["a"]), /unfilled template text/);
+});
+
+test("specific evidence limitations and text mentioning a template phrase remain valid", () => {
+  const value = report();
+  value.findings[0].alternative = "An alternative explanation or limitation is the absence of an external-site test in these papers.";
+  value.findings[0].nextStep = "Test the reported reconstruction method on held-out scanners before comparing transfer performance.";
+  value.limitations = ["The two supplied abstracts do not report clinical outcomes, so clinical effectiveness cannot be assessed."];
+  assert.deepEqual(parseAiReport(JSON.stringify(value), ["a"]), value);
+  const insufficient = { summary: "所选样本没有报告罕见疾病的结果，无法形成这一方向的预测。", findings: [], limitations: ["两篇输入论文仅涉及重建误差，没有提供罕见疾病数据。"] };
+  assert.deepEqual(parseAiReport(JSON.stringify(insufficient), ["a"]), insufficient);
+  const messages = buildAiMessages(prepareAiEvidence([paper("a")], spec, 48, now));
+  assert.match(messages[0].content, /Schema strings are placeholders: never repeat them/);
+});
+
 test("report parser rejects unbounded, malformed or extra output fields", () => {
   assert.throws(() => parseAiReport("not JSON", []), /not valid report JSON/);
   assert.throws(() => parseAiReport("x".repeat(50001), []), /allowed size/);

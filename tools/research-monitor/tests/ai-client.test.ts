@@ -271,6 +271,25 @@ test("evidence-to-model-to-report integration validates citations and records th
   } finally { globalThis.fetch = originalFetch; }
 });
 
+test("unfilled model templates produce a static retry message instead of a displayed report", async () => {
+  const originalFetch = globalThis.fetch;
+  const value = report(["paper-0"]);
+  value.summary = "UNACCEPTED-MODEL-TEXT";
+  value.findings[0].alternative = "Alternative explanation or limitation";
+  try {
+    globalThis.fetch = fetchMock(() => complete(JSON.stringify(value)));
+    const data = evidence();
+    await assert.rejects(runAiAnalysis({ ...data, spec: { ...data.spec, locale: "zh" } }, config, {
+      signal: controller().signal, onProgress: () => {},
+    }), (error: unknown) => {
+      assert.ok(error instanceof Error);
+      assert.match(error.message, /模型只返回了模板内容；请换用较大模型或免费云端重试/);
+      assert.ok(!error.message.includes("UNACCEPTED-MODEL-TEXT"));
+      return true;
+    });
+  } finally { globalThis.fetch = originalFetch; }
+});
+
 test("sequential batch synthesis only permits citations actually preserved in preliminary reports", async () => {
   const originalFetch = globalThis.fetch;
   const data = evidence(45);

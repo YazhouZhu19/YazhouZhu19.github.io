@@ -223,7 +223,8 @@ export async function runAiAnalysis(evidence: AiEvidence, config: AiSettings, op
         // Only static validation codes/paths are exposed, never rejected text or values.
         const issues = (error as { issues?: { code: string; path: (string | number)[] }[] })?.issues;
         const duplicate = issues?.some(issue => issue.code === "custom" && issue.path.at(-1) === "paperIds");
-        const detail = duplicate ? text("存在重复的论文引用。", "Duplicate paper citations.", locale)
+        const detail = error instanceof Error && error.message === "The AI response contains unfilled template text" ? text("模型只返回了模板内容；请换用较大模型或免费云端重试。", "The model returned unfilled template text; retry with a larger model or a free cloud model.", locale)
+          : duplicate ? text("存在重复的论文引用。", "Duplicate paper citations.", locale)
           : issues?.some(issue => issue.code === "too_small") ? text("缺少必要内容。", "Required content is missing.", locale)
           : issues?.some(issue => issue.code === "too_big") ? text("输出超出篇幅限制。", "The output exceeds length limits.", locale)
           : error instanceof Error && error.message === "The AI response cites a paper outside the supplied evidence" ? text("引用了输入之外的论文。", "A cited paper was not supplied.", locale)

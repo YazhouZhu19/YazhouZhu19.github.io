@@ -1,7 +1,7 @@
 // Model files are fetched only after an explicit analysis request by ai-client.
 // Sizes are approximate model resources, excluding the WebLLM runtime.
 export const LOCAL_AI_MODELS = [
-  { id: "Qwen3-0.6B-q4f16_1-MLC", name: "Qwen3-0.6B", downloadLabel: "350 MB", tierZh: "轻量", tierEn: "Lightweight" },
+  { id: "Qwen3-0.6B-q4f16_1-MLC", name: "Qwen3-0.6B", downloadLabel: "350 MB", tierZh: "轻量试用", tierEn: "Lightweight trial" },
   { id: "Qwen3-1.7B-q4f16_1-MLC", name: "Qwen3-1.7B", downloadLabel: "1 GB", tierZh: "均衡", tierEn: "Balanced" },
   { id: "Qwen3-4B-q4f16_1-MLC", name: "Qwen3-4B", downloadLabel: "2.3 GB", tierZh: "较大模型", tierEn: "Larger model" },
 ] as const;
