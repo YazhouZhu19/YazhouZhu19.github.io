@@ -1,6 +1,6 @@
 # GitHub projects and Google News discovery
 
-The **GitHub projects** and **Models & progress** entrances sit beside the full paper library. Their independent snapshot is `data/research-signals.json`; neither source is inserted into the paper archive or counted as a paper in the macro dashboard. Browse by text, publisher/owner and dates; compare up to three repositories by license, push/release dates, archived state and stars. Stars are a snapshot of attention, not research quality. Code licensing does not establish permissions for model weights, data or clinical use.
+The **GitHub projects** and **Models & progress** entrances sit beside the full paper library. Their independent snapshot is `data/research-signals.json`; neither source is inserted into the paper archive or counted as a paper in the macro dashboard. Browse by text, broad research area, relevance and dates; owners and publishers appear on each card and remain searchable by text, with no separate owner/publisher dropdown; compare up to three repositories by license, push/release dates, archived state and stars. Stars are a snapshot of attention, not research quality. Code licensing does not establish permissions for model weights, data or clinical use.
 
 ## Collection and provenance
 
@@ -36,3 +36,7 @@ PI/team analysis includes external records only when the selected papers and tho
 GitHub date filters use the latest push, release or creation date; news filters use the reported publication date. Mutable repository metadata and search snippets are eligible for AI only when their observation date is on or before the selected end day. The collector currently keeps the latest observation per record, not a historical time series: it cannot reconstruct past repository state, popularity growth or a past announcement's exact contents. Dates are not backfilled to fabricate retrospective predictions.
 
 Automated tests cover schema/size rejection, malformed responses, bounded discovery, cache/error retention, cross-source sampling and historical cutoffs, exact PI linkage, typed AI payloads, citation rejection and zero-price cloud safeguards. A mocked cloud test verifies the request/response integration; it does not validate a real model's scientific interpretation.
+
+## Browse categories
+
+The source library groups its detailed discovery routes into 13 GitHub research areas and 10 news areas (`lib/signal-browse-categories.ts`). These are browsing aids based on retrieval tags, not independently verified task classifications. Records can belong to multiple areas, so category counts overlap. General-only, unknown and untagged records receive a general category; a generic discovery route does not add that category when a specific area is known. Every record remains reachable. The original query catalog, collector breadth, provenance and snapshot data are preserved; detailed discovery routes remain available under collection scope.

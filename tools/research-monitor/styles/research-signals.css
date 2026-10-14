@@ -32,7 +32,7 @@
 .signals-filters { padding: 20px; border: 1px solid var(--signals-line); border-radius: 12px; background: #fff; }
 .signals-search { display: flex; align-items: center; gap: 10px; border: 1px solid #d8e1d8; border-radius: 7px; padding: 0 12px; color: #7c8d7d; }
 .signals-search > input { width: 100%; min-width: 0; height: 43px; border: none; outline: none; background: transparent; color: var(--signals-ink); font: 13px/1.6 var(--font-ui); }
-.signals-filter-row { display: grid; grid-template-columns: minmax(155px, 1.4fr) repeat(3, minmax(120px, 1fr)) auto; gap: 13px; margin-top: 16px; align-items: end; }
+.signals-filter-row { display: grid; grid-template-columns: repeat(3, minmax(120px, 1fr)) auto; gap: 13px; margin-top: 16px; align-items: end; }
 .signals-filter-row > div { min-width: 0; }
 .signals-filter-row label { display: block; margin-bottom: 6px; color: var(--signals-muted); font: 12px/1.6 var(--font-ui); }
 .signals-filter-row :is(input, select) { width: 100%; min-width: 0; height: 40px; padding: 8px 10px; border: 1px solid #d8e1d8; border-radius: 6px; background: white; color: var(--signals-ink); font: 12px/1.6 var(--font-ui); }
