@@ -1,6 +1,6 @@
 # Research and team outlook
 
-The simplified workspace preserves the complete archive and personal data. Its new default view helps readers formulate testable next steps, using observed papers as evidence. It does not call an AI service, infer undisclosed PI plans, rank research quality or claim calibrated prediction accuracy.
+The simplified workspace preserves the complete archive and personal data. The research dashboard remains the default macro overview; the direction and team outlook views help readers formulate testable next steps using observed papers as evidence. They do not call an AI service, infer undisclosed PI plans, rank research quality or claim calibrated prediction accuracy.
 
 ## Scope and time
 
@@ -26,6 +26,8 @@ These conservative checks can detect major backfill and retrieval shifts, but do
 ## PI / teams
 
 The user confirms names or ORCIDs and optionally filters the author's publication affiliation. Neither an institution nor last authorship identifies a lab or PI. Team assessments use the same evidence rules as direction assessments, with explicit watchlist-limited wording. Author discovery is a list of public authors and matching records, not a PI ranking or verified membership list.
+
+The selectable directory follows the original dynamic author-discovery approach, with one list per research interest and name/ORCID/affiliation search. It uses classified papers with valid, nonfuture publication dates; default candidates need at least two library records and an ORCID or an unabbreviated name. Explicit searches may expose abbreviated names with a warning. Distinct ORCIDs and name-only identities stay separate. Filtering recomputes paper counts, tags and publication affiliations in the selected scope. A temporary directory assessment reads only that entry's paper records, preventing a name-only selection from silently absorbing records assigned to other ORCIDs. Saved personal teams retain their established full-library member matching and three user-assigned purpose categories. No directory entry is automatically saved into a user's watchlists.
 
 ## Revisions and outcomes
 

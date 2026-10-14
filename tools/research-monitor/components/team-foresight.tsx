@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Plus, Search, Users } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/lib/local-api";
 import { buildForesight } from "@/lib/foresight";
-import { beijingDay, matchesMember, matchesTeam, type DashboardDrill } from "@/lib/dashboard";
-import { normalizedName, TRACKS } from "@/lib/classify";
+import { beijingDay, matchesTeam, type DashboardDrill } from "@/lib/dashboard";
+import { TRACKS } from "@/lib/classify";
+import { buildTeamDirectory, filterTeamDirectory, type TeamDirectoryEntry } from "@/lib/team-directory";
 import type { ForesightCard, ForesightResult } from "@/lib/foresight-types";
 import type { MonitorData, Paper, Team } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,15 @@ import { ForesightCards } from "./foresight-view";
 import { TeamsView } from "./monitor-views";
 import "@/styles/team-foresight.css";
 
-export type TeamForesightPreferences = { teamId: string; horizon: ForesightCard["horizon"] };
+type ListSource = "directory" | "saved";
+export type TeamForesightPreferences = {
+  teamId: string;
+  horizon: ForesightCard["horizon"];
+  directoryTrack?: string;
+  query?: string;
+  listSource?: ListSource;
+  savedKind?: string;
+};
 type Props = {
   data: MonitorData;
   teams: Team[];
@@ -30,40 +39,8 @@ type Props = {
   preferences?: TeamForesightPreferences;
   onPreferencesChange?: (preferences: TeamForesightPreferences) => void;
 };
-type AuthorCandidate = { key: string; name: string; member: string; orcid: string | null; affiliations: string[]; papers: Paper[] };
 type TrajectoryDimension = "tracks" | "methods" | "modalities";
-
-function hasUnabbreviatedName(name: string): boolean {
-  const tokens = name.match(/[\p{L}]+/gu) ?? [];
-  if (tokens.some(token => /^[A-Za-z]$/.test(token) || /^[A-Z]{2,3}$/.test(token))) return false;
-  return tokens.length >= 2 || /^[\p{Script=Han}]{2,}$/u.test(name.trim());
-}
-
-function authorCandidates(papers: Paper[], asOf: string): AuthorCandidate[] {
-  const candidates = new Map<string, AuthorCandidate>();
-  for (const paper of papers) {
-    const date = paper.publishedAt.slice(0, 10);
-    const parsed = new Date(`${date}T00:00:00Z`);
-    if (!paper.tracks.length || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date || date > asOf) continue;
-    const seen = new Set<string>();
-    for (const author of paper.authors) {
-      const name = author.displayName?.trim() || author.name.trim();
-      const candidateOrcid = (author.orcid || "").replace(/^https?:\/\/(?:www\.)?orcid\.org\//i, "").trim().toUpperCase();
-      const orcid = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(candidateOrcid) ? candidateOrcid : null;
-      const normalized = normalizedName(name);
-      const key = orcid ? `orcid:${orcid}` : `name:${normalized}`;
-      if ((!normalized && !orcid) || seen.has(key)) continue;
-      seen.add(key);
-      const entry = candidates.get(key) ?? { key, name: name || orcid!, member: orcid || author.name.trim() || name, orcid, affiliations: [], papers: [] };
-      if (orcid && hasUnabbreviatedName(name) && !hasUnabbreviatedName(entry.name)) entry.name = name;
-      if (!entry.papers.some(row => row.id === paper.id)) entry.papers.push(paper);
-      entry.affiliations = [...new Set([...entry.affiliations, ...author.affiliations])];
-      candidates.set(key, entry);
-    }
-  }
-  return [...candidates.values()].map(candidate => ({ ...candidate, papers: candidate.papers.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)) }))
-    .sort((a, b) => Number(!!b.orcid) - Number(!!a.orcid) || Number(hasUnabbreviatedName(b.name)) - Number(hasUnabbreviatedName(a.name)) || b.papers.length - a.papers.length || a.name.localeCompare(b.name));
-}
+const WATCHLIST_KINDS = ["持续关注", "竞争观察", "合作候选"];
 
 export function TeamForesight({ data, teams, onChange, openPaper, onDrill, storageAvailable, preferences, onPreferencesChange }: Props) {
   const { locale, tr } = useI18n();
@@ -71,11 +48,15 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
   const [localPreferences, setLocalPreferences] = useState<TeamForesightPreferences>({ teamId: "", horizon: "6–12" });
   const viewPreferences = preferences ?? localPreferences;
   const { teamId, horizon } = viewPreferences;
+  const directoryTrack = viewPreferences.directoryTrack ?? "all";
+  const query = viewPreferences.query ?? "";
+  const listSource = viewPreferences.listSource ?? (teams.length ? "saved" : "directory");
+  const savedKind = viewPreferences.savedKind ?? "all";
   const changePreferences = (next: TeamForesightPreferences) => {
     setLocalPreferences(next);
     onPreferencesChange?.(next);
   };
-  const [search, setSearch] = useState("");
+  const [visibleLimit, setVisibleLimit] = useState(6);
   const [trajectoryDimension, setTrajectoryDimension] = useState<TrajectoryDimension>("tracks");
   const [relationshipsOpen, setRelationshipsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -84,20 +65,50 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
   const [draftInstitution, setDraftInstitution] = useState("");
   const [draftKind, setDraftKind] = useState("持续关注");
   const [saving, setSaving] = useState(false);
-  const selectedTeam = teams.find(team => team.id === teamId) ?? teams[0];
+  const assessmentHeading = useRef<HTMLDivElement>(null);
+  const shouldScrollToAssessment = useRef(false);
   const day = beijingDay(new Date());
-  const result = useMemo<ForesightResult | null>(() => selectedTeam ? buildForesight(data.papers, { team: selectedTeam, horizon, now: new Date(`${day}T12:00:00+08:00`) }) : null,
-    [data.papers, selectedTeam, horizon, day]);
+  const directory = useMemo(() => buildTeamDirectory(data.papers, day), [data.papers, day]);
+  const filteredAuthors = useMemo(() => filterTeamDirectory(directory, { track: directoryTrack, query }), [directory, directoryTrack, query]);
+  // Keep a chosen card visible when returning from its paper evidence after remount.
+  const selectedAuthorIndex = listSource === "directory" ? filteredAuthors.findIndex(author => author.id === teamId) : -1;
+  const effectiveLimit = Math.max(visibleLimit, Math.ceil((selectedAuthorIndex + 1) / 6) * 6);
+  const visibleAuthors = filteredAuthors.slice(0, effectiveLimit);
+  const visibleTeams = teams.filter(team => savedKind === "all" || team.kind === savedKind);
+  const selectedCandidate = listSource === "directory" ? filteredAuthors.find(author => author.id === teamId) : undefined;
+  const selectedSavedTeam = listSource === "saved" ? visibleTeams.find(team => team.id === teamId) : undefined;
+  const selectedTeam = useMemo<Team | undefined>(() => selectedCandidate ? {
+    id: selectedCandidate.id, name: selectedCandidate.name, members: [selectedCandidate.member],
+    institution: "", kind: "作者目录", createdAt: "",
+  } : selectedSavedTeam, [selectedCandidate, selectedSavedTeam]);
+  const result = useMemo<ForesightResult | null>(() => selectedTeam ? buildForesight(selectedCandidate?.papers ?? data.papers, {
+    team: selectedTeam, horizon, track: selectedCandidate && directoryTrack !== "all" ? directoryTrack : undefined,
+    now: new Date(`${day}T12:00:00+08:00`),
+  }) : null, [data.papers, selectedTeam, selectedCandidate, directoryTrack, horizon, day]);
   const teamCounts = useMemo(() => new Map(teams.map(team => [team.id, data.papers.filter(paper => matchesTeam(paper, team)).length])), [data.papers, teams]);
-  const authors = useMemo(() => authorCandidates(data.papers, day), [data.papers, day]);
-  const visibleAuthors = useMemo(() => {
-    const query = normalizedName(search);
-    return authors.filter(author => query
-      ? normalizedName(`${author.name} ${author.orcid ?? ""} ${author.affiliations.join(" ")}`).includes(query)
-      : !!author.orcid || hasUnabbreviatedName(author.name)).slice(0, 4);
-  }, [authors, search]);
+  const changeListScope = (next: Partial<TeamForesightPreferences>) => {
+    setVisibleLimit(6);
+    setRelationshipsOpen(false);
+    changePreferences({ ...viewPreferences, listSource, teamId: "", ...next });
+  };
+  const selectObject = (id: string) => {
+    setRelationshipsOpen(false);
+    shouldScrollToAssessment.current = true;
+    if (id === teamId) {
+      assessmentHeading.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      assessmentHeading.current?.focus({ preventScroll: true });
+      shouldScrollToAssessment.current = false;
+    }
+    changePreferences({ ...viewPreferences, listSource, teamId: id });
+  };
+  useEffect(() => {
+    if (!selectedTeam || !shouldScrollToAssessment.current) return;
+    shouldScrollToAssessment.current = false;
+    assessmentHeading.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    assessmentHeading.current?.focus({ preventScroll: true });
+  }, [selectedTeam?.id]);
   const relationships = useMemo(() => {
-    if (!relationshipsOpen || !selectedTeam || !result) return [];
+    if (!relationshipsOpen || !selectedSavedTeam || !selectedTeam || !result) return [];
     const currentIds = new Set(result.current.map(paper => paper.id));
     return teams.filter(team => team.id !== selectedTeam.id).slice(0, 3).map(team => {
       const peer = buildForesight(data.papers, { team, horizon, now: new Date(`${day}T12:00:00+08:00`) });
@@ -107,11 +118,11 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
       };
       return { team, papers: peer.current, common: peer.current.filter(paper => currentIds.has(paper.id)), tracks: shared("tracks"), methods: shared("methods"), modalities: shared("modalities") };
     });
-  }, [relationshipsOpen, selectedTeam, result, teams, data.papers, horizon, day]);
+  }, [relationshipsOpen, selectedSavedTeam, selectedTeam, result, teams, data.papers, horizon, day]);
   const dimensionLabel = (dimension: TrajectoryDimension) => dimension === "tracks" ? t("研究方向", "Research direction") : dimension === "methods" ? t("方法路线", "Methods") : t("数据模态", "Data modalities");
   const tagLabel = (dimension: TrajectoryDimension, tag: string) => tr(dimension === "tracks" ? TRACKS[tag] ?? tag : tag);
 
-  const beginCreate = (author?: AuthorCandidate) => {
+  const beginCreate = (author?: TeamDirectoryEntry) => {
     setDraftName(author ? `${author.name} · ${t("作者观察", "Author watchlist")}` : "");
     setDraftMembers(author?.member ?? "");
     setDraftInstitution("");
@@ -125,7 +136,10 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
         name: draftName, members: draftMembers.split(/\n|;/).map(value => value.trim()).filter(Boolean), institution: draftInstitution, kind: draftKind,
       }) });
       await onChange();
-      if (response.team) changePreferences({ ...viewPreferences, teamId: response.team.id });
+      if (response.team) {
+        shouldScrollToAssessment.current = true;
+        changePreferences({ ...viewPreferences, teamId: response.team.id, listSource: "saved", savedKind: draftKind });
+      }
       setCreateOpen(false);
       toast.success(tr("已建立观察名单"));
     } catch (error) {
@@ -135,21 +149,41 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
   const openPeriod = (label: string, papers: Paper[]) => onDrill({ label, ids: papers.map(paper => paper.id) });
 
   return <div className="foresight-view team-foresight">
-    {!!teams.length && <div className="team-watchlist-toolbar">
-      <span>{t(`${teams.length} 份已保存名单`, `${teams.length} saved watchlists`)}</span>
-      <Button onClick={() => beginCreate()} disabled={!storageAvailable}><Plus size={16}/>{t("添加观察名单", "Add watchlist")}</Button>
-    </div>}
+    <section className="team-selector" aria-labelledby="team-selector-title">
+      <div className="team-watchlist-toolbar"><div><h3 id="team-selector-title">{t("选择观察对象", "Choose a research subject")}</h3><p>{t("从库内作者开始，或选择你保存的 PI／团队名单。", "Start with authors in the library or choose a saved PI / team watchlist.")}</p></div><Button variant="outline" onClick={() => beginCreate()} disabled={!storageAvailable}><Plus size={16}/>{t("新建名单", "New watchlist")}</Button></div>
+      <div className="team-list-tabs" role="group" aria-label={t("观察对象来源", "Research subject source")}>
+        <button id="team-directory-tab" aria-controls="team-directory-panel" aria-pressed={listSource === "directory"} onClick={() => { if (listSource !== "directory") changeListScope({ listSource: "directory" }); }}>{t("按研究方向选作者", "Authors by research direction")}</button>
+        <button id="team-saved-tab" aria-controls="team-saved-panel" aria-pressed={listSource === "saved"} onClick={() => { if (listSource !== "saved") changeListScope({ listSource: "saved" }); }}>{t("我的团队名单", "My watchlists")}<span>{teams.length}</span></button>
+      </div>
+      {listSource === "directory" ? <div id="team-directory-panel" role="region" aria-labelledby="team-directory-tab">
+        <div className="team-directory-controls">
+          <label className="foresight-field"><span>{t("研究方向", "Research direction")}</span><select value={directoryTrack} onChange={event => changeListScope({ directoryTrack: event.target.value })}><option value="all">{t("全部研究方向", "All research directions")}</option>{Object.entries(TRACKS).map(([key, label]) => <option key={key} value={key}>{tr(label)}</option>)}</select></label>
+          <label className="foresight-field team-author-search"><span>{t("查找姓名、ORCID 或署名机构", "Find a name, ORCID or affiliation")}</span><div><Search size={16} aria-hidden="true"/><input value={query} onChange={event => changeListScope({ query: event.target.value })} placeholder={t("搜索作者或机构", "Search authors or affiliations")}/></div></label>
+        </div>
+        <p className="foresight-note team-directory-note">{t("列表来自当前库中已分类、日期有效的论文；默认展示至少有 2 条记录的完整姓名或 ORCID。可直接查看研判，再决定是否保存。署名机构仅为论文发表时的信息，作者身份与 PI 职务仍需核验。", "This directory uses classified, validly dated library papers. Defaults require at least two records and an unabbreviated name or ORCID. View an assessment before deciding to save. Affiliations reflect paper metadata, while identity and PI roles still need verification.")}</p>
+        <div className="team-directory-count">{t(`${filteredAuthors.length} 位作者候选`, `${filteredAuthors.length} author candidates`)}<span>{t("按当前方向的库内记录数排列，数量不代表研究质量", "Ordered by records in this direction; counts do not measure research quality")}</span></div>
+        <ul className="team-author-candidates">{visibleAuthors.map(author => <li key={author.id} className={selectedCandidate?.id === author.id ? "is-selected" : undefined}>
+          <div className="team-author-identity"><strong>{author.name}</strong><span>{author.orcid ? `ORCID ${author.orcid}` : author.abbreviated ? t("缩写姓名可能合并不同作者，请核验身份", "Abbreviated names may combine different authors; verify identity") : t("姓名匹配，身份待核对", "Name match; identity needs review")}</span><p className="team-affiliation" title={author.affiliations.join(" · ")}>{t("论文署名机构：", "Paper affiliation: ")}{author.affiliations[0] || t("来源未提供", "Not supplied")}{author.affiliations.length > 1 ? t(` 等 ${author.affiliations.length} 处署名`, ` (${author.affiliations.length} affiliations)`) : ""}</p></div>
+          <div className="team-author-actions"><Button size="sm" variant={selectedCandidate?.id === author.id ? "secondary" : "outline"} aria-pressed={selectedCandidate?.id === author.id} onClick={() => selectObject(author.id)}>{selectedCandidate?.id === author.id ? t("正在查看", "Viewing") : t("查看研判", "View assessment")}</Button><button className="foresight-button" disabled={!storageAvailable} onClick={() => beginCreate(author)}><Plus size={14}/>{t("加入我的名单", "Save to my watchlists")}</button></div>
+          <div className="team-author-scope"><button className="foresight-button" onClick={() => openPeriod(author.name, author.papers)}>{author.papers.length} {t("条当前方向记录", "records in this direction")}<ArrowUpRight size={14}/></button><div className="team-direction-tags">{author.tracks.slice(0, 3).map(track => <span key={track}>{tr(TRACKS[track] ?? track)}</span>)}{author.tracks.length > 3 && <span>+{author.tracks.length - 3}</span>}</div></div>
+          <button className="team-author-paper" onClick={() => openPaper(author.papers[0])}><span>{t("最近论文", "Latest paper")} · {author.papers[0].publishedAt.slice(0, 10)}</span>{author.papers[0].title}<ArrowUpRight size={14}/></button>
+        </li>)}</ul>
+        {!visibleAuthors.length && <p className="team-selector-empty">{query ? t("该方向下未找到匹配作者。可调整搜索，或手动新建名单。", "No matching author was found in this direction. Adjust the search or create a watchlist manually.") : t("该方向尚无符合默认条件的作者。可搜索姓名，查看单篇或缩写姓名线索。", "No author meets the default criteria in this direction. Search to include single-record or abbreviated-name candidates.")}</p>}
+        {filteredAuthors.length > effectiveLimit && <div className="team-directory-more"><Button variant="outline" onClick={() => setVisibleLimit(limit => Math.max(limit, effectiveLimit) + 6)}>{t("显示更多", "Show more")}</Button><span>{t(`已显示 ${visibleAuthors.length} / ${filteredAuthors.length}`, `Showing ${visibleAuthors.length} of ${filteredAuthors.length}`)}</span></div>}
+      </div> : <div id="team-saved-panel" role="region" aria-labelledby="team-saved-tab">
+        <div className="team-kind-filters" role="group" aria-label={t("名单用途", "Watchlist purpose")}>{["all", ...WATCHLIST_KINDS].map(kind => <button key={kind} aria-pressed={savedKind === kind} onClick={() => { if (savedKind !== kind) changeListScope({ savedKind: kind }); }}>{kind === "all" ? t("全部", "All") : tr(kind)}<span>{teams.filter(team => kind === "all" || team.kind === kind).length}</span></button>)}</div>
+        <ul className="team-saved-cards">{visibleTeams.map(team => <li key={team.id} className={selectedSavedTeam?.id === team.id ? "is-selected" : undefined}><div><strong>{team.name}</strong><span className="team-saved-kind">{tr(team.kind)}</span><p>{team.members.join(" · ")}</p>{team.institution && <p>{t("署名机构筛选：", "Affiliation filter: ")}{team.institution}</p>}</div><div className="team-saved-actions"><button className="foresight-button" onClick={() => openPeriod(team.name, data.papers.filter(paper => matchesTeam(paper, team)))}>{teamCounts.get(team.id) ?? 0} {t("条库内记录", "library records")}<ArrowUpRight size={14}/></button><Button variant={selectedSavedTeam?.id === team.id ? "secondary" : "outline"} size="sm" aria-pressed={selectedSavedTeam?.id === team.id} onClick={() => selectObject(team.id)}>{selectedSavedTeam?.id === team.id ? t("正在查看", "Viewing") : t("查看研判", "View assessment")}</Button></div></li>)}</ul>
+        {!visibleTeams.length && <p className="team-selector-empty">{teams.length ? t("这一用途下还没有名单。可新建名单，或从作者目录加入。", "There are no watchlists for this purpose. Create one or add an author from the directory.") : t("尚未保存个人名单。先从“按研究方向选作者”选择对象，或新建一份名单。", "No personal watchlists are saved yet. Choose a subject under Authors by research direction, or create a watchlist.")}</p>}
+      </div>}
+    </section>
 
     {!storageAvailable && <p className="foresight-note">{t("当前浏览器无法保存名单；仍可查看已有名单和论文证据。", "This browser cannot save watchlists. Existing watchlists and paper evidence remain available.")}</p>}
 
     {selectedTeam && result ? <>
-      <div className="foresight-controls team-foresight-controls">
-        <label className="foresight-field"><span>{t("观察对象", "Watchlist")}</span><select value={selectedTeam.id} onChange={event => changePreferences({ ...viewPreferences, teamId: event.target.value })}>{teams.map(team => <option key={team.id} value={team.id}>{team.name} · {teamCounts.get(team.id) ?? 0} {t("条库内记录", "library records")}</option>)}</select></label>
-        <label className="foresight-field"><span>{t("判断时间范围", "Outlook horizon")}</span><select value={horizon} onChange={event => changePreferences({ ...viewPreferences, horizon: event.target.value as ForesightCard["horizon"] })}>{(["3–6", "6–12", "12–24"] as const).map(value => <option key={value} value={value}>{value} {t("个月", "months")}</option>)}</select></label>
-      </div>
+      <div className="team-assessment-heading" ref={assessmentHeading} tabIndex={-1}><div><span>{selectedCandidate ? t("作者目录 · 临时观察", "Author directory · temporary observation") : t("我的团队名单", "My watchlists")}</span><h3>{selectedTeam.name}</h3></div><label className="foresight-field"><span>{t("判断时间范围", "Outlook horizon")}</span><select value={horizon} onChange={event => changePreferences({ ...viewPreferences, listSource, horizon: event.target.value as ForesightCard["horizon"] })}>{(["3–6", "6–12", "12–24"] as const).map(value => <option key={value} value={value}>{value} {t("个月", "months")}</option>)}</select></label></div>
       <div className="team-identity-note">
-        <strong>{selectedTeam.name}</strong><span>{selectedTeam.members.join(" · ")}</span>
-        <p>{t("按成员全名或 ORCID 匹配；同名可能混淆，机构和末位作者不自动认定为真实团队或 PI。", "Matches use member names or ORCIDs. Names may be ambiguous; affiliations and last authorship do not establish a team or PI role.")}</p>
+        <span>{selectedTeam.members.join(" · ")}</span>
+        <p>{selectedCandidate ? t("本次研判仅使用当前方向下该作者候选的公开论文，未加入个人名单；姓名仍可能重名，作者目录不自动认定 PI 或真实团队身份。", "This assessment uses only this author candidate’s public papers in the selected direction and is not saved as a personal watchlist. Names may be ambiguous; the directory does not establish PI or team identity.") : t("按成员全名或 ORCID 匹配；同名可能混淆，机构和末位作者不自动认定为真实团队或 PI。", "Matches use member names or ORCIDs. Names may be ambiguous; affiliations and last authorship do not establish a team or PI role.")}</p>
         {selectedTeam.institution && <p>{t("署名机构筛选：", "Affiliation filter: ")}{selectedTeam.institution}{t("；缺少该机构信息的记录不会匹配。", "; records without matching affiliation metadata are excluded.")}</p>}
       </div>
       <section className="team-trajectory" aria-labelledby="team-trajectory-title">
@@ -169,7 +203,7 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
       </section>
       <ForesightCards result={result} onPaper={openPaper} onDrill={onDrill}/>
       {!!result.current.length && <section className="team-recent-evidence"><div className="foresight-toolbar"><h3>{t("近期论文证据", "Recent paper evidence")}</h3><button className="foresight-button" onClick={() => openPeriod(selectedTeam.name, result.papers)}>{t("查看本次范围论文", "All papers in this scope")}<ArrowUpRight size={14}/></button></div><ul>{result.current.slice(0, 3).map(paper => <li key={paper.id}><button onClick={() => openPaper(paper)}><time dateTime={paper.publishedAt}>{paper.publishedAt.slice(0, 10)}</time><span>{paper.title}</span><ArrowUpRight size={15}/></button></li>)}</ul></section>}
-      {teams.length >= 2 && <details className="team-relationships" onToggle={event => setRelationshipsOpen(event.currentTarget.open)}>
+      {selectedSavedTeam && teams.length >= 2 && <details key={selectedSavedTeam.id} className="team-relationships" onToggle={event => setRelationshipsOpen(event.currentTarget.open)}>
         <summary>{t("关注名单之间的关系", "Relationships between watchlists")}</summary>
         <p className="foresight-note">{t("比较最近 90 天的去重论文，最多展示另外 3 份名单。公开研究交集与潜在互补线索需结合真实资源核验，不推断合作意愿或竞争强度。", "Compare distinct works from the latest 90 days for up to three other watchlists. Public research overlap and possible complementary clues require real-world resource checks; they do not establish willingness to collaborate or competitive strength.")}</p>
         <ul className="team-relationship-list">{relationships.map(relation => <li key={relation.team.id}>
@@ -179,30 +213,15 @@ export function TeamForesight({ data, teams, onChange, openPaper, onDrill, stora
           <div className="team-relationship-actions"><button className="foresight-button" disabled={!relation.common.length} onClick={() => openPeriod(`${selectedTeam.name} × ${relation.team.name} · ${t("共同论文", "Shared papers")}`, relation.common)}>{t("共同论文", "Shared papers")} · {relation.common.length}<ArrowUpRight size={14}/></button><button className="foresight-button" disabled={!result.current.length} onClick={() => openPeriod(`${selectedTeam.name} · ${t("最近 90 天", "Latest 90 days")}`, result.current)}>{selectedTeam.name} · {result.current.length}<ArrowUpRight size={14}/></button><button className="foresight-button" disabled={!relation.papers.length} onClick={() => openPeriod(`${relation.team.name} · ${t("最近 90 天", "Latest 90 days")}`, relation.papers)}>{relation.team.name} · {relation.papers.length}<ArrowUpRight size={14}/></button></div>
         </li>)}</ul>
       </details>}
-    </> : <section className="foresight-empty team-foresight-empty"><Users size={28}/><div><h3>{t("先选择真实的研究对象", "Start with a real research watchlist")}</h3><p>{t("添加 PI、作者或核心成员的全名 / ORCID，或从下方论文作者中建立名单。选定后将生成有原文证据的方向判断。", "Add a PI, author or core member by full name or ORCID, or start from an author below. Selecting a watchlist creates assessments linked to paper evidence.")}</p></div><Button variant="outline" onClick={() => beginCreate()} disabled={!storageAvailable}>{t("建立第一份名单", "Create your first watchlist")}</Button></section>}
+    </> : <section className="team-selection-hint"><Users size={20}/><p>{t("在上方选择一位作者或一份名单，即可查看研究轨迹、方向研判与论文证据。", "Choose an author or watchlist above to explore the research trajectory, assessments and paper evidence.")}</p></section>}
 
-    <details className="team-discovery" open={!teams.length ? true : undefined}>
-      <summary>{t("从真实论文发现作者", "Discover authors from real papers")}</summary>
-      <div className="team-discovery-content"><p className="foresight-note">{t("从已分类且日期有效的非未来论文中发现作者，默认优先 ORCID 与完整姓名。数量不代表研究质量或 PI 身份；姓名仍可能重名，请先核对论文与机构。", "Authors come from classified papers with valid, nonfuture dates; defaults prioritize ORCIDs and unabbreviated names. Counts do not establish research quality or PI status. Names can still be ambiguous; inspect papers and affiliations first.")}</p>
-        <label className="foresight-field team-author-search"><span>{t("查找姓名、ORCID 或署名机构", "Find a name, ORCID or affiliation")}</span><div><Search size={16} aria-hidden="true"/><input value={search} onChange={event => setSearch(event.target.value)} placeholder={t("输入你关心的作者", "Search for an author")}/></div></label>
-        <ul className="team-author-candidates">{visibleAuthors.map(author => {
-          const alreadyWatched = teams.some(team => author.papers.some(paper => paper.authors.some(a => matchesMember(a, [author.member]) && matchesMember(a, team.members))));
-          return <li key={author.key}>
-            <div className="team-author-identity"><strong>{author.name}</strong><span>{author.orcid ? `ORCID ${author.orcid}` : !hasUnabbreviatedName(author.name) ? t("缩写姓名可能合并不同作者，请核验身份", "Abbreviated names may combine different authors; verify identity") : t("姓名匹配，身份待核对", "Name match; identity needs review")}</span><p>{author.affiliations[0] || t("来源未提供机构", "No affiliation supplied")}</p></div>
-            <div className="team-author-actions"><button className="foresight-button" onClick={() => openPeriod(author.name, author.papers)}>{author.papers.length} {t("条匹配记录", "matching records")}<ArrowUpRight size={14}/></button><Button variant="outline" size="sm" disabled={!storageAvailable} onClick={() => beginCreate(author)}><Plus size={14}/>{alreadyWatched ? t("加入新名单", "Add to a new list") : t("建立观察", "Watch author")}</Button></div>
-            <button className="team-author-paper" onClick={() => openPaper(author.papers[0])}><span>{t("论文证据", "Paper evidence")}</span>{author.papers[0].title}<ArrowUpRight size={14}/></button>
-          </li>;
-        })}</ul>
-        {!visibleAuthors.length && <p className="foresight-note">{search ? t("当前相关论文中没有匹配的作者线索，可手动添加姓名或 ORCID。", "No matching author appears in the relevant papers. You can still add a name or ORCID manually.") : t("当前尚无适合默认展示的作者线索，可搜索姓名或手动建立名单。", "No suitable default author is available. Search for a name or create a watchlist manually.")}</p>}
-      </div>
-    </details>
     {!!teams.length && <details className="team-management"><summary>{t("管理已保存名单", "Manage saved watchlists")} · {teams.length}</summary><TeamsView papers={data.papers} teams={teams} onChange={onChange} openPaper={openPaper} storageAvailable={storageAvailable} managementOnly/></details>}
 
     <Dialog open={createOpen} onOpenChange={value => { if (!saving) setCreateOpen(value); }}><DialogContent><DialogHeader><DialogTitle>{t("建立 PI / 团队观察名单", "Create a PI / team watchlist")}</DialogTitle><DialogDescription>{t("只使用你确认的成员姓名或 ORCID。作者候选的身份仍需你核对。", "Use member names or ORCIDs you have confirmed. Suggested authors still require an identity check.")}</DialogDescription></DialogHeader><div className="team-form">
       <Label htmlFor="foresight-team-name">{t("名单名称", "Watchlist name")}</Label><Input id="foresight-team-name" maxLength={160} value={draftName} onChange={event => setDraftName(event.target.value)}/>
       <Label htmlFor="foresight-team-members">{t("成员 / ORCID（每行一位）", "Members / ORCIDs (one per line)")}</Label><Textarea id="foresight-team-members" value={draftMembers} onChange={event => setDraftMembers(event.target.value)}/>
       <Label htmlFor="foresight-team-institution">{t("署名机构关键词（可选）", "Affiliation keyword (optional)")}</Label><Input id="foresight-team-institution" maxLength={250} value={draftInstitution} onChange={event => setDraftInstitution(event.target.value)}/><p className="foresight-control-help">{t("设置后，缺少匹配机构的论文不会进入该名单。", "When set, papers without a matching affiliation will be excluded.")}</p>
-      <label className="foresight-field"><span>{t("观察目的", "Watchlist purpose")}</span><select value={draftKind} onChange={event => setDraftKind(event.target.value)}>{["持续关注", "竞争观察", "合作候选"].map(kind => <option key={kind} value={kind}>{tr(kind)}</option>)}</select></label>
+      <label className="foresight-field"><span>{t("观察目的", "Watchlist purpose")}</span><select value={draftKind} onChange={event => setDraftKind(event.target.value)}>{WATCHLIST_KINDS.map(kind => <option key={kind} value={kind}>{tr(kind)}</option>)}</select></label>
     </div><DialogFooter><Button variant="outline" disabled={saving} onClick={() => setCreateOpen(false)}>{t("取消", "Cancel")}</Button><Button disabled={!storageAvailable || !draftName.trim() || !draftMembers.trim() || saving} onClick={() => void createTeam()}>{saving ? t("正在保存…", "Saving…") : t("保存并分析", "Save and assess")}</Button></DialogFooter></DialogContent></Dialog>
   </div>;
 }

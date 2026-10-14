@@ -12,7 +12,7 @@ export function beijingDay(value: string | Date): string {
   return beijingFormatter.format(d);
 }
 export function matchesMember(author: Author, members: string[]) {
-  const identity = (v: string) => normalizedName(v.replace(/^https?:\/\/(?:www\.)?orcid\.org\//i, ""));
+  const identity = (v: string) => normalizedName(v.trim().replace(/^https?:\/\/(?:www\.)?orcid\.org\//i, ""));
   return members.some(m => [author.name, author.displayName ?? "", author.orcid ?? ""].some(v => v && identity(v) === identity(m)));
 }
 export function matchesTeam(p: Paper, t: Team) {

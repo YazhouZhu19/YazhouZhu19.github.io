@@ -78,3 +78,65 @@
   .team-recent-evidence li > button { grid-template-columns: minmax(0, 1fr) 16px; gap: 5px 10px; }
   .team-recent-evidence time { grid-column: 1 / -1; }
 }
+
+.team-selector { margin: 0 0 30px; }
+.team-watchlist-toolbar h3 { margin: 0; font: 500 18px/1.5 var(--font-reading); }
+.team-watchlist-toolbar p { margin: 5px 0 0; color: var(--muted-foreground); font: 12px/1.7 var(--font-ui); }
+.team-watchlist-toolbar > button { flex-shrink: 0; }
+.team-list-tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--border); margin: 0 0 20px; }
+.team-list-tabs > button { display: inline-flex; align-items: center; gap: 8px; padding: 10px 0 12px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted-foreground); font: 500 13px/1.5 var(--font-ui); }
+.team-list-tabs > button[aria-pressed="true"] { color: var(--foreground); border-bottom-color: var(--foreground); }
+.team-list-tabs > button > span { color: var(--muted-foreground); font-variant-numeric: tabular-nums; font-size: 11px; }
+.team-directory-controls { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.5fr); gap: 16px; align-items: end; }
+.team-directory-controls .team-author-search { max-width: none; margin: 0; }
+.team-directory-controls .team-author-search > div { border: 1px solid var(--border); border-radius: 6px; padding: 0 12px; background: var(--background); }
+.team-directory-controls .team-author-search input { border: 0; background: transparent; border-radius: 0; padding-left: 0; padding-right: 0; box-shadow: none; }
+.team-directory-controls .team-author-search > div:focus-within { outline: 2px solid var(--ring); outline-offset: 2px; }
+.team-directory-note { margin: 14px 0; font-size: 12px; }
+.team-directory-count { display: flex; gap: 14px; flex-wrap: wrap; font: 500 12px/1.7 var(--font-ui); padding: 0 0 10px; color: var(--foreground); }
+.team-directory-count > span { color: var(--muted-foreground); font-weight: 400; }
+.team-author-candidates { border-top: 1px solid var(--border); }
+.team-author-candidates > li { padding: 16px 12px; margin: 0 -12px; border-radius: 6px; }
+.team-author-candidates > li.is-selected, .team-saved-cards > li.is-selected { background: color-mix(in srgb, var(--muted) 70%, transparent); box-shadow: inset 3px 0 0 var(--foreground); }
+.team-author-identity .team-affiliation { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.team-author-actions { align-self: start; max-width: 290px; }
+.team-author-actions > .foresight-button { font-size: 11px; }
+.team-author-actions > .foresight-button:disabled { opacity: .45; cursor: not-allowed; }
+.team-author-scope { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; grid-column: 1 / -1; }
+.team-author-scope > .foresight-button { font-size: 12px; padding: 0; }
+.team-direction-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.team-direction-tags > span { padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px; color: var(--muted-foreground); font: 10px/1.5 var(--font-ui); }
+.team-author-paper { font-size: 12px; gap: 8px; }
+.team-author-paper > span { font-size: 11px; }
+.team-directory-more { display: flex; align-items: center; gap: 14px; padding-top: 12px; }
+.team-directory-more > span { color: var(--muted-foreground); font-size: 12px; }
+.team-kind-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+.team-kind-filters > button { display: inline-flex; align-items: center; gap: 7px; background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; color: var(--muted-foreground); font: 12px/1.5 var(--font-ui); }
+.team-kind-filters > button[aria-pressed="true"] { color: var(--foreground); border-color: var(--foreground); background: var(--muted); }
+.team-kind-filters > button > span { font-variant-numeric: tabular-nums; font-size: 11px; }
+.team-saved-cards { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--border); }
+.team-saved-cards > li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 16px 12px; margin: 0 -12px; border-bottom: 1px solid var(--border); border-radius: 6px; }
+.team-saved-cards strong { font: 500 16px/1.5 var(--font-reading); margin-right: 10px; overflow-wrap: anywhere; }
+.team-saved-kind { color: var(--muted-foreground); font: 11px/1.5 var(--font-ui); white-space: nowrap; }
+.team-saved-cards p { margin: 5px 0 0; color: var(--muted-foreground); font-size: 12px; overflow-wrap: anywhere; }
+.team-saved-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.team-saved-actions > .foresight-button { font-size: 12px; }
+.team-selector-empty { margin: 18px 0; padding: 18px; background: var(--muted); color: var(--muted-foreground); font-size: 13px; line-height: 1.8; border-radius: 6px; }
+.team-selection-hint { display: flex; align-items: center; gap: 12px; padding: 18px 0; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 13px; line-height: 1.8; }
+.team-selection-hint > svg { flex-shrink: 0; }
+.team-selection-hint p { margin: 0; }
+.team-assessment-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding-top: 24px; margin: 12px 0; border-top: 1px solid var(--border); scroll-margin-top: 24px; }
+.team-assessment-heading:focus { outline: none; }
+.team-assessment-heading > div { min-width: 0; }
+.team-assessment-heading > div > span { color: var(--muted-foreground); font-size: 12px; }
+.team-assessment-heading h3 { margin: 6px 0 0; font: 500 22px/1.5 var(--font-reading); overflow-wrap: anywhere; }
+.team-assessment-heading > .foresight-field { flex: 0 0 180px; }
+@media (max-width: 700px) {
+  .team-list-tabs { gap: 18px; }
+  .team-list-tabs > button { font-size: 12px; text-align: left; }
+  .team-directory-controls { grid-template-columns: 1fr; gap: 12px; }
+  .team-author-actions { max-width: none; }
+  .team-saved-cards > li { grid-template-columns: 1fr; gap: 12px; }
+  .team-assessment-heading { flex-wrap: wrap; gap: 12px; }
+  .team-assessment-heading > .foresight-field { flex-basis: 100%; }
+}

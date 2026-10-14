@@ -5,10 +5,12 @@ import { TASKS, TRACKS } from "../lib/classify";
 import type { MonitorData, Paper, SyncRun } from "../lib/types";
 
 const now = new Date("2026-09-18T04:00:00Z");
-test("ORCID watchlists accept bare, canonical URL, and www URL identities", () => {
+test("ORCID watchlists accept bare and URL identities with whitespace or trailing slashes", () => {
   const id = "0000-0002-1825-0097";
-  for (const source of [id, `https://orcid.org/${id}`, `https://www.orcid.org/${id}`]) {
-    for (const member of [id, `https://orcid.org/${id}`, `https://www.orcid.org/${id}`]) {
+  const variants = [id, `https://orcid.org/${id}`, `https://www.orcid.org/${id}`, ` ${id} `,
+    ` https://orcid.org/${id}/ `, `\tHTTPS://WWW.ORCID.ORG/${id}/\n`];
+  for (const source of variants) {
+    for (const member of variants) {
       assert.equal(matchesMember({name:"Example Author",orcid:source,affiliations:[]},[member]),true);
     }
   }
