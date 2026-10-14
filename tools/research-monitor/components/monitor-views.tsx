@@ -17,16 +17,18 @@ import { TRACKS, normalizedName } from "@/lib/classify";
 import type { MonitorData, Paper, Team } from "@/lib/types";
 const date = (d?: string | null) => d ? d.slice(0, 10) : "未提供";
 const time = (d?: string | null) => d ? new Date(d).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }) : "尚未同步";
-export function TeamsView({ papers, teams, onChange, openPaper, storageAvailable }: {
+export function TeamsView({ papers, teams, onChange, openPaper, storageAvailable, managementOnly = false }: {
     papers: Paper[];
     teams: Team[];
-    onChange: () => void;
+    onChange: () => void | Promise<unknown>;
     openPaper: (p: Paper) => void;
     storageAvailable: boolean;
+    managementOnly?: boolean;
 }) {
     const { locale, tr } = useI18n();
     const [open, setOpen] = useState(false), [name, setName] = useState(""), [members, setMembers] = useState(""), [institution, setInstitution] = useState(""), [kind, setKind] = useState("持续关注"), [saving, setSaving] = useState(false), [expanded, setExpanded] = useState<string | null>(null);
     const candidates = useMemo(() => {
+        if (managementOnly) return [];
         const m = new Map<string, {
             name: string;
             count: number;
@@ -47,13 +49,13 @@ export function TeamsView({ papers, teams, onChange, openPaper, storageAvailable
             }
         }
         return [...m.values()].filter(r => r.count >= 2).sort((a, b) => b.count - a.count).slice(0, 8);
-    }, [papers]);
+    }, [papers, managementOnly]);
     const create = async () => {
         setSaving(true);
         try {
             await request("/api/teams", { method: "POST", body: JSON.stringify({ name, members: members.split(/\n|;/).map(s => s.trim()).filter(Boolean), institution, kind }) });
             setOpen(false);
-            onChange();
+            await onChange();
             toast.success(tr("已建立观察名单"));
         }
         catch (e) {
@@ -66,7 +68,7 @@ export function TeamsView({ papers, teams, onChange, openPaper, storageAvailable
     const remove = async (id: string) => {
         try {
             await request("/api/teams", { method: "DELETE", body: JSON.stringify({ id }) });
-            onChange();
+            await onChange();
             toast.success(tr("已移出观察名单"));
         }
         catch (e) {
@@ -74,6 +76,12 @@ export function TeamsView({ papers, teams, onChange, openPaper, storageAvailable
         }
     };
     const begin = (author = "") => { setName(author ? tr("{0} · 作者观察",[author]) : ""); setMembers(author); setInstitution(""); setKind("持续关注"); setOpen(true); };
+    if (managementOnly) return <div className="team-watchlist-management">
+        {teams.length ? <ul>{teams.map(team => <li key={team.id}>
+            <div><strong>{team.name}</strong><span>{team.members.join(" · ")}</span>{team.institution && <small>{team.institution}</small>}</div>
+            <Button variant="ghost" size="icon" disabled={!storageAvailable} aria-label={tr("移除观察名单：{0}", [team.name])} onClick={() => void remove(team.id)}><Trash2 size={15}/></Button>
+        </li>)}</ul> : <p>{locale === "en" ? "No saved watchlists yet." : "尚无已保存的观察名单。"}</p>}
+    </div>;
     return <><div className="teams-heading"><h2>{tr("我的观察名单 ")}<span>{teams.length}</span></h2><Button onClick={() => begin()} disabled={!storageAvailable}><Plus size={16}/>{tr("添加团队 / 作者")}</Button></div><div className="notice"><Info size={17}/><span>{tr("按成员姓名或 ORCID 匹配。姓名可能重名，机构可能缺失；名单由你确认，不把机构或末位作者自动当作课题组。")}</span></div>{!teams.length ? <div className="team-intro"><Users size={30}/><div><h3>{tr("先建立你真正关心的名单")}</h3><p>{tr("添加 PI 和核心成员，将相关论文集中到一个观察窗口。")}</p></div><Button variant="outline" onClick={() => begin()} disabled={!storageAvailable}>{tr("建立第一份名单")}</Button></div> : <div className="team-grid">{teams.map(t => { const works = papers.filter(p => matchesTeam(p, t)); const known = new Set(t.members.map(normalizedName)); const coauthors = new Map<string, number>(); works.forEach(p => { new Set(p.authors.filter(a => !matchesMember(a, t.members)).map(a => a.name)).forEach(n => coauthors.set(n, (coauthors.get(n) ?? 0) + 1)); }); return <section className="team-card" key={t.id}><div className="team-card-heading"><div className="team-avatar">{t.name.slice(0, 1)}</div><div><h3>{t.name}</h3><span>{tr(t.kind)}</span></div><Button variant="ghost" size="icon" aria-label={tr("移除观察名单：{0}", [t.name])} onClick={() => void remove(t.id)}><Trash2 size={15}/></Button></div><p className="team-members">{tr("成员：")}{t.members.join(" · ")}</p>{t.institution && <p className="team-members">{tr("成员署名机构筛选：")}{t.institution}</p>}<div className="team-metrics"><div><strong>{works.length}</strong><span>{tr("匹配记录")}</span></div><div><strong>{Object.keys(TRACKS).filter(id => works.some(p => p.tracks.includes(id))).length}</strong><span>{tr("感兴趣方向")}</span></div><div><strong>{works.filter(p => p.status === "preprint").length}</strong><span>{tr("预印本")}</span></div></div><h4>{tr("近期研究")}</h4>{works.length ? works.slice(0, expanded === t.id ? 12 : 3).map(p => <button className="team-paper" key={p.id} onClick={() => openPaper(p)}><span>{p.title}</span><small>{tr(date(p.publishedAt))}</small></button>) : <p className="detail-hint">{tr("当前采集库中暂无匹配；这不表示该团队没有相关研究。")}</p>}{works.length > 3 && <Button variant="ghost" size="sm" onClick={() => setExpanded(expanded === t.id ? null : t.id)}>{expanded === t.id ? tr("收起") : tr("查看更多匹配论文")}</Button>}<h4>{tr("共同署名线索")}</h4><div className="tag-row">{[...coauthors.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([n, c]) => <span className="tag" key={n}>{n} · {c}</span>)}</div><p className="detail-hint">{tr("共著次数来自当前采集库，不代表当前合作关系或意愿。")}</p></section>; })}</div>}<section className="paper-section author-discovery"><div className="section-heading"><div><h2>{tr("从已采集论文发现作者")}</h2><p className="section-caption">{tr("至少出现于两条记录的作者线索；数量不代表学术水平或竞争强度。")}</p></div></div><div className="author-grid">{candidates.map(a => <div className="author-row" key={a.name}><div><strong>{a.name}</strong><span>{a.count}{tr(" 条记录 \u00B7 ")}{a.affiliation || tr("来源未提供机构")}</span></div><Button variant="ghost" size="sm" onClick={() => begin(a.name)} disabled={!storageAvailable}><Plus size={15}/>{tr("观察")}</Button></div>)}</div>{!candidates.length && <div className="empty-state">{tr("当前没有足够的重复作者记录。")}</div>}</section><Dialog open={open} onOpenChange={setOpen}><DialogContent><DialogHeader><DialogTitle>{tr("建立团队 / 作者观察名单")}</DialogTitle><DialogDescription>{tr("成员请使用论文署名全名或完整 ORCID。每行一位，可随时移除名单。")}</DialogDescription></DialogHeader><div className="team-form"><Label htmlFor="team-name">{tr("名单名称")}</Label><Input id="team-name" value={name} onChange={e => setName(e.target.value)} placeholder={tr("课题组名称或作者名")}/><Label htmlFor="team-members">{tr("成员 / ORCID（每行一位）")}</Label><Textarea id="team-members" value={members} onChange={e => setMembers(e.target.value)} placeholder={tr("与来源记录一致的作者全名")}/><Label htmlFor="team-inst">{tr("成员署名机构关键词（可选）")}</Label><Input id="team-inst" value={institution} onChange={e => setInstitution(e.target.value)} placeholder={tr("用于减少重名；缺少机构的记录将不匹配")}/><Label>{tr("观察目的")}</Label><Select value={kind} onValueChange={setKind}><SelectTrigger aria-label={tr("观察目的")}><SelectValue /></SelectTrigger><SelectContent>{["持续关注", "竞争观察", "合作候选"].map(x => <SelectItem key={x} value={x}>{tr(x)}</SelectItem>)}</SelectContent></Select></div><DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>{tr("取消")}</Button><Button disabled={!name.trim() || !members.trim() || saving} onClick={() => void create()}>{saving ? tr("正在保存") : tr("保存名单")}</Button></DialogFooter></DialogContent></Dialog></>;
 }
 export function SourcesView({ data }: { data: MonitorData | null }) {

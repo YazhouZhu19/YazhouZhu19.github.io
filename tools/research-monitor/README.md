@@ -2,6 +2,8 @@
 
 A public bilingual research dashboard covering 10 medical imaging research interests, including organ/lesion segmentation, human-in-the-loop clinical diagnosis, detection, reconstruction, registration, radiomics, prognosis, image–language understanding, intervention, and foundation models. The filter is named **感兴趣方向 / Research interests**. See [INTERESTS.md](INTERESTS.md) for the bilingual scope and design sources.
 
+The primary workspace has four entrances: **科研仪表盘 / Research dashboard**, **方向研判 / Research outlook**, **PI / Teams**, and **论文库 / Paper library**. The dashboard is the default macro overview, retaining the original metrics, direction and date distributions, publication status, task–modality matrix, methods, team matches and source health. Chart drill-through opens the paper library and returns to the dashboard with its filters preserved; preliminary analysis remains a dashboard subview and an expandable library section. Research outlook compares publication windows and proposes evidence-linked, conditional research hypotheses. Team outlook uses user-confirmed name/ORCID watchlists. The full paper archive, original abstracts, reading notes and source provenance remain available. Saved papers and source diagnostics are auxiliary entrances. See [FORESIGHT.md](FORESIGHT.md) for the inference limits, deduplication, comparison checks and revision history.
+
 - Chinese: https://yazhouzhu19.github.io/research-monitor/
 - English: https://yazhouzhu19.github.io/research-monitor/en/
 
@@ -18,6 +20,8 @@ The source status panel separates request failures from limited coverage and rep
 ## Personal data
 
 Saved papers, notes, and team/PI watchlists are stored only in localStorage under `medical-research-monitor:personal:v1`. Chinese and English pages share this browser data. Nothing personal is uploaded by the app. Use **Local data → Export backup** before clearing browser data or moving devices. **Import backup** validates the file and requests confirmation before replacing both lists. Private/incognito sessions and blocked/full storage can prevent persistence. Old-site account data is not automatically transferred.
+
+Assessment revisions and manual outcome reviews use the separate local key `medical-research-monitor:assessments:v1`. The collapsed **How assessments change** panel exports that history separately; the existing personal backup format is unchanged. No retrospective forecasts are fabricated. History records only versions viewed on the current browser, up to 12 per scope and 40 scopes; there is no background notification or server-side personal tracking.
 
 ## Development
 
@@ -42,7 +46,7 @@ Tests cover source parsing, DOI/native identifier merging, version history, outa
 
 ## Data interpretation
 
-Open **初步分析 / Preliminary analysis** to inspect observed research topics, direction–method combinations, and abstract-based reading leads for the selected publication-date window, interest, and source. Each aggregate opens its supporting paper records. Paper details include original objective, methods, and results excerpts when recognizable, plus quoted validation or open-resource signals. These are deterministic reading aids, not model-generated summaries, full-text reviews, novelty claims, or quality scores. Missing/negative/planned evidence must not be presented as completed validation. See [ANALYSIS.md](ANALYSIS.md) for the rules and denominators.
+Open **Paper library → Explore statistics & reading leads → Preliminary analysis** to inspect observed research topics, direction–method combinations, and abstract-based reading leads for the selected publication-date window, interest, and source. Each aggregate opens its supporting paper records. Paper details include original objective, methods, and results excerpts when recognizable, plus quoted validation or open-resource signals. These are deterministic reading aids, not model-generated summaries, full-text reviews, novelty claims, or quality scores. Missing/negative/planned evidence must not be presented as completed validation. See [ANALYSIS.md](ANALYSIS.md) for the rules and denominators. Conditional outlook cards are rule-based research scenarios, not calibrated probability forecasts.
 
 The initial snapshot is a recent-paper sample. Queries have caps, tags are heuristic, and journal/preprint versions may remain distinct. Interest labels can overlap and do not rate quality or clinical validity. Expansion from two to ten interests changes collection coverage, so increased counts may partly reflect that scope change. Source errors preserve old records and are visibly reported; an empty HTTP response is never counted as zero new papers. Author names may be ambiguous. Coauthorship and matches to a user-created watchlist do not establish current team membership, competitive strength, or willingness to collaborate.
 

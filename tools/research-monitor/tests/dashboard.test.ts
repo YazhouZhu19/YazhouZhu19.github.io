@@ -1,10 +1,19 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { beijingDay, buildDashboard, buildSourceHealth, defaultDashboardFilters } from "../lib/dashboard";
+import { beijingDay, buildDashboard, buildSourceHealth, defaultDashboardFilters, matchesMember } from "../lib/dashboard";
 import { TASKS, TRACKS } from "../lib/classify";
 import type { MonitorData, Paper, SyncRun } from "../lib/types";
 
 const now = new Date("2026-09-18T04:00:00Z");
+test("ORCID watchlists accept bare, canonical URL, and www URL identities", () => {
+  const id = "0000-0002-1825-0097";
+  for (const source of [id, `https://orcid.org/${id}`, `https://www.orcid.org/${id}`]) {
+    for (const member of [id, `https://orcid.org/${id}`, `https://www.orcid.org/${id}`]) {
+      assert.equal(matchesMember({name:"Example Author",orcid:source,affiliations:[]},[member]),true);
+    }
+  }
+  assert.equal(matchesMember({name:"Example Author",orcid:id,affiliations:[]},["0000-0002-1825-0098"]),false);
+});
 const initialAt = "2026-09-10T01:00:00Z";
 const paper = (id: string, overrides: Partial<Paper> = {}): Paper => ({
   id, title: `Research ${id}`, abstract: "Medical image research", authors: [], affiliations: [],

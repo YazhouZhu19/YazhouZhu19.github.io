@@ -1,0 +1,24 @@
+import type { Paper, Team } from "./types";
+
+export type Bilingual = { zh: string; en: string };
+export type ForesightDimension = "method" | "data" | "validation" | "application" | "opportunity" | "output";
+export type ForesightEvidence = { paperId: string; excerpt: string; kind: "tag" | "abstract" };
+export type ForesightCard = {
+  id: string; dimension: ForesightDimension; label: Bilingual;
+  title: Bilingual; observation: Bilingual; forecast: Bilingual;
+  strength: "limited" | "supported"; horizon: "3–6" | "6–12" | "12–24";
+  alternative: Bilingual; action: Bilingual; watch: Bilingual;
+  evidence: ForesightEvidence[]; paperIds: string[];
+  currentCount: number; previousCount: number; currentDenominator: number; previousDenominator: number;
+  delta: number | null; signature: string;
+};
+export type ForesightOptions = {
+  track?: string; query?: string; modality?: string; team?: Team;
+  horizon?: ForesightCard["horizon"]; now?: Date;
+};
+export type ForesightResult = {
+  key: string; asOf: string; from: string; previousFrom: string; previousTo: string;
+  papers: Paper[]; current: Paper[]; previous: Paper[]; cards: ForesightCard[];
+  missingAbstracts: number; duplicatesRemoved: number; excludedFuture: number;
+  comparisonReady: boolean; caveats: Bilingual[]; fingerprint: string;
+};

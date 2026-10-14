@@ -7,6 +7,8 @@ import "./styles/paper-analysis.css";
 import "./styles/living.css";
 import "./styles/living-analysis.css";
 import "./styles/typography.css";
+import "./styles/foresight.css";
+import "./styles/foresight-shell.css";
 
 const locale = document.documentElement.lang === "en" ? "en" : "zh";
 createRoot(document.getElementById("root")!).render(
