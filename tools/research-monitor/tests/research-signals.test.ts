@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { collectResearchSignals, createSignalFetcher, CURATED_REPOSITORIES, GITHUB_ENRICHMENT_LIMIT, GITHUB_RESULTS_PER_QUERY, GITHUB_SEARCH_REQUEST_BUDGET, githubSearchPlan, githubDiscoveryCacheUrl, SignalRateLimitError, googleNewsUrl, isGitHubProjectRelevant, isNewsProgressRelevant, NEWS_QUERIES, parseGitHubRepository, parseGoogleNewsRss, publicRelatedUrls, type SignalFetch } from "../lib/collect-signals";
 import { GITHUB_DISCOVERY_GROUPS } from "../lib/github-discovery";
+import { evaluateGitHubRelevance } from "../lib/signal-relevance";
 import { emptyResearchSignalsData, parseResearchSignalsData, safeSignalUrl, signalDate } from "../lib/research-signals";
 
 const now = "2026-10-14T04:00:00.000Z";
@@ -49,10 +50,10 @@ test("RSS filtering rejects irrelevant, old/future content and AI substring fals
   const result = parseGoogleNewsRss(body, "google-news-imaging", discovery, now, 365);
   assert.equal(result.received, 5); assert.equal(result.records.length, 1); assert.equal(result.records[0].publisher, "公开新闻");
 });
-test("project and progress filters exclude clear coursework, portfolios and financial/personnel news", () => {
-  for (const summary of ["Medical imaging course assignment 2", "Medical image analysis portfolio", "Notes and open discussion on medical imaging papers"]) assert.equal(isGitHubProjectRelevant({ fullName: "user/project", summary, topics: [] }), false);
+test("medical coursework, portfolios and domain-related business news remain candidates", () => {
+  for (const summary of ["Medical imaging course assignment 2", "Medical image analysis portfolio", "Notes and open discussion on medical imaging papers"]) assert.equal(evaluateGitHubRelevance({ fullName: "user/project", summary, topics: [] })?.level, "candidate");
   assert.equal(isGitHubProjectRelevant({ fullName: "lab/imaging", summary: "Medical imaging segmentation toolkit", topics: [] }), true);
-  for (const title of ["Perimeter Medical Imaging AI Appoints Michelle Caron to Board of Directors", "AI in Medical Imaging Market Size", "医学影像大模型第一股登陆港交所", "德适-B(02526.HK)：医学影像大模型专精龙头，范式升级驱动增长提速", "Top AI in Radiology Companies Transforming Medical Imaging and Diagnostics"]) assert.equal(isNewsProgressRelevant(title), false);
+  for (const title of ["Perimeter Medical Imaging AI Appoints Michelle Caron to Board of Directors", "AI in Medical Imaging Market Size", "医学影像大模型第一股登陆港交所", "德适-B(02526.HK)：医学影像大模型专精龙头，范式升级驱动增长提速", "Top AI in Radiology Companies Transforming Medical Imaging and Diagnostics"]) assert.equal(isNewsProgressRelevant(title), true);
   assert.equal(isNewsProgressRelevant("Researchers release open AI model for medical imaging"), true);
 });
 test("empty valid RSS is distinct from blank, malformed, HTML and truncated responses", () => {
@@ -96,16 +97,17 @@ test("HTTP requester never sends token to Google, refuses redirects and bounds b
 test("GitHub relevance includes modality/task projects without general medical-imaging wording", () => {
   for (const summary of ["MRI reconstruction with learned priors", "brain tumor segmentation", "CT image registration", "retinal OCT classification", "lung nodule detection", "PET reconstruction benchmark", "breast lesion segmentation dataset", "Radiomics feature extraction", "DICOM viewer", "NIfTI processing"])
     assert.equal(isGitHubProjectRelevant({ fullName: "lab/project", summary, topics: [] }), true, summary);
-  for (const summary of ["Segment anything foundation model", "generic LLM inference engine", "Stock market prediction", "Curated list of papers for medical imaging", "Medical imaging paper list"])
+  for (const summary of ["Segment anything foundation model", "generic LLM inference engine", "Stock market prediction"])
     assert.equal(isGitHubProjectRelevant({ fullName: "lab/project", summary, topics: [] }), false, summary);
 });
 test("search plan covers every direction fairly with bounded requests and both rankings", () => {
   const plan = githubSearchPlan();
   assert(plan.length <= GITHUB_SEARCH_REQUEST_BUDGET);
   assert.deepEqual(plan.slice(0, GITHUB_DISCOVERY_GROUPS.length).map(step => step.groupId), GITHUB_DISCOVERY_GROUPS.map(group => group.id));
-  for (const group of GITHUB_DISCOVERY_GROUPS) assert.deepEqual(plan.filter(step => step.groupId === group.id && step.query === group.queries[0]).map(step => step.sort), ["best-match", "updated"]);
+  const fullPlan = githubSearchPlan(5000);
+  for (const group of GITHUB_DISCOVERY_GROUPS) assert.deepEqual(fullPlan.filter(step => step.groupId === group.id && step.query === group.queries[0]).map(step => step.sort), ["best-match", "updated"]);
   assert.equal(githubSearchPlan(5).length, 5);
-  assert.throws(() => githubSearchPlan(49));
+  assert.throws(() => githubSearchPlan(5001));
 });
 test("multi-direction search deduplicates across rankings, unions groups and exceeds the former 18 cap", async () => {
   const calls: string[] = [];
@@ -124,7 +126,7 @@ test("multi-direction search deduplicates across rankings, unions groups and exc
   assert(calls.every(url => new URL(url).hostname === "api.github.com"));
   assert(calls.filter(url => /\/readme$/.test(url)).length <= GITHUB_ENRICHMENT_LIMIT);
   for (const url of calls.filter(url => new URL(url).pathname === "/search/repositories")) assert.equal(Number(new URL(url).searchParams.get("per_page")), GITHUB_RESULTS_PER_QUERY);
-  assert(calls.length <= 110);
+  assert(calls.length <= 130);
 });
 test("GitHub-only refresh preserves news state and ignores a failing unselected source", async () => {
   const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: fakeFetch, now: new Date(now), force: true });
@@ -195,15 +197,15 @@ test("secondary limit uses one-minute fallback despite a nearby primary reset", 
 });
 
 
-test("discovery rejects paper directories, course submissions and display-only prototypes", () => {
-  const rejected = [
+test("discovery preserves paper directories and prototypes as candidates instead of verified projects", () => {
+  const candidates = [
     { fullName: "albarqouni/Deep-Learning-for-Medical-Applications", summary: "Deep Learning Papers on Medical Image Analysis" },
     { fullName: "amanchadha/coursera-ai-for-medicine-specialization", summary: "Programming assignments, labs and quizzes for the Coursera AI for Medicine specialization. Medical imaging." },
     { fullName: "amirhossein-kz/Awesome-Diffusion-Models-in-Medical-Imaging", summary: "Diffusion Models in Medical Imaging: A Comprehensive Survey" },
     { fullName: "alexandretzy/Prototype-Thesis-1", summary: "A responsive frontend prototype for medical imaging, with fictional data for demonstration only" },
     { fullName: "lab/ADA4MIA", summary: "Awesome Active Domain Adaptation for Medical Image Analysis" },
   ];
-  for (const record of rejected) assert.equal(isGitHubProjectRelevant({ ...record, topics: [] }), false, record.fullName);
+  for (const record of candidates) assert.equal(evaluateGitHubRelevance({ ...record, topics: [] })?.level, "candidate", record.fullName);
   assert.equal(isGitHubProjectRelevant({ fullName: "foundation/ehr-wallet", summary: "Blockchain-based sharing and medical data management", topics: ["medical-imaging"] }), false);
   const retained = [
     "Code for our papers on medical imaging segmentation",

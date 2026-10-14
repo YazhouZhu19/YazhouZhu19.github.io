@@ -102,6 +102,9 @@ export function prepareCombinedAiEvidence(papers: Paper[], signals: ResearchSign
   const seen = new Set<string>();
   for (const signal of [...signals].sort((a, b) => b.observedAt.localeCompare(a.observedAt) || a.id.localeCompare(b.id))) {
     if (!selected.has(signal.kind)) continue;
+    // Candidates and older unassessed snapshots remain browsing leads. Only
+    // explicitly direct matches enter evidence, consistent with the library UI.
+    if (signal.relevance?.level !== "direct") continue;
     if (spec.mode === "team" && !associations.has(signal.id)) continue;
     const day = publicationDay(signalDate(signal) ?? "");
     if (!day) { excludedInvalid++; continue; }

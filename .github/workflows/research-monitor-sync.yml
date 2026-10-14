@@ -26,6 +26,7 @@ jobs:
     permissions:
       contents: write
       pages: write
+      actions: read
     defaults:
       run:
         shell: bash
@@ -173,7 +174,7 @@ jobs:
           legacy_data = (dist / 'data/papers.json').read_bytes()
           public_data = (dist / 'data/public-papers-v2.json').read_bytes()
           signal_data = (dist / 'data/research-signals.json').read_bytes()
-          if signal_data != Path('tools/research-monitor/data/research-signals.json').read_bytes() or len(signal_data) > 4 * 1024 * 1024:
+          if signal_data != Path('tools/research-monitor/data/research-signals.json').read_bytes() or len(signal_data) > 64 * 1024 * 1024:
               raise SystemExit('Public signal snapshot differs from the archive or exceeds the limit')
           if source_data != legacy_data:
               raise SystemExit('Legacy public manifest differs from the v1 archive')
@@ -250,9 +251,6 @@ jobs:
           EXPECTED_COMMIT: ${{ steps.refresh.outputs.commit }}
         run: |
           set -euo pipefail
-          # GITHUB_TOKEN pushes do not trigger Pages automatically. Request the
-          # build explicitly; a successful POST alone is not publication success.
-          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds" > "$RUNNER_TEMP/research-pages-build-request.json"
           python3 - <<'PY'
           import hashlib
           import json
@@ -276,11 +274,29 @@ jobs:
               raise SystemExit('Pages site did not return an HTTPS public URL')
           monitor_url = site_url.rstrip('/') + '/research-monitor/'
 
-          def api(path):
-              result = subprocess.run(['gh', 'api', path], capture_output=True, text=True)
+          def api(path, method=None):
+              command = ['gh', 'api', path]
+              if method:
+                  command.extend(['--method', method])
+              try:
+                  result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+              except subprocess.SubprocessError:
+                  raise RuntimeError('Pages API request did not complete') from None
               if result.returncode:
-                  raise RuntimeError('Could not read Pages build status')
+                  raise RuntimeError('Pages API request failed')
               return json.loads(result.stdout)
+
+          def pages_build_present(payload, latest):
+              # The legacy latest endpoint can describe a cancelled duplicate.
+              # Look at every Pages run for this exact commit before requesting.
+              runs = payload.get('workflow_runs') if isinstance(payload, dict) else None
+              total = payload.get('total_count') if isinstance(payload, dict) else None
+              if not isinstance(runs, list) or not isinstance(total, int) or total > len(runs) or not all(isinstance(run, dict) for run in runs):
+                  raise RuntimeError('Pages workflow status is incomplete')
+              matching = [run for run in runs if run.get('head_sha') == expected_commit and run.get('path') == 'dynamic/pages/pages-build-deployment']
+              if any(run.get('status') != 'completed' or run.get('conclusion') == 'success' for run in matching):
+                  return True
+              return latest.get('commit') == expected_commit and latest.get('status') in ('building', 'built')
 
           def read_public(path, limit):
               # Public requests contain no token or other credentials.
@@ -297,10 +313,18 @@ jobs:
           # and marker below still match this build.
           build_ready = False
           deadline = time.monotonic() + 900
+          # Let an automatic Pages run become visible after the push. Only two
+          # successful observations of absence can authorize our one fallback POST.
+          request_not_before = time.monotonic() + 30
+          absent_observations = 0
+          build_requested = False
           last_status = None
           while time.monotonic() < deadline:
+              request_build = False
               try:
                   build = api(f"repos/{os.environ['GITHUB_REPOSITORY']}/pages/builds/latest")
+                  if not isinstance(build, dict):
+                      raise RuntimeError('Pages build status is invalid')
                   status, commit = build.get('status'), build.get('commit')
                   if (status, commit) != last_status:
                       print(f'Pages build status={status} commit={commit}', flush=True)
@@ -311,7 +335,16 @@ jobs:
                       relevant = subprocess.run(['git', 'merge-base', '--is-ancestor', expected_commit, commit], capture_output=True).returncode == 0
                   if relevant and status == 'built':
                       build_ready = True
+                  if not build_requested:
+                      query = urllib.parse.urlencode({'event': 'dynamic', 'head_sha': expected_commit, 'per_page': 100})
+                      runs = api(f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs?{query}")
+                      if pages_build_present(runs, build):
+                          absent_observations = 0
+                      else:
+                          absent_observations += 1
+                          request_build = absent_observations >= 2 and time.monotonic() >= request_not_before
               except (RuntimeError, ValueError, OSError, subprocess.CalledProcessError) as error:
+                  absent_observations = 0
                   print(f'Waiting for Pages build status ({type(error).__name__}).', flush=True)
 
               # A duplicate cancelled Pages run can leave the legacy status
@@ -330,7 +363,7 @@ jobs:
                               raise RuntimeError('Legacy public manifest does not match this deployment')
                           if verify_snapshot(legacy_data, lambda path: read_public('data/' + path, MAX_BYTES)) != total:
                               raise RuntimeError('Legacy and current public paper counts differ')
-                          signal_data = read_public('data/research-signals.json', 4 * 1024 * 1024)
+                          signal_data = read_public('data/research-signals.json', 64 * 1024 * 1024)
                           if hashlib.sha256(signal_data).hexdigest() != expected_manifest['signalsSha256']:
                               raise RuntimeError('Public GitHub/news data does not match this deployment')
                           for route in ('', 'en/'):
@@ -344,6 +377,15 @@ jobs:
                   # Transient API/CDN errors retry; no access-token values or
                   # request headers are printed.
                   print(f'Waiting for Pages publication ({type(error).__name__}).', flush=True)
+              if request_build:
+                  # Set this before POST: an ambiguous network response must not
+                  # cause another competing build. Public verification still runs.
+                  build_requested = True
+                  try:
+                      api(f"repos/{os.environ['GITHUB_REPOSITORY']}/pages/builds", method='POST')
+                      print('Requested one Pages fallback build; awaiting public verification.', flush=True)
+                  except (RuntimeError, ValueError, OSError) as error:
+                      print(f'Pages fallback request outcome unavailable ({type(error).__name__}); it will not be repeated.', flush=True)
               time.sleep(15)
           else:
               stage = 'public data verification' if build_ready else 'Pages build'

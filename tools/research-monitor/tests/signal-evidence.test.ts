@@ -17,16 +17,39 @@ const paper = (id: string, patch: Partial<Paper> = {}): Paper => ({
 const github = (id: string, patch: Partial<GitHubSignal> = {}): GitHubSignal => ({
   id, kind: "github", title: `lab/${id}`, fullName: `lab/${id}`, url: `https://github.com/lab/${id}`, summary: "Medical image segmentation tool", summaryKind: "repository-description",
   publisher: "lab", publishedAt: "2025-01-01T00:00:00Z", firstSeenAt: "2026-10-14T01:00:00Z", observedAt: "2026-10-14T02:00:00Z", updatedAt: "2026-10-14T02:00:00Z", topics: [], sourceId: "github", relatedUrls: [],
+  relevance: { level: "direct", reasons: ["explicit-medical-imaging"] },
   stars: 100, forks: 20, openIssues: 3, license: "MIT", language: "Python", archived: false, pushedAt: "2026-10-02T00:00:00Z", releasedAt: null, releaseUrl: null, readmeExcerpt: "Source code and example use.", ...patch,
 });
 const news = (id: string, patch: Partial<NewsSignal> = {}): NewsSignal => ({
-  id, kind: "news", title: "Publisher announces imaging model", url: `https://news.google.com/rss/articles/${id}`, summary: "A search excerpt announces a model.", summaryKind: "search-snippet", publisher: "Example Publisher", publishedAt: "2026-10-03T00:00:00Z", firstSeenAt: "2026-10-14T01:00:00Z", observedAt: "2026-10-14T02:00:00Z", updatedAt: null, topics: [], sourceId: "google-news", relatedUrls: [], newsType: "model", discoveryUrl: `https://news.google.com/rss/articles/${id}`, originalUrl: null, ...patch,
+  id, kind: "news", title: "Publisher announces imaging model", url: `https://news.google.com/rss/articles/${id}`, summary: "A search excerpt announces a model.", summaryKind: "search-snippet", publisher: "Example Publisher", publishedAt: "2026-10-03T00:00:00Z", firstSeenAt: "2026-10-14T01:00:00Z", observedAt: "2026-10-14T02:00:00Z", updatedAt: null, topics: [], sourceId: "google-news", relatedUrls: [], newsType: "model", discoveryUrl: `https://news.google.com/rss/articles/${id}`, originalUrl: null, relevance: { level: "direct", reasons: ["explicit-medical-imaging"] }, ...patch,
 });
 
 test("paper-only evidence remains identical to the existing path", () => {
   const papers = [paper("a"), paper("b")];
   assert.deepEqual(prepareCombinedAiEvidence(papers, [github("repo")], spec, ["paper"], 6, now), prepareAiEvidence(papers, spec, 6, now));
   assert.deepEqual(prepareCombinedAiEvidence(papers, [github("repo")], spec, [], 6, now).papers, []);
+});
+
+test("broad retrieval candidates do not enter research evidence and rule labels are transparent", () => {
+  const records = [github("direct", { relevance: { level: "direct", reasons: ["explicit-medical-imaging"] } }), github("ambiguous", { relevance: { level: "candidate", reasons: ["ambiguous-domain"] } }), news("candidate", { relevance: { level: "candidate", reasons: ["ambiguous-domain"] } })];
+  const result = prepareCombinedAiEvidence([], records, spec, ["github", "news"], 8, now);
+  assert.deepEqual(result.papers.map(item => item.signal?.id), ["direct"]);
+  const messages = buildAiMessages(result), payload = JSON.parse(messages[1].content);
+  assert.equal(payload.evidence[0].retrievalRelevance, "direct");
+  assert.deepEqual(payload.evidence[0].relevanceReasons, ["explicit-medical-imaging"]);
+  assert.match(messages[0].content, /not human review/);
+});
+
+test("unassessed legacy signals stay out of direction and PI evidence even with exact paper links", () => {
+  const papers = [paper("linked-paper", { doi: "10.1000/linked" })];
+  const relatedUrls = ["https://doi.org/10.1000/linked"];
+  const records = [github("legacy-repo", { relevance: undefined, relatedUrls }), news("legacy-news", { relevance: undefined, relatedUrls }), github("direct", { relatedUrls })];
+  for (const mode of ["landscape", "team"] as const) {
+    const result = prepareCombinedAiEvidence(papers, records, { ...spec, mode }, ["github", "news"], 8, now);
+    assert.deepEqual(result.papers.map(item => item.signal?.id), ["direct"]);
+    assert.equal(result.sourceCoverage!.github.eligible, 1);
+    assert.equal(result.sourceCoverage!.news.eligible, 0);
+  }
 });
 
 test("joint sampling represents every eligible kind without treating counts as independent studies", () => {
