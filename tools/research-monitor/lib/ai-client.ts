@@ -1,27 +1,30 @@
 import { buildAiMessages, parseAiReport, type AiEvidence, type AiReport } from "./ai-evidence";
+import { getLocalAiModel, isFreeApiModel } from "./ai-models";
 import type { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
 
 export const LOCAL_AI_MODEL = "Qwen3-1.7B-q4f16_1-MLC";
 export const FREE_API_MODEL = "openrouter/free";
-export type AiSettings = { provider: "local" | "openrouter"; apiKey: string; model: string; paid: boolean };
+export type AiSettings = { provider: "local" | "openrouter"; apiKey: string; model: string; paid: boolean; localModel: string; freeModel: string };
 export type AiAnalysisResult = { report: AiReport; model: string; generatedAt: string };
 type RunOptions = { signal: AbortSignal; onProgress: (message: string) => void };
 type Message = { role: "system" | "user"; content: string };
 
 // Credentials and reports are never written to disk, URLs, localStorage or analytics.
-let settings: AiSettings = { provider: "local", apiKey: "", model: FREE_API_MODEL, paid: false };
+let settings: AiSettings = { provider: "local", apiKey: "", model: FREE_API_MODEL, paid: false, localModel: LOCAL_AI_MODEL, freeModel: FREE_API_MODEL };
 const listeners = new Set<() => void>();
 export const getAiSettings = () => settings;
 export function subscribeAiSettings(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener); }; }
 export function updateAiSettings(patch: Partial<AiSettings>) {
   const next = { ...settings, ...patch };
+  next.localModel = getLocalAiModel(next.localModel).id;
   if (!next.paid) next.model = FREE_API_MODEL;
   if (Object.keys(next).every(key => next[key as keyof AiSettings] === settings[key as keyof AiSettings])) return;
   settings = next;
   listeners.forEach(listener => listener());
 }
 export function aiModelLabel(value: AiSettings) {
-  return value.provider === "local" ? "Qwen3-1.7B · WebLLM" : value.paid ? value.model || "OpenRouter" : "OpenRouter · openrouter/free";
+  return value.provider === "local" ? `${getLocalAiModel(value.localModel).name} · WebLLM`
+    : value.paid ? value.model || "OpenRouter" : `OpenRouter · ${value.freeModel || FREE_API_MODEL}`;
 }
 
 export const AI_REPORT_SCHEMA = {
@@ -52,6 +55,7 @@ function cancelled() { return new DOMException("Analysis cancelled", "AbortError
 function checkAbort(signal: AbortSignal) { if (signal.aborted) throw cancelled(); }
 function text(zh: string, en: string, locale: string) { return locale === "en" ? en : zh; }
 let localEngine: WebWorkerMLCEngine | null = null;
+let localEngineModel: string | null = null;
 let localWorker: Worker | null = null;
 let busy = false;
 
@@ -59,6 +63,7 @@ function terminateLocal() {
   localWorker?.terminate();
   localWorker = null;
   localEngine = null;
+  localEngineModel = null;
 }
 
 /** Also settles a terminated worker's promise and releases every listener/timer. */
@@ -75,13 +80,16 @@ async function interruptible<T>(operation: Promise<T>, signal: AbortSignal, mill
   } finally { if (timer) clearTimeout(timer); signal.removeEventListener("abort", abort); }
 }
 
-async function loadLocal(options: RunOptions, locale: string) {
+async function loadLocal(modelId: string, options: RunOptions, locale: string) {
   checkAbort(options.signal);
-  if (localEngine) return localEngine;
+  const model = getLocalAiModel(modelId);
+  if (localEngine && localEngineModel === model.id) return localEngine;
+  // Keep only one model resident on the GPU; downloaded artifacts remain cached.
+  if (localEngine || localWorker) terminateLocal();
   if (typeof navigator === "undefined" || !("gpu" in navigator)) {
-    throw new Error(text("此浏览器不支持 WebGPU。请使用支持 WebGPU 的桌面浏览器，或切换到个人 API 模式。", "This browser does not support WebGPU. Use a compatible desktop browser or your personal API connection.", locale));
+    throw new Error(text("此浏览器不支持 WebGPU。可切换免费云端模型并填写自己的 API Key，或使用支持 WebGPU 的桌面浏览器。", "This browser does not support WebGPU. Select a free cloud model with your own API key, or use a compatible desktop browser.", locale));
   }
-  options.onProgress(text("正在准备免费模型；首次需要下载约 1 GB，请保持页面打开。", "Preparing the free model; the first use downloads about 1 GB. Keep this page open.", locale));
+  options.onProgress(text(`正在准备 ${model.name}；首次模型资源约 ${model.downloadLabel}，请保持页面打开。`, `Preparing ${model.name}; first-use model assets are approximately ${model.downloadLabel}. Keep this page open.`, locale));
   const { CreateWebWorkerMLCEngine } = await import("@mlc-ai/web-llm");
   checkAbort(options.signal);
   const worker = new Worker(new URL("./ai-worker.ts", import.meta.url), { type: "module" });
@@ -91,20 +99,21 @@ async function loadLocal(options: RunOptions, locale: string) {
     const loading = new Promise<WebWorkerMLCEngine>((resolve, reject) => {
       workerFailed = () => { worker.terminate(); reject(new Error("Local AI worker failed")); };
       worker.addEventListener("error", workerFailed, { once: true });
-      CreateWebWorkerMLCEngine(worker, LOCAL_AI_MODEL, {
+      CreateWebWorkerMLCEngine(worker, model.id, {
         initProgressCallback: progress => {
-          if (!options.signal.aborted) options.onProgress(text(`加载 Qwen3-1.7B：${Math.round(progress.progress * 100)}% · 首次加载可能需要几分钟。`, `Loading Qwen3-1.7B: ${Math.round(progress.progress * 100)}% · The first load may take a few minutes.`, locale));
+          if (!options.signal.aborted) options.onProgress(text(`加载 ${model.name}：${Math.round(progress.progress * 100)}% · 首次加载可能需要几分钟。`, `Loading ${model.name}: ${Math.round(progress.progress * 100)}% · The first load may take a few minutes.`, locale));
         },
       }, { context_window_size: 8192 }).then(resolve, reject);
     });
     const engine = await interruptible(loading, options.signal, 10 * 60_000, terminateLocal, text("模型加载超时，请重试。", "Model loading timed out; please retry.", locale));
     checkAbort(options.signal);
     localEngine = engine;
+    localEngineModel = model.id;
     return engine;
   } catch (error) {
     terminateLocal();
     if (options.signal.aborted || (error instanceof Error && error.name === "AbortError")) throw cancelled();
-    throw new Error(text("免费模型未能加载。请检查模型下载网络、WebGPU 与设备内存，或切换个人 API 模式。", "The free model could not load. Check model download access, WebGPU and device memory, or use a personal API connection.", locale));
+    throw new Error(text(`${model.name} 未能加载。请检查下载网络、WebGPU 与设备内存，或切换免费云端模型并填写自己的 API Key。`, `${model.name} could not load. Check download access, WebGPU and device memory, or select a free cloud model with your own API key.`, locale));
   } finally { worker.removeEventListener("error", workerFailed); }
 }
 
@@ -112,7 +121,8 @@ async function loadLocal(options: RunOptions, locale: string) {
 export async function callOpenRouter(messages: Message[], config: AiSettings, signal: AbortSignal, locale = "zh", fetcher: typeof fetch = fetch): Promise<{ content: string; model: string }> {
   checkAbort(signal);
   if (!config.apiKey.trim()) throw new Error(text("请先输入你自己的 OpenRouter API Key。", "Enter your own OpenRouter API key first.", locale));
-  const model = config.paid ? config.model.trim() : FREE_API_MODEL;
+  const model = (config.paid ? config.model : config.freeModel)?.trim() ?? "";
+  if (!config.paid && !isFreeApiModel(model)) throw new Error(text("免费模式只接受 openrouter/free 或以 :free 结尾的有效模型 ID，不会改用付费模型。", "Free mode requires openrouter/free or a valid model ID ending in :free. No paid model will be used.", locale));
   if (!/^[\w.-]+\/[\w.:-]+$/.test(model)) throw new Error(text("请填写有效的 OpenRouter 模型 ID，例如 provider/model。", "Enter a valid OpenRouter model ID, such as provider/model.", locale));
   const timeout = new AbortController();
   const relay = () => timeout.abort();
@@ -160,14 +170,17 @@ function estimatedTokens(messages: Message[]) {
 }
 export function aiEvidenceBatches(evidence: AiEvidence, local: boolean): AiEvidence["papers"][] {
   const batches: AiEvidence["papers"][] = [];
+  const inputBudget = local ? 5200 : 28000;
   let current: AiEvidence["papers"] = [];
   for (const paper of evidence.papers) {
     const candidate = [...current, paper];
-    if (current.length && (candidate.length > (local ? 6 : 40) || local && estimatedTokens(concise(buildAiMessages({ ...evidence, papers: candidate }))) > 5200)) {
+    if (current.length && (candidate.length > (local ? 6 : 40) || estimatedTokens(concise(buildAiMessages({ ...evidence, papers: candidate }))) > inputBudget)) {
       batches.push(current); current = [paper];
     } else current = candidate;
-    if (local && estimatedTokens(concise(buildAiMessages({ ...evidence, papers: current }))) > 5200) {
-      throw new Error(text("问题或单篇论文超出免费模型的上下文，请缩短问题或使用 API 模式。", "The question or a paper exceeds the local model context. Shorten the question or use the API mode.", evidence.spec.locale));
+    if (estimatedTokens(concise(buildAiMessages({ ...evidence, papers: current }))) > inputBudget) {
+      throw new Error(local
+        ? text("问题或单篇论文超出免费模型的上下文，请缩短问题或使用 API 模式。", "The question or a paper exceeds the local model context. Shorten the question or use the API mode.", evidence.spec.locale)
+        : text("问题或单篇论文超出云端分析的输入预算，请缩短问题后重试。", "The question or a paper exceeds the cloud input budget. Shorten the question and retry.", evidence.spec.locale));
     }
   }
   if (current.length) batches.push(current);
@@ -202,7 +215,8 @@ export async function runAiAnalysis(evidence: AiEvidence, config: AiSettings, op
   options.signal.addEventListener("abort", abortLocal, { once: true });
   try {
     const batches = aiEvidenceBatches(evidence, config.provider === "local");
-    const engine = config.provider === "local" ? await loadLocal(options, locale) : null;
+    const localModel = getLocalAiModel(config.localModel);
+    const engine = config.provider === "local" ? await loadLocal(localModel.id, options, locale) : null;
     const parse = (raw: string, ids: string[]) => {
       try { return parseAiReport(raw, ids); }
       catch (error) {
@@ -229,15 +243,15 @@ export async function runAiAnalysis(evidence: AiEvidence, config: AiSettings, op
       const reply = await interruptible(
         engine.chat.completions.create({ messages, temperature: 0.2, max_tokens: 2200,
           response_format: { type: "json_object", schema: JSON.stringify(schema) },
-          extra_body: { enable_thinking: false },
+          ...(localModel.id.startsWith("Qwen3-") ? { extra_body: { enable_thinking: false } } : {}),
         }),
         options.signal, 5 * 60_000, terminateLocal, text("本批推理超时，请缩小范围或改用 API 模式。", "This batch timed out. Narrow the scope or use API mode.", locale),
       );
       checkAbort(options.signal);
       const choice = reply.choices[0];
       if (choice?.finish_reason !== "stop" || !choice.message.content) throw new Error(text("本地模型没有生成完整结果，请缩小文献范围再试。", "The local model did not produce a complete result. Narrow the evidence window and retry.", locale));
-      models.add(LOCAL_AI_MODEL);
-      return normalizeLocalContent(choice.message.content);
+      models.add(localModel.id);
+      return localModel.id.startsWith("Qwen3-") ? normalizeLocalContent(choice.message.content) : choice.message.content;
     };
     const reports: AiReport[] = [];
     for (let index = 0; index < batches.length; index++) {

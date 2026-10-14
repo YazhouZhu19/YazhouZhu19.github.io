@@ -1,11 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { aiEvidenceBatches, buildAiSynthesis, callOpenRouter, FREE_API_MODEL, getAiSettings, normalizeLocalContent, runAiAnalysis, updateAiSettings, type AiSettings } from "../lib/ai-client";
+import { aiEvidenceBatches, aiModelLabel, buildAiSynthesis, callOpenRouter, FREE_API_MODEL, getAiSettings, LOCAL_AI_MODEL, normalizeLocalContent, runAiAnalysis, updateAiSettings, type AiSettings } from "../lib/ai-client";
+import { getLocalAiModel, LOCAL_AI_MODELS } from "../lib/ai-models";
 import { parseAiReport, prepareAiEvidence, type AiReport, type AiSpec } from "../lib/ai-evidence";
 import type { Paper } from "../lib/types";
 
 const personalKey = "test-only-private-key-never-print";
-const config: AiSettings = { provider: "openrouter", apiKey: personalKey, model: "vendor/paid-model", paid: false };
+const config: AiSettings = { provider: "openrouter", apiKey: personalKey, model: "vendor/paid-model", paid: false, localModel: LOCAL_AI_MODEL, freeModel: FREE_API_MODEL };
 const messages = [{ role: "user" as const, content: "Public paper evidence" }];
 const controller = () => new AbortController();
 function complete(content = "{}", model: string | null = "actual/free-model", finishReason = "stop") {
@@ -47,6 +48,116 @@ test("free API calls use one fixed endpoint, a zero-price router and no model fa
   const result = await callOpenRouter(messages, config, controller().signal, "en", fetcher);
   assert.deepEqual(result, { content: "{}", model: "actual/free-model" });
   assert.equal(calls, 1);
+});
+
+test("a selected free model is sent exactly with a zero-price provider guard", async () => {
+  const selected = "example/provider-model:free";
+  let calls = 0;
+  const reply = await callOpenRouter(messages, { ...config, freeModel: selected, model: "vendor/paid-model" }, controller().signal, "en", fetchMock((_input, init) => {
+    calls++;
+    const body = JSON.parse(String(init?.body));
+    assert.equal(body.model, selected);
+    assert.deepEqual(body.provider.max_price, { prompt: 0, completion: 0 });
+    assert.equal(body.models, undefined);
+    return complete("{}", "actual/selected-free-model");
+  }));
+  assert.equal(calls, 1);
+  assert.equal(reply.model, "actual/selected-free-model");
+  assert.equal(aiModelLabel({ ...config, freeModel: selected }), `OpenRouter · ${selected}`);
+});
+
+test("invalid or paid model IDs in free mode fail before transmission without routing elsewhere", async () => {
+  let calls = 0;
+  const fetcher = fetchMock(() => { calls++; return complete(); });
+  for (const freeModel of ["", "vendor/paid-model", "https://attacker.invalid/collect:free", "vendor/model:free/extra", "vendor/model:free?redirect=paid", "vendor/model:FREE"]) {
+    await assert.rejects(callOpenRouter(messages, { ...config, freeModel }, controller().signal, "en", fetcher), /Free mode requires/);
+  }
+  assert.equal(calls, 0);
+});
+
+test("local, free-cloud and paid-model selections remain independent", () => {
+  const previous = { ...getAiSettings() };
+  try {
+    for (const local of LOCAL_AI_MODELS) {
+      updateAiSettings({ provider: "local", localModel: local.id, freeModel: "example/selected:free", paid: false });
+      assert.equal(getAiSettings().localModel, local.id);
+      assert.equal(getAiSettings().freeModel, "example/selected:free");
+      assert.equal(aiModelLabel(getAiSettings()), `${local.name} · WebLLM`);
+    }
+    updateAiSettings({ paid: true, model: "vendor/paid-model" });
+    assert.equal(getAiSettings().freeModel, "example/selected:free");
+    updateAiSettings({ paid: false });
+    assert.equal(getAiSettings().model, FREE_API_MODEL);
+    assert.equal(getAiSettings().freeModel, "example/selected:free");
+    updateAiSettings({ localModel: "https://attacker.invalid/model" });
+    assert.equal(getAiSettings().localModel, LOCAL_AI_MODEL);
+    assert.equal(aiModelLabel({ ...getAiSettings(), provider: "local" }), `${getLocalAiModel(LOCAL_AI_MODEL).name} · WebLLM`);
+  } finally { updateAiSettings(previous); }
+});
+
+test("local engines reuse the selected model and release the old worker on model changes", async () => {
+  const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  const originalWorker = Object.getOwnPropertyDescriptor(globalThis, "Worker");
+  const originalFetch = globalThis.fetch;
+  const workers: FakeWorker[] = [];
+  const data = evidence();
+  const first = LOCAL_AI_MODELS[0], second = LOCAL_AI_MODELS[2];
+  type WorkerRequest = { kind: string; uuid: string; content: { modelId: string[]; chatOpts: { context_window_size: number }[]; request?: { messages: { role: string; content: string }[]; extra_body: unknown } } };
+  class FakeWorker extends EventTarget {
+    onmessage: ((event: MessageEvent) => void) | null = null;
+    model = "";
+    loads = 0;
+    terminated = false;
+    constructor() { super(); workers.push(this); }
+    terminate() { this.terminated = true; }
+    postMessage(request: WorkerRequest) {
+      assert.equal(this.terminated, false);
+      let content: unknown = null;
+      if (request.kind === "reload") {
+        this.model = request.content.modelId[0];
+        this.loads++;
+        assert.equal(request.content.chatOpts[0].context_window_size, 8192);
+      } else {
+        assert.equal(request.kind, "chatCompletionNonStreaming");
+        assert.deepEqual(request.content.modelId, [this.model]);
+        assert.deepEqual(request.content.request?.extra_body, { enable_thinking: false });
+        const user = JSON.parse(request.content.request!.messages.find(message => message.role === "user")!.content);
+        content = { choices: [{ finish_reason: "stop", message: { content: "<think>\n\n</think>\n\n" + JSON.stringify(report([user.papers[0].id])) } }] };
+      }
+      queueMicrotask(() => this.onmessage?.(new MessageEvent("message", { data: { kind: "return", uuid: request.uuid, content } })));
+    }
+  }
+  const local = (localModel: string): AiSettings => ({ ...config, provider: "local", localModel });
+  const progress: string[] = [];
+  try {
+    Object.defineProperty(globalThis, "navigator", { configurable: true, value: { gpu: {} } });
+    Object.defineProperty(globalThis, "Worker", { configurable: true, value: FakeWorker });
+    globalThis.fetch = fetchMock(() => { throw new Error("A local test must not call an API or download models"); });
+    const initial = await runAiAnalysis(data, local(first.id), { signal: controller().signal, onProgress: message => progress.push(message) });
+    assert.equal(initial.model, first.id);
+    const reused = await runAiAnalysis(data, local(first.id), { signal: controller().signal, onProgress: () => {} });
+    assert.equal(reused.model, first.id);
+    assert.equal(workers.length, 1);
+    assert.equal(workers[0].loads, 1);
+    assert.equal(workers[0].terminated, false);
+    const changed = await runAiAnalysis(data, local(second.id), { signal: controller().signal, onProgress: message => progress.push(message) });
+    assert.equal(changed.model, second.id);
+    assert.equal(workers.length, 2);
+    assert.equal(workers[0].terminated, true);
+    assert.equal(workers[1].model, second.id);
+    assert.ok(progress.some(message => message.includes(first.name) && message.includes(first.downloadLabel)));
+    assert.ok(progress.some(message => message.includes(second.name) && message.includes(second.downloadLabel)));
+  } finally {
+    // Exercise cancellation too, and leave the module's cached engine empty.
+    const cancel = controller();
+    await assert.rejects(runAiAnalysis(data, local(second.id), {
+      signal: cancel.signal, onProgress: message => { if (message.includes("reading paper batch")) cancel.abort(); },
+    }), { name: "AbortError" });
+    assert.ok(workers.every(worker => worker.terminated));
+    if (originalNavigator) Object.defineProperty(globalThis, "navigator", originalNavigator); else Reflect.deleteProperty(globalThis, "navigator");
+    if (originalWorker) Object.defineProperty(globalThis, "Worker", originalWorker); else Reflect.deleteProperty(globalThis, "Worker");
+    globalThis.fetch = originalFetch;
+  }
 });
 
 test("paid model selection is explicit, and endpoint-like model IDs are rejected before sending", async () => {
@@ -234,6 +345,18 @@ test("Chinese source text shrinks local batches and retains full paper evidence 
   assert.deepEqual(local.flat(), data.papers);
   assert.equal(aiEvidenceBatches(data, false).length, 1);
   assert.equal(data.papers[0].abstract.length, 900);
+});
+
+test("cloud batching also budgets long Chinese inputs instead of relying only on a 40-paper count", () => {
+  const data = prepareAiEvidence(Array.from({ length: 40 }, (_, index) => ({
+    ...paper(`cloud-chinese-${index}`), abstract: "临床研究证据".repeat(150),
+  })), { ...spec, locale: "zh" }, 48, new Date("2026-10-14T04:00:00Z"));
+  const batches = aiEvidenceBatches(data, false);
+  assert.ok(batches.length > 1);
+  assert.ok(batches.every(batch => batch.length < 40 && batch.length > 0));
+  assert.deepEqual(batches.flat(), data.papers);
+  const oversized = { ...data, spec: { ...data.spec, locale: "en" as const }, papers: [{ ...data.papers[0], id: "oversized-id-" + "x".repeat(60000) }] };
+  assert.throws(() => aiEvidenceBatches(oversized, false), /exceeds the cloud input budget/);
 });
 
 test("an oversized independent question rejects local batching but remains usable with API batching", () => {
