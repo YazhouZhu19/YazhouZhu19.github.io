@@ -5,12 +5,13 @@ import { collectResearchSignals } from "../lib/collect-signals";
 import { emptyResearchSignalsData, parseResearchSignalsData, SIGNALS_MAX_BYTES } from "../lib/research-signals";
 
 async function main() {
-  let input = "data/research-signals.json", output = input, days = 365, force = false, init = false;
+  let input = "data/research-signals.json", output = input, days = 365, force = false, init = false, githubOnly = false;
   const args = process.argv.slice(2);
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--force") { force = true; continue; }
+    if (args[i] === "--github-only") { githubOnly = true; continue; }
     if (args[i] === "--init") { init = true; continue; }
-    if (args[i] === "--help") { console.log("Usage: tsx scripts/collect-signals.ts [--input file] [--output file] [--news-days 1..730] [--force] [--init]"); return; }
+    if (args[i] === "--help") { console.log("Usage: tsx scripts/collect-signals.ts [--input file] [--output file] [--news-days 1..730] [--force] [--init] [--github-only]"); return; }
     if (!["--input", "--output", "--news-days"].includes(args[i]) || !args[i + 1] || args[i + 1].startsWith("--")) throw new Error("Unknown or missing argument");
     const key = args[i], value = args[++i];
     if (key === "--input") input = value; else if (key === "--output") output = value; else days = Number(value);
@@ -24,7 +25,7 @@ async function main() {
     if (error.code === "ENOENT" && init) previous = emptyResearchSignalsData();
     else throw new Error("Signals input missing or invalid; existing snapshot unchanged (first initialization requires --init)");
   }
-  const { data, allFailed } = await collectResearchSignals(previous, { newsDays: days, force, githubToken: process.env.GH_TOKEN || process.env.GITHUB_TOKEN });
+  const { data, allFailed } = await collectResearchSignals(previous, { newsDays: days, force, githubOnly, githubToken: process.env.GH_TOKEN || process.env.GITHUB_TOKEN });
   const content = JSON.stringify(data, null, 2) + "\n";
   if (Buffer.byteLength(content) > SIGNALS_MAX_BYTES) throw new Error("Signals output exceeds 4 MiB; existing snapshot unchanged");
   await mkdir(dirname(output), { recursive: true });

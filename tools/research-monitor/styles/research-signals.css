@@ -13,6 +13,15 @@
 .signals-source-row strong { font-weight: 500; color: #3f5546; }
 .signals-source-row p { margin: 5px 0; overflow-wrap: anywhere; }
 .signals-source-row small { font-size: 10px; }
+.signals-discovery-catalog { padding-top: 13px; border-top: 1px solid var(--signals-line); }
+.signals-discovery-catalog > summary { cursor: pointer; color: #4c6554; font-weight: 500; }
+.signals-discovery-catalog > p { margin: 10px 0; }
+.signals-discovery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 24px; margin: 16px 0; }
+.signals-discovery-grid > div { min-width: 0; }
+.signals-discovery-grid strong { display: block; color: #4c6554; font-weight: 500; }
+.signals-discovery-grid strong > span { margin-left: 7px; color: var(--signals-muted); font: 11px var(--font-data); }
+.signals-discovery-grid a { display: flex; align-items: baseline; margin-top: 5px; font-size: 11px; }
+.signals-discovery-grid a svg { flex-shrink: 0; }
 .research-signals a { display: inline-flex; align-items: center; gap: 4px; color: #42634f; text-decoration: none; overflow-wrap: anywhere; }
 .research-signals a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .signals-status { padding: 1px 7px; border-radius: 4px; color: #517357; background: #eaf0e6; font-size: 10px; }
@@ -27,6 +36,11 @@
 .signals-filter-row > div { min-width: 0; }
 .signals-filter-row label { display: block; margin-bottom: 6px; color: var(--signals-muted); font: 12px/1.6 var(--font-ui); }
 .signals-filter-row :is(input, select) { width: 100%; min-width: 0; height: 40px; padding: 8px 10px; border: 1px solid #d8e1d8; border-radius: 6px; background: white; color: var(--signals-ink); font: 12px/1.6 var(--font-ui); }
+.signals-discovery-filter { display: grid; grid-template-columns: minmax(220px, .9fr) minmax(0, 1.6fr); gap: 20px; align-items: end; margin-top: 16px; }
+.signals-discovery-filter > div { min-width: 0; }
+.signals-discovery-filter label { display: block; margin-bottom: 6px; color: var(--signals-muted); font: 12px/1.6 var(--font-ui); }
+.signals-discovery-filter select { width: 100%; min-width: 0; height: 40px; padding: 8px 10px; border: 1px solid #d8e1d8; border-radius: 6px; background: white; color: var(--signals-ink); font: 12px/1.6 var(--font-ui); }
+.signals-discovery-filter > p { margin: 0 0 1px; color: #7a847b; font: 11px/1.8 var(--font-ui); }
 .signals-filter-hint { margin: 12px 0 0; color: #7a847b; font: 11px/1.8 var(--font-ui); }
 .signals-results-heading { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin: 25px 0 15px; }
 .signals-results-heading h2 { margin: 0; font: 500 23px/1.5 var(--font-data); }
@@ -47,6 +61,9 @@
 .signal-repo-facts small { margin-left: 3px; color: #8b9489; font-size: 10px; }
 .signal-topics { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 13px; }
 .signal-topics > span { padding: 2px 7px; border-radius: 4px; background: #f4f6f1; color: #75816e; font: 10px/1.7 var(--font-ui); overflow-wrap: anywhere; }
+.signal-discovery-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 13px; }
+.signal-discovery-tags > span { padding: 2px 7px; border: 1px solid #dfe7d9; border-radius: 4px; color: #65795f; font: 10px/1.7 var(--font-ui); overflow-wrap: anywhere; }
+.signal-discovery-tags > .signal-discovery-label { padding-left: 0; border-color: transparent; color: #8a9488; }
 .signal-readme { margin-top: 14px; padding: 10px 12px; background: #f8faf6; border-radius: 7px; color: #6b7b69; font: 11px/1.7 var(--font-ui); }
 .signal-readme summary { cursor: pointer; }
 .signal-readme p { margin: 10px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.85 var(--font-ui); }
@@ -92,6 +109,7 @@
   .signals-filter-row > button { justify-self: start; }
 }
 @media (max-width: 600px) {
+  .signals-discovery-filter, .signals-discovery-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
   .signals-intro { gap: 12px; }
   .signals-intro-mark { flex-basis: 34px; height: 34px; width: 34px; }
   .signals-intro h2 { font-size: 19px; }

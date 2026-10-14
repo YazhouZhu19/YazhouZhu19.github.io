@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { collectResearchSignals, createSignalFetcher, CURATED_REPOSITORIES, googleNewsUrl, isGitHubProjectRelevant, isNewsProgressRelevant, NEWS_QUERIES, parseGitHubRepository, parseGoogleNewsRss, publicRelatedUrls, type SignalFetch } from "../lib/collect-signals";
+import { collectResearchSignals, createSignalFetcher, CURATED_REPOSITORIES, GITHUB_ENRICHMENT_LIMIT, GITHUB_RESULTS_PER_QUERY, GITHUB_SEARCH_REQUEST_BUDGET, githubSearchPlan, githubDiscoveryCacheUrl, SignalRateLimitError, googleNewsUrl, isGitHubProjectRelevant, isNewsProgressRelevant, NEWS_QUERIES, parseGitHubRepository, parseGoogleNewsRss, publicRelatedUrls, type SignalFetch } from "../lib/collect-signals";
+import { GITHUB_DISCOVERY_GROUPS } from "../lib/github-discovery";
 import { emptyResearchSignalsData, parseResearchSignalsData, safeSignalUrl, signalDate } from "../lib/research-signals";
 
 const now = "2026-10-14T04:00:00.000Z";
@@ -62,10 +63,11 @@ test("public relationship URLs deduplicate and exclude executable/local links", 
   assert.deepEqual(publicRelatedUrls("[a](https://arxiv.org/abs/2401.12345) https://arxiv.org/abs/2401.12345 https://localhost/x javascript:alert(1)"), ["https://arxiv.org/abs/2401.12345"]);
 });
 test("collection deduplicates queries, enriches readmes and preserves first-seen on failure", async () => {
-  const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: fakeFetch, now: new Date(now), force: true });
+  const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: fakeFetch, now: new Date(now), force: true, githubToken: "test" });
   assert.equal(first.allFailed, false); assert.equal(first.data.records.filter(record => record.kind === "news").length, 1);
   assert.equal(first.data.records.filter(record => record.kind === "github").length, CURATED_REPOSITORIES.length);
-  assert(first.data.records.filter(record => record.kind === "github").every(record => record.relatedUrls.includes("https://arxiv.org/abs/2401.12345")));
+  assert(first.data.records.some(record => record.relatedUrls.includes("https://arxiv.org/abs/2401.12345")));
+  assert(first.data.records.filter(record => record.relatedUrls.includes("https://arxiv.org/abs/2401.12345")).length <= GITHUB_ENRICHMENT_LIMIT);
   const failed = await collectResearchSignals(first.data, { fetchText: async () => { throw new Error("secret should never leak"); }, now: new Date("2026-10-15T04:00:00Z"), force: true });
   assert.equal(failed.allFailed, true); assert.deepEqual(failed.data.records, first.data.records);
   assert(failed.data.sources.every(source => source.status === "error" && source.lastSuccessAt === now));
@@ -88,4 +90,127 @@ test("HTTP requester never sends token to Google, refuses redirects and bounds b
   await assert.rejects(() => request("https://example.com/"));
   await assert.rejects(() => createSignalFetcher(undefined, async () => new Response(""))(discovery), /为空/);
   await assert.rejects(() => createSignalFetcher(undefined, async () => new Response("x", { headers: { "content-length": "5000000" } }))(discovery), /上限/);
+});
+
+
+test("GitHub relevance includes modality/task projects without general medical-imaging wording", () => {
+  for (const summary of ["MRI reconstruction with learned priors", "brain tumor segmentation", "CT image registration", "retinal OCT classification", "lung nodule detection", "PET reconstruction benchmark", "breast lesion segmentation dataset", "Radiomics feature extraction", "DICOM viewer", "NIfTI processing"])
+    assert.equal(isGitHubProjectRelevant({ fullName: "lab/project", summary, topics: [] }), true, summary);
+  for (const summary of ["Segment anything foundation model", "generic LLM inference engine", "Stock market prediction", "Curated list of papers for medical imaging", "Medical imaging paper list"])
+    assert.equal(isGitHubProjectRelevant({ fullName: "lab/project", summary, topics: [] }), false, summary);
+});
+test("search plan covers every direction fairly with bounded requests and both rankings", () => {
+  const plan = githubSearchPlan();
+  assert(plan.length <= GITHUB_SEARCH_REQUEST_BUDGET);
+  assert.deepEqual(plan.slice(0, GITHUB_DISCOVERY_GROUPS.length).map(step => step.groupId), GITHUB_DISCOVERY_GROUPS.map(group => group.id));
+  for (const group of GITHUB_DISCOVERY_GROUPS) assert.deepEqual(plan.filter(step => step.groupId === group.id && step.query === group.queries[0]).map(step => step.sort), ["best-match", "updated"]);
+  assert.equal(githubSearchPlan(5).length, 5);
+  assert.throws(() => githubSearchPlan(49));
+});
+test("multi-direction search deduplicates across rankings, unions groups and exceeds the former 18 cap", async () => {
+  const calls: string[] = [];
+  const request: SignalFetch = async url => {
+    calls.push(url); const parsed = new URL(url);
+    if (parsed.pathname !== "/search/repositories") return fakeFetch(url);
+    const groupIndex = GITHUB_DISCOVERY_GROUPS.findIndex(group => group.queries.includes(parsed.searchParams.get("q")!));
+    const items = [repo("Shared/imaging"), ...Array.from({ length: 10 }, (_, i) => repo(`Lab${groupIndex}/medical-project-${i}`))];
+    return { body: JSON.stringify({ total_count: 100, incomplete_results: false, items }), status: 200 };
+  };
+  const result = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: request, force: true, githubOnly: true, now: new Date(now), githubToken: "test" });
+  const github = result.data.records.filter(record => record.kind === "github");
+  assert(github.length >= 180);
+  assert.deepEqual(new Set(github.find(record => record.fullName === "Shared/imaging")!.discoveryGroups), new Set(GITHUB_DISCOVERY_GROUPS.map(group => group.id)));
+  assert.equal(result.data.sources[0].status, "ok");
+  assert(calls.every(url => new URL(url).hostname === "api.github.com"));
+  assert(calls.filter(url => /\/readme$/.test(url)).length <= GITHUB_ENRICHMENT_LIMIT);
+  for (const url of calls.filter(url => new URL(url).pathname === "/search/repositories")) assert.equal(Number(new URL(url).searchParams.get("per_page")), GITHUB_RESULTS_PER_QUERY);
+  assert(calls.length <= 110);
+});
+test("GitHub-only refresh preserves news state and ignores a failing unselected source", async () => {
+  const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: fakeFetch, now: new Date(now), force: true });
+  const newsBefore = first.data.sources.filter(source => source.kind === "news");
+  const result = await collectResearchSignals(first.data, { fetchText: async url => {
+    assert.equal(new URL(url).hostname, "api.github.com"); throw new Error("unavailable");
+  }, now: new Date("2026-10-15T04:00:00Z"), force: true, githubOnly: true });
+  assert.equal(result.allFailed, true);
+  assert.deepEqual(result.data.sources.filter(source => source.kind === "news"), newsBefore);
+  assert.deepEqual(result.data.records, first.data.records);
+});
+test("discovery catalog fingerprint invalidates a fresh older search cache", async () => {
+  const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: fakeFetch, now: new Date(now), force: true });
+  first.data.sources.find(source => source.kind === "github")!.url = "https://api.github.com/search/repositories?q=old";
+  let githubRequests = 0;
+  const refreshed = await collectResearchSignals(first.data, { fetchText: async url => { if (new URL(url).hostname === "api.github.com") githubRequests++; else assert.fail("news should remain cached"); return fakeFetch(url); }, now: new Date("2026-10-14T05:00:00Z") });
+  assert(githubRequests > 0); assert.equal(refreshed.data.sources[0].url, githubDiscoveryCacheUrl());
+});
+test("partial search failure retains old projects, excerpts, releases and group history", async () => {
+  const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: fakeFetch, now: new Date(now), force: true, githubToken: "test" });
+  const original = first.data.records.find(record => record.kind === "github")!;
+  assert.equal(original.kind, "github");
+  if (original.kind !== "github") return;
+  original.discoveryGroups = ["segmentation"];
+  original.releasedAt = now; original.releaseUrl = original.url + "/releases/tag/v1";
+  const updated = await collectResearchSignals(first.data, { fetchText: async url => {
+    if (new URL(url).pathname === "/search/repositories") throw new Error("unavailable");
+    if (/\/readme$/.test(url)) return { body: "", status: 404 };
+    return fakeFetch(url);
+  }, now: new Date("2026-10-15T04:00:00Z"), force: true, githubOnly: true });
+  assert.equal(updated.data.sources[0].status, "partial"); assert.equal(updated.allFailed, false);
+  const kept = updated.data.records.find(record => record.id === original.id)!;
+  assert.equal(kept.firstSeenAt, now);
+  assert.equal(kept.kind, "github");
+  if (kept.kind !== "github") return;
+  assert.equal(kept.readmeExcerpt, original.readmeExcerpt); assert.equal(kept.releaseUrl, original.releaseUrl); assert.deepEqual(kept.discoveryGroups, ["segmentation"]);
+  assert(first.data.records.every(old => updated.data.records.some(record => record.id === old.id)));
+});
+test("anonymous collection stays within 60 calls and long rate limits stop follow-up requests", async () => {
+  let calls = 0;
+  const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: async url => { calls++; return fakeFetch(url); }, now: new Date(now), force: true, githubOnly: true });
+  assert(calls <= 60); assert.equal(first.allFailed, false);
+  calls = 0; const waits: number[] = [];
+  const limited = await collectResearchSignals(first.data, { fetchText: async () => { calls++; throw new SignalRateLimitError(3600000); }, wait: async ms => { waits.push(ms); }, now: new Date("2026-10-15T04:00:00Z"), force: true, githubOnly: true });
+  assert.equal(calls, 1); assert.deepEqual(waits, []); assert.equal(limited.allFailed, true);
+  assert.deepEqual(limited.data.records, first.data.records);
+});
+test("short rate limits get only one bounded retry and redact server response content", async () => {
+  const waits: number[] = []; let calls = 0;
+  const result = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: async () => { calls++; throw new SignalRateLimitError(2000); }, wait: async ms => { waits.push(ms); }, now: new Date(now), force: true, githubOnly: true });
+  assert.equal(calls, 2); assert.deepEqual(waits, [2000]); assert.equal(result.allFailed, true);
+  const request = createSignalFetcher("secret-token", async () => new Response("secret-server-body", { status: 429, headers: { "retry-after": "2" } }));
+  await assert.rejects(request("https://api.github.com/search/repositories?q=medical"), (error: unknown) => error instanceof SignalRateLimitError && error.retryAfterMs === 2000 && !error.message.includes("secret"));
+});
+
+
+test("403 secondary limits without headers stop safely instead of producing a retry storm", async () => {
+  for (const status of [403, 429]) {
+    const request = createSignalFetcher(undefined, async () => new Response("untrusted body", { status }));
+    await assert.rejects(request("https://api.github.com/search/repositories?q=medical"), (error: unknown) => error instanceof SignalRateLimitError && error.retryAfterMs >= 60000);
+  }
+});
+
+
+test("secondary limit uses one-minute fallback despite a nearby primary reset", async () => {
+  const request = createSignalFetcher(undefined, async () => new Response("untrusted body", { status: 403, headers: { "x-ratelimit-remaining": "20", "x-ratelimit-reset": String(Math.floor(Date.now() / 1000) + 5) } }));
+  await assert.rejects(request("https://api.github.com/search/repositories?q=medical"), (error: unknown) => error instanceof SignalRateLimitError && error.retryAfterMs === 60000);
+});
+
+
+test("discovery rejects paper directories, course submissions and display-only prototypes", () => {
+  const rejected = [
+    { fullName: "albarqouni/Deep-Learning-for-Medical-Applications", summary: "Deep Learning Papers on Medical Image Analysis" },
+    { fullName: "amanchadha/coursera-ai-for-medicine-specialization", summary: "Programming assignments, labs and quizzes for the Coursera AI for Medicine specialization. Medical imaging." },
+    { fullName: "amirhossein-kz/Awesome-Diffusion-Models-in-Medical-Imaging", summary: "Diffusion Models in Medical Imaging: A Comprehensive Survey" },
+    { fullName: "alexandretzy/Prototype-Thesis-1", summary: "A responsive frontend prototype for medical imaging, with fictional data for demonstration only" },
+    { fullName: "lab/ADA4MIA", summary: "Awesome Active Domain Adaptation for Medical Image Analysis" },
+  ];
+  for (const record of rejected) assert.equal(isGitHubProjectRelevant({ ...record, topics: [] }), false, record.fullName);
+  assert.equal(isGitHubProjectRelevant({ fullName: "foundation/ehr-wallet", summary: "Blockchain-based sharing and medical data management", topics: ["medical-imaging"] }), false);
+  const retained = [
+    "Code for our papers on medical imaging segmentation",
+    "Interactive frontend application for DICOM visualization",
+    "Hands-on tutorial code for MRI reconstruction",
+    "Medical imaging benchmark dataset and training code",
+    "Awesome medical imaging inference toolkit",
+  ];
+  for (const summary of retained) assert.equal(isGitHubProjectRelevant({ fullName: "lab/research", summary, topics: [] }), true, summary);
 });

@@ -25,6 +25,9 @@ export const GitHubSignalSchema = z.object({
   stars: z.number().int().nonnegative(), forks: z.number().int().nonnegative(), openIssues: z.number().int().nonnegative(),
   license: z.string().max(100).nullable(), language: z.string().max(100).nullable(), archived: z.boolean(),
   pushedAt: date.nullable(), releasedAt: date.nullable(), releaseUrl: url.nullable(), readmeExcerpt: z.string().max(1000),
+  // Search routes that found this repository; not a verified task classification.
+  discoveryGroups: z.array(z.string().max(80).regex(/^[a-z][a-z0-9-]*$/)).max(32)
+    .refine(values => new Set(values).size === values.length, "Duplicate discovery groups").optional(),
 }).strict();
 export const NewsSignalSchema = z.object({
   ...common, kind: z.literal("news"), newsType: z.enum(["model", "research", "tooling"]),

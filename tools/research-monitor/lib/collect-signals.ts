@@ -1,10 +1,16 @@
 import { createHash } from "node:crypto";
+import { GITHUB_DISCOVERY_GROUPS, GITHUB_DISCOVERY_VERSION } from "./github-discovery";
 import { emptyResearchSignalsData, parseResearchSignalsData, safeSignalUrl, SIGNALS_LIMITATIONS,
   type GitHubSignal, type NewsSignal, type ResearchSignal, type ResearchSignalsData, type SignalSourceState } from "./research-signals";
 
 const API = "https://api.github.com";
 export const CURATED_REPOSITORIES = ["Project-MONAI/MONAI", "MIC-DKFZ/nnUNet", "bowang-lab/MedSAM", "bowang-lab/MedSAM2", "microsoft/BiomedParse", "microsoft/LLaVA-Med", "StanfordMIMI/Merlin", "wasserth/TotalSegmentator", "Google-Health/medgemma", "Project-MONAI/VISTA"];
-export const GITHUB_QUERIES = ['"medical imaging" in:description fork:false archived:false', 'topic:medical-image-analysis fork:false archived:false'];
+export const GITHUB_QUERIES = GITHUB_DISCOVERY_GROUPS.flatMap(group => group.queries);
+export const GITHUB_SEARCH_REQUEST_BUDGET = 48;
+export const GITHUB_ENRICHMENT_LIMIT = 24;
+export const GITHUB_RESULTS_PER_QUERY = 20;
+const ANONYMOUS_REQUEST_BUDGET = 60;
+const AUTHENTICATED_REQUEST_BUDGET = 110;
 export const NEWS_QUERIES = [
   { id: "google-news-imaging", name: "Google News · medical imaging", query: '"medical imaging" (model OR AI OR release)', hl: "en-US", gl: "US", ceid: "US:en" },
   { id: "google-news-radiology", name: "Google News · radiology models", query: '(radiology OR pathology) ("foundation model" OR "open source" OR "AI model")', hl: "en-US", gl: "US", ceid: "US:en" },
@@ -13,7 +19,11 @@ export const NEWS_QUERIES = [
 const CACHE_MS = 6 * 60 * 60 * 1000;
 const RESPONSE_MAX_BYTES = 3 * 1024 * 1024;
 export type SignalFetch = (url: string) => Promise<{ body: string; status: number }>;
-export type SignalCollectOptions = { now?: Date; fetchText?: SignalFetch; newsDays?: number; force?: boolean; githubToken?: string };
+export type SignalCollectOptions = { now?: Date; fetchText?: SignalFetch; newsDays?: number; force?: boolean; githubToken?: string; githubOnly?: boolean; wait?: (milliseconds: number) => Promise<void> };
+/** Safe public metadata only; raw response bodies and tokens never enter errors. */
+export class SignalRateLimitError extends Error {
+  constructor(readonly retryAfterMs: number) { super("GitHub 请求受到限制；已有记录保留"); }
+}
 
 function allowedFetchUrl(value: string) {
   if (!safeSignalUrl(value)) return false;
@@ -32,6 +42,13 @@ export function createSignalFetcher(token?: string, fetcher: typeof fetch = fetc
     try { response = await fetcher(value, { headers, redirect: "error", signal: AbortSignal.timeout(25000) }); }
     catch { throw new Error("公开来源连接失败或超时；保留已有记录"); }
     if (!response.ok) {
+      if (github && (response.status === 429 || response.status === 403)) {
+        const retryHeader = response.headers.get("retry-after"), reset = Number(response.headers.get("x-ratelimit-reset"));
+        const retrySeconds = retryHeader && /^\d+(?:\.\d+)?$/.test(retryHeader) ? Number(retryHeader) : null;
+        const retryDate = retryHeader && retrySeconds === null ? Date.parse(retryHeader) : NaN;
+        const delay = retrySeconds !== null ? retrySeconds * 1000 : Number.isFinite(retryDate) ? retryDate - Date.now() : response.headers.get("x-ratelimit-remaining") === "0" && reset > 0 ? reset * 1000 - Date.now() : 60000;
+        throw new SignalRateLimitError(Math.max(1000, Math.min(Number.isFinite(delay) ? delay : 60000, 3600000)));
+      }
       if (github && response.status === 404 && /\/(readme|releases\/latest)$/.test(new URL(value).pathname)) return { body: "", status: 404 };
       throw new Error(`公开来源返回 HTTP ${response.status}`);
     }
@@ -79,7 +96,17 @@ export function isImagingRelevant(value: string): boolean {
 }
 export function isGitHubProjectRelevant(repo: Pick<GitHubSignal, "fullName" | "summary" | "topics">): boolean {
   const value = `${repo.fullName} ${repo.summary} ${repo.topics.join(" ")}`;
-  return isImagingRelevant(value) && !/\.github\.io\b|portfolio|course assignment|homework|notes and open discussion|reading list|papers? reading/i.test(value);
+  const medicalContext = /\b(?:mri|fmri|ct|pet|oct|x[ -]?ray|ultrasound|retin(?:a|al)|fundus|brain|breast|prostate|lung|cardiac|kidney|liver|tumou?r|lesion|organ)\b/i.test(value);
+  const imagingTask = /segment|reconstruct|registrat|classif|detect|radiomic|prognos|survival|diagnos|image|imaging|scan|denois|super.resolution|synthesi|diffusion|tomograph|anatom|volum|annotation|foundation.model/i.test(value);
+  const explicitImplementation = /\b(?:code|implementations?|toolkit|library|benchmark|dataset|inference|model weights)\b/i.test(repo.summary);
+  const paperDirectory = /\/awesome(?:[-_.]|$)/i.test(repo.fullName) || /reading list|papers? reading|curated (?:list|collection) of (?:papers|articles)|(?:paper|publication)s? list|list of (?:papers|publications)/i.test(value) ||
+    ((/\bpapers\s+(?:on|for|about|in)\b/i.test(repo.summary) || /^awesome\b/i.test(repo.summary)) && !explicitImplementation);
+  const coursework = /course assignment|homework|notes and open discussion|\bcoursework\b/i.test(value) ||
+    (/\b(?:coursera|course|specialization)\b/i.test(value) && /\b(?:assignments?|quizzes|quiz|solutions)\b/i.test(value));
+  const presentationOnly = /front[ -]?end(?:[ -]only)?\s+(?:prototype|mockup|demo)\b|fictional data for demonstration|(?:mockup|prototype)\s+(?:website|landing page)/i.test(value);
+  const unrelated = /\.github\.io\b|portfolio|financial|stock market|trading bot|\b(?:arduino|obstacle avoidance|distance sensor|distance measurement|ultrasonic ranging)\b/i.test(value);
+  const unrelatedWallet = /\b(?:wallet|blockchain)\b/i.test(value) && !isImagingRelevant(repo.summary);
+  return (isImagingRelevant(value) || /\b(?:radiomics?|dicom|nifti)\b/i.test(value) || (medicalContext && imagingTask)) && !paperDirectory && !coursework && !presentationOnly && !unrelated && !unrelatedWallet;
 }
 export function isNewsProgressRelevant(value: string): boolean {
   return isImagingRelevant(value) && /\bmodels?\b|\bAI\b|artificial intelligence|deep learning|foundation|open.source|模型|人工智能|深度学习|开源/i.test(value) &&
@@ -124,29 +151,88 @@ export function parseGoogleNewsRss(body: string, sourceId: string, discoveryUrl:
   return { records, received: items.length };
 }
 
-async function collectGitHub(fetchText: SignalFetch, now: string) {
+export type GitHubSearchStep = { groupId: string; query: string; sort: "best-match" | "updated" };
+/** Every group receives its first query before a group receives additional queries. */
+export function githubSearchPlan(budget = GITHUB_SEARCH_REQUEST_BUDGET): GitHubSearchStep[] {
+  if (!Number.isSafeInteger(budget) || budget < 0 || budget > GITHUB_SEARCH_REQUEST_BUDGET) throw new Error("GitHub 搜索预算无效");
+  const plan: GitHubSearchStep[] = [];
+  const queryCount = Math.max(...GITHUB_DISCOVERY_GROUPS.map(group => group.queries.length));
+  for (let queryIndex = 0; queryIndex < queryCount; queryIndex++) {
+    for (const sort of ["best-match", "updated"] as const) {
+      for (const group of GITHUB_DISCOVERY_GROUPS) {
+        if (group.queries[queryIndex] && plan.length < budget) plan.push({ groupId: group.id, query: group.queries[queryIndex], sort });
+      }
+    }
+  }
+  return plan;
+}
+export function githubDiscoveryCacheUrl(): string {
+  const fingerprint = createHash("sha256").update(JSON.stringify(GITHUB_DISCOVERY_GROUPS)).digest("hex").slice(0, 16);
+  return `${API}/search/repositories?${new URLSearchParams({ q: '"medical imaging"', discovery: `${GITHUB_DISCOVERY_VERSION}-${fingerprint}` })}`;
+}
+async function collectGitHub(fetchText: SignalFetch, now: string, previous: ResearchSignalsData, options: SignalCollectOptions) {
   const candidates = new Map<string, GitHubSignal>(), errors: string[] = [];
-  let received = 0, successes = 0;
+  const requestBudget = options.githubToken ? AUTHENTICATED_REQUEST_BUDGET : ANONYMOUS_REQUEST_BUDGET;
+  const pause = options.wait ?? (options.fetchText ? async () => {} : (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms)));
+  const interval = options.githubToken ? 2200 : 6100;
+  let received = 0, successes = 0, requests = 0, searchRequests = 0, retried = false, halted = false, previousSearchAt = 0, enriched = 0;
+  async function request(url: string): ReturnType<SignalFetch> {
+    // One call is reserved for a bounded retry, including when operating anonymously.
+    if (halted || requests >= requestBudget - (retried ? 0 : 1)) throw new Error("GitHub 本次请求预算已用完；已有记录保留");
+    if (new URL(url).pathname === "/search/repositories") {
+      if (previousSearchAt) await pause(Math.max(0, interval - (Date.now() - previousSearchAt)));
+      previousSearchAt = Date.now(); searchRequests++;
+    }
+    requests++;
+    try { return await fetchText(url); }
+    catch (error) {
+      if (!(error instanceof SignalRateLimitError)) throw error;
+      if (!retried && error.retryAfterMs <= 15000 && requests < requestBudget) {
+        retried = true; await pause(Math.max(error.retryAfterMs, new URL(url).pathname === "/search/repositories" ? interval : 0)); requests++;
+        if (new URL(url).pathname === "/search/repositories") previousSearchAt = Date.now();
+        try { return await fetchText(url); } catch (retryError) { halted = true; throw retryError; }
+      }
+      halted = true; throw error;
+    }
+  }
+  function add(result: GitHubSignal, groupId?: string) {
+    const old = candidates.get(result.id);
+    candidates.set(result.id, { ...result, discoveryGroups: [...new Set([...(old?.discoveryGroups ?? []), ...(groupId ? [groupId] : [])])] });
+  }
   for (const fullName of CURATED_REPOSITORIES) {
-    try { const result = parseGitHubRepository(json((await fetchText(`${API}/repos/${fullName}`)).body), now); candidates.set(result.id, result); received++; successes++; }
+    if (halted) break;
+    try { const result = parseGitHubRepository(json((await request(`${API}/repos/${fullName}`)).body), now); add(result); received++; successes++; }
     catch (error) { errors.push(`${fullName}: ${shortError(error)}`); }
   }
-  for (const query of GITHUB_QUERIES) {
+  const plan = githubSearchPlan();
+  for (const step of plan) {
+    if (halted) break;
     try {
-      const value = json((await fetchText(`${API}/search/repositories?${new URLSearchParams({ q: query, sort: "updated", order: "desc", per_page: "12" })}`)).body);
-      if (!value || !Array.isArray(value.items) || count(value.total_count) === null || typeof value.incomplete_results !== "boolean") throw new Error("GitHub 搜索响应字段无效");
+      const parameters = new URLSearchParams({ q: step.query, per_page: String(GITHUB_RESULTS_PER_QUERY) });
+      if (step.sort === "updated") { parameters.set("sort", "updated"); parameters.set("order", "desc"); }
+      const value = json((await request(`${API}/search/repositories?${parameters}`)).body);
+      if (!value || !Array.isArray(value.items) || value.items.length > GITHUB_RESULTS_PER_QUERY || count(value.total_count) === null || typeof value.incomplete_results !== "boolean") throw new Error("GitHub 搜索响应字段无效");
       if (value.total_count > 0 && !value.items.length) throw new Error("GitHub 搜索声明有结果但返回空列表");
       if (value.incomplete_results) errors.push("GitHub 搜索返回不完整结果");
       for (const item of value.items) {
-        const result = parseGitHubRepository(item, now); received++;
-        if (isGitHubProjectRelevant(result) && candidates.size < 18) candidates.set(result.id, result);
+        received++;
+        try { const result = parseGitHubRepository(item, now); if (isGitHubProjectRelevant(result)) add(result, step.groupId); }
+        catch (error) { errors.push(shortError(error)); }
       }
       successes++;
     } catch (error) { errors.push(shortError(error)); }
   }
-  for (const repo of candidates.values()) {
+  const oldRepos = new Map(previous.records.filter((record): record is GitHubSignal => record.kind === "github").map(record => [record.id, record]));
+  const ordered = [...candidates.values()].sort((a, b) => a.id.localeCompare(b.id));
+  // Prefer missing README metadata, then rotate a fixed-size window every cache period.
+  const missing = ordered.filter(repo => !oldRepos.get(repo.id)?.readmeExcerpt), known = ordered.filter(repo => oldRepos.get(repo.id)?.readmeExcerpt);
+  const rotate = <T>(values: T[]) => { const offset = values.length ? (Math.floor(Date.parse(now) / CACHE_MS) * GITHUB_ENRICHMENT_LIMIT) % values.length : 0; return [...values.slice(offset), ...values.slice(0, offset)]; };
+  const enrichment = [...rotate(missing), ...rotate(known)].slice(0, Math.min(GITHUB_ENRICHMENT_LIMIT, Math.max(0, Math.floor((requestBudget - requests - (retried ? 0 : 1)) / 2))));
+  for (const repo of enrichment) {
+    if (halted) break;
+    enriched++;
     try {
-      const response = await fetchText(`${API}/repos/${repo.fullName}/readme`);
+      const response = await request(`${API}/repos/${repo.fullName}/readme`);
       if (response.status !== 404) {
         const value = json(response.body);
         if (value.encoding !== "base64" || typeof value.content !== "string" || value.content.length > 2 * 1024 * 1024) throw new Error("GitHub README 格式无效");
@@ -155,8 +241,9 @@ async function collectGitHub(fetchText: SignalFetch, now: string) {
         repo.relatedUrls = [...new Set([...repo.relatedUrls, ...publicRelatedUrls(readme)])].slice(0, 40);
       }
     } catch (error) { errors.push(`${repo.fullName} README: ${shortError(error)}`); }
+    if (halted) break;
     try {
-      const response = await fetchText(`${API}/repos/${repo.fullName}/releases/latest`);
+      const response = await request(`${API}/repos/${repo.fullName}/releases/latest`);
       if (response.status !== 404) {
         const value = json(response.body);
         if (value.draft !== false || value.prerelease !== false || !stamp(value.published_at) || !safeSignalUrl(value.html_url) || !value.html_url.startsWith(repo.url + "/releases/")) throw new Error("GitHub release 响应字段无效");
@@ -164,14 +251,14 @@ async function collectGitHub(fetchText: SignalFetch, now: string) {
       }
     } catch (error) { errors.push(`${repo.fullName} release: ${shortError(error)}`); }
   }
-  return { records: [...candidates.values()], received, successes, errors };
+  return { records: [...candidates.values()], received, successes, errors, requests, searchRequests, enriched, planned: plan.length };
 }
 export async function collectResearchSignals(previous: ResearchSignalsData = emptyResearchSignalsData(), options: SignalCollectOptions = {}): Promise<{ data: ResearchSignalsData; allFailed: boolean }> {
   parseResearchSignalsData(previous);
   const now = (options.now ?? new Date()).toISOString(), days = options.newsDays ?? 365;
   const request = options.fetchText ?? createSignalFetcher(options.githubToken);
   // Validation happens before issuing any requests or replacing the snapshot.
-  NEWS_QUERIES.forEach(query => googleNewsUrl(query, days));
+  if (!options.githubOnly) NEWS_QUERIES.forEach(query => googleNewsUrl(query, days));
   const records = new Map(previous.records.map(record => [record.id, record])), sources: SignalSourceState[] = [];
   function merge(incoming: ResearchSignal[]) {
     for (const item of incoming) {
@@ -179,6 +266,7 @@ export async function collectResearchSignals(previous: ResearchSignalsData = emp
       records.set(item.id, { ...item, firstSeenAt: old?.firstSeenAt ?? item.firstSeenAt,
         ...(item.kind === "github" && old?.kind === "github" ? {
           readmeExcerpt: item.readmeExcerpt || old.readmeExcerpt,
+          discoveryGroups: [...new Set([...(item.discoveryGroups ?? []), ...(old.discoveryGroups ?? [])])],
           relatedUrls: [...new Set([...item.relatedUrls, ...old.relatedUrls])].slice(0, 40),
           releasedAt: item.releasedAt ?? old.releasedAt, releaseUrl: item.releaseUrl ?? old.releaseUrl,
         } : {}),
@@ -190,18 +278,18 @@ export async function collectResearchSignals(previous: ResearchSignalsData = emp
     if (!options.force && source?.status === "ok" && source.url === targetUrl && Date.parse(now) - Date.parse(source.checkedAt) >= 0 && Date.parse(now) - Date.parse(source.checkedAt) < CACHE_MS) { sources.push(source); return true; }
     return false;
   }
-  const githubUrl = `${API}/search/repositories?${new URLSearchParams({ q: GITHUB_QUERIES[0] })}`;
+  const githubUrl = githubDiscoveryCacheUrl();
   if (!cached("github-public", githubUrl)) {
-    const result = await collectGitHub(request, now); merge(result.records);
+    const result = await collectGitHub(request, now, previous, options); merge(result.records);
     sources.push({ id: "github-public", name: "GitHub public repositories", kind: "github", url: githubUrl,
       status: result.errors.length ? result.successes ? "partial" : "error" : "ok", checkedAt: now,
       lastSuccessAt: result.errors.length ? previous.sources.find(source => source.id === "github-public")?.lastSuccessAt ?? null : now,
       received: result.received, retained: [...records.values()].filter(item => item.kind === "github").length,
       error: result.errors.length ? result.errors.join("；").slice(0, 1600) : null,
-      coverage: "10 个精选公开项目 + 2 个医疗影像关键词搜索（各最多 12 项，最多补充至 18 个项目），排除明确的个人主页/课程作业；抓取当前公开描述、README 短摘和最新非预发布 release。保留既有记录，每 6 小时重新检查。",
+      coverage: `${CURATED_REPOSITORIES.length} 个精选项目 + ${GITHUB_DISCOVERY_GROUPS.length} 个研究任务/方向（${GITHUB_QUERIES.length} 条查询），按组轮流以最佳匹配与最近更新排序检索；本次搜索 ${result.searchRequests}/${result.planned} 次，每次最多 ${GITHUB_RESULTS_PER_QUERY} 项，API 请求 ${result.requests} 次。跨组去重并保留检索命中标签，标签不代表作者认定或质量背书。直接采集搜索元数据，本次最多补全 ${result.enriched} 个仓库的 README/最新非预发布 release；其余可沿用旧摘录/版本，不代表已重新核验。保留既有记录，每 6 小时重查；检索目录 ${GITHUB_DISCOVERY_VERSION}。`,
     });
   }
-  for (const query of NEWS_QUERIES) {
+  for (const query of options.githubOnly ? [] : NEWS_QUERIES) {
     const url = googleNewsUrl(query, days); if (cached(query.id, url)) continue;
     let received = 0, error: string | null = null;
     try { const parsed = parseGoogleNewsRss((await request(url)).body, query.id, url, now, days); received = parsed.received; merge(parsed.records); }
@@ -217,5 +305,6 @@ export async function collectResearchSignals(previous: ResearchSignalsData = emp
   const mergedRecords = [...records.values()].sort((a, b) => a.id.localeCompare(b.id));
   const finalSources = sources.map(source => ({ ...source, retained: mergedRecords.filter(record => record.sourceId === source.id).length }));
   const data = parseResearchSignalsData({ schemaVersion: 1, generatedAt: now, records: mergedRecords, sources: finalSources, limitations: [...SIGNALS_LIMITATIONS] });
-  return { data, allFailed: sources.every(source => source.status === "error") };
+  const selectedSources = options.githubOnly ? sources.filter(source => source.kind === "github") : sources;
+  return { data, allFailed: selectedSources.length > 0 && selectedSources.every(source => source.status === "error") };
 }
