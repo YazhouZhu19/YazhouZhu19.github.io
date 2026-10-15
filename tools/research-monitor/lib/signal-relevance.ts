@@ -21,7 +21,7 @@ export const RELEVANCE_REASON_LABELS: Record<string, { zh: string; en: string }>
   "educational-resource": { zh: "课程、教程或学习资料", en: "Coursework, tutorial or learning material" },
   "demonstration-project": { zh: "演示、原型或个人展示项目", en: "Demonstration, prototype or portfolio project" },
   "research-progress": { zh: "标题或摘要含研究、模型、工具或验证进展", en: "Research, model, tool or validation signal in title or summary" },
-  "snippet-only": { zh: "相关性线索主要来自检索摘要", en: "Relevance evidence primarily comes from the search snippet" },
+  "snippet-only": { zh: "相关性线索主要来自摘要", en: "Relevance evidence primarily comes from the summary" },
   "mixed-announcement": { zh: "技术进展与商业或人事消息混合", en: "Technical progress mixed with business or personnel news" },
   "business-announcement": { zh: "投融资、人事、市场或渠道消息，尚非技术进展证据", en: "Finance, personnel, market or distribution news, not technical-progress evidence" },
   "administrative-announcement": { zh: "行政调查、设施或设备配置消息", en: "Administrative inquiry, facility or equipment-allocation news" },
@@ -49,6 +49,7 @@ const DEMONSTRATION = /\bportfolio\b|front end(?: only)? (?:prototype|mockup|dem
 function directEvidence(value: string): string | null {
   if (EXPLICIT.test(value)) return "explicit-medical-imaging";
   if (INFRASTRUCTURE.test(value)) return "imaging-infrastructure";
+  if (/\bx\s?rays?\b/i.test(value) && (MEDICAL_CONTEXT.test(value) || /\bsurg(?:ery|eries|ical)\b/i.test(value))) return "modality-and-task";
   if (STRONG_MODALITY.test(value) && (IMAGING_TASK.test(value) || DETECTION_TASK.test(value))) return "modality-and-task";
   if (AMBIGUOUS_MODALITY.test(value) && (IMAGING_TASK.test(value) || DETECTION_TASK.test(value)) && (ANATOMY.test(value) || MEDICAL_CONTEXT.test(value))) return "modality-and-task";
   // Established modality/task phrases do not need the generic word "medical".

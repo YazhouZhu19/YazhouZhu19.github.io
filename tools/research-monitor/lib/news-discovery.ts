@@ -7,11 +7,44 @@ export interface NewsDiscoveryQuery {
   ceid: string;
   groupId?: string;
 }
-export const NEWS_DISCOVERY_VERSION = "2026-10-15-v2";
+export const NEWS_DISCOVERY_VERSION = "2026-10-15-v3";
 const en = (id: string, name: string, groupId: string, query: string): NewsDiscoveryQuery =>
   ({ id, name: `Google News · ${name}`, groupId, query, hl: "en-US", gl: "US", ceid: "US:en" });
 const zh = (id: string, name: string, groupId: string, query: string): NewsDiscoveryQuery =>
   ({ id, name: `Google News · ${name}`, groupId, query, hl: "zh-CN", gl: "CN", ceid: "CN:zh-Hans" });
+
+const imaging = '("medical imaging" OR radiology OR MRI OR "computed tomography" OR "digital pathology" OR ultrasound OR retinal OR endoscopy)';
+const progress = '(AI OR model OR algorithm OR research OR dataset OR software OR validation)';
+const imagingZh = '(医学影像 OR 医疗影像 OR 磁共振 OR 数字病理 OR 计算病理 OR 超声影像 OR 内镜 OR 眼底)';
+const progressZh = '(模型 OR 人工智能 OR 研究 OR 开源 OR 数据集 OR 算法 OR 验证)';
+
+/** Named-publisher discovery complements direct feeds, especially for older posts. */
+export const NEWS_PUBLISHER_QUERIES: NewsDiscoveryQuery[] = [
+  en("google-news-source-rsna", "RSNA 官方发布", "medical-imaging", `site:rsna.org ${imaging} ${progress}`),
+  en("google-news-source-google", "Google Research", "foundation-models", 'site:research.google (MedGemma OR MedSigLIP OR "medical imaging" OR radiology OR pathology) (model OR AI OR research)'),
+  en("google-news-source-microsoft", "Microsoft Research", "foundation-models", 'site:microsoft.com (BiomedParse OR MAIRA OR "medical imaging" OR "digital pathology") (model OR research OR release)'),
+  en("google-news-source-nvidia", "NVIDIA 医疗影像", "toolkits", 'site:nvidia.com (MONAI OR "medical imaging" OR "surgical AI" OR "digital pathology") (model OR research OR release OR software)'),
+  en("google-news-source-auntminnie", "AuntMinnie", "medical-imaging", `site:auntminnie.com ${imaging} ${progress}`),
+  en("google-news-source-health-imaging", "Health Imaging", "medical-imaging", `site:healthimaging.com ${imaging} ${progress}`),
+  en("google-news-source-radiology-business", "Radiology Business", "medical-imaging", `site:radiologybusiness.com ${imaging} ${progress}`),
+  en("google-news-source-itn", "Imaging Technology News", "medical-imaging", `site:itnonline.com ${imaging} ${progress}`),
+  en("google-news-source-diagnostic-imaging", "Diagnostic Imaging", "medical-imaging", `site:diagnosticimaging.com ${imaging} ${progress}`),
+  en("google-news-source-stanford", "Stanford Medicine", "medical-imaging", `site:med.stanford.edu/news ${imaging} ${progress}`),
+  en("google-news-source-mit", "MIT News", "medical-imaging", `site:news.mit.edu ${imaging} ${progress}`),
+  en("google-news-source-mayo", "Mayo Clinic", "medical-imaging", `site:newsnetwork.mayoclinic.org ${imaging} ${progress}`),
+  en("google-news-source-ucsf", "UCSF", "medical-imaging", `site:ucsf.edu ${imaging} ${progress}`),
+  en("google-news-source-ge", "GE HealthCare", "medical-imaging", `site:gehealthcare.com ${imaging} ${progress}`),
+  en("google-news-source-siemens", "Siemens Healthineers", "medical-imaging", `site:siemens-healthineers.com ${imaging} ${progress}`),
+  en("google-news-source-philips", "Philips", "medical-imaging", `site:philips.com ${imaging} ${progress}`),
+  en("google-news-source-aidoc", "Aidoc", "clinical-validation", `site:aidoc.com ${imaging} ${progress}`),
+  en("google-news-source-qure", "Qure.ai", "xray", 'site:qure.ai ("chest X-ray" OR radiology OR "medical imaging") (AI OR model OR research OR validation)'),
+  en("google-news-source-pathai", "PathAI", "pathology", 'site:pathai.com (pathology OR histopathology OR PLUTO) (AI OR model OR research OR release)'),
+  zh("google-news-source-cas", "中国科学院", "medical-imaging", `site:cas.cn ${imagingZh} ${progressZh}`),
+  zh("google-news-source-tsinghua", "清华大学", "medical-imaging", `site:tsinghua.edu.cn ${imagingZh} ${progressZh} -招生 -招聘`),
+  zh("google-news-source-sjtu", "上海交通大学", "medical-imaging", `site:sjtu.edu.cn ${imagingZh} ${progressZh} -招生 -招聘`),
+  zh("google-news-source-fudan", "复旦大学", "medical-imaging", `site:newsroom.fudan.edu.cn ${imagingZh} ${progressZh}`),
+  zh("google-news-source-sciencenet", "科学网", "medical-imaging", `site:sciencenet.cn ${imagingZh} ${progressZh}`),
+];
 
 /** Discovery routes only: Google RSS snippets do not verify the underlying release. */
 export const NEWS_QUERIES: NewsDiscoveryQuery[] = [
@@ -40,6 +73,7 @@ export const NEWS_QUERIES: NewsDiscoveryQuery[] = [
   zh("google-news-zh-pathology", "病理与细胞影像", "pathology", '(数字病理 OR 计算病理 OR 细胞影像) (模型 OR 数据集 OR 开源 OR 研究)'),
   zh("google-news-zh-specialties", "专科影像模型", "retinal", '(眼底影像 OR 内镜影像 OR 皮肤镜 OR 心脏影像) (模型 OR 人工智能 OR 研究 OR 验证)'),
   zh("google-news-zh-data-tools", "影像数据、工具与验证", "datasets", '(医学影像 OR 医疗影像) (数据集 OR 评测 OR 工具 OR 联邦学习 OR 多中心 OR 临床试验)'),
+  ...NEWS_PUBLISHER_QUERIES,
 ];
 
 const labels: Array<[string, string, string]> = [

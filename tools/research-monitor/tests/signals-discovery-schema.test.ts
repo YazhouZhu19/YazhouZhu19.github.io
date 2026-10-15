@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { emptyResearchSignalsData, GitHubDiscoveryStateSchema, NewsDiscoveryStateSchema, NewsSignalSchema,
-  parseResearchSignalsData, SignalRelevanceSchema, SIGNALS_MAX_BYTES, SIGNALS_MAX_RECORDS } from "../lib/research-signals";
+  parseResearchSignalsData, SignalRelevanceSchema, SignalSourceStateSchema, SIGNALS_MAX_BYTES, SIGNALS_MAX_RECORDS, SIGNALS_MAX_SOURCES } from "../lib/research-signals";
 import { fetchResearchSignals, ResearchSignalsLoadError } from "../lib/signals-loader";
 
 const github = { catalogVersion: "test", cursor: 0, queue: [{ groupId: "segmentation", query: "medical imaging", sort: "best-match", page: 1, from: "2026-01-01", to: "2026-01-01" }], completedQueries: 0, repositoryCursor: 0, cycles: 0 };
@@ -26,6 +26,23 @@ test("checkpoint schemas bound queues, pages and real calendar dates", () => {
   assert.equal(NewsDiscoveryStateSchema.safeParse({ ...news, queue: [{ ...news.queue[0], to: "2026-01-01" }] }).success, false);
   assert.equal(NewsDiscoveryStateSchema.safeParse({ ...news, queue: [{ ...news.queue[0], from: "2026-13-01" }] }).success, false);
   assert.equal(GitHubDiscoveryStateSchema.safeParse({ ...github, cursor: Infinity }).success, false);
+  assert.equal(NewsDiscoveryStateSchema.safeParse({ ...news, recentCheckedAt: { route: "2026-10-15T00:00:00Z" } }).success, true);
+  assert.equal(NewsDiscoveryStateSchema.safeParse({ ...news, recentCheckedAt: { route: "invalid" } }).success, false);
+  assert.equal(NewsDiscoveryStateSchema.safeParse({ ...news, recentCheckedAt: Object.fromEntries(Array.from({ length: 161 }, (_, index) => [`route-${index}`, "2026-10-15T00:00:00Z"])) }).success, false);
+});
+
+test("expanded source catalogs are bounded and never label unattempted queries as checked", () => {
+  const pending = { id: "news-new", name: "New discovery route", kind: "news", url: "https://news.google.com/rss/search?q=imaging", status: "pending", checkedAt: null, lastSuccessAt: null, received: 0, retained: 0, error: null, coverage: "Queued for a first check" };
+  assert.equal(SignalSourceStateSchema.safeParse(pending).success, true);
+  for (const change of [{ checkedAt: "2026-10-15T00:00:00Z" }, { lastSuccessAt: "2026-10-15T00:00:00Z" }, { received: 1 }, { error: "Not attempted" }, { status: "ok" }, { status: "partial" }, { status: "error" }])
+    assert.equal(SignalSourceStateSchema.safeParse({ ...pending, ...change }).success, false);
+  const legacy = { ...pending, status: "ok", checkedAt: "2026-10-15T00:00:00Z", lastSuccessAt: "2026-10-15T00:00:00Z" };
+  assert.equal(SignalSourceStateSchema.safeParse(legacy).success, true);
+  const snapshot = emptyResearchSignalsData("2026-10-15T00:00:00Z");
+  const sources = Array.from({ length: SIGNALS_MAX_SOURCES }, (_, index) => ({ ...pending, id: `news-${index}` }));
+  assert.equal(SIGNALS_MAX_SOURCES, 160);
+  assert.equal(parseResearchSignalsData({ ...snapshot, sources }).sources.length, 160);
+  assert.throws(() => parseResearchSignalsData({ ...snapshot, sources: [...sources, { ...pending, id: "overflow" }] }));
 });
 
 test("relevance is explained and bounded, and discovery labels are available to news", () => {

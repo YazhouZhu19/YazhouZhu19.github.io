@@ -13,6 +13,9 @@
 .signals-source-row strong { font-weight: 500; color: #3f5546; }
 .signals-source-row p { margin: 5px 0; overflow-wrap: anywhere; }
 .signals-source-row small { font-size: 10px; }
+.signals-source-list { margin: 16px 0; }
+.signals-source-list > summary { cursor: pointer; color: #4c6554; font-weight: 500; }
+.signals-source-scroll { max-height: 480px; overflow: auto; margin-top: 10px; padding-right: 8px; }
 .signals-discovery-catalog { padding-top: 13px; border-top: 1px solid var(--signals-line); }
 .signals-discovery-catalog > summary { cursor: pointer; color: #4c6554; font-weight: 500; }
 .signals-discovery-catalog > p { margin: 10px 0; }
@@ -26,6 +29,7 @@
 .research-signals a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .signals-status { padding: 1px 7px; border-radius: 4px; color: #517357; background: #eaf0e6; font-size: 10px; }
 .signals-status-error, .signals-status-partial { color: #886436; background: #f2ecde; }
+.signals-status-pending { color: #69766e; background: #e9ede8; }
 .signals-source-error { color: #895a39; }
 .signals-notice { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; padding: 14px 17px; border: 1px solid #e5d7c7; border-radius: 9px; background: #faf5ed; color: #795a3c; font: 12px/1.8 var(--font-ui); }
 .signals-notice p { margin: 0; }

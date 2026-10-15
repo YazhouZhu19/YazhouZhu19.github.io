@@ -3,6 +3,8 @@ import { GITHUB_DISCOVERY_GROUPS, GITHUB_DISCOVERY_VERSION } from "./github-disc
 import { evaluateGitHubRelevance, classifyNewsRelevance } from "./signal-relevance";
 import { NEWS_QUERIES } from "./news-discovery";
 import { collectNewsWindows } from "./collect-news-signals";
+import { NEWS_FEED_SOURCES } from "./news-sources";
+import { collectPublisherNews, mergePublisherNews } from "./collect-publisher-news";
 export { NEWS_QUERIES } from "./news-discovery";
 import { emptyResearchSignalsData, parseResearchSignalsData, safeSignalUrl, SIGNALS_LIMITATIONS,
   type GitHubDiscoveryState, type GitHubSignal, type NewsSignal, type ResearchSignal, type ResearchSignalsData, type SignalSourceState } from "./research-signals";
@@ -32,7 +34,8 @@ function allowedFetchUrl(value: string) {
   if (!safeSignalUrl(value)) return false;
   const url = new URL(value);
   return (url.hostname === "api.github.com" && (/^\/repos\/[\w.-]+\/[\w.-]+(?:\/(readme|releases\/latest))?$/.test(url.pathname) || url.pathname === "/search/repositories")) ||
-    (url.hostname === "news.google.com" && url.pathname === "/rss/search");
+    (url.hostname === "news.google.com" && url.pathname === "/rss/search") ||
+    NEWS_FEED_SOURCES.some(source => source.url === value);
 }
 /** A token is attached only to the GitHub API; redirects are never followed. */
 export function createSignalFetcher(token?: string, fetcher: typeof fetch = fetch): SignalFetch {
@@ -355,9 +358,11 @@ export async function collectResearchSignals(previous: ResearchSignalsData = emp
   // Validation happens before issuing any requests or replacing the snapshot.
   if (!options.githubOnly) NEWS_QUERIES.forEach(query => googleNewsUrl(query, days));
   const records = new Map(previous.records.map(record => [record.id, record])), sources: SignalSourceState[] = [];
+  let attemptedRequests = 0, successfulRequests = 0;
   const discoveryState = { ...previous.discoveryState };
   function merge(incoming: ResearchSignal[]) {
     for (const item of incoming) {
+      if (item.kind === "news") { mergePublisherNews(records, item); continue; }
       const old = records.get(item.id);
       records.set(item.id, { ...item, firstSeenAt: old?.firstSeenAt ?? item.firstSeenAt,
         discoveryGroups: [...new Set([...(item.discoveryGroups ?? []), ...(old?.discoveryGroups ?? [])])],
@@ -376,12 +381,13 @@ export async function collectResearchSignals(previous: ResearchSignalsData = emp
   }
   function cached(id: string, targetUrl: string) {
     const source = previous.sources.find(item => item.id === id);
-    if (!options.force && source?.status === "ok" && source.url === targetUrl && Date.parse(now) - Date.parse(source.checkedAt) >= 0 && Date.parse(now) - Date.parse(source.checkedAt) < CACHE_MS) { sources.push(source); return true; }
+    if (!options.force && source?.status === "ok" && source.checkedAt && source.url === targetUrl && Date.parse(now) - Date.parse(source.checkedAt) >= 0 && Date.parse(now) - Date.parse(source.checkedAt) < CACHE_MS) { sources.push(source); return true; }
     return false;
   }
   const githubUrl = githubDiscoveryCacheUrl();
   if (!options.newsOnly && (options.discoveryMode === "backfill" || !cached("github-public", githubUrl))) {
     const result = await collectGitHub(request, now, previous, options); merge(result.records); discoveryState.github = result.state;
+    attemptedRequests += result.requests; successfulRequests += result.successes;
     sources.push({ id: "github-public", name: "GitHub public repositories", kind: "github", url: githubUrl,
       status: result.errors.length ? result.successes ? "partial" : "error" : "ok", checkedAt: now,
       lastSuccessAt: result.errors.length ? previous.sources.find(source => source.id === "github-public")?.lastSuccessAt ?? null : now,
@@ -396,19 +402,28 @@ export async function collectResearchSignals(previous: ResearchSignalsData = emp
       wait: options.wait ?? (options.fetchText ? async () => {} : (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))),
     });
     merge(news.records); sources.push(...news.sources); discoveryState.news = news.state;
+    attemptedRequests += news.attemptStats.requests; successfulRequests += news.attemptStats.successes;
+    const publisherNews = await collectPublisherNews(previous, now, days, request, {
+      force: options.force || options.discoveryMode === "backfill",
+      wait: options.wait ?? (options.fetchText ? async () => {} : (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))),
+    });
+    merge(publisherNews.records); sources.push(...publisherNews.sources);
+    attemptedRequests += publisherNews.attemptStats.requests; successfulRequests += publisherNews.attemptStats.successes;
   }
   // Old configured sources remain discoverable if a future collector removes one.
   for (const source of previous.sources) if (!sources.some(item => item.id === source.id)) sources.push(source);
   // Re-evaluate retained metadata with the current transparent rules. Keep old
   // IDs even when they become candidates; never preserve an obsolete direct label.
+  const allFailed = attemptedRequests > 0 && successfulRequests === 0;
   const mergedRecords = [...records.values()].map(record => {
+    if (allFailed) return record;
     if ((options.githubOnly && record.kind === "news") || (options.newsOnly && record.kind === "github")) return record;
     const relevance = (record.kind === "github" ? evaluateGitHubRelevance(record) : classifyNewsRelevance(record)) ?? { level: "candidate" as const, reasons: record.relevance?.level === "candidate" ? record.relevance.reasons : ["legacy-unmatched"] };
     return { ...record, relevance };
   }).sort((a, b) => a.id.localeCompare(b.id));
   const finalSources = sources.map(source => ({ ...source, retained: mergedRecords.filter(record => record.sourceId === source.id).length }));
   const data = parseResearchSignalsData({ schemaVersion: 1, generatedAt: now, records: mergedRecords, sources: finalSources, limitations: [...SIGNALS_LIMITATIONS], discoveryState });
-  const activeIds = new Set([...(options.newsOnly ? [] : ["github-public"]), ...(options.githubOnly ? [] : NEWS_QUERIES.map(query => query.id))]);
-  const selectedSources = sources.filter(source => activeIds.has(source.id));
-  return { data, allFailed: selectedSources.length > 0 && selectedSources.every(source => source.status === "error") };
+  // Cached successes and unattempted queued sources cannot hide a failed run.
+  // A cache-only refresh performs no requests, so it is not a collection failure.
+  return { data, allFailed };
 }

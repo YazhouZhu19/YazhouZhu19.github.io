@@ -272,6 +272,14 @@ test("failed checks do not advance observation, while records from a partial run
   assert.equal(newsDashboardAsOf(data), "2026-10-15T16:00:00.000Z");
 });
 
+test("newly configured but unattempted news routes do not create fresh observations", () => {
+  const generatedAt = "2026-10-15T16:10:00Z";
+  const pending = source({ status: "pending", checkedAt: null, lastSuccessAt: null, received: 0, retained: 0 });
+  assert.equal(newsDashboardAsOf(snapshot(generatedAt, [], [pending])), null);
+  const previous = "2026-10-15T15:50:00Z";
+  assert.equal(newsDashboardAsOf(snapshot(generatedAt, [], [pending, source({ id: "older", checkedAt: previous, lastSuccessAt: previous })])), "2026-10-15T15:50:00.000Z");
+});
+
 test("successful empty news searches establish a new observation time without erasing newer evidence", () => {
   const generatedAt = "2026-10-15T16:10:00Z", success = "2026-10-15T16:05:00Z";
   const data = snapshot(generatedAt, [], [source({ checkedAt: success, lastSuccessAt: success }),

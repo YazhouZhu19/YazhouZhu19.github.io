@@ -4,6 +4,7 @@ import { z } from "zod";
 // silently dropping older discoveries to make a publication fit.
 export const SIGNALS_MAX_BYTES = 64 * 1024 * 1024;
 export const SIGNALS_MAX_RECORDS = 50000;
+export const SIGNALS_MAX_SOURCES = 160;
 
 /** Public metadata only. This module is safe to import in the browser. */
 export function safeSignalUrl(value: unknown): value is string {
@@ -49,10 +50,15 @@ export type NewsSignal = z.infer<typeof NewsSignalSchema>;
 export type ResearchSignal = z.infer<typeof ResearchSignalSchema>;
 export const SignalSourceStateSchema = z.object({
   id: z.string().min(1).max(100), name: z.string().min(1).max(200), kind: z.enum(["github", "news"]), url,
-  status: z.enum(["ok", "partial", "error"]), checkedAt: date, lastSuccessAt: date.nullable(),
+  status: z.enum(["ok", "partial", "error", "pending"]), checkedAt: date.nullable(), lastSuccessAt: date.nullable(),
   received: z.number().int().nonnegative(), retained: z.number().int().nonnegative(),
   error: z.string().max(1600).nullable(), coverage: z.string().max(1200),
-}).strict();
+}).strict().superRefine((source, ctx) => {
+  if (source.status === "pending") {
+    if (source.checkedAt !== null || source.lastSuccessAt !== null || source.received !== 0 || source.error !== null)
+      ctx.addIssue({ code: "custom", message: "An unattempted source cannot claim a check, success, response or error" });
+  } else if (source.checkedAt === null) ctx.addIssue({ code: "custom", path: ["checkedAt"], message: "An attempted source requires a check timestamp" });
+});
 export type SignalSourceState = z.infer<typeof SignalSourceStateSchema>;
 const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
   const timestamp = Date.parse(`${value}T00:00:00Z`);
@@ -75,12 +81,13 @@ export const NewsDiscoveryStateSchema = z.object({
   queue: z.array(z.object({ queryId: z.string().min(1).max(160), from: day, to: day }).strict()
     .refine(item => item.from < item.to, "Invalid discovery window")).max(6000),
   completedWindows: count,
+  recentCheckedAt: z.record(z.string().min(1).max(160), date).refine(value => Object.keys(value).length <= SIGNALS_MAX_SOURCES, "Too many recent query timestamps").optional(),
 }).strict();
 export type GitHubDiscoveryState = z.infer<typeof GitHubDiscoveryStateSchema>;
 export type NewsDiscoveryState = z.infer<typeof NewsDiscoveryStateSchema>;
 export const ResearchSignalsDataSchema = z.object({
   schemaVersion: z.literal(1), generatedAt: date, records: z.array(ResearchSignalSchema).max(SIGNALS_MAX_RECORDS),
-  sources: z.array(SignalSourceStateSchema).max(30), limitations: z.array(z.string().max(1200)).max(20),
+  sources: z.array(SignalSourceStateSchema).max(SIGNALS_MAX_SOURCES), limitations: z.array(z.string().max(1200)).max(20),
   discoveryState: z.object({ github: GitHubDiscoveryStateSchema.optional(), news: NewsDiscoveryStateSchema.optional() }).strict().optional(),
 }).strict().superRefine((data, ctx) => {
   for (const field of ["records", "sources"] as const) {
@@ -94,9 +101,9 @@ export type ResearchSignalsData = z.infer<typeof ResearchSignalsDataSchema>;
 export const SIGNALS_LIMITATIONS = [
   "GitHub 通过多组方向、任务、模态和主题检索，分批翻页与时间分窗持续补充。受索引、检索上限、API 配额和公开描述完整性影响，不能保证收录所有相关项目；star、fork、提交日期不代表科研质量、性能或临床有效性。",
   "GitHub 许可证字段仅来自仓库元数据，不保证模型权重、训练数据或衍生应用采用同一许可；请核对项目原文。",
-  "新闻通过 Google News 公开搜索 RSS 发现；该入口不是承诺稳定的官方开发者 API。结果受语言、地区、索引及查询上限影响，不代表全行业进展。",
+  "新闻结合 Google News 公开搜索 RSS 与发布者公开 RSS/Atom 订阅发现。Google 搜索 RSS 不是承诺稳定的官方开发者 API；搜索受语言、地区、索引及查询上限影响，独立订阅仅覆盖发布者当前公开的条目，两者均不代表全行业进展。",
   "相关性按公开标题、简介、主题等线索分为高相关与待复核；检索标签和规则匹配理由不构成经过人工验证的任务分类。待复核记录保留供探索，不作为默认研判证据；仍可能误收或漏收。",
-  "新闻标题与摘要是检索线索，未经原始文章核验；发布方可能包括媒体和企业，宣传与转载不可作为独立验证。Google 是发现渠道，不是原始发布者。",
+  "Google 新闻条目标注为检索摘要，独立订阅条目标注为发布者内容摘录；均未核验完整文章或研究结论。发布方可能包括媒体和企业，宣传与转载不可作为独立验证。Google 是发现渠道，不是原始发布者。",
   "论文、仓库、新闻可能描述同一工作；联合研判应去重，不将多渠道报道当作多次独立证据。首次发现时间不等于发布时间。",
 ];
 export function emptyResearchSignalsData(now = new Date().toISOString()): ResearchSignalsData {

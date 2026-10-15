@@ -3,7 +3,9 @@ import assert from "node:assert/strict";
 import { collectResearchSignals, createSignalFetcher, CURATED_REPOSITORIES, GITHUB_ENRICHMENT_LIMIT, GITHUB_RESULTS_PER_QUERY, GITHUB_SEARCH_REQUEST_BUDGET, githubSearchPlan, githubDiscoveryCacheUrl, SignalRateLimitError, googleNewsUrl, isGitHubProjectRelevant, isNewsProgressRelevant, NEWS_QUERIES, parseGitHubRepository, parseGoogleNewsRss, publicRelatedUrls, type SignalFetch } from "../lib/collect-signals";
 import { GITHUB_DISCOVERY_GROUPS } from "../lib/github-discovery";
 import { evaluateGitHubRelevance } from "../lib/signal-relevance";
-import { emptyResearchSignalsData, parseResearchSignalsData, safeSignalUrl, signalDate } from "../lib/research-signals";
+import { emptyResearchSignalsData, parseResearchSignalsData, safeSignalUrl, signalDate, type ResearchSignalsData, type SignalSourceState } from "../lib/research-signals";
+import { validateSignalCollection } from "../scripts/check-signal-collection";
+import { NEWS_FEED_SOURCES } from "../lib/news-sources";
 
 const now = "2026-10-14T04:00:00.000Z";
 const repo = (fullName = "Project-MONAI/MONAI") => ({ full_name: fullName, private: false, html_url: `https://github.com/${fullName}`, description: "Medical imaging AI toolkit", created_at: "2020-01-01T00:00:00Z", updated_at: now, pushed_at: now, topics: ["medical-imaging"], stargazers_count: 20, forks_count: 2, open_issues_count: 3, archived: false, license: { spdx_id: "Apache-2.0" }, language: "Python" });
@@ -13,11 +15,16 @@ const discovery = googleNewsUrl(NEWS_QUERIES[0], 365);
 const fakeFetch: SignalFetch = async url => {
   const parsed = new URL(url);
   if (parsed.hostname === "news.google.com") return { body: rss(), status: 200 };
+  if (NEWS_FEED_SOURCES.some(source => source.url === url)) return { body: rss(""), status: 200 };
   if (parsed.pathname === "/search/repositories") return { body: JSON.stringify({ total_count: 0, incomplete_results: false, items: [] }), status: 200 };
   if (/\/readme$/.test(parsed.pathname)) return { body: JSON.stringify({ encoding: "base64", content: Buffer.from("Medical imaging toolkit. [Paper](https://arxiv.org/abs/2401.12345)").toString("base64") }), status: 200 };
   if (/\/releases\/latest$/.test(parsed.pathname)) return { body: "", status: 404 };
   return { body: JSON.stringify(repo(parsed.pathname.slice(7))), status: 200 };
 };
+function completedNewsCache(data: ResearchSignalsData): ResearchSignalsData {
+  return { ...data, sources: data.sources.map(source => source.kind === "news" ? { ...source, status: "ok", checkedAt: now, lastSuccessAt: now, error: null } : source),
+    discoveryState: { ...data.discoveryState, news: { ...data.discoveryState!.news!, queue: [], recentCheckedAt: Object.fromEntries(NEWS_QUERIES.map(query => [query.id, now])) } } };
+}
 
 test("schema rejects duplicate IDs, unsafe URLs, missing provenance and unexpected data", () => {
   const record = parseGitHubRepository(repo(), now);
@@ -28,6 +35,22 @@ test("schema rejects duplicate IDs, unsafe URLs, missing provenance and unexpect
   assert.throws(() => parseResearchSignalsData({ ...data, sources: [] }));
   assert.throws(() => parseResearchSignalsData({ ...data, apiKey: "forbidden" }));
   for (const url of ["javascript:alert(1)", "http://example.com", "https://localhost/x", "https://127.0.0.1/x", "https://user:pass@example.com/x"]) assert.equal(safeSignalUrl(url), false);
+});
+test("publication validation evaluates actual attempts despite cached and pending sources", () => {
+  const next = "2026-10-14T05:00:00.000Z";
+  const cached: SignalSourceState = { id: "github-public", name: "GitHub", kind: "github", url: "https://api.github.com/search/repositories", status: "ok", checkedAt: now, lastSuccessAt: now, received: 0, retained: 0, error: null, coverage: "Cached" };
+  const stale: SignalSourceState = { ...cached, id: "news-existing", kind: "news", url: discovery };
+  const pending: SignalSourceState = { ...stale, id: "news-new", status: "pending", checkedAt: null, lastSuccessAt: null };
+  const before = { ...emptyResearchSignalsData(now), sources: [cached, stale] };
+  const after = { ...before, generatedAt: next, sources: [cached, { ...stale, status: "error" as const, checkedAt: next, error: "Source failed" }, pending] };
+  assert.doesNotThrow(() => validateSignalCollection(before, after, next, "1"));
+  assert.throws(() => validateSignalCollection(before, after, next, "0"), /every attempted source/);
+  const noAttempts = { ...after, sources: [cached, stale, pending] };
+  assert.doesNotThrow(() => validateSignalCollection(before, noAttempts, next, "0"));
+  assert.throws(() => validateSignalCollection(before, noAttempts, next, "1"), /every attempted source/);
+  const partial = { ...after, sources: [cached, { ...stale, status: "partial" as const, checkedAt: next, lastSuccessAt: next }, pending] };
+  assert.doesNotThrow(() => validateSignalCollection(before, partial, next, "0"));
+  assert.throws(() => validateSignalCollection(before, partial, next, "1"), /every attempted source/);
 });
 test("GitHub metadata never accepts private repositories or fabricated counters", () => {
   assert.throws(() => parseGitHubRepository({ ...repo(), private: true }, now));
@@ -71,22 +94,44 @@ test("collection deduplicates queries, enriches readmes and preserves first-seen
   assert(first.data.records.filter(record => record.relatedUrls.includes("https://arxiv.org/abs/2401.12345")).length <= GITHUB_ENRICHMENT_LIMIT);
   const failed = await collectResearchSignals(first.data, { fetchText: async () => { throw new Error("secret should never leak"); }, now: new Date("2026-10-15T04:00:00Z"), force: true });
   assert.equal(failed.allFailed, true); assert.deepEqual(failed.data.records, first.data.records);
-  assert(failed.data.sources.every(source => source.status === "error" && source.lastSuccessAt === now));
+  assert(failed.data.sources.filter(source => source.checkedAt === "2026-10-15T04:00:00.000Z").every(source => source.status === "error"));
+  assert(failed.data.sources.every(source => source.lastSuccessAt === (first.data.sources.find(previous => previous.id === source.id)?.lastSuccessAt ?? null)));
   assert(!JSON.stringify(failed.data).includes("secret"));
 });
 test("six-hour cache never advances source or record observation timestamps", async () => {
   const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: fakeFetch, now: new Date(now), force: true });
-  const cached = await collectResearchSignals(first.data, { fetchText: async () => { throw new Error("must not fetch"); }, now: new Date("2026-10-14T05:00:00Z") });
-  assert.deepEqual(cached.data.sources, first.data.sources); assert.deepEqual(cached.data.records, first.data.records);
+  const complete = completedNewsCache(first.data);
+  let requests = 0;
+  const cached = await collectResearchSignals(complete, { fetchText: async () => { requests++; throw new Error("must not fetch"); }, now: new Date("2026-10-14T05:00:00Z") });
+  assert.equal(requests, 0);
+  assert.deepEqual(cached.data.sources.map(({ coverage, ...source }) => source), complete.sources.map(({ coverage, ...source }) => source)); assert.deepEqual(cached.data.records, complete.records);
   assert.equal(cached.data.generatedAt, "2026-10-14T05:00:00.000Z"); assert.equal(cached.allFailed, false);
+});
+test("a cached GitHub success and unattempted sources cannot hide failure of all actual news attempts", async () => {
+  const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: fakeFetch, now: new Date(now), force: true });
+  const complete = completedNewsCache(first.data);
+  complete.sources.push({ id: "news-queued", name: "Queued route", kind: "news", url: "https://news.google.com/rss/search?q=queued", status: "pending", checkedAt: null, lastSuccessAt: null, received: 0, retained: 0, error: null, coverage: "Not yet attempted" });
+  delete complete.discoveryState!.news!.recentCheckedAt![NEWS_QUERIES[0].id];
+  const checked: string[] = [];
+  const failed = await collectResearchSignals(complete, { fetchText: async url => { checked.push(url); throw new Error("Network failed"); }, now: new Date("2026-10-14T05:00:00Z") });
+  assert.equal(checked.length, 1);
+  assert.equal(new URL(checked[0]).hostname, "news.google.com");
+  assert.equal(failed.allFailed, true);
+  assert.equal(failed.data.sources.find(source => source.id === "github-public")!.status, "ok");
+  assert.equal(failed.data.sources.find(source => source.id === "news-queued")!.checkedAt, null);
+  assert.deepEqual(failed.data.records, complete.records);
+  assert.doesNotThrow(() => validateSignalCollection(complete, failed.data, "2026-10-14T05:00:00Z", "1"));
 });
 test("HTTP requester never sends token to Google, refuses redirects and bounds bodies", async () => {
   const calls: Array<{ url: string; options: RequestInit | undefined }> = [];
   const fetcher: typeof fetch = async (input, options) => { calls.push({ url: String(input), options }); return new Response("<rss/>", { status: 200 }); };
   const request = createSignalFetcher("test-private-token", fetcher);
   await request(discovery); await request("https://api.github.com/repos/Project-MONAI/MONAI");
+  for (const source of NEWS_FEED_SOURCES) await request(source.url);
   assert.equal((calls[0].options?.headers as Record<string, string>).Authorization, undefined);
   assert.equal((calls[1].options?.headers as Record<string, string>).Authorization, "Bearer test-private-token");
+  assert(calls.filter(call => new URL(call.url).hostname !== "api.github.com").every(call => !(call.options?.headers as Record<string, string>).Authorization));
+  for (const source of NEWS_FEED_SOURCES) await assert.rejects(() => request(`${source.url}${source.url.includes("?") ? "&" : "?"}unlisted=1`));
   assert(calls.every(call => call.options?.redirect === "error"));
   await assert.rejects(() => request("https://example.com/"));
   await assert.rejects(() => createSignalFetcher(undefined, async () => new Response(""))(discovery), /为空/);
@@ -140,9 +185,10 @@ test("GitHub-only refresh preserves news state and ignores a failing unselected 
 });
 test("discovery catalog fingerprint invalidates a fresh older search cache", async () => {
   const first = await collectResearchSignals(emptyResearchSignalsData(now), { fetchText: fakeFetch, now: new Date(now), force: true });
-  first.data.sources.find(source => source.kind === "github")!.url = "https://api.github.com/search/repositories?q=old";
+  const complete = completedNewsCache(first.data);
+  complete.sources.find(source => source.kind === "github")!.url = "https://api.github.com/search/repositories?q=old";
   let githubRequests = 0;
-  const refreshed = await collectResearchSignals(first.data, { fetchText: async url => { if (new URL(url).hostname === "api.github.com") githubRequests++; else assert.fail("news should remain cached"); return fakeFetch(url); }, now: new Date("2026-10-14T05:00:00Z") });
+  const refreshed = await collectResearchSignals(complete, { fetchText: async url => { if (new URL(url).hostname === "api.github.com") githubRequests++; else assert.fail("news should remain cached"); return fakeFetch(url); }, now: new Date("2026-10-14T05:00:00Z") });
   assert(githubRequests > 0); assert.equal(refreshed.data.sources[0].url, githubDiscoveryCacheUrl());
 });
 test("partial search failure retains old projects, excerpts, releases and group history", async () => {
