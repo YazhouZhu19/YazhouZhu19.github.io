@@ -200,7 +200,7 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
     </details>;
 
   return <div className={`research-signals source-signals ${kind}-signals`}>
-    <nav className="dashboard-section-tabs signals-dashboard-tabs" aria-label={kind === "github" ? t("GitHub 仪表盘视图", "GitHub dashboard views") : t("公开进展仪表盘视图", "Public progress dashboard views")}><button type="button" className={view === "overview" ? "active" : ""} aria-pressed={view === "overview"} onClick={() => switchView("overview")}>{t("统计总览", "Overview")}</button><button type="button" className={view === "library" ? "active" : ""} aria-pressed={view === "library"} onClick={() => switchView("library")}>{kind === "github" ? t("项目库", "Repository library") : t("新闻库", "News library")}<span>{records.length.toLocaleString()}</span></button></nav>
+    <nav className="dashboard-section-tabs signals-dashboard-tabs" aria-label={kind === "github" ? t("开源洞察视图", "Open-source insights views") : t("前沿动态视图", "Frontier updates views")}><button type="button" className={view === "overview" ? "active" : ""} aria-pressed={view === "overview"} onClick={() => switchView("overview")}>{t("统计总览", "Overview")}</button><button type="button" className={view === "library" ? "active" : ""} aria-pressed={view === "library"} onClick={() => switchView("library")}>{kind === "github" ? t("项目库", "Repository library") : t("新闻库", "News library")}<span>{records.length.toLocaleString()}</span></button></nav>
 
     {kind === "github" && githubModel && snapshot && <GitHubDashboardSummary model={githubModel} onDrill={openGlobalRecords}/>}
     {kind === "news" && newsModel && snapshot && <NewsDashboardSummary model={newsModel} onDrill={openGlobalRecords} sourceCheckedAt={sourceCheckedAt}/>}

@@ -1,6 +1,6 @@
 # GitHub projects and public news discovery
 
-The **GitHub code dashboard** and **Public updates dashboard** sit beside the **Paper dashboard**. Each source dashboard contains a statistical overview and its full searchable library. Their independent snapshot is `data/research-signals.json`; neither source is inserted into the paper archive or counted as a paper in the macro dashboard. Browse by text, broad research area, relevance and dates; owners and publishers appear on each card and remain searchable by text, with no separate owner/publisher dropdown; compare up to three repositories by license, push/release dates, archived state and stars. Stars are a snapshot of attention, not research quality. Code licensing does not establish permissions for model weights, data or clinical use.
+The **Open-source insights** and **Frontier updates** sit beside the **Paper insights**. Each source dashboard contains a statistical overview and its full searchable library. Their independent snapshot is `data/research-signals.json`; neither source is inserted into the paper archive or counted as a paper in the macro dashboard. Browse by text, broad research area, relevance and dates; owners and publishers appear on each card and remain searchable by text, with no separate owner/publisher dropdown; compare up to three repositories by license, push/release dates, archived state and stars. Stars are a snapshot of attention, not research quality. Code licensing does not establish permissions for model weights, data or clinical use.
 
 ## Collection and provenance
 
