@@ -1,0 +1,50 @@
+.workspace-main-nav [data-slot="sidebar-menu-button"] {
+  height: auto;
+  min-height: 49px;
+  gap: 10px;
+}
+.workspace-main-nav [data-slot="sidebar-menu-button"] > span {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.45;
+  font-size: 13px;
+}
+.dashboard-section-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 25px;
+  margin: 4px 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+.dashboard-section-tabs > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: 500 13px/1.5 var(--font-ui);
+  cursor: pointer;
+}
+.dashboard-section-tabs > button[aria-pressed="true"] {
+  color: var(--foreground);
+  border-bottom-color: #4e6f58;
+}
+.dashboard-section-tabs > button > span {
+  font: 11px var(--font-data);
+  color: var(--muted-foreground);
+}
+.dashboard-section-tabs > button:focus-visible {
+  outline: 2px solid #4e7e48;
+  outline-offset: 3px;
+}
+@media (max-width: 650px) {
+  .dashboard-section-tabs { gap: 6px 19px; }
+  .dashboard-section-tabs > button { font-size: 12px; gap: 5px; }
+  .topbar .topbar-label { min-width: 0; }
+  .topbar .topbar-label > strong { white-space: normal; line-height: 1.4; font-size: 12px; }
+  .topbar .account-controls { flex-shrink: 0; }
+}
