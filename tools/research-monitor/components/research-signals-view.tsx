@@ -7,7 +7,7 @@ import { GITHUB_DISCOVERY_GROUPS } from "@/lib/github-discovery";
 import { NEWS_DISCOVERY_GROUPS, NEWS_QUERIES } from "@/lib/news-discovery";
 import { getSignalBrowseCategories, getSignalBrowseCategoryIds } from "@/lib/signal-browse-categories";
 import { signalDashboardDate } from "@/lib/signal-dashboard";
-import { buildGitHubDashboard } from "@/lib/github-dashboard";
+import { buildGitHubDashboard, githubDashboardDate } from "@/lib/github-dashboard";
 import { beijingDay } from "@/lib/dashboard";
 import { RELEVANCE_REASON_LABELS } from "@/lib/signal-relevance";
 import { explicitEvidenceKeys, findRelatedSignals } from "@/lib/signal-evidence";
@@ -16,6 +16,7 @@ import type { DashboardDrill } from "@/lib/dashboard";
 import { AiModelSettings, AiResearchPanel } from "./ai-research-panel";
 import { SignalDashboard, type SignalDashboardDrill } from "./signal-dashboard";
 import { GitHubDashboard, GitHubDashboardSummary } from "./github-dashboard";
+import { DashboardChoice } from "./dashboard-choice";
 import { useI18n } from "./locale-provider";
 import "@/styles/research-signals.css";
 import "@/styles/ai-research.css";
@@ -34,7 +35,7 @@ type Props = {
 type RelevanceFilter = "direct" | "candidate" | "all";
 type GitHubRange = 7 | 30 | 90 | "all" | "custom";
 type BrowseDrill = SignalDashboardDrill & { global?: boolean; exactIds?: boolean };
-type BrowseState = { query: string; category: string; relevance: RelevanceFilter; from: string; to: string; sort: string; limit: number; compareIds: string[]; analyze: boolean; view: "overview" | "library"; drill: BrowseDrill | null; githubRange?: GitHubRange; githubClock?: "discovery" | "activity" };
+type BrowseState = { query: string; category: string; relevance: RelevanceFilter; from: string; to: string; sort: string; limit: number; compareIds: string[]; analyze: boolean; view: "overview" | "library"; drill: BrowseDrill | null; githubRange?: GitHubRange; githubClock?: "activity" | "creation" };
 const browseSessions = new Map<Props["kind"], BrowseState>();
 
 function discoverySearchUrl(kind: Props["kind"], query: string): string {
@@ -72,7 +73,7 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
   const [view, setView] = useState<BrowseState["view"]>(() => browseSessions.get(kind)?.view ?? "overview");
   const [drill, setDrill] = useState<BrowseDrill | null>(() => browseSessions.get(kind)?.drill ?? null);
   const [githubRange, setGithubRange] = useState<GitHubRange>(() => browseSessions.get(kind)?.githubRange ?? 30);
-  const [githubClock, setGithubClock] = useState<"discovery" | "activity">(() => browseSessions.get(kind)?.githubClock ?? "discovery");
+  const [githubClock, setGithubClock] = useState<"activity" | "creation">(() => browseSessions.get(kind)?.githubClock ?? "activity");
   const [now, setNow] = useState(() => new Date());
   useEffect(() => { if (kind !== "github") return; const timer = setInterval(() => setNow(new Date()), 60000); return () => clearInterval(timer); }, [kind]);
   const analysisRef = useRef<HTMLDivElement>(null);
@@ -93,6 +94,7 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
   const paperById = useMemo(() => new Map(papers.map(paper => [paper.id, paper])), [papers]);
   const categories = getSignalBrowseCategories(kind);
   const datesById = useMemo(() => new Map(records.map(record => [record.id, signalDashboardDate(record)])), [records]);
+  const selectedDatesById = useMemo(() => new Map(records.map(record => [record.id, record.kind === "github" ? githubDashboardDate(record, githubClock) : signalDashboardDate(record)])), [records, githubClock]);
   const categoryIndex = useMemo(() => {
     const byRecord = new Map<string, string[]>();
     const counts = new Map<string, number>();
@@ -127,11 +129,11 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
     });
     return [...rows].sort((a, b) => {
       if (sort === "title") return a.title.localeCompare(b.title);
-      const left = kind === "github" && githubClock === "discovery" ? a.firstSeenAt : datesById.get(a.id) ?? "", right = kind === "github" && githubClock === "discovery" ? b.firstSeenAt : datesById.get(b.id) ?? "";
+      const left = selectedDatesById.get(a.id) ?? "", right = selectedDatesById.get(b.id) ?? "";
       if (!left || !right) return left ? -1 : right ? 1 : a.id.localeCompare(b.id);
       return (sort === "oldest" ? left.localeCompare(right) : right.localeCompare(left)) || a.id.localeCompare(b.id);
     });
-  }, [githubModel, baseRecords, datesById, kind, githubClock, from, to, sort, invalidDates]);
+  }, [githubModel, baseRecords, datesById, selectedDatesById, from, to, sort, invalidDates]);
   const filtered = useMemo(() => {
     if (!drill) return scopedRecords;
     const ids = new Set(drill.ids);
@@ -139,11 +141,11 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
     if (!drill.global && !drill.exactIds) return rows;
     return rows.sort((a, b) => {
       if (sort === "title") return a.title.localeCompare(b.title);
-      const left = githubClock === "discovery" ? a.firstSeenAt : datesById.get(a.id) ?? "", right = githubClock === "discovery" ? b.firstSeenAt : datesById.get(b.id) ?? "";
+      const left = selectedDatesById.get(a.id) ?? "", right = selectedDatesById.get(b.id) ?? "";
       if (!left || !right) return left ? -1 : right ? 1 : a.id.localeCompare(b.id);
       return (sort === "oldest" ? left.localeCompare(right) : right.localeCompare(left)) || a.id.localeCompare(b.id);
     });
-  }, [scopedRecords, records, drill, githubClock, datesById, sort]);
+  }, [scopedRecords, records, drill, selectedDatesById, sort]);
   const analysisRecords = useMemo(() => filtered.filter(record => record.relevance?.level === "direct"), [filtered]);
   const compared = useMemo(() => records.filter((record): record is GitHubSignal => record.kind === "github" && compareIds.includes(record.id)), [records, compareIds]);
   const missingDates = records.filter(record => !datesById.get(record.id)).length;
@@ -156,14 +158,14 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
     setCompareIds(ids => ids.some(id => !available.has(id)) ? ids.filter(id => available.has(id)) : ids);
   }, [snapshot, records]);
   const changeScope = (change: () => void) => { setDrill(null); change(); };
-  const reset = () => { setDrill(null); setQuery(""); setCategory("all"); setRelevance(kind === "github" ? "all" : "direct"); setFrom(""); setTo(""); setSort("latest"); setGithubRange(30); setGithubClock("discovery"); };
+  const reset = () => { setDrill(null); setQuery(""); setCategory("all"); setRelevance(kind === "github" ? "all" : "direct"); setFrom(""); setTo(""); setSort("latest"); setGithubRange(30); setGithubClock("activity"); };
   const switchView = (next: BrowseState["view"]) => { setView(next); setDrill(null); };
   const openDashboardRecords = (selection: SignalDashboardDrill) => {
     setDrill({ ...selection, exactIds: kind === "github" }); setView("library"); setLimit(24);
     requestAnimationFrame(() => { contentRef.current?.focus({ preventScroll: true }); contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
   };
   const openGlobalRecords = (selection: SignalDashboardDrill) => {
-    setQuery(""); setCategory("all"); setRelevance("all"); setFrom(""); setTo(""); setGithubRange("all"); setGithubClock("discovery"); setSort("latest");
+    setQuery(""); setCategory("all"); setRelevance("all"); setFrom(""); setTo(""); setGithubRange("all"); setGithubClock("activity"); setSort("latest");
     setDrill({ ...selection, global: true }); setView("library"); setLimit(24);
     requestAnimationFrame(() => { contentRef.current?.focus({ preventScroll: true }); contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
   };
@@ -173,7 +175,10 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
   };
   const noDate = t("未提供日期", "Date not provided");
   const searchControl = <div><label htmlFor={`${fieldId}-search`}>{kind === "github" ? t("搜索项目", "Search repositories") : t("搜索公开消息", "Search announcements")}</label><div className="signals-search"><Search size={16}/><input id={`${fieldId}-search`} type="search" value={query} onChange={event => changeScope(() => setQuery(event.target.value))} placeholder={kind === "github" ? t("项目、模型、任务或开发者…", "Repository, model, task, or developer…") : t("模型、技术或发布者…", "Model, method, or publisher…")}/></div></div>;
-  const sortControl = <div><label htmlFor={`${fieldId}-sort`}>{t("列表排序", "Library sort")}</label><select id={`${fieldId}-sort`} value={sort} onChange={event => setSort(event.target.value)}><option value="latest">{t("最近日期优先", "Newest first")}</option><option value="oldest">{t("最早日期优先", "Oldest first")}</option><option value="title">{t("名称", "Name")}</option></select></div>;
+  const choiceControl = (id: string, label: string, value: string, onChange: (value: string) => void, options: [string, string][], describedBy?: string) => kind === "github"
+    ? <DashboardChoice id={id} label={label} value={value} onChange={onChange} options={options} describedBy={describedBy}/>
+    : <select id={id} value={value} onChange={event => onChange(event.target.value)} aria-describedby={describedBy}>{options.map(([key, name]) => <option key={key} value={key}>{name}</option>)}</select>;
+  const sortControl = <div className={kind === "github" ? "dash-control" : undefined}><label htmlFor={`${fieldId}-sort`}>{t("列表排序", "Library sort")}</label>{choiceControl(`${fieldId}-sort`, t("列表排序", "Library sort"), sort, setSort, [["latest", t("最近日期优先", "Newest first")], ["oldest", t("最早日期优先", "Oldest first")], ["title", t("名称", "Name")]])}</div>;
 
   const sourceHealth = <details className="signals-source-health">
       <summary>{t("采集范围与来源状态", "Collection scope and source status")}<span>{sources.length} {t("个检索 / 采集入口", "collection endpoints")}{unhealthy.length > 0 ? ` · ${unhealthy.length} ${t("项需留意", "need attention")}` : ""} · {t("快照", "Snapshot")} {dateLabel(snapshot?.generatedAt, noDate)}</span></summary>
@@ -194,9 +199,12 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
 
     <section className="signals-filters" aria-label={t("统计与列表共同筛选", "Shared dashboard and library filters")}>
       <div className={`signals-filter-toolbar${kind === "github" ? " github-filter-toolbar" : ""}`}>
-        {kind === "github" ? <><div><label htmlFor={`${fieldId}-range`}>{t("统计时间", "Time range")}</label><select id={`${fieldId}-range`} value={githubRange} onChange={event => changeScope(() => { setGithubRange(["7", "30", "90"].includes(event.target.value) ? Number(event.target.value) as 7 | 30 | 90 : event.target.value as "all" | "custom"); setFrom(""); setTo(""); })}><option value="7">{t("近 7 天", "Last 7 days")}</option><option value="30">{t("近 30 天", "Last 30 days")}</option><option value="90">{t("近 90 天", "Last 90 days")}</option><option value="all">{t("全部日期", "All dates")}</option><option value="custom">{t("自定义日期", "Custom dates")}</option></select></div><div><label htmlFor={`${fieldId}-clock`}>{t("日期口径", "Date basis")}</label><select id={`${fieldId}-clock`} value={githubClock} onChange={event => changeScope(() => setGithubClock(event.target.value as "discovery" | "activity"))}><option value="discovery">{t("平台入库时间", "Library discovery date")}</option><option value="activity">{t("仓库最近活动", "Latest repository activity")}</option></select></div></> : searchControl}
-        <div><label htmlFor={`${fieldId}-category`}>{t("研究方向", "Research area")}</label><select id={`${fieldId}-category`} value={category} onChange={event => changeScope(() => setCategory(event.target.value))} aria-describedby={`${fieldId}-category-hint`}><option value="all">{t("全部方向", "All directions")} ({records.length})</option>{categories.map(group => <option key={group.id} value={group.id}>{t(group.labelZh, group.labelEn)} ({categoryIndex.counts.get(group.id) ?? 0})</option>)}</select></div>
-        <div><label htmlFor={`${fieldId}-relevance`}>{t("相关性", "Relevance")}</label><select id={`${fieldId}-relevance`} value={relevance} onChange={event => changeScope(() => setRelevance(event.target.value as RelevanceFilter))} aria-describedby={`${fieldId}-relevance-hint`}><option value="direct">{t("高相关", "Directly relevant")} ({directCount})</option><option value="candidate">{t("待复核", "Needs review")} ({candidateCount})</option><option value="all">{t("全部线索", "All leads")} ({records.length})</option></select></div>
+        {kind === "github" ? <>
+          <div className="dash-control"><label htmlFor={`${fieldId}-range`}>{t("统计时间", "Time range")}</label><DashboardChoice id={`${fieldId}-range`} label={t("统计时间", "Time range")} value={String(githubRange)} onChange={value => changeScope(() => { setGithubRange(["7", "30", "90"].includes(value) ? Number(value) as 7 | 30 | 90 : value as "all" | "custom"); setFrom(""); setTo(""); })} options={[["7", t("近 7 天", "Last 7 days")], ["30", t("近 30 天", "Last 30 days")], ["90", t("近 90 天", "Last 90 days")], ["all", t("全部日期", "All dates")], ["custom", t("自定义日期", "Custom dates")]]}/></div>
+          <div className="dash-control"><label htmlFor={`${fieldId}-clock`}>{t("日期口径", "Date basis")}</label><DashboardChoice id={`${fieldId}-clock`} label={t("日期口径", "Date basis")} value={githubClock} onChange={value => changeScope(() => setGithubClock(value as "activity" | "creation"))} options={[["activity", t("仓库最近活动", "Latest repository activity")], ["creation", t("仓库最初发布时间", "Initial repository publication")]]}/></div>
+        </> : searchControl}
+        <div className={kind === "github" ? "dash-control" : undefined}><label htmlFor={`${fieldId}-category`}>{t("研究方向", "Research area")}</label>{choiceControl(`${fieldId}-category`, t("研究方向", "Research area"), category, value => changeScope(() => setCategory(value)), [["all", `${t("全部方向", "All directions")} (${records.length})`], ...categories.map((group): [string, string] => [group.id, `${t(group.labelZh, group.labelEn)} (${categoryIndex.counts.get(group.id) ?? 0})`])], `${fieldId}-category-hint`)}</div>
+        <div className={kind === "github" ? "dash-control" : undefined}><label htmlFor={`${fieldId}-relevance`}>{t("相关性", "Relevance")}</label>{choiceControl(`${fieldId}-relevance`, t("相关性", "Relevance"), relevance, value => changeScope(() => setRelevance(value as RelevanceFilter)), [["direct", `${t("高相关", "Directly relevant")} (${directCount})`], ["candidate", `${t("待复核", "Needs review")} (${candidateCount})`], ["all", `${t("全部线索", "All leads")} (${records.length})`]], `${fieldId}-relevance-hint`)}</div>
         {kind === "github" && <button type="button" className="foresight-button" onClick={reset}>{t("重置", "Reset")}</button>}
       </div>
       {(kind !== "github" || githubRange === "custom") && <div className="signals-filter-row"><div><label htmlFor={`${fieldId}-from`}>{t("起始日期", "From")}</label><input id={`${fieldId}-from`} type="date" value={from} max={to || undefined} onChange={event => changeScope(() => setFrom(event.target.value))}/></div><div><label htmlFor={`${fieldId}-to`}>{t("截止日期", "To")}</label><input id={`${fieldId}-to`} type="date" value={to} min={from || undefined} onChange={event => changeScope(() => setTo(event.target.value))}/></div>{kind !== "github" && <>{sortControl}<button type="button" className="foresight-button" onClick={reset}>{t("清除筛选", "Clear filters")}</button></>}</div>}
@@ -204,7 +212,7 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
       <details className="signals-scope-explanation"><summary>{t("筛选口径与数据说明", "Filter definitions and data notes")}</summary>
         <p className="signals-filter-hint" id={`${fieldId}-category-hint`}>{t(`将检索方向归并为 ${categories.length} 个大类，跨方向记录可属于多类；尚无明确方向的记录归入综合类。括号为全库数量，可叠加其他筛选。`, `Discovery directions are grouped into ${categories.length} broad areas and can overlap. Records without a specific area are included in the general category. Counts cover the full library; combine them with other filters.`)}</p>
         <p className="signals-filter-hint" id={`${fieldId}-relevance-hint`}>{kind === "github" ? t("总览默认包括全部线索；高相关与待复核可分别筛选。待复核记录不进入 AI 研判。", "The overview includes all leads by default; filter direct and review candidates separately. Candidates do not enter AI assessments.") : t("默认展示标题或简介中有明确影像关联的记录；待复核线索仍保留供探索。", "The default view shows records with explicit imaging context; other leads remain available for review.")}{t("相关性不代表科研质量或效果验证。", " Relevance does not establish research quality or validated performance.")}</p>
-        <p className="signals-filter-hint">{kind === "github" ? t("平台入库按首次发现时间统计，并单列最早采集批次；仓库最近活动取推送、Release 或创建时间中的最新值。两者均按北京时间归日，不代表研究发表或历史提交次数。", "Discovery uses first-seen timestamps, with the earliest collection batch shown separately. Latest activity uses the latest push, release or creation date. Both use Beijing calendar days, not paper publication dates or historical commit counts.") : t("日期采用检索源标注的文章发布日期，按 UTC 归日。", "Dates are source publication dates, grouped by UTC calendar day.")}{missingDates > 0 && kind !== "github" ? t(` ${missingDates} 条没有日期，设置日期范围后将排除。`, ` ${missingDates} undated items are excluded when a date range is set.`) : ""}</p>
+        <p className="signals-filter-hint">{kind === "github" ? t("仓库最近活动取推送、Release 或创建时间中的最新值；仓库最初发布时间采用 GitHub 仓库创建时间，不等于首次 Release 或转为公开的时间。两者均按北京时间归日；顶部今日入库仍按平台首次发现时间统计。", "Latest activity uses the latest push, release or creation date. Initial publication uses GitHub repository creation time, not the first release or the date a repository became public. Both use Beijing calendar days; Added today still uses the platform first-seen time.") : t("日期采用检索源标注的文章发布日期，按 UTC 归日。", "Dates are source publication dates, grouped by UTC calendar day.")}{missingDates > 0 && kind !== "github" ? t(` ${missingDates} 条没有日期，设置日期范围后将排除。`, ` ${missingDates} undated items are excluded when a date range is set.`) : ""}</p>
         {kind === "news" && <p className="signals-filter-hint"><SourceLink url={`https://news.google.com/search?q=${encodeURIComponent(query.trim() || "medical imaging AI")}&hl=en-US&gl=US&ceid=US:en`}>{t("在 Google 新闻继续检索", "Continue searching on Google News")}</SourceLink>{t(" · 在新窗口检索，结果不会自动入库。", " · Opens a new search; results are not added automatically.")}</p>}
       </details>
       {invalidDates && <p className="signals-source-error" role="alert">{t("起始日期不能晚于截止日期。", "The start date must not follow the end date.")}</p>}
@@ -225,7 +233,7 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
       const comparing = compareIds.includes(record.id);
       const matchedCategories = categories.filter(group => categoryIndex.byRecord.get(record.id)?.includes(group.id));
       return <article className="signal-card" key={record.id}>
-        <div className="signal-card-meta"><span className={`signal-kind signal-kind-${record.kind}`}>{record.kind === "github" ? "GitHub" : record.discoveryUrl ? t("Google 新闻检索", "Google News discovery") : t("公开发布", "Public announcement")}</span><span>{record.kind === "github" ? t("所有者：", "Owner: ") : t("发布者：", "Publisher: ")}{record.publisher}</span><span>{record.kind === "github" ? `${t("最近活动 ", "Latest activity ")}${beijingDay(datesById.get(record.id) ?? "") || noDate}` : dateLabel(datesById.get(record.id), noDate)}</span>{record.kind === "github" && <span>{t("首次入库 ", "First collected ")}{beijingDay(record.firstSeenAt) || noDate}</span>}{record.kind === "github" && record.archived && <span className="signal-archived">{t("已归档", "Archived")}</span>}</div>
+        <div className="signal-card-meta"><span className={`signal-kind signal-kind-${record.kind}`}>{record.kind === "github" ? "GitHub" : record.discoveryUrl ? t("Google 新闻检索", "Google News discovery") : t("公开发布", "Public announcement")}</span><span>{record.kind === "github" ? t("所有者：", "Owner: ") : t("发布者：", "Publisher: ")}{record.publisher}</span><span>{record.kind === "github" ? `${t("最近活动 ", "Latest activity ")}${beijingDay(datesById.get(record.id) ?? "") || noDate}` : dateLabel(datesById.get(record.id), noDate)}</span>{record.kind === "github" && <span>{t("最初发布 ", "Initially published ")}{beijingDay(githubDashboardDate(record, "creation") ?? "") || noDate}</span>}{record.kind === "github" && <span>{t("首次入库 ", "First collected ")}{beijingDay(record.firstSeenAt) || noDate}</span>}{record.kind === "github" && record.archived && <span className="signal-archived">{t("已归档", "Archived")}</span>}</div>
         <h3><SourceLink url={record.kind === "news" ? record.originalUrl || record.url : record.url}>{record.title}</SourceLink></h3>
         <p className="signal-summary">{record.summary || t("来源未提供摘要。", "No summary was supplied by the source.")}</p>
         <details className={`signal-relevance-details signal-relevance-${record.relevance?.level ?? "candidate"}`}><summary><span>{record.relevance?.level === "direct" ? t("高相关", "Directly relevant") : t("待复核", "Needs review")}</span>{t("查看匹配依据", "Inspect relevance clues")}</summary>{record.relevance ? <ul>{record.relevance.reasons.map(reason => <li key={reason}>{RELEVANCE_REASON_LABELS[reason] ? t(RELEVANCE_REASON_LABELS[reason].zh, RELEVANCE_REASON_LABELS[reason].en) : reason}</li>)}</ul> : <p>{t("此旧记录尚未重新评估相关性。", "This older record has not been reassessed for relevance.")}</p>}<p>{t("依据公开元数据进行规则匹配；请核对原始内容。", "Rule-based matches in public metadata; check the original content.")}</p></details>

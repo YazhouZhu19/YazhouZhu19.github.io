@@ -3,13 +3,13 @@ import { buildSignalDashboard, signalDashboardDate, type SignalDashboard, type S
 
 const DAY = 86_400_000;
 const BEIJING_OFFSET = 8 * 60 * 60 * 1000;
+export type GitHubDashboardClock = "activity" | "creation";
 export interface GitHubDashboardFilters {
   baseRecords?: readonly ResearchSignal[];
   range?: 7 | 30 | 90 | "all" | "custom";
-  clock?: "discovery" | "activity";
+  clock?: GitHubDashboardClock;
   from?: string;
   to?: string;
-  includeInitial?: boolean;
 }
 export interface GitHubDashboardSeriesRow {
   date: string;
@@ -28,7 +28,7 @@ export interface GitHubDashboardModel {
   scoped: SignalDashboard;
   series: GitHubDashboardSeriesRow[];
   seriesGranularity: "day" | "month";
-  filters: { range: NonNullable<GitHubDashboardFilters["range"]>; clock: NonNullable<GitHubDashboardFilters["clock"]>; includeInitial: boolean };
+  filters: { range: NonNullable<GitHubDashboardFilters["range"]>; clock: NonNullable<GitHubDashboardFilters["clock"]> };
   today: string | null;
   start: string | null;
   end: string | null;
@@ -45,7 +45,7 @@ export interface GitHubDashboardModel {
   referenceDateValid: boolean;
   nowValid: boolean;
   rangeValid: boolean;
-  excluded: { initial: SignalDashboardBucket; missing: SignalDashboardBucket; future: SignalDashboardBucket; outside: SignalDashboardBucket; unavailable: SignalDashboardBucket };
+  excluded: { missing: SignalDashboardBucket; future: SignalDashboardBucket; outside: SignalDashboardBucket; unavailable: SignalDashboardBucket };
 }
 
 function stamp(value: string | Date | null | undefined): number | null {
@@ -70,6 +70,13 @@ function bucket(id: string, labelZh: string, labelEn: string, recordIds: string[
 }
 function add(target: SignalDashboardBucket, id: string): void { target.recordIds.push(id); target.count++; }
 
+/** GitHub created_at is repository creation, not the time a private repo became public. */
+export function githubDashboardDate(record: GitHubSignal, clock: GitHubDashboardClock): string | null {
+  if (clock === "activity") return signalDashboardDate(record);
+  const time = stamp(record.publishedAt);
+  return time === null ? null : new Date(time).toISOString();
+}
+
 /**
  * firstSeenAt is assigned when a repository enters the collector, then retained
  * when that ID is refreshed. It is not the repository's creation date. There is
@@ -83,7 +90,7 @@ export function buildGitHubDashboard(allRecords: readonly ResearchSignal[], filt
   const allGitHub = [...all.values()];
   const selected = new Set((filters.baseRecords ?? allGitHub).filter(record => record.kind === "github").map(record => record.id));
   const base = allGitHub.filter(record => selected.has(record.id));
-  const range = filters.range ?? 30, clock = filters.clock ?? "discovery", includeInitial = filters.includeInitial ?? false;
+  const range = filters.range ?? 30, clock = filters.clock ?? "activity";
   const current = stamp(now), snapshot = stamp(asOf);
   const limit = current !== null && snapshot !== null ? Math.min(current, snapshot) : null;
   const today = current === null ? null : beijingDay(current);
@@ -107,7 +114,10 @@ export function buildGitHubDashboard(allRecords: readonly ResearchSignal[], filt
     initial: bucket("global-initial", "推定初始基线", "Inferred initial baseline", initialIds),
   };
   const initialInScope = bucket("scope-initial", "当前筛选中的初始记录", "Initial records within filters", base.filter(isInitial).map(record => record.id));
-  const dateById = new Map(base.map(record => [record.id, clock === "discovery" ? firstSeen.get(record.id) ?? null : stamp(signalDashboardDate(record))]));
+  // For GitHub records, publishedAt is populated from the API's created_at.
+  // It is a repository creation timestamp, not proof of when it became public.
+  // Missing creation metadata must never fall back to collection or release time.
+  const dateById = new Map(base.map(record => [record.id, stamp(githubDashboardDate(record, clock))]));
   let start: string | null = null, end = today;
   let rangeValid = true;
   if (range === "custom") {
@@ -117,16 +127,15 @@ export function buildGitHubDashboard(allRecords: readonly ResearchSignal[], filt
   } else if (today) {
     if (range === "all") {
       const validDates = [...dateById.values()].filter((time): time is number => time !== null && limit !== null && time <= limit);
-      start = clock === "discovery" ? initialDay : validDates.length ? beijingDay(validDates.reduce((a, b) => Math.min(a, b))) : today;
+      start = validDates.length ? beijingDay(validDates.reduce((a, b) => Math.min(a, b))) : today;
     } else start = shiftDay(today, 1 - range);
   }
   if (start && end && start > end) rangeValid = false;
-  // Collection history starts at the first observation. Activity dates instead
-  // describe repository metadata and may legitimately predate this monitor.
-  const observedFrom = start && rangeValid ? clock === "discovery" ? initialDay ? (initialDay > start ? initialDay : start) : null : start : null;
+  // Both clocks describe repository metadata that can predate this monitor.
+  // The initial collection batch remains part of both filtered populations.
+  const observedFrom = start && rangeValid ? start : null;
   const observedTo = end && snapshotDay && current !== null && rangeValid ? [end, snapshotDay, today!].sort()[0] : null;
   const excluded = {
-    initial: bucket("excluded-initial", "初始记录另列", "Initial records shown separately"),
     missing: bucket("excluded-missing", "日期缺失或无效", "Missing or invalid dates"),
     future: bucket("excluded-future", "晚于当前时间或快照", "After current time or snapshot"),
     outside: bucket("excluded-outside", "所选日期范围外", "Outside selected dates"),
@@ -138,7 +147,6 @@ export function buildGitHubDashboard(allRecords: readonly ResearchSignal[], filt
     if (time == null) { add(excluded.missing, record.id); continue; }
     if (limit === null || !rangeValid || !start || !end) { add(excluded.unavailable, record.id); continue; }
     if (time > limit) { add(excluded.future, record.id); continue; }
-    if (clock === "discovery" && !includeInitial && isInitial(record)) { add(excluded.initial, record.id); continue; }
     const day = beijingDay(time);
     if (day < start || day > end) { add(excluded.outside, record.id); continue; }
     rows.push(record);
@@ -168,7 +176,7 @@ export function buildGitHubDashboard(allRecords: readonly ResearchSignal[], filt
   const shifted = rows.map(record => ({ ...record, publishedAt: shift(record.publishedAt), pushedAt: shift(record.pushedAt), releasedAt: shift(record.releasedAt) }));
   const scoped = buildSignalDashboard(shifted, "github", limit === null ? "" : new Date(limit + BEIJING_OFFSET).toISOString());
   scoped.asOf = snapshot === null ? "" : new Date(snapshot).toISOString();
-  return { global, rows, scoped, series, seriesGranularity, filters: { range, clock, includeInitial }, today, start, end, observedFrom, observedTo,
+  return { global, rows, scoped, series, seriesGranularity, filters: { range, clock }, today, start, end, observedFrom, observedTo,
     initialAt, initialDay, initialInScope, now: current === null ? null : new Date(current).toISOString(),
     asOf: snapshot === null ? null : new Date(snapshot).toISOString(), snapshotDay,
     snapshotStale: today !== null && snapshotDay !== null && snapshotDay < today,

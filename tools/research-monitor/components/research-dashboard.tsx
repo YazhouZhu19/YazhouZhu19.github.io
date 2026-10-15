@@ -4,7 +4,7 @@ import { memo, useEffect, useMemo, useState } from "react";
 import { ArrowDownToLine, ArrowUpRight, BookOpen, CircleHelp, Database, Layers3, Radio, Users, Workflow } from "lucide-react";
 import { SpatialChart, TimelineChart, StatusRing } from "./spatial-chart";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DashboardChoice as Choice } from "./dashboard-choice";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TRACKS } from "@/lib/classify";
 import { beijingDay, buildDashboard, buildSourceHealth, type DashboardDrill, type DashboardFilters } from "@/lib/dashboard";
@@ -22,18 +22,6 @@ type Props = {
 };
 const count = (n: number) => n.toLocaleString("zh-CN");
 const stamp = (s: string) => new Date(s).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
-function Choice({ label, value, onChange, options }: {
-    label: string;
-    value: string;
-    onChange: (s: string) => void;
-    options: [
-        string,
-        string
-    ][];
-}) {
-    const { locale, tr } = useI18n();
-    return <Select value={value} onValueChange={onChange}><SelectTrigger aria-label={tr(label)}><SelectValue /></SelectTrigger><SelectContent>{options.map(([v, name]) => <SelectItem key={v} value={v}>{tr(name)}</SelectItem>)}</SelectContent></Select>;
-}
 function Metric({ label, value, hint, icon: Icon, accent, onClick }: {
     label: string;
     value: string;
