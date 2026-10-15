@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <title>OEVRYN Engine</title>
+  <desc>Research Intelligence for Medical Image Analysis. Connect papers, open-source code and public updates to explore research directions and PI and team trajectories.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d2131"/><stop offset="1" stop-color="#173b46"/></linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#76e3bf"/><stop offset="1" stop-color="#86d8da"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#a6e5df" stroke-opacity=".035"/></pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <g fill="none" stroke="#5ac8b0" opacity=".12"><circle cx="1170" cy="590" r="510"/><circle cx="1170" cy="590" r="410"/><circle cx="1170" cy="590" r="310"/></g>
+  <rect width="1200" height="7" fill="url(#accent)"/>
+  <g transform="translate(58 58)">
+    <rect width="52" height="52" rx="14" fill="#244c4c"/>
+    <path d="M12 21v-9h9m10 0h9v9M12 31v9h9m10 0h9v-9" stroke="#80e1bf" stroke-width="2.6" fill="none"/>
+    <circle cx="26" cy="26" r="6" fill="#80e1bf"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="130" y="80" fill="#d2e8e9" font-size="16" font-weight="700" letter-spacing="2">RESEARCH INTELLIGENCE</text>
+    <text x="130" y="103" fill="#8aaab9" font-size="15">Evidence. Connections. Possibilities.</text>
+    <text x="58" y="226" fill="#f5fafc" font-size="64" font-weight="700" letter-spacing="-2">OEVRYN <tspan font-weight="400">Engine</tspan></text>
+    <rect x="60" y="260" width="72" height="4" rx="2" fill="#7bdcbc"/>
+    <text x="58" y="317" fill="#e3f1f2" font-size="31">Research Intelligence</text>
+    <text x="58" y="358" fill="#c2d9e1" font-size="29">for Medical Image Analysis</text>
+    <text x="60" y="425" fill="#a8c5cf" font-size="19">Connect the evidence.</text>
+    <text x="60" y="455" fill="#a8c5cf" font-size="19">Explore what comes next.</text>
+    <text x="60" y="505" fill="#80e1bf" font-size="16" letter-spacing=".5">CHINESE &amp; ENGLISH · OPEN TO EXPLORE</text>
+    <rect x="723" y="55" width="414" height="460" rx="22" fill="#f3f8f8"/>
+    <text x="751" y="95" fill="#527b82" font-size="14" font-weight="700" letter-spacing="1.8">CONNECTED RESEARCH</text>
+    <path d="M751 114h358" stroke="#d5e3e5"/>
+    <g fill="#264655" font-size="24">
+      <text x="751" y="160" fill="#68a593" font-size="14">01</text><text x="788" y="162">Papers</text>
+      <text x="788" y="190" fill="#64818b" font-size="15">Literature &amp; original evidence</text>
+      <text x="751" y="238" fill="#68a593" font-size="14">02</text><text x="788" y="240">Open-source code</text>
+      <text x="788" y="268" fill="#64818b" font-size="15">Implementations &amp; activity</text>
+      <text x="751" y="316" fill="#68a593" font-size="14">03</text><text x="788" y="318">Public updates</text>
+      <text x="788" y="346" fill="#64818b" font-size="15">Models &amp; research announcements</text>
+    </g>
+    <path d="M751 374h358" stroke="#d5e3e5"/>
+    <text x="751" y="409" fill="#527b82" font-size="12" font-weight="700" letter-spacing="1.5">EXPLORE WHAT COMES NEXT</text>
+    <g fill="#264655" font-size="19"><text x="751" y="445">Research outlook</text><text x="751" y="478">PI &amp; team trajectories</text></g>
+    <path d="M59 550h1082" stroke="#40606d" opacity=".7"/>
+    <text x="59" y="590" fill="#a4c4cf" font-size="20">yazhouzhu19.github.io/research-monitor</text>
+    <text x="1141" y="590" text-anchor="end" fill="#87e0c1" font-size="19">OEVRYN Engine</text>
+  </g>
+</svg>

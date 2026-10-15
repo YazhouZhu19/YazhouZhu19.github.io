@@ -1,6 +1,10 @@
-# Medical Image Research Monitor / 医学影像科研观察
+# OEVRYN Engine
 
-A public bilingual research dashboard covering 10 medical imaging research interests, including organ/lesion segmentation, human-in-the-loop clinical diagnosis, detection, reconstruction, registration, radiomics, prognosis, image–language understanding, intervention, and foundation models. The filter is named **感兴趣方向 / Research interests**. See [INTERESTS.md](INTERESTS.md) for the bilingual scope and design sources.
+**Research Intelligence for Medical Image Analysis**
+
+汇聚研究证据，洞察医学影像前沿。
+
+A public bilingual research platform connecting papers, open-source code and public updates to support evidence analysis and research direction, PI and team outlooks. Its paper dashboard covers 10 medical imaging research interests, including organ/lesion segmentation, human-in-the-loop clinical diagnosis, detection, reconstruction, registration, radiomics, prognosis, image–language understanding, intervention, and foundation models. The filter is named **感兴趣方向 / Research interests**. See [INTERESTS.md](INTERESTS.md) for the bilingual scope and design sources.
 
 The primary workspace has five entrances: **论文仪表盘 / Paper dashboard**, **GitHub 开源代码仪表盘 / GitHub code dashboard**, **公开进展消息仪表盘 / Public updates dashboard**, **方向研判 / Research outlook**, and **PI / Teams**. The paper dashboard is the default view, with internal Overview, Paper library and Reading leads views. It retains the original metrics, direction and date distributions, publication status, task–modality matrix, methods, team matches and source health. Chart drill-through opens the integrated paper library and returns to its originating view with the dashboard filters preserved. The full archive, original abstracts, reading notes and source provenance remain available. Each additional-source dashboard combines aggregate statistics with its searchable repository/news library; scoped charts drill into the exact records counted. Saved papers and source diagnostics remain auxiliary entrances.
 
@@ -75,7 +79,7 @@ The initial snapshot is a recent-paper sample. Queries have caps, tags are heuri
 
 ## Maintenance
 
-Both locale entry pages include static Open Graph and Twitter `summary_large_image` metadata. The share cover is `public/social-preview-v1.png` (1200 × 630); its editable vector source is `public/social-preview-v1.svg`. Vite copies these public assets into every deployment. The same PNG can be attached directly to a social post if the link preview is unavailable. When changing the artwork, use a new versioned filename and update both HTML entry points.
+Both locale entry pages include static Open Graph and Twitter `summary_large_image` metadata. The share cover is `public/social-preview-v2.png` (1200 × 630); its editable vector source is `public/social-preview-v2.svg`. Vite copies these public assets into every deployment. The same PNG can be attached directly to a social post if the link preview is unavailable. When changing the artwork, use a new versioned filename and update both HTML entry points.
 
 Use **Actions → Research monitor sync → Run workflow** for an immediate refresh. Partial source outages publish the available result with source errors. When all sources fail, the workflow publishes validated failure metadata while retaining the library and marks the run failed. Pages output is checked against a deployment marker and public data SHA-256 before success is reported.
 

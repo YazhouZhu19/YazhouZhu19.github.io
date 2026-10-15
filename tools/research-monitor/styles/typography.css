@@ -26,7 +26,6 @@ body {
   font-family: var(--font-ui);
 }
 
-.brand strong,
 .page-heading h1,
 .dashboard-workspace .page-heading h1,
 html[lang="en"] .page-heading h1 {
@@ -100,4 +99,23 @@ h3,
   .full-abstract {
     font-size: 16px;
   }
+}
+
+/* Shared wordmark and compact bilingual subtitle. */
+.brand-copy { min-width: 0; }
+.brand strong,
+html[lang="en"] .brand strong {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.brand span,
+html[lang="en"] .brand span {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  line-height: 1.65;
 }

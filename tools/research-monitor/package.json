@@ -52,5 +52,5 @@
     "vite": "8.0.13"
   },
   "type": "module",
-  "description": "Medical image research monitoring with a macro dashboard, free browser AI outlooks and optional personal API analysis."
+  "description": "OEVRYN Engine — Research Intelligence for Medical Image Analysis, connecting papers, open-source code and public updates for research direction, PI and team outlooks."
 }
