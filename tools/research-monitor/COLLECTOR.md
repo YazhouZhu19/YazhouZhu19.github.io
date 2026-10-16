@@ -1,6 +1,6 @@
 # Official-source collector
 
-The collector lives in `lib/{types,classify,record,parse,collect}.ts` and `scripts/collect.ts`. Requires Node.js 22.13+ and the development dependencies `tsx`, `typescript`, and `@types/node`. The collector does not need an AI provider, account, API key, database, or proxy. [INTERESTS.md](INTERESTS.md) describes the 10 research interests and their source basis.
+The collector lives in `lib/{types,classify,record,parse,collect,source-request}.ts` and `scripts/collect.ts`. Requires Node.js 22.13+ and the development dependencies `tsx`, `typescript`, and `@types/node`. The collector does not need an AI provider, account, API key, database, or proxy. [INTERESTS.md](INTERESTS.md) describes the 10 research interests and their source basis.
 
 ```sh
 npx tsx scripts/collect.ts
@@ -26,11 +26,13 @@ All existing papers survive source outages and bounded fetch windows. There is n
 
 ## Errors and Actions behavior
 
-Requests use HTTPS official API hosts only, a 25-second timeout, and up to three attempts for network errors, empty responses, HTTP 429, and HTTP 5xx. Other HTTP errors fail immediately. No proxy or `chatgpt.site` dependency exists.
+Requests use HTTPS official API hosts only and up to three attempts for network errors, empty responses, HTTP 429, and HTTP 5xx. arXiv has a 60-second timeout covering both the request and body read, with 5- and 10-second retry backoff; other sources retain their 25-second timeout and 1.5-/3-second backoff. The arXiv queue serializes the full request and body read, including retries, and leaves at least 3.1 seconds between request starts. Other HTTP errors fail immediately. No proxy or `chatgpt.site` dependency exists.
+
+`Retry-After` seconds and HTTP dates are respected instead of being shortened to 10 seconds. A requested wait longer than 60 seconds stops that request and records a host cooldown; later queries in the same run do not immediately contact that host again. Exhausted HTTP 429 retries also enter a cooldown. These failures remain in source errors and request logs, with zero attempts for a query skipped during cooldown. Subsequent scheduled runs can retry the affected source; external API availability is not guaranteed. See the [official arXiv rate limits](https://info.arxiv.org/help/api/tou.html#rate-limits).
 
 Each source run reports `ok`, `partial`, or `error`, along with its real error message. A source is `partial` when capped results remain or a later request fails after a validated page; valid fetched records can still be merged. `error` means no valid page was obtained for that source. Errors also appear in `MonitorData.errors` / `error` and individual request logs. Partial/capped results never claim exhaustive coverage. A clean success (including an intentional result cap) advances `lastSuccessfulSync`; an error-interrupted source does not advance its catch-up anchor.
 
-When the medRxiv fallback recovers a primary failure, the original request error is preserved with `recoveredBy` in the audit log, but it is not reported as a current source outage. A failure of the backup remains a visible source error. The interface distinguishes failed or partially failed requests from successful but limited coverage, names affected sources, and links to source sync logs. Last-success times exclude all runs carrying an error.
+When the medRxiv fallback recovers a primary failure, the original request error is preserved with `recoveredBy` in the audit log, but it is not reported as a current source outage. A failure of the backup remains a visible source error. The interface distinguishes failed or partially failed requests from successful but limited coverage, names affected sources, and links to source sync logs. Incomplete updates show an amber notice explaining that successfully collected and historical papers remain usable; a complete collection outage keeps a red error. A clean recovery removes the current notice while keeping historical error logs. Last-success times exclude all runs carrying an error.
 
 - At least one source yields a valid page: save the snapshot and exit 0. Other sources can fail, and Actions may publish the partial result with its visible errors.
 - All three sources fail: save all previous papers with new error runs and exit 1.
@@ -38,4 +40,4 @@ When the medRxiv fallback recovers a primary failure, the original request error
 
 An Actions workflow may use `continue-on-error: true` on the collector step to commit/publish the recorded failure status even when all sources fail, then explicitly fail a final step so monitoring shows the job failure. Avoid allowing shell `|| true` to hide collector failures.
 
-The offline tests cover DOI/arXiv/version merging, raw metadata retention, empty and malformed responses, partial source failure, complete outage, the bounded history window, run retention, legacy input, and libraries larger than 3,000 papers. Tests make no external requests.
+The offline tests cover transport timeout recovery, retry exhaustion, rate-limit cooldowns, serialized arXiv connections, notice severity and recovery, DOI/arXiv/version merging, raw metadata retention, empty and malformed responses, partial source failure, complete outage, the bounded history window, run retention, legacy input, and libraries larger than 3,000 papers. Tests make no external requests.

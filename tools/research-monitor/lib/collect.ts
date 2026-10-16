@@ -4,10 +4,11 @@ import { parseArxiv, parseEpmc, parseMedrxiv, parseMedrxivPage } from "./parse";
 import { parseEpmcPage } from "./epmc-page";
 import { applyOutcomes, mergePapers, mergeRecord, type SourceOutcome } from "./record";
 import type { MonitorData, Paper, RequestLog, SyncRun } from "./types";
+import { fetchOfficialText, SourceRequestError, type FetchText } from "./source-request";
+export { fetchOfficialText, SourceRequestError, ARXIV_REQUEST_INTERVAL_MS, type FetchText } from "./source-request";
 
 export const SOURCE_NAMES = {epmc:"Europe PMC",arxiv:"arXiv",medrxiv:"medRxiv"} as const;
 export type SourceKey = keyof typeof SOURCE_NAMES;
-export type FetchText = (url: string) => Promise<{ body:string; httpStatus:number; attempts:number }>;
 export type CollectOptions = {now?:Date; fetchText?:FetchText; id?:() => string};
 const DAY = 86400000;
 const EPMC_IMAGING = '(TITLE_ABS:"medical image" OR TITLE_ABS:"medical imaging" OR TITLE_ABS:radiology OR TITLE_ABS:radiologist* OR TITLE_ABS:MRI OR TITLE_ABS:"magnetic resonance" OR TITLE_ABS:CT OR TITLE_ABS:"computed tomography" OR TITLE_ABS:ultrasound OR TITLE_ABS:histopathology OR TITLE_ABS:mammography OR TITLE_ABS:retinal OR TITLE_ABS:fundus OR TITLE_ABS:radiograph* OR TITLE_ABS:PET OR TITLE_ABS:endoscopy)';
@@ -35,68 +36,6 @@ export const ARXIV_TRACK_QUERIES: Record<string,string> = {
  language:'(all:"report generation" OR all:"visual question" OR all:"vision-language" OR all:"image-text" OR all:"image-language" OR all:"multimodal large language") AND '+ARXIV_IMAGING,
  intervention:'(all:radiotherapy OR all:"treatment planning" OR all:"dose prediction" OR all:"surgical navigation" OR all:"image-guided" OR all:intraoperative) AND '+ARXIV_IMAGING,
  foundation:'(all:"foundation model" OR all:"foundation models" OR all:"segment anything" OR all:MedSAM OR all:"SAM-Med" OR all:"large vision-language model" OR all:"universal segmentation model") AND '+ARXIV_IMAGING,
-};
-
-// arXiv asks clients to leave at least 3 seconds between calls. The shared queue
-// includes retries and protects concurrent callers, not merely each query loop.
-export const ARXIV_REQUEST_INTERVAL_MS = 3100;
-let arxivLastStarted = 0;
-let arxivQueue = Promise.resolve();
-async function waitForOfficialSlot(url:string) {
- if(new URL(url).hostname !== "export.arxiv.org") return;
- const slot = arxivQueue.then(async () => {
-   const wait = ARXIV_REQUEST_INTERVAL_MS - (Date.now()-arxivLastStarted);
-   if(wait > 0) await new Promise(resolve => setTimeout(resolve,wait));
-   arxivLastStarted = Date.now();
- });
- arxivQueue = slot.catch(() => {});
- await slot;
-}
-
-export class SourceRequestError extends Error {
-  constructor(message:string, public httpStatus:number|undefined, public attempts:number) {super(message);}
-}
-
-/** Only official hosts; redirects are checked as well, so no proxy is introduced. */
-function officialUrl(value: string): boolean {
-  const url = new URL(value);
-  return url.protocol === "https:" && ["www.ebi.ac.uk","export.arxiv.org","api.biorxiv.org","api.medrxiv.org"].includes(url.hostname);
-}
-
-export const fetchOfficialText: FetchText = async url => {
-  if (!officialUrl(url)) throw new SourceRequestError("采集地址不是支持的官方 HTTPS 来源",undefined,0);
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    let status:number|undefined, retryMs = 1500 * 2 ** (attempt-1);
-    try {
-      await waitForOfficialSlot(url);
-      const response = await fetch(url, {
-        headers:{"User-Agent":"MedicalImageResearchMonitor/2.0 (GitHub Pages public metadata collector)",Accept:"application/json, application/atom+xml, application/xml"},
-        signal:AbortSignal.timeout(25000), redirect:"error",
-      });
-      status = response.status;
-      if (response.url && !officialUrl(response.url)) throw new SourceRequestError("来源重定向到非官方地址",status,attempt);
-      const retryAfter = response.headers.get("retry-after");
-      if (retryAfter) {
-        const delay = /^\d+$/.test(retryAfter) ? Number(retryAfter)*1000 : Date.parse(retryAfter)-Date.now();
-        if (Number.isFinite(delay)) retryMs = Math.max(retryMs,Math.min(10000,delay));
-      }
-      if (!response.ok) {
-        const message = `来源返回 HTTP ${status}`;
-        if (status !== 429 && status < 500) throw new SourceRequestError(message,status,attempt);
-        throw new Error(message);
-      }
-      const body = await response.text();
-      if (!body.trim()) throw new Error(`来源返回 HTTP ${status} 但响应体为空；无法判定是否有新论文`);
-      return {body,httpStatus:status,attempts:attempt};
-    } catch (error) {
-      if (error instanceof SourceRequestError) throw error;
-      const cause = error instanceof Error ? error.cause as {code?:string;message?:string}|undefined : undefined;
-      const detail = (error instanceof Error ? error.message : String(error)) + (cause ? ` (${cause.code ?? cause.message ?? "unknown cause"})` : "");
-      if (attempt === 3) throw new SourceRequestError(`${detail}（已尝试 ${attempt} 次）`,status,attempt);
-      await new Promise(resolve => setTimeout(resolve,retryMs));
-    }
-  }
-  throw new SourceRequestError("请求失败",undefined,3);
 };
 
 function sourceHasCurrentTaxonomy(previous:MonitorData, source:string):boolean {

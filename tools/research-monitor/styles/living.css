@@ -365,6 +365,10 @@ button, a, input, textarea, summary { touch-action: manipulation; }
 .saved-note { background: var(--living-paper); border-left-color: var(--living-line); color: var(--living-muted); border-radius: 0 12px 12px 0; }
 .notice { background: var(--living-paper); border-color: var(--living-line); color: var(--living-muted); border-radius: 14px; }
 .notice.error { background: rgba(161, 50, 50, .045); color: var(--status-error); border-color: rgba(161, 50, 50, .18); }
+.notice.warning { background: #fffbf0; color: #805b16; border-color: #ead9ae; align-items: center; justify-content: space-between; }
+.notice.warning > span { min-width: 0; }
+.notice.warning > button { flex-shrink: 0; }
+@media (max-width: 640px) { .notice.warning { flex-wrap: wrap; } }
 .workspace-footnote, .chart-note, .chart-legend { color: var(--living-muted); }
 .paper-detail {
   background: rgba(255, 255, 255, .98);
