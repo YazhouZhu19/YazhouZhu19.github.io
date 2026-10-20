@@ -1,4 +1,5 @@
 "use client";
+import "@/styles/ai-research.css";
 
 import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {

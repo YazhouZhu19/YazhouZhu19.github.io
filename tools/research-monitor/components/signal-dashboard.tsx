@@ -1,4 +1,5 @@
 "use client";
+import "@/styles/dashboard-common.css";
 
 import { useMemo } from "react";
 import {

@@ -1,4 +1,5 @@
 "use client";
+import "@/styles/dashboard-common.css";
 
 import { ArrowUpRight, Box, Database, Layers3, Newspaper, Radio, Users, Wrench } from "lucide-react";
 import { newsDashboardDate, type NewsDashboardModel } from "@/lib/news-dashboard";
@@ -8,7 +9,6 @@ import type { SignalDashboardDrill } from "./signal-dashboard";
 import { SourceDashboardBars, SourceDashboardRing, SourceDashboardTimeline } from "./source-dashboard-charts";
 import { Button } from "./ui/button";
 import { useI18n } from "./locale-provider";
-import "@/styles/github-dashboard.css";
 import "@/styles/news-dashboard.css";
 
 type Props = {

@@ -1,4 +1,5 @@
 "use client";
+import "@/styles/analysis.css";
 
 import { memo, useMemo } from "react";
 import { SpatialChart } from "./spatial-chart";

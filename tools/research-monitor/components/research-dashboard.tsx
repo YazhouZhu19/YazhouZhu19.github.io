@@ -1,4 +1,5 @@
 "use client";
+import "@/styles/dashboard-common.css";
 import { useI18n } from "./locale-provider";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {

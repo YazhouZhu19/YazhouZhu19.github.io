@@ -1,4 +1,5 @@
 "use client";
+import "@/styles/foresight.css";
 
 import { useMemo, useState } from "react";
 import type { DashboardDrill } from "@/lib/dashboard";

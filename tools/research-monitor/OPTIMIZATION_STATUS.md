@@ -30,7 +30,7 @@ scores must not be presented as independently validated accuracy.
 | P2.2 | Implemented | Main JS 41,129 B gzip; source/paper UI lazy; startup total still explicitly counts vendors and Worker. |
 | P2.3 | Implemented; throttled measurement pending | List containment, memoized charts/stable callbacks and Worker facets; 4× CPU acceptance awaits P5 runner. |
 | P2.4 | Implemented | Shared hash state, push/replace navigation, locale preservation and generation-bound drill recovery; 11 URL tests pass. |
-| P3.3 | Pending | Design tokens, CSS consolidation, responsive and dark-mode checks. |
+| P3.3 | Implemented; visual checks ongoing | One token system and dark palette; 5,404 selector/property pairs retained; main CSS 117,360 B. |
 | P3.4 | Pending | Shared dashboard shell while preserving metrics. |
 | P3.5 | Pending | Severity-based notices with all limitation text retained. |
 | P3.6 | Pending | Shared loading, empty and error states. |
@@ -157,3 +157,5 @@ scores must not be presented as independently validated accuracy.
 - **P2.4:** Shareable hash state covers the main view, paper/overview/date/source/search and advanced filters. History pushes view changes and replaces filter edits; both browser events restore state. Drill IDs never enter URLs and cannot cross document or snapshot generations. Eleven focused history/normalization tests and the 446-test shared TypeScript suite pass; typecheck and production build passed. Bilingual end-to-end validation is tracked in P5.2.
 
 - **P2.3:** Paper rows retain incremental loading and add content visibility/intrinsic sizing (disabled for print). Timeline, ring and source charts are memoized; paper chart callbacks and matrix columns remain stable across unrelated renders. Source facets reuse the Worker index, including the library change shipped with P2.4. Timer/listener cleanup was inspected in snapshot, personal, signal, URL and viewport hooks. The shared 446-test suite, typecheck and Vite build pass. The 4× CPU <200 ms acceptance is not yet verified; initial QA timings varied under concurrent builds and are not presented as field INP.
+
+- **P3.3:** Consolidated colors/spacing/type/radius/shadow into tokens, merged legacy layers and moved reading/AI/library CSS to lazy views. Audit retains all 5,404 existing selector/property pairs. Outside token definitions and breakpoints, color literals fall 662→0, spacing 1,517→0, font sizes 556→0 and radii 165→0. Main CSS measures 117,360 raw bytes versus baseline 263,903, meeting the 120,000-byte target before later features. Core text contrasts are at least 4.62 light/8.03 dark. Typecheck, 446 shared tests and build pass. Responsive visual checks are ongoing; in-app viewport screenshots show a scaling artifact despite correct DOM widths, so clean browser screenshots are required before final visual acceptance.

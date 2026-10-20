@@ -1,3 +1,4 @@
+import "@/styles/paper-library.css";
 import { useI18n } from "./locale-provider";
 import { Button } from "@/components/ui/button";
 import { lazy, Suspense, type ReactNode } from "react";

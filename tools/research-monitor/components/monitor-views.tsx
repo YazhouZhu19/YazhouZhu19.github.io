@@ -1,4 +1,6 @@
 "use client";
+import "@/styles/paper-library.css";
+import "@/styles/monitor-views.css";
 import { api as request } from "@/lib/local-api";
 import { useI18n } from "./locale-provider";
 import { useMemo, useState } from "react";

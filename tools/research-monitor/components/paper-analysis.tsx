@@ -1,4 +1,5 @@
 "use client";
+import "@/styles/paper-analysis.css";
 import { useMemo } from "react";
 import { ScanText } from "lucide-react";
 import { buildPaperAnalysis } from "@/lib/analysis";

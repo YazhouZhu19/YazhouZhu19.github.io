@@ -1,3 +1,4 @@
+import "@/styles/foresight.css";
 import { useEffect, useState } from "react";
 import { Download, History } from "lucide-react";
 import type { ForesightResult } from "@/lib/foresight-types";

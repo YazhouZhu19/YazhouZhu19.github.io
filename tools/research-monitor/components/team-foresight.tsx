@@ -1,4 +1,5 @@
 "use client";
+import "@/styles/foresight.css";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Plus, Search, Users } from "lucide-react";
