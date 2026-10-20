@@ -1,6 +1,7 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { getLoadedPaperSnapshot, searchPublicPapers } from "@/lib/local-api";
 import type { Paper } from "@/lib/types";
+import type { WorkspaceUrlState } from "@/lib/url-state";
 const EMPTY_PAPERS: Paper[] = [];
 const EMPTY_FACETS: string[] = [];
 export function usePaperLibrary({
@@ -9,25 +10,28 @@ export function usePaperLibrary({
   savedIds,
   drillIds,
   clearDrill,
+  initialFilters = {},
 }: {
   papers: Paper[];
   view: string;
   savedIds: Set<string>;
   drillIds: Set<string> | null;
   clearDrill: () => void;
+  initialFilters?: Partial<WorkspaceUrlState>;
 }) {
-  const [track, setTrack] = useState("all"),
-    [search, setSearch] = useState(""),
-    [task, setTask] = useState("all"),
-    [modality, setModality] = useState("all"),
-    [organ, setOrgan] = useState("all"),
-    [method, setMethod] = useState("all"),
-    [source, setSource] = useState("all"),
-    [status, setStatus] = useState("all"),
-    [period, setPeriod] = useState("all"),
-    [sort, setSort] = useState("newest"),
-    [human, setHuman] = useState("all"),
+  const [track, setTrack] = useState(initialFilters.track ?? "all"),
+    [search, setSearch] = useState(initialFilters.search ?? ""),
+    [task, setTask] = useState(initialFilters.task ?? "all"),
+    [modality, setModality] = useState(initialFilters.modality ?? "all"),
+    [organ, setOrgan] = useState(initialFilters.organ ?? "all"),
+    [method, setMethod] = useState(initialFilters.method ?? "all"),
+    [source, setSource] = useState(initialFilters.source ?? "all"),
+    [status, setStatus] = useState(initialFilters.status ?? "all"),
+    [period, setPeriod] = useState(initialFilters.period ?? "all"),
+    [sort, setSort] = useState(initialFilters.sort ?? "newest"),
+    [human, setHuman] = useState(initialFilters.human ?? "all"),
     [limit, setLimit] = useState(30);
+  const [scope, setScope] = useState<string | undefined>(initialFilters.scope);
   const deferredSearch = useDeferredValue(search);
   const [advanced, setAdvanced] = useState(false);
   useEffect(
@@ -131,8 +135,25 @@ export function usePaperLibrary({
     [clearDrill],
   );
 
-  const sources = useMemo(() => [...new Set(papers.flatMap((p) => p.sources))].sort(), [papers]);
+  const restoreFilters = useCallback((next: WorkspaceUrlState) => {
+    setTrack(next.track);
+    setSearch(next.search);
+    setPeriod(next.period);
+    setSource(next.source);
+    setScope(next.scope);
+    setTask(next.task ?? "all");
+    setModality(next.modality ?? "all");
+    setOrgan(next.organ ?? "all");
+    setMethod(next.method ?? "all");
+    setStatus(next.status ?? "all");
+    setHuman(next.human ?? "all");
+    setSort(next.sort ?? "newest");
+  }, []);
+  const sources = paperFacets?.sources ?? EMPTY_FACETS;
   return {
+    scope,
+    setScope,
+    restoreFilters,
     track,
     setTrack,
     search,

@@ -5,10 +5,19 @@ import { ArrowUpRight, RefreshCw } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { nav, auxiliaryNav } from "@/lib/workspace-navigation";
 import { fmtTime } from "@/lib/workspace-format";
+import { languageHref } from "@/lib/url-state";
 import { collectionNotice } from "@/lib/collection-notice";
 import type { usePaperSnapshot } from "@/hooks/use-paper-snapshot";
 import type { ResearchSignalsData } from "@/lib/research-signals";
-export function WorkspaceTopbar({ view, accountControl }: { view: string; accountControl: ReactNode }) {
+export function WorkspaceTopbar({
+  view,
+  accountControl,
+  hash = "",
+}: {
+  view: string;
+  accountControl: ReactNode;
+  hash?: string;
+}) {
   const { locale, tr } = useI18n();
   const ui = (zh: string, en: string) => (locale === "en" ? en : zh);
   const current = [...nav, ...auxiliaryNav].find((n) => n.id === view) ?? nav[0];
@@ -21,7 +30,7 @@ export function WorkspaceTopbar({ view, accountControl }: { view: string; accoun
       <div className="account-controls">
         <nav className="language-switch" aria-label={locale === "en" ? "Language" : "界面语言"}>
           <a
-            href="/research-monitor/"
+            href={languageHref("/research-monitor/", hash)}
             hrefLang="zh-CN"
             lang="zh-CN"
             aria-current={locale === "zh" ? "page" : undefined}
@@ -29,7 +38,7 @@ export function WorkspaceTopbar({ view, accountControl }: { view: string; accoun
             中文
           </a>
           <a
-            href="/research-monitor/en/"
+            href={languageHref("/research-monitor/en/", hash)}
             hrefLang="en"
             lang="en"
             aria-current={locale === "en" ? "page" : undefined}

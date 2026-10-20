@@ -29,7 +29,7 @@ scores must not be presented as independently validated accuracy.
 | P2.1 | Complete | Removed 48 unreachable UI modules, an orphan chart view and 13 unused dependencies. |
 | P2.2 | Implemented | Main JS 41,129 B gzip; source/paper UI lazy; startup total still explicitly counts vendors and Worker. |
 | P2.3 | Pending | List containment, stable chart inputs and shared derived indexes. |
-| P2.4 | Pending | Shareable hash state and browser navigation. |
+| P2.4 | Implemented | Shared hash state, push/replace navigation, locale preservation and generation-bound drill recovery; 11 URL tests pass. |
 | P3.3 | Pending | Design tokens, CSS consolidation, responsive and dark-mode checks. |
 | P3.4 | Pending | Shared dashboard shell while preserving metrics. |
 | P3.5 | Pending | Severity-based notices with all limitation text retained. |
@@ -153,3 +153,5 @@ scores must not be presented as independently validated accuracy.
 - **P2.1:** Import-graph and CSS audits identify 48 unreachable UI modules and the orphan Recharts view. Removed 13 direct packages; runtime dependencies fall from 24 to 11 and lockfile entries from 292 to 234, with no surviving package version changes. Kept sonner, animation CSS and 13 reachable UI modules. Typecheck and 420 + 25 tests pass. Resource measurements are finalized with P2.2; no data records changed.
 
 - **P2.2:** Added Rolldown module reports (`stats.html` plus JSON), stable React/Radix vendor groups and lazy paper/source/AI interfaces. Main JS measures 131,483 raw / 41,129 gzip bytes, within the 110,000-byte gzip target. Total initial JS including shared vendors and the P4 classifier draft Worker is 205,184 gzip bytes, higher than P1's 195,386; this overhead is explicitly budgeted and documented. 434 shared-tree TypeScript tests, typecheck, Vite, all snapshot round trips and budget checks passed; local API checks include complete classified-record equality. Local browser confirms 8,326 records with no console errors. New lazy CSS resource budgets reflect P3 relocation; its final main CSS target is tracked separately.
+
+- **P2.4:** Shareable hash state covers the main view, paper/overview/date/source/search and advanced filters. History pushes view changes and replaces filter edits; both browser events restore state. Drill IDs never enter URLs and cannot cross document or snapshot generations. Eleven focused history/normalization tests and the 446-test shared TypeScript suite pass; typecheck and production build passed. Bilingual end-to-end validation is tracked in P5.2.

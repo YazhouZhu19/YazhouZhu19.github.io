@@ -7,6 +7,8 @@ import { useSignals } from "@/hooks/use-signals";
 import { usePaperSnapshot } from "@/hooks/use-paper-snapshot";
 import { usePersonalData } from "@/hooks/use-personal-data";
 import { usePaperLibrary } from "@/hooks/use-paper-library";
+import { useWorkspaceUrlState } from "@/hooks/use-workspace-url-state";
+import { initialWorkspaceUrlState, workspaceView } from "@/lib/url-state";
 import { SignalsContext } from "./signals-context";
 import { LocalDataControls } from "./local-data-controls";
 import { useI18n } from "./locale-provider";
@@ -51,7 +53,10 @@ export default function MonitorWorkspace() {
   const authenticated = true;
   const { locale, tr } = useI18n();
   const ui = (zh: string, en: string) => (locale === "en" ? en : zh);
-  const [view, setView] = useState("dashboard");
+  const [initialUrlState] = useState(() =>
+    initialWorkspaceUrlState(typeof window === "undefined" ? "" : window.location.hash),
+  );
+  const [view, setView] = useState<string>(initialUrlState.view);
   const {
     snapshot: signals,
     manifest: signalsManifest,
@@ -87,23 +92,94 @@ export default function MonitorWorkspace() {
   });
   const { collections, teams, openPaper, refreshPersonal } = personal;
   const [directionPreferences, setDirectionPreferences] = useState<ForesightPreferences>({
-    track: "segmentation",
-    modality: "",
-    query: "",
+    track:
+      initialUrlState.view === "foresight" && initialUrlState.track !== "all"
+        ? initialUrlState.track
+        : "segmentation",
+    modality: initialUrlState.view === "foresight" ? (initialUrlState.modality ?? "") : "",
+    query: initialUrlState.view === "foresight" ? initialUrlState.search : "",
     horizon: "6–12",
   });
   const [teamPreferences, setTeamPreferences] = useState<TeamForesightPreferences>({
     teamId: "",
     horizon: "6–12",
   });
-  const [dashboardFilters, setDashboardFilters] = useState<DashboardFilters>(defaultDashboardFilters);
-  const [analysisFilters, setAnalysisFilters] = useState<DashboardFilters>(defaultDashboardFilters);
+  const initialDashboardFilters = (target: string): DashboardFilters =>
+    initialUrlState.view === target
+      ? {
+          days: initialUrlState.period,
+          track: initialUrlState.track,
+          source: initialUrlState.source,
+          clock: initialUrlState.clock ?? "publication",
+        }
+      : defaultDashboardFilters;
+  const [dashboardFilters, setDashboardFilters] = useState<DashboardFilters>(() =>
+    initialDashboardFilters("dashboard"),
+  );
+  const [analysisFilters, setAnalysisFilters] = useState<DashboardFilters>(() =>
+    initialDashboardFilters("analysis"),
+  );
   const [drillOrigin, setDrillOrigin] = useState<string>("foresight");
 
   const [dashboardDrill, setDashboardDrill] = useState<DashboardDrill | null>(null);
   const drillIds = useMemo(() => (dashboardDrill ? new Set(dashboardDrill.ids) : null), [dashboardDrill]);
   const clearDrill = useCallback(() => setDashboardDrill(null), []);
-  const library = usePaperLibrary({ papers, view, savedIds: personal.savedIds, drillIds, clearDrill });
+  const library = usePaperLibrary({
+    papers,
+    view,
+    savedIds: personal.savedIds,
+    drillIds,
+    clearDrill,
+    initialFilters:
+      initialUrlState.view === "feed" || initialUrlState.view === "saved"
+        ? initialUrlState
+        : { scope: initialUrlState.scope },
+  });
+  const activeFilters =
+    view === "dashboard" ? dashboardFilters : view === "analysis" ? analysisFilters : null;
+  const urlHash = useWorkspaceUrlState(
+    {
+      view: workspaceView(view),
+      track: view === "foresight" ? directionPreferences.track : (activeFilters?.track ?? library.track),
+      period: activeFilters?.days ?? library.period,
+      source: activeFilters?.source ?? library.source,
+      clock: activeFilters?.clock,
+      search: view === "foresight" ? directionPreferences.query : library.search,
+      scope: library.scope,
+      task: library.task,
+      modality: view === "foresight" ? directionPreferences.modality : library.modality,
+      organ: library.organ,
+      method: library.method,
+      status: library.status,
+      human: library.human,
+      sort: library.sort,
+      ...(view === "feed" && dashboardDrill
+        ? { drill: { label: dashboardDrill.label, origin: workspaceView(drillOrigin) } }
+        : {}),
+    },
+    dashboardDrill,
+    (next, drill) => {
+      setView(next.view);
+      library.restoreFilters(next);
+      const filters: DashboardFilters = {
+        days: next.period,
+        track: next.track,
+        source: next.source,
+        clock: next.clock ?? "publication",
+      };
+      if (next.view === "dashboard") setDashboardFilters(filters);
+      if (next.view === "analysis") setAnalysisFilters(filters);
+      if (next.view === "foresight")
+        setDirectionPreferences((current) => ({
+          ...current,
+          track: next.track === "all" ? "segmentation" : next.track,
+          modality: next.modality ?? "",
+          query: next.search,
+        }));
+      setDashboardDrill(drill);
+      setDrillOrigin(next.drill?.origin ?? "foresight");
+    },
+  );
   const { reset, setSort } = library;
   const openDrill = useCallback(
     (drill: DashboardDrill, origin: string = "foresight") => {
@@ -151,7 +227,7 @@ export default function MonitorWorkspace() {
           sourceRecordCount={sourceRecordCount}
         />
         <SidebarInset>
-          <WorkspaceTopbar view={view} accountControl={accountControl} />
+          <WorkspaceTopbar view={view} accountControl={accountControl} hash={urlHash} />
           <div className="workspace foresight-workspace">
             <WorkspaceHeader
               {...snapshot}
