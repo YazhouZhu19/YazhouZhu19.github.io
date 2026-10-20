@@ -1,0 +1,48 @@
+{
+  "cpuThrottling": "none",
+  "supported": [
+    "element",
+    "event",
+    "first-input",
+    "interaction-contentful-paint",
+    "largest-contentful-paint",
+    "layout-shift",
+    "long-animation-frame",
+    "longtask",
+    "mark",
+    "measure",
+    "navigation",
+    "paint",
+    "resource",
+    "soft-navigation",
+    "visibility-state"
+  ],
+  "elapsedMs": 139405,
+  "maxLongTask": 97,
+  "maxInteraction": 56,
+  "longTasks": [
+    {
+      "name": "self",
+      "startTime": 3267,
+      "duration": 97
+    }
+  ],
+  "interactions": [],
+  "requests": [
+    {
+      "path": "/research-monitor/assets/main-Mkg3cwFh.js",
+      "transferSize": 177634
+    },
+    {
+      "path": "/research-monitor/assets/main-CwaCtPD3.css",
+      "transferSize": 44521
+    },
+    {
+      "path": "/research-monitor/assets/data-worker-B48jBP5-.js",
+      "transferSize": 18627
+    }
+  ],
+  "note": "Event durations are observed local samples, not field INP. Worker fetches are not in the main resource timeline.",
+  "capturedAt": "2026-10-20T17:07:53.379Z",
+  "stage": "Initial paper load, unthrottled local Chromium"
+}

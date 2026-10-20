@@ -17,6 +17,7 @@ export type BudgetConfig = {
   entryHtml?: string[];
   initialData: DataInput[];
   initialDynamicEntries?: string[];
+  initialAssetKeys?: string[];
   limits: {
     assets: Record<string, Size>;
     totals: Record<string, Size>;
@@ -156,6 +157,13 @@ export async function measureBuild(root: string, config: BudgetConfig): Promise<
   const manifest = JSON.parse(await readFile(join(root, ".vite/manifest.json"), "utf8"));
   const initial = await initialResources(root, manifest, config);
   const paths = await resourcePaths(root);
+  // Worker entrypoints are emitted outside Vite's page manifest. Declare their
+  // stable resource keys explicitly so startup worker bytes never hide as optional.
+  for (const key of config.initialAssetKeys ?? []) {
+    const matches = paths.filter(path => resourceKey(path) === key);
+    if (matches.length !== 1) throw new Error(`Initial asset key must resolve once: ${key}`);
+    initial.add(matches[0]);
+  }
   const assets: Asset[] = [];
   for (const path of paths) assets.push({
     path, key: resourceKey(path), type: extname(path) === ".js" ? "js" : "css",
@@ -178,7 +186,7 @@ export async function measureBuild(root: string, config: BudgetConfig): Promise<
     schemaVersion: 1, measuredAt: new Date().toISOString(),
     compression: "gzip level 9, each HTTP resource compressed independently; bytes, not kB/KiB",
     notes: [
-      "Initial JS/CSS follows static imports of both locale entries plus configured first-view dynamic entries; shared resources are counted once.",
+      "Initial JS/CSS follows static imports of both locale entries plus configured first-view dynamic entries and startup worker assets; shared resources are counted once.",
       "The initialData list mirrors current startup loading. Update it together with any loader change; all manifest-referenced shards are included.",
       "Unreferenced archive generations and v1 compatibility files are excluded from startup transfer, but remain published.",
       "Optional resources include later views and click-to-run WebLLM/AI workers. Model weights fetched from external providers are not build resources.",

@@ -17,7 +17,7 @@
     {
       "id": "papers",
       "kind": "paper-snapshot",
-      "path": "data/public-papers-v2.json"
+      "path": "data/public-papers-v3.json"
     }
   ],
   "limits": {
@@ -85,12 +85,28 @@
       "assets/signals-snapshot.js": {
         "rawBytes": 8192,
         "gzipBytes": 4096
+      },
+      "assets/data-worker.js": {
+        "rawBytes": 73728,
+        "gzipBytes": 19456
+      },
+      "assets/paper-index.js": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/public-paper-loader.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/shard-cache.js": {
+        "rawBytes": 9216,
+        "gzipBytes": 4096
       }
     },
     "totals": {
       "initialJs": {
-        "rawBytes": 582656,
-        "gzipBytes": 181248
+        "rawBytes": 656384,
+        "gzipBytes": 200704
       },
       "initialCss": {
         "rawBytes": 269312,
@@ -105,20 +121,20 @@
         "gzipBytes": 9216
       },
       "initialData": {
-        "rawBytes": 72253440,
-        "gzipBytes": 11777024
+        "rawBytes": 53026816,
+        "gzipBytes": 11182080
       },
       "initialMeasuredResources": {
-        "rawBytes": 73105408,
-        "gzipBytes": 12003328
+        "rawBytes": 53952512,
+        "gzipBytes": 11427840
       }
     },
     "datasets": {
       "papers": {
-        "rawBytes": 72253440,
-        "gzipBytes": 11777024,
+        "rawBytes": 53026816,
+        "gzipBytes": 11182080,
         "fileRawBytes": 4194304,
-        "fileGzipBytes": 774144
+        "fileGzipBytes": 1048576
       },
       "signals": {
         "rawBytes": 51073024,
@@ -127,5 +143,13 @@
         "fileGzipBytes": 8240128
       }
     }
-  }
+  },
+  "initialAssetKeys": [
+    "assets/data-worker.js"
+  ],
+  "optimizationNotes": [
+    "P1.4 removes signals from startup; GitHub/news overview is a separately loaded 36,437-byte gzip manifest.",
+    "P1.5 explicitly includes the 71,944-byte raw / 18,289-byte gzip startup data Worker; fallback modules are optional. Worker isolation duplicates validation code, increasing initial JS by about 18 KB gzip until P2 splitting.",
+    "P1.2 switches startup measurement to v3: 50,501,670 raw / 10,649,085 gzip bytes for all 8,326 papers. Fewer, denser shards have larger per-shard gzip size; the unchanged 4 MiB raw cap still applies."
+  ]
 }

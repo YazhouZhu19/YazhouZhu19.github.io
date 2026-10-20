@@ -1,8 +1,8 @@
 import { z } from "zod";
 import type { Collection, MonitorData, Team } from "@/lib/types";
-import { parseSnapshotManifest, resolveSnapshot, SnapshotFormatError, type SnapshotManifest } from "@/lib/snapshot";
-import { createShardCache } from "@/lib/shard-cache";
-import { createManifestLoader } from "@/lib/manifest-loader";
+import { monitorDataSchema, type VerifiedPublicData } from "@/lib/public-data-schema";
+import { createDataWorkerClient, type PaperDataResult } from "@/lib/data-worker-client";
+export { monitorDataSchema } from "@/lib/public-data-schema";
 
 // A single key keeps an import (collections and teams together) atomic.
 export const LOCAL_DATA_KEY = "medical-research-monitor:personal:v1";
@@ -42,38 +42,6 @@ export const backupSchema = z.object({ ...personalShape, exportedAt: timestamp }
 export type PersonalBackup = z.infer<typeof backupSchema>;
 type PersonalData = z.infer<typeof personalSchema>;
 
-// Public records are separately validated and never stored in personal backups.
-const shortText = z.string().max(2000);
-const labels = z.array(shortText).max(500);
-const publicUrl = z.string().max(12000).url().refine(value => /^https?:\/\//i.test(value));
-const dateText = z.string().max(40).refine(value => value === "" || Number.isFinite(Date.parse(value)));
-const count = z.number().int().nonnegative();
-const paperSchema = z.object({
-  id: paperId, title: z.string().min(1).max(20000), abstract: z.string().max(500000),
-  authors: z.array(z.object({ name: shortText, displayName: shortText.optional(), orcid: shortText.nullable().optional(), affiliations: labels })).max(5000),
-  affiliations: labels, doi: shortText.nullable(), pmid: shortText.nullable().optional(), arxivId: shortText.nullable().optional(),
-  source: shortText, sources: labels, sourceCollection: shortText.optional(), status: z.enum(["preprint", "published", "unknown"]),
-  publishedAt: dateText, updatedAt: dateText.nullable(), firstSeenAt: timestamp, venue: shortText.nullable(), url: publicUrl,
-  version: z.union([z.number().finite(), shortText]).nullable().optional(), relatedDoi: shortText.nullable().optional(),
-  versions: z.array(z.object({ id: shortText.optional(), source: shortText.optional(), versionNumber: z.union([z.number().finite(), shortText]).optional(), firstPublishDate: dateText.optional() })).max(1000).optional(),
-  tasks: labels, modalities: labels, organs: labels, methods: labels, humanSignals: labels,
-  evidence: z.array(z.object({ label: shortText, excerpt: z.string().max(20000) })).max(500), tracks: labels, reviewStatus: shortText,
-  provenance: z.array(z.object({ queryUrl: publicUrl.optional(), queryTrack: shortText.optional(), collectedAt: timestamp, sourceRecordId: shortText.optional() })).max(10000),
-});
-const runSchema = z.object({
-  id: shortText, source: shortText, startedAt: timestamp, completedAt: timestamp, status: z.enum(["ok", "partial", "error"]),
-  received: count, kept: count, added: count, updated: count, total: count.nullable(), query: z.string().max(50000),
-  dateFrom: dateText, dateTo: dateText, error: z.string().max(10000).optional(), coverage: z.string().max(10000),
-});
-const querySchema = z.object({
-  source: shortText, track: shortText, retrieved: count, hitCount: count.nullable(), startDate: dateText, endDate: dateText,
-  dateField: shortText, query: z.string().max(50000), collectedAt: timestamp, url: publicUrl.optional(),
-});
-export const monitorDataSchema = z.object({
-  totalStored: count.optional(), papers: z.array(paperSchema).max(100000), runs: z.array(runSchema).max(10000), queryRuns: z.array(querySchema).max(10000),
-  collectedAt: timestamp, storageAvailable: z.boolean().optional(), error: z.string().max(10000).optional(),
-  lastSuccessfulSync: timestamp.nullable(), coverage: z.string().max(10000),
-});
 export type LocalMonitorData = MonitorData & {
   publicDataAvailable: true;
   personalStorageAvailable: boolean;
@@ -184,18 +152,21 @@ export function clearLocalData(): void {
 }
 
 let knownPaperIds: Set<string> | undefined;
-type VerifiedPublicData = z.infer<typeof monitorDataSchema>;
-// A manifest names immutable, checksum-verified shards. Keep only the last
-// validated snapshot, so periodic checks do not parse the same library again.
-let verifiedSnapshot: { manifestKey: string; data: VerifiedPublicData; ids: Set<string> } | undefined;
-const paperShardCache = createShardCache("papers");
-const paperManifestLoader = createManifestLoader((import.meta.env?.BASE_URL ?? "/research-monitor/") + "data/public-papers-v2.json", {
-  validate: raw => {
-    if (raw && typeof raw === "object" && "schema" in raw) return parseSnapshotManifest(raw);
-    if (!monitorDataSchema.safeParse(raw).success) throw new SnapshotFormatError("Invalid legacy paper snapshot");
-    return raw;
-  },
-});
+let paperClient: ReturnType<typeof createDataWorkerClient> | undefined;
+let latestPaperResult: PaperDataResult | undefined;
+function getPaperClient() {
+  return paperClient ??= createDataWorkerClient({ baseUrl: import.meta.env?.BASE_URL ?? "/research-monitor/" });
+}
+export function getLoadedPaperSnapshot() { return latestPaperResult; }
+export async function searchPublicPapers(query: string, signal?: AbortSignal, generation = latestPaperResult?.generation) {
+  if (!latestPaperResult) return [];
+  return (await getPaperClient().search(query, { generation: generation ?? latestPaperResult.generation, signal })).ids;
+}
+export function disposePaperData() {
+  paperClient?.dispose();
+  paperClient = undefined;
+  latestPaperResult = undefined;
+}
 
 function withPersonalStorage(data: VerifiedPublicData): LocalMonitorData {
   const personal = getLocalStorageStatus();
@@ -206,54 +177,18 @@ function withPersonalStorage(data: VerifiedPublicData): LocalMonitorData {
 }
 
 async function readPublicData(init?: RequestInit): Promise<LocalMonitorData> {
-  let raw: unknown;
   try {
-    raw = await paperManifestLoader.load(init?.signal ?? undefined);
+    const result = await getPaperClient().load(init?.signal ?? undefined);
+    init?.signal?.throwIfAborted();
+    latestPaperResult = result;
+    knownPaperIds = new Set(result.data.papers.map(paper => paper.id));
+    return withPersonalStorage(result.data);
   } catch (error) {
     init?.signal?.throwIfAborted();
-    if (error instanceof SnapshotFormatError) throw new Error(LOCAL_ERRORS.publicData);
     if (error instanceof Error && error.name === "AbortError") throw error;
-    throw new Error(LOCAL_ERRORS.network);
+    const kind = error && typeof error === "object" && "kind" in error ? error.kind : undefined;
+    throw new Error(kind === "format" ? LOCAL_ERRORS.publicData : LOCAL_ERRORS.network);
   }
-  init?.signal?.throwIfAborted();
-  // Compare all manifest metadata and descriptors, not just its timestamp or
-  // paper count. Legacy snapshots have no small manifest and are not cached.
-  const manifestKey = raw && typeof raw === "object" && "schema" in raw ? JSON.stringify(raw) : undefined;
-  if (manifestKey && verifiedSnapshot?.manifestKey === manifestKey) {
-    knownPaperIds = verifiedSnapshot.ids;
-    return withPersonalStorage(verifiedSnapshot.data);
-  }
-  let manifest: SnapshotManifest | undefined;
-  try {
-    if (manifestKey) manifest = parseSnapshotManifest(raw);
-    const shards = new Map(manifest?.shards.map(shard => [shard.path, shard]));
-    raw = await resolveSnapshot(raw, async path => {
-      const shard = shards.get(path);
-      if (!shard) throw new SnapshotFormatError("Unlisted paper shard");
-      return paperShardCache.read(shard, async () => {
-        try {
-          const response = await fetch(import.meta.env.BASE_URL + "data/" + path, { cache: "force-cache", credentials: "omit", signal: init?.signal });
-          if (!response.ok) throw new Error(LOCAL_ERRORS.network);
-          return await response.text();
-        } catch (error) {
-          init?.signal?.throwIfAborted();
-          if (error instanceof Error && error.name === "AbortError") throw error;
-          throw new Error(LOCAL_ERRORS.network);
-        }
-      }, init?.signal ?? undefined);
-    });
-  } catch (error) {
-    if (error instanceof SnapshotFormatError) throw new Error(LOCAL_ERRORS.publicData);
-    throw error;
-  }
-  init?.signal?.throwIfAborted();
-  const result = monitorDataSchema.safeParse(raw);
-  if (!result.success) throw new Error(LOCAL_ERRORS.publicData);
-  if (manifest) await paperShardCache.commitGeneration(manifest.shards, init?.signal ?? undefined);
-  init?.signal?.throwIfAborted();
-  knownPaperIds = new Set(result.data.papers.map(paper => paper.id));
-  if (manifestKey) verifiedSnapshot = { manifestKey, data: result.data, ids: knownPaperIds };
-  return withPersonalStorage(result.data);
 }
 
 function parseBody<T extends z.ZodTypeAny>(schema: T, init?: RequestInit): z.output<T> {

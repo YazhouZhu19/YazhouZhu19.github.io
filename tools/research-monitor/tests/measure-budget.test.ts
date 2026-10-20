@@ -133,3 +133,11 @@ test("resource budgets follow a stable name across Vite hash changes without era
   assert.equal(resourceKey("assets/main-X_9-yzAB.css"), "assets/main.css");
   assert.equal(resourceKey("plain.js"), "plain.js");
 });
+
+
+test("startup worker assets outside the page manifest are counted and cannot silently disappear", async t => {
+  const root = await fixture(t);
+  const report = await measureBuild(root, { ...config, initialAssetKeys: ["assets/ai-worker.js"] });
+  assert.equal(report.assets.find(asset => asset.key === "assets/ai-worker.js")?.initial, true);
+  await assert.rejects(measureBuild(root, { ...config, initialAssetKeys: ["assets/missing.js"] }), /must resolve once/);
+});
