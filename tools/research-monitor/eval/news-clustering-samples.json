@@ -1,0 +1,548 @@
+{
+  "generatedAt": "2026-10-20T14:35:32.144Z",
+  "records": 2380,
+  "events": 2318,
+  "groups": 51,
+  "groupedReports": 113,
+  "maxGroup": 4,
+  "durationMs": 690.399625,
+  "overviewRecords": 450,
+  "overviewEvents": 421,
+  "allRetained": true,
+  "samples": [
+    {
+      "id": "news-event:news:0f10026ca0db76d5c6282b6d",
+      "count": 4,
+      "publishers": [
+        "finance.sina.com.cn",
+        "搜狐网",
+        "驱动之家"
+      ],
+      "earliest": "2026-09-18T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:0f10026ca0db76d5c6282b6d",
+          "title": "诺奖得主Hinton预言十年后 阿里通用医疗影像AI登Science正刊",
+          "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE1qcmhtcGJYa1dHMUMwMkN6QUNpTTZDVFViVlgzbzg1d3I2Z1NQVTZfSXpTOU5HN0szNG1BdmNQeUcxeUNpam9jZGFfRlVtN0F3V1JZ?oc=5",
+          "publishedAt": "2026-09-18T07:00:00.000Z"
+        },
+        {
+          "id": "news:1634e70d8de836dd3ead082a",
+          "title": "诺奖得主Hinton预言十年后 阿里通用医疗影像AI登Science正刊",
+          "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE9xVGxkdTg4OFdwdXhLVDdDUlZwVzRjOFUwcVhoLUtPZG9uRmx6TW5CclFjOVFSQ19HbWkxZXBXS3FhMFR2QkpRVHMxQ254UkJTcE4yWklVNzc?oc=5",
+          "publishedAt": "2026-09-18T07:00:00.000Z"
+        },
+        {
+          "id": "news:3166462393d87b8c0f79e0d2",
+          "title": "Hinton预言十年后，阿里通用医疗影像AI登Science正刊",
+          "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQNlV6aDQ1N2hYUVFEMzdVal9lc1JHbHpJdHRRRVN1dnJVWm9Jb2V4NTR4ZUZWcFNzSmdCczlPNXFtaEFRZU9kTnc2Tng3UHNxTmRPUnpLbXFvYngwVUhONGpza0d2Z0N0NnBkd3FTajlqcV9MQ3BOOGZteldfV21HLUNtaWZTT0VPMnc?oc=5",
+          "publishedAt": "2026-09-18T07:00:00.000Z"
+        },
+        {
+          "id": "news:71cf9741581904988e609261",
+          "title": "诺奖得主Hinton预言十年后 阿里通用医疗影像AI登Science正刊",
+          "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOcUJIUk5SdWRBaUMwNmFvUWxCVWx3MnduZ2dBTGpSWS12a2lBeWlxRTdJaGdjMHhySmdVQTBZYlphanoyQ0xtZWFxbUNsZ0hFMmpmRG1jRGVfdnhLd1VPQmJKVEZOZmR5QTdfcFB5SUQ1VW01SDJUNWw2MHk4eEplQ0tFMkc3QXdsNjgzMktzSDBiWl81dWZNWVdES19ONk1objdIS003SXpLTG9nZVN0NVJB?oc=5",
+          "publishedAt": "2026-09-18T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:14c9468aba31ca985654be39",
+      "count": 4,
+      "publishers": [
+        "Investing.com",
+        "Investing.com Canada",
+        "Investing.com India",
+        "Investing.com UK"
+      ],
+      "earliest": "2026-10-13T12:10:00.000Z",
+      "members": [
+        {
+          "id": "news:14c9468aba31ca985654be39",
+          "title": "Agilent to acquire digital pathology firm Proscia for $240M By Investing.com",
+          "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNdTRWQWlUd1UtTzk5aE5CbFlaenZzaHRnRkFtZ2JOdFZ1ekprdHljbjMyQVlnUGtQMmsyZ3lmc1l5WVVDN016UEFTWm5LaEVfWkRaRDl5YTNFd3FBWDk0bm1QUDdmRXV6NkxDenRBLVlFVmthd3Q5cG84Z1VIZEFMTmd2djJQeS05d1ViWk9iNWJSZFdSODdaZURsMEFxR1M5MS01YnBweUJZTVRNSWxSdGFnOWdORHFZdWxJ?oc=5",
+          "publishedAt": "2026-10-13T12:10:00.000Z"
+        },
+        {
+          "id": "news:4e4a135878a15f28072fac10",
+          "title": "Agilent to acquire digital pathology firm Proscia for $240M By Investing.com",
+          "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOXzBxbkRoY3hkazdWOGVLbnd1dExkUWJtdUVjbTFybXpGbmhXZzBBODJodDcyeGliVnRSTnBFemtncm9ad043bnNDNWg0QlV3YUE5SFFCc2Q1YXZUSXR0WGlsVFY0RFVoeDY5dnZTb0h1VVFad2tCaVpkZkh1b1lYYmdJRk5Sa0NJOEtnN2Z2Y2JzVWo4U2Nnb0o0SVZhMDdCMkdrMS1BSnp2eE1OTFB4aFk2R1BIRWJ3OF9F?oc=5",
+          "publishedAt": "2026-10-13T12:20:46.000Z"
+        },
+        {
+          "id": "news:5815f12ac44cc01bac1578c2",
+          "title": "Agilent to acquire digital pathology firm Proscia for $240M",
+          "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOV2lHOXZMQ2xvSUtVdHM4NmRqX3hQV2ZoNS1CTnh1Vjhpb1QzX3ZCQTNnemZXcktMTXZwcFBuYmVnbld1TFRjMmVJck5kNzZianFIUDdGa0dLSWgtTzhtTy02WndDeENVeFphNWk0VlBLSzZoR3hZQkJ0OUo3RVJOTGNaU0RpY1FITTFYNW93ZDdTMlZ3TE5WWFFJMmpwQWFwdThjbjg4Zmo2c0VzMWxiZzR1bDVWUQ?oc=5",
+          "publishedAt": "2026-10-13T12:35:57.000Z"
+        },
+        {
+          "id": "news:a2cad1e5073d491dea1cb76c",
+          "title": "Agilent to acquire digital pathology firm Proscia for $240M By Investing.com",
+          "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQdGZ1Y0d4YWRoX1pBck5zLVhUVGlWVS1zb2txN2g5eDBtUmxLVlZOOUdwMXVEazRienFVLVh6LWw2eGhsVGl4V0ttam5fYWxlNzFMaEo0cTJmbGc1U3RBQnZzRHJTR0VuemRlempES1pPQWdraUJBZ2dOTWwwQUs2RU9tZDlqbXZkeERacUdVbzlJbWhtSlF3cVF2UGlOQmFWRVVpbUhvcXQyN3NNdjMzZXNTcmkxS2ZpblM4?oc=5",
+          "publishedAt": "2026-10-13T12:45:27.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:26f25c83c5f7bdd6af4fc7d0",
+      "count": 4,
+      "publishers": [
+        "BioSpectrum India",
+        "Digital Health News",
+        "Newspatrolling.com"
+      ],
+      "earliest": "2026-10-15T10:41:57.000Z",
+      "members": [
+        {
+          "id": "news:26f25c83c5f7bdd6af4fc7d0",
+          "title": "Aarthi Scans and Ashoka University’s Koita Centre for Digital Health Sign MoU for Research Collaboration in AI in Medical Imaging",
+          "url": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxPU0JrWGZKa2h0eUZWVjhrQlZ3VmF6VXBYdHcxZnduTEk4Vzk0N3ZxQjFVQlVwSDRUbUlfeHlqZTgxVS1PWEJoU2htaGFLSkZQZElTcDFwSWJzNHBRZUU2V3Y3VENyUXhNMEJFUGZzOHFBdng2eExjb1lUeFVkZjhkM2RvcFBCSFZuOGxoRFpHMzg3amR2dGpWeVNSeG1PMVhZT25STDRnaW9LN1BWSmYtMXA0LXRLNGFEWVpJalhHRGFEaFFNajlWTXgwNVdtd2tNd1ZRNDVmeGxKOFFaZ1lnMFpUOFdJaXVfNTJmeQ?oc=5",
+          "publishedAt": "2026-10-15T10:41:57.000Z"
+        },
+        {
+          "id": "news:5bdb191d10caf68840344efa",
+          "title": "Aarthi Scans and Ashoka University’s Koita Centre for Digital Health sign MoU for research collaboration in AI in Medical Imaging",
+          "url": "https://news.google.com/rss/articles/CBMijgJBVV95cUxOMElDeXM0dWdCbEdCdzJGb0FHMkdwem5QNElDSF9iSjBRWmZnQ1BKZWI3bmxLZERtUFhBT0lGbF8xWGpNWHYycnN2NGFxaFJ5SWltV0E2emZudW42ZFpMMW1qbmZSQmljU185YVNiZ0h4eWNxZjB5cGJTOUJXd1lyMW9YUFZIY3IyWHdMSjctd2tHemVZb21zTVo3dmJaNi1hSzJvUGtubXJOMVJtako4WkJlZDZQQXVBd3hsTlM2T0pkQ01NVTY3UWFrdkZWWUU0OUNUbmtYNF96VUhFYUczbmRYT0dXNXp0YzlCVzBVb3gwMkJPVG0tNXgxU3R0WVlLUXBxTkNXbzgzQlZUU3c?oc=5",
+          "publishedAt": "2026-10-15T10:45:26.000Z"
+        },
+        {
+          "id": "news:164667d93fabaef200f8a30a",
+          "title": "Aarthi Scans and Koita Centre for Digital Health sign MoU for research collaboration in AI-based Medical Imaging",
+          "url": "https://news.google.com/rss/articles/CBMi9wFBVV95cUxPTW1YSGJGWWRjTzZQMk52WFZoZjdLazViM1dyOEhZbDA2WndueEY3MWZNU2hRRDd4Q1RSVmR4MVNRdkt6VkV5REVBUjh1MkNNY1NvY3pPLWJ4T3IwUkdSTVNWVXVPelpRQnpXRl9aOEE0RG9LT2txX3Flb0ZnY3ZyMnoyQ2lYRWZpRzFBVFNOZVhWaW1CcGQyMWVkMHppTXlrQkVzeWhMMk5PVWN3bUtwX01mSEp3UTZIM2pyMkduaW1qa3lmemcwdVlSLXV6Z1N1WDNZTVlZd2tlZkpSNi0weXRzTnRac1NhSGZ5MEQydWVwdHZvYjlv?oc=5",
+          "publishedAt": "2026-10-15T11:40:34.000Z"
+        },
+        {
+          "id": "news:a4b31389da75f48b0135908b",
+          "title": "Aarthi Scans & Koita Centre for Digital Health Sign MoU for R&D Collaboration in AI-based Medical Imaging",
+          "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxOcVdJRkYtbDRqS2Y1cEN5eWJ2NDVmdGZCOHZSbWdjVEZKdlFJd1lSM2FtUDBYWTRVS09lX0FjUm9qOC1qNkNTTy1lNW1NdW96OS1iNUp3OEZrSTRweUo4azlxcEJaME5Vbkg2TEE1a08zT3ZGYVI1UEVoN3hQWkxmU0RFdDhkRG1zMGVUUnFMOXJKWnBhNHBkMnFheDhXV2k3Z1ZBbmZ0VllQVG1PLTZuWW9tNE1tcjAzcUJmMkh3RmFkSjRzRVRZNkZYd1BBbURoQktr?oc=5",
+          "publishedAt": "2026-10-16T09:39:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:2b2f130d202ab87b98c6e56e",
+      "count": 3,
+      "publishers": [
+        "光华日报",
+        "科学网—新闻"
+      ],
+      "earliest": "2026-08-23T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:2b2f130d202ab87b98c6e56e",
+          "title": "全球首个磁共振脑机接口全栈式解决方案正式发布",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE1wWk9OSTdtTmRuVzNLYzU5UTJSbGlQcXJuUUFPelhEaDN2aUpTSFNhQjEwNmhSMXIxdUNxWklqN2dOV0NtZHNDVlVEc2M4dUFaXy1Bd3hPemRpbVhxZ2FoZWRGLWg?oc=5",
+          "publishedAt": "2026-08-23T07:00:00.000Z"
+        },
+        {
+          "id": "news:d82b95bfbf32e64239ee1f64",
+          "title": "全球首个磁共振脑机接口全栈式解决方案在天津发布",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5pR3o0UkgwMTFCTnhfVHVCQ0VaVlpRUC14Qk9pZXQtdXRBSkM2eFFuM1RvWWo5UXlQUEhueUI3SDVhVFB3a1J1YlNPZ1hzQzlYYW9DdjJTVkVtMzlXY2tPY0NWd3o?oc=5",
+          "publishedAt": "2026-08-23T07:00:00.000Z"
+        },
+        {
+          "id": "news:76d4d298035b2fe9901de699",
+          "title": "全球首个磁共振脑机接口全栈式解决方案在天津发布",
+          "url": "https://news.google.com/rss/articles/CBMi1wJBVV95cUxNclFwZ0J3R3NxSzY2ZmNzRkE5NVMxczJ2S1JsWjlJN0VpUVZhTF9wcTNneVppdWNvbWRWdVk5V25qeTVLbEJRbHYyUGZxT1NDQS1kRk0yM2VQOUtwWHVyT0pXbVpVLTM0MHZkd0Vld0JNeEFyN3FWbER6QkMyR2Jwd0dpY2t6Nl9GYVE3UXlaa2JxaFpkU3paX1VzdnpfNEx5VTZRWEk3bDBfY0trdTNHTUIyMGg5V2hWb2dWa1ZTWDV4SElscmZCNE1EQmpMVjVwUzV0MGdPSlB5MkQyejBLZHhMZlI4dlFSV1A3OGRHZjFoNEQ2TWpqZENjOFk0TEQ1ejJGU3hVNGxKRzRXRmtaWnZha1dvcTh4YmxtekJUdFFRNkcyNVctS0gtS3JZSUYwODloYU1HT1dxRnZGS0h4cVY3R0hNYnhiMXJXdjBxMUhIMEdBeC1B?oc=5",
+          "publishedAt": "2026-08-24T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:01700497b03b82ac71a58461",
+      "count": 3,
+      "publishers": [
+        "Dainik Shiksha",
+        "The Business Standard",
+        "Xinhua"
+      ],
+      "earliest": "2026-08-29T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:01700497b03b82ac71a58461",
+          "title": "China issues ethical guidelines for AI use in medical imaging",
+          "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPM2djeW40ZHgtNFV5YzFfOGx1cWdBbllQU2tSVF9rakpoRmwxcTNLQTNtWjEyc2pzaDJsRnRESVhhNzlfS21kNlVWbjR6VEl1RVdCb0szS3Z5TWJhQzlzdURVeE5uOFltTUhVWm9jcFhDNnJ0eUw0SDEzc0M4VkxFVVNBZkF0OV9zVzQtSnRKWWhacnY3N01jVkdvNG9VLVJ1R3d3UTRUcmpIQQ?oc=5",
+          "publishedAt": "2026-08-29T07:00:00.000Z"
+        },
+        {
+          "id": "news:bd261228aa3e7a29e1f7d4bb",
+          "title": "China issues ethical guidelines for AI medical imaging",
+          "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTFBoZ1BKNVVKS1YxZ25XbmlTYllDQVZLY0F0eVR1QnUzNEF3TnV4cHMxU1VqQ25zSjhadm5zS1N2d0x0eWRZRmduOEV4UGNweUx5S0NnbW0tZEpzcFVudHZwWXZudVNwNjBVcXJtNTNMRVU1TTNES0c5aUIyZFo?oc=5",
+          "publishedAt": "2026-08-29T07:00:00.000Z"
+        },
+        {
+          "id": "news:cbd84072e01d1a869ed98ecf",
+          "title": "China issues ethical guidelines for AI use in medical imaging",
+          "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxNYk5zMTF0aGRKVS1FaG96dGVpcnhuMHdFU0J3Zzk4QXU5R2JjTEtieUlqRU1tQUNIOE55N1J2eFV4UHFDY29oQnV3WGJmU0d2a2N5NEctdm4wY2JaZTd6Z2k4OWlMRExfQ3RoVDd4ZThDRzNELWJUOWlVdU90Q01wS0VVb1YtWVdEeFNKQ0t4U2ZPM0ZMZWd2Q1FB?oc=5",
+          "publishedAt": "2026-08-29T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:8566a79bcc701c2a175a1c13",
+      "count": 3,
+      "publishers": [
+        "Awaz The Voice",
+        "The News Mill",
+        "ThePrint"
+      ],
+      "earliest": "2026-09-17T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:8566a79bcc701c2a175a1c13",
+          "title": "AIIMS transfers AI-based mammography technology to BPL Technologies",
+          "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPM1ctR0s3dG43TkpCOU5Ya0FHeFZqM1BuTUZOZGtOaUtNMkFhZ19jZy1MTWJ4MnB5ellUTW5UQkNFaWp6d1hXVmpTNW03REhVa0Q1QTVNa0prek9NeUxqWEVjOTBRZ0tDTGVQa01DZUgzVENQNlFWYWwwaGZ3UVJ4TVBWVlRnd0ZqWFRjNDFMMHVHRVN6Rzc1RE93UVhtelJmYkVOLdIBqgFBVV95cUxNbjlndU41RWpBOXVsTGl5SnpZTnVnbWNabnRIcUxxNnlLUC1lR1VQMllEaFVNQ3R2Y2JrOF9RdEhkZXhFTlBocG1OMVZtTVQwZ0pZV2xJR3lKX0g5SEwzN1o1dHJzWU4tZ3RDTTVzb29qY0cyb0h3MXVaUDRKMFlyaXlxNXlFX3dLYkFQMlJ0eVNqbDJadHBFOWVpSzdJek9keTV3Mk5mOGZBdw?oc=5",
+          "publishedAt": "2026-09-17T07:00:00.000Z"
+        },
+        {
+          "id": "news:bc7f540bb766919a352e8db4",
+          "title": "AIIMS Delhi transfers AI mammography tech to BPL Technologies",
+          "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOX214ZV8yUzZPaW9iUllhUk1XTFl0b0xMR1JYM21BVU1NNGhGUXUxQnFET3QwdE5LZlV2S0llazVWRUM0V3lpd3ZfNm9paU5UUGNmaVhNNjdvekM3cVN6UWsyd3hfZDU1cVNyM2pZR3lDNVg4MzdPZENabFYyRVFMRW5MaXhxdV9KYUZqS04xT3RXSHZDeFR6Rl9R?oc=5",
+          "publishedAt": "2026-09-17T07:00:00.000Z"
+        },
+        {
+          "id": "news:76e0f34842261bab936cc534",
+          "title": "AIIMS transfers AI-based mammography technology to BPL Technologies",
+          "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOcE9tZlZpdGw4V25MaUdRQmk1TTNJXzlEdnBLTW9BZWJrRGVJcVM3c3BNSmFsbElCMjZYdElJSmp3RlBXajljOGhNdjdtakRkb25RM2ZjT2lNWEFTdzFKV1ZBdWhfZExrdFFjMWRuY2ZQTXZaQ2Q1eUFucXRROXk5Z1JJX2RXeGdkc0RvSzRya3NlRFhNZ3JRdjA2amI4Y2U5VnNocnVuNTFhNkY4WGMwdDRMNzI0N3JhYXc?oc=5",
+          "publishedAt": "2026-09-18T07:01:59.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:2ada071ee294cc252b2704c5",
+      "count": 3,
+      "publishers": [
+        "Macau Business",
+        "PR Newswire",
+        "The Malaysian Reserve"
+      ],
+      "earliest": "2026-09-23T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:2ada071ee294cc252b2704c5",
+          "title": "HKSH Medical Group and United Imaging Mark Launch of Hong Kong's First Long-Axial PET/CT",
+          "url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxNVmpaMlRhZGwySUF5Vzg0WEUzeWstaV9PVDFqd212eWFDZTVfWnZBZ0V4STNJUGhaczR1bDF5a3g3VVN6TmRnMUxhaEF4S0RXek9kU1pocnNZZ05PajFQRjhaMUJ3cjFiTXFlMUM3OVBhVG1VZmMwTEVRdzdwRS1NaGFaekpjLWEzR2ctS0hJZnVSSWN4T1lfeDNsSENucWRuZWZhSFhxUV9zSUxBeVBSQ0VnZmFvVlF2NjNUMmRQTTVsaEFTLWVZSjNDRXptVUJpcnNPQVhyOUZYaERIaDI0Ug?oc=5",
+          "publishedAt": "2026-09-23T07:00:00.000Z"
+        },
+        {
+          "id": "news:6f765d165d680be8a6fd8a5a",
+          "title": "HKSH Medical Group and United Imaging Mark Launch of Hong Kong's First Long-Axial PET/CT",
+          "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxOck51RXNjaV9uXzNIdEN5TDhrU1BYWFVYTnFDM1FRMHJRXy0tSGdfNUc3Q2tER0FkLTFhckxkU2xmcklSVkVsVElTcjEyUGctbXBKb21rcjc4alNOcHllWGRjLWlCYmNaVlJvang4STBqNG1uOGhRVUpDSFJHU1IySUM5bmFvQy04V1RaUHY2UWxtbHpTU3E4d0FfNmZLRnlWQVVRY1kxMFZRdXBVbkRWaHpnREVqakRsNDlZUDljU0tkc1NFRE0xQ2RQdw?oc=5",
+          "publishedAt": "2026-09-23T07:00:00.000Z"
+        },
+        {
+          "id": "news:e94a756eba2dc6803c4d4ede",
+          "title": "HKSH Medical Group and United Imaging Mark Launch of Hong Kong's First Long-Axial PET/CT",
+          "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPWjVSR3Y1d0VfTjRNOTROOFRrWkgwTmF0d1lrd3NoU1habm5USGI5WDNNSm45SE5Obk5RZVdJNk5oZDNsYzNPSWFUYWtjdl9IUDhja1hGY0NwelR6c2xyUTJrRUxzTlhyLTYtMUVrS2tkQzRPbWI2TzctZ2RSSDA1Y1Y0TkJ6WFNDWDA1b29zRWdZZl9zYlBFQWRYN09rQkdKaF84YUxyb09EekxnVml0UEQxNEc?oc=5",
+          "publishedAt": "2026-09-23T11:53:08.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:fb8dff5845a23303a98c7ccd",
+      "count": 3,
+      "publishers": [
+        "KLSE Screener",
+        "Malaysiakini",
+        "The Edge Malaysia"
+      ],
+      "earliest": "2026-10-13T10:26:00.000Z",
+      "members": [
+        {
+          "id": "news:fb8dff5845a23303a98c7ccd",
+          "title": "KPJ Healthcare introduces AI-assisted colonoscopy at Johor Specialist Hospital to support early colorectal cancer detection",
+          "url": "https://news.google.com/rss/articles/CBMiggJBVV95cUxOU0E0dXBqOGZRSmttd09SVi1HUTZGSktjbUJid0NxdUVVUU1FRFRYeUE0akM4alk3T0pLWEJCRERuNHJOMUFIMFJheWlreUx0WW1jNi1IMEIyLXJJRW5ONEZlbzlZQ1hNSTNnNU5rQVUyLXY3X2tEQ1dLZHhieERzQXVXMlUtMklFblJzR3Ryc0VNMkhwZVlac1RPamVfdkU0bXdwRXlEdG44UWdMRXNDeDZIb21OaDlGOEpGY0htd1FyYXR4TzZGbUpUQzUway16MkJKWGNfdVJzVktabFlGV0c0UG1ESkgydFhMak1QQnVEMmpsM21YQzVhOGM4SURONGc?oc=5",
+          "publishedAt": "2026-10-13T10:26:00.000Z"
+        },
+        {
+          "id": "news:d95968b1ab2f6d8e9589aafe",
+          "title": "KPJ Healthcare Introduces AI-Assisted Colonoscopy at Johor Specialist Hospital to Support Early Colorectal Cancer Detection",
+          "url": "https://news.google.com/rss/articles/CBMigwJBVV95cUxNbkI3XzJIaUVuQTNGX2MycE1ueG9VWUtScnJtMVhxb0pmOGtjeXV1SW9JdFh0Z2FPWFRFeUZ6WW01WkoyaFJQcXQxVEhQTFMxYzB1eDMyQmV2WEgzeTJWdDRKb3hSdHJfMDE0WXI5aHY0SUVKM3hyUkVkUHRnellQd0xrS0lPNG1iaW5qd3p5eFVPS1Z5d0ttWTJtRGo1VnhDTlVHbzdHMnJudUNnTUZZUVFDcW1TUG84b0pITHZoQjNXWUpwUXE4TEo4V0JtR05xT0p0bHFVMDFDbV9LbThhQkJSelZua3F5SGIxamgwZkV2RjROTktxUDRIQkZReTc1eU9n?oc=5",
+          "publishedAt": "2026-10-13T11:09:27.000Z"
+        },
+        {
+          "id": "news:8a8411b83f1a83cd9256c19d",
+          "title": "KPJ Healthcare Introduces AI-Assisted Colonoscopy at Johor Specialist Hospital to Support Early Colorectal Cancer Detection",
+          "url": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxQdTBraU52MExZUHF0bEZ2cXlBVE1sdUJZZ2RpakFRaVNLOXBla1hqZ3VTaVNCSHNjZDlpXzE5UEl4VFIwVVdmd1R5eGNjYVVLOUxDdl9JMnhKRFl5WEE1V1p4SmlVVTkwQ3BOMHg0OUJiand1VHdZZXVuWGVRaklERUNCYUVTYmVhVEVxVzI2ZEQ2eld4aWpPQjlBS0J4ZjNqa1plWE5xOXE0Vlp3Um56d1NkY1J4NHRKLWU5TkNfMS1valZBUUJNOC1xSy11UEFXQjBQM3l5Mng0cXY3NlR2R3Y2Vzl5YWFIeWZDeTBteUNsMmxZRUtwdU1MSzFqZw?oc=5",
+          "publishedAt": "2026-10-13T11:10:59.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:f26ecf91a505d9a4f2ab4f52",
+      "count": 2,
+      "publishers": [
+        "King's College London",
+        "Medical Xpress"
+      ],
+      "earliest": "2025-12-05T08:00:00.000Z",
+      "members": [
+        {
+          "id": "news:f26ecf91a505d9a4f2ab4f52",
+          "title": "AI brain scan model identifies stroke, brain tumors and aneurysms",
+          "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBpMnFyUzl1c1J3UV9ySWQwaEJ2Vjk2VEZlTnhYdFR6bWJzUDZvRzVUVlRxaXVYdjNfN2laWVF2WUhQRnpCWS1fbTZMQ21xR0pGWWsxYlBYZUN0dmNwMzhFSVFGNjdrYWpkNHl3UTc2MnJTNlVZdkx2VndXb25jcjg?oc=5",
+          "publishedAt": "2025-12-05T08:00:00.000Z"
+        },
+        {
+          "id": "news:68b829562ff5fb6d5d29bb3f",
+          "title": "AI brain scan model identifies stroke, brain tumours and aneurysms",
+          "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQREtkR040UGttRVFEMGhJM1VrNk9VdVQ0UW1INXFrSlgtOGh3eDkxMmhJREpXMG9fQ0I4alRIM0U0VVBMajltbEN1aTRoQ2NMZ3pVUHJxQXpfOUJwMnp0ZlFOLWE2dzBZcDVxaHQ2dlJoLVdQblBNaERmZEI3cE5JMzZSUzBZcXRyVEZPTGZXeHRmcVhGRmMw?oc=5",
+          "publishedAt": "2025-12-08T08:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:13b57b93531103fe9b055ed3",
+      "count": 2,
+      "publishers": [
+        "EurekAlert! Science News Releases",
+        "Medical Xpress"
+      ],
+      "earliest": "2026-03-06T08:00:00.000Z",
+      "members": [
+        {
+          "id": "news:13b57b93531103fe9b055ed3",
+          "title": "PET imaging study reveals how ketamine relieves treatment-resistant depression",
+          "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQdzA0NGJzb05yTDJEcElaV0dic2dNOXNhRVp0N0hSVVVDNFEyWjZoblZvUFdYTGRlQXNzSWs1ZURjSlJEeWUyZk9BYXpYN1VzR05XM1FuSjlzLWlXMkZsQ1I0ellEam9nT3pyT0Z1UjdGSkRKUGxuUjliQ3NhcFVxVzFoa2w4TVFf?oc=5",
+          "publishedAt": "2026-03-06T08:00:00.000Z"
+        },
+        {
+          "id": "news:859b8c7d61a4321b8825877d",
+          "title": "New PET imaging study reveals how ketamine relieves treatment-resistant depression",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1DMW9IdTlWSHFfNkV2OC1pYXpmUEd0ZVI0bEVaVlBUeXRxOHFGdWQtcVlyLTVCbGhONGJiNjhTQVRfVU1vcWtsTXN1TVVsaXF2RnVIMEFnRUF2R0xu?oc=5",
+          "publishedAt": "2026-03-06T08:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:44107c9d63b510be13768aaa",
+      "count": 2,
+      "publishers": [
+        "finance.sina.com.cn",
+        "中国科技网"
+      ],
+      "earliest": "2026-03-30T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:44107c9d63b510be13768aaa",
+          "title": "“医学影像大模型第一股” 德适登陆港交所 市值突破186亿元",
+          "url": "https://news.google.com/rss/articles/CBMi9ANBVV95cUxQaUQ5ZmVwWVItWWFGSWowV0FGeHhQV3p4V04tY0hNUlNzWmhCa1ZtRjgxUHpJRjctb0Y3azhDZU1TX1EtVWw4OUdyZnhfWGVUSjdlMGk4MUcyRkpFRnZmNmpDNkd4Yld0N0NfODdFejFVcXU2SzRWakZiejFfbXJYU19SbHc3TE9XRXh1THhndGpYdW9Yb0YzZ1lZSVNVM0RfaWNaWS1WM1NqZnB3dGFqSEdqR2NaODVmTmJJZm1FRnoteVc1ZXVid2d5VEhPYjJRS1JGQUN1c3JVb3QtMkxsSWpKTDJQTTJXSzA1Qzl0VkxfU0pfeGVSd3BLeHJJQk9VazNYUHdJa3BEMzRxM0syd1BoRE05dHJQalUya2FCTFpjRC1aOVVIMDFrOWxDVGZpM2RUVnA4LVQ3NnF4ZEVOa2NiS3RZcWtlY09fN2pfeVMwMlJnTTZqWEF0TFFFMmNBUWYzMEU5MjdwY0p0MVM4elE5cGo5b1BTb2J1U2RyZGc2NjFZV256TkhmOGxNMXdSX29DSEViX3JidWQ4aXVPMzhZdHRNYUxMVXE4RU9iNmxpSzI1NVNKUmd3VElFTWVWaWpueHRNcUhwSWRxcDFKUDRFWU5vaTlSeDFGdkNKc2pBeks0aXQ4OEtmVGZiazB3MWZseg?oc=5",
+          "publishedAt": "2026-03-30T07:00:00.000Z"
+        },
+        {
+          "id": "news:d940b806f12c0cb1a274db3e",
+          "title": "“医学影像大模型第一股”德适登陆港交所",
+          "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE14QTkxd1hCUE5LYWoyVkhMajdDbHhlN0dZdjVUZ242ZGJ3dDBKVXEtNVEweUtJZk5mNklmRGZwOV9zdktDeVVwWWtFVl9MUjhWU2NuMHpaUXZYcDlUN3FjbHFGZEJPWGcyTnA1Rk0yMDg?oc=5",
+          "publishedAt": "2026-03-30T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:cb602fe64997428900218938",
+      "count": 2,
+      "publishers": [
+        "9to5Mac",
+        "The Mac Observer"
+      ],
+      "earliest": "2026-04-06T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:cb602fe64997428900218938",
+          "title": "Studio Display XDR Medical Imaging Feature Gets FDA Clearance, Rolls Out This Week",
+          "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNT0JZZ2xYVk4xbTBSeFd4SW5kSUwxNGlpWVpacUh3Y0g3bEN5WEh1bzJPNHdPTjM0U0tPVG1RZmVCWDZUWXJvUFh6WHBqUXBLZk8zX3pSSUN0UlJtOUpDbUFMb2N6aVVOdGlPQUtZVzdxVFd0YUNwbjRISDhYS2hFb0VNWE5JeWFqMVpUaHpvMWhXRDA0UG9wRzZkMmtwSVVpZEwxeTRIQi1pMXBmUnE5R2w0UHFRUQ?oc=5",
+          "publishedAt": "2026-04-06T07:00:00.000Z"
+        },
+        {
+          "id": "news:e22f880f56ecc0bff929bc1f",
+          "title": "Studio Display XDR medical imaging feature gets FDA clearance [U: Now available]",
+          "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNTkVReW1kYXpSVTZ1akhTVGUyS3c0Mlc1X3hLM1ViejFoNnNWdXFmZGJ4bXc0RV9PalBDazhEaTB6bzJoQlJFRlRTSXQ5QXlFYURUdUw1cWNBTFk5MWYwY3F1OTJpQ19zWkRTRFBrVThDcTd3b29LZGd5eXR0cV9JZzBla193SnNhUmNfdnh5dWdrdw?oc=5",
+          "publishedAt": "2026-04-07T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:57f9949c7a3ae7a5ccf1e6a6",
+      "count": 2,
+      "publishers": [
+        "生物谷",
+        "美通社"
+      ],
+      "earliest": "2026-04-13T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:57f9949c7a3ae7a5ccf1e6a6",
+          "title": "突破医疗影像核心部件瓶颈：先导医疗科技亮相CMEF 2026， 发布材料至医疗系统垂直整合解决方案",
+          "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTFBfUUptLUJLcS1YdmZqSXF4OWdZWjdPMTVWcFJZcTYzVlVTVjZKcDZQY3FNUDhWZlpkbWdfYnJYR3JybjhLUHNpV0lSSG5kazVQOUVvNXVFcw?oc=5",
+          "publishedAt": "2026-04-13T07:00:00.000Z"
+        },
+        {
+          "id": "news:6b19152ae91e00b046da014a",
+          "title": "突破医疗影像核心部件瓶颈：先导医疗科技亮相CMEF 2026，发布材料至医疗系统垂直整合解决方案",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1zMzBqQ0ZVNTBEMUhsM1llTlVIb3RNbnU4SGJmcHRSUDM5RHQ1bGlfN0VQd0YyMGpXckoxZk11QVN5WWk3RlQ0Snh5R29DX3BPNnA0cHhDYkRwWXQ5?oc=5",
+          "publishedAt": "2026-04-14T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:31f24d7aa99a50075521558d",
+      "count": 2,
+      "publishers": [
+        "Business Wire",
+        "Cleveland Clinic"
+      ],
+      "earliest": "2026-05-21T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:31f24d7aa99a50075521558d",
+          "title": "Carnegie Mellon University and Cleveland Clinic Develop AI System to Interpret Cardiac MRI Scans with Enhanced Accuracy",
+          "url": "https://news.google.com/rss/articles/CBMihwJBVV95cUxPdVhqZ3hMdUhfWjZBOGV3eDJ4RWluaGdtUDFmeWRZdHFpWjhINm5PQVYyb0NzdUJnWElfRVdsdl9sbnByWkt4dzBWdzVwdnZWck1RRDlPXzFuZzVQSkFsNkVod3BDZzRoOGEyaWNjYTdjay0tblRzWjBzZHAwN2tPZHVXZjVGWGxYYmI5NHVkckdUVklIQmtSVnRfMGc3ai10bXh1emc4T0dyX1htWXFGWGkyZTlSaThaZlppdUxRX1hFT094ajJTMGRuWks5QmstckpFalpFS2o2aUd1WW1tN1B1NkRHN01Pamc3Z3hVR1pPaDhaODYxQ3dqZ2ZMTjAzV2tnZ0tnbw?oc=5",
+          "publishedAt": "2026-05-21T07:00:00.000Z"
+        },
+        {
+          "id": "news:51dfc167ff794fc3cdc145ee",
+          "title": "Carnegie Mellon University and Cleveland Clinic Develop AI System to Interpret Cardiac MRI Scans with Enhanced Accuracy",
+          "url": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxNdFB5ZDVyU3NrNHhyT2huTUNNNFdPdGVubTgySUppZlg3QnhLbWdQZ2VSSmtQb2NpNHJ2OEQwWWZ4MmgzbVBtMENEbVNhR2hkWUlPR2RtUWlKTjQwY2dXZWpxcDlITHBwSnJlV0cxSWlkbHR6ZFRaRWpnREMtWlJnOEdhaG1NaGQ5OElEa0steE9hUWV1bl9Lak1FZERzT0RDT3RRNWZELWhkd1lmUGRPRTZkZlZpeG1WSmRCYXJlUFk5c3dza3JWRzBEYWt1eFNhSWZtY00zR3U4cnMtZFYteG9CdV9LTFNGUVpJZkNUVDl5WWxISDB6VDk0NA?oc=5",
+          "publishedAt": "2026-05-21T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:cf70808872273d68dc57f3ef",
+      "count": 2,
+      "publishers": [
+        "BioSpace",
+        "Business Wire"
+      ],
+      "earliest": "2026-05-28T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:cf70808872273d68dc57f3ef",
+          "title": "Acupath Laboratories Integrates AI-Powered Prostate Cancer Risk Stratification Tool into its Digital Pathology Diagnostic Pathway",
+          "url": "https://news.google.com/rss/articles/CBMilAJBVV95cUxQVWExcjFfVS10UXBVTm1MbjRVc2RrZkR4cGxIeTE2R3VaUVBLSENsMHJEeS04Slo3VjF6U2FyUGtubDg3SEFlVGFRMy1TVlhsWW4xT0FYYUtnTU1uNnFCa3FpZFRTVGJEZ0FYU1cwcy0xX1VVUnJLcHQ3cldZZkR0Q3FXcUozdFBJRDlNcmUwSDdKbndyNEx1WWp4Y09UUHBaYzd2MFFXN0tpTzdaRTkyOTRwd3VDa2tlS1pfaDFSelJlRnRrZE40TEhYRFNwUUo4NU5QeldFSDFNRjNfalkwS0dDdUpCalBxeEQ2MDBFVl9BRWtDc002R3lyWld4MzBJX0VpSWxmbXBycF9mQ0tHWGVtRG4?oc=5",
+          "publishedAt": "2026-05-28T07:00:00.000Z"
+        },
+        {
+          "id": "news:e978400fedbac12ba3122379",
+          "title": "Acupath Laboratories Integrates AI-Powered Prostate Cancer Risk Stratification Tool into its Digital Pathology Diagnostic Pathway",
+          "url": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxQdlN1dzFsVTZxYzllQkpjbnliMkI0N0V6RFhYS05IOUp3WUNwd2Q5REZDRFowMDJGQUFOM2t1Mkt3ZGhaSVZiQnNGdE83OWttdl9OV2c3SVFuTzBySG1YRVNMTTM0cDl4Ul9FTGJlS2U3ckJpSU1NNXQwQUs5NTk3VWFzdXBlQ2Q4ajZVUWhpZ211MmYtMDNmZmxERmpGV2ZzVjBVMHRQNUFwQlNUYzRCbTdSWklGSUlnUjd6NjZzcmVReTFGZktRV2NURlQ1UDI2MlhCM1E1WE9IUmYyUGwxbllrYjluNnYtd25hLVIxTkVoQmxZRFliM3gxUHlrUQ?oc=5",
+          "publishedAt": "2026-05-28T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:f3de5dbf2763366534670541",
+      "count": 2,
+      "publishers": [
+        "Diagnostic and Interventional Cardiology",
+        "PR Newswire"
+      ],
+      "earliest": "2026-06-02T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:f3de5dbf2763366534670541",
+          "title": "FDA Clears Clarius Ejection Fraction AI to Deliver Objective, Real-Time Cardiac Ultrasound Assessments for Primary Care and Emergency Medicine",
+          "url": "https://news.google.com/rss/articles/CBMiowJBVV95cUxQNkY2VGJmWFREZ3BtYjdpbFRJcFZPRlRjczBvbXYxclN5dTdwRGRXZTJRYWNGQ005Vy1ScUhvSDBVQWh0YzNfekRLZC15VHZhcG5fajRTcW1waXhKamIyR3FUdGc5Y3JIdTNsekpkT0VuRzRYX3JXVEdBNnBycXk3TXVLM3JKZVMtNUNXOUF2OE9pT0ZwYTJpdE9NUHZYSFQzVnl2em9IRy1DQ29TXzJaaExpeG1scmhUUW1BZFRDQTBDUExGZW5SVmx1MjEwMjdJZHFlWU5OZEdCMXk0WHh6UGZ0OGN3bEoxd2pCUlVoc3c1S29ySWc5MmZZcDVDOEFLX2g5NVNKR0lCYVFydmtDTFJOeXRLMmJfTE85cFhja20wZ2s?oc=5",
+          "publishedAt": "2026-06-02T07:00:00.000Z"
+        },
+        {
+          "id": "news:ff79c1216e35f73e15cf5c91",
+          "title": "FDA Clears Clarius Ejection Fraction AI to Deliver Objective, Real-Time Cardiac Ultrasound Assessments",
+          "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNTlhaZDVycjRKNnBNMm5nTnNFVEZ0SWpKWGZzVWJHTGw2eURWSm45eC1uWTAzQ01SZkdVZEkyU2RyUEVENlF2UHpnM2tCUzFLcWZna2xoeHBLamZfbXA1YVVkbG11SDYxTzdEQnE5R0ZWMUp4ZWIySE5EZl9DUG5kTkhFUkVWa1pXdFZZdmUwX1BNbl90RjNCcFNRMldrZU4tTEIySVZiMXprYWJRNlVfd1hJbjY3N3J3TlNNWGhlVDQ?oc=5",
+          "publishedAt": "2026-06-03T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:879ccd3ab306793418ca363a",
+      "count": 2,
+      "publishers": [
+        "EurekAlert!",
+        "University of Pennsylvania"
+      ],
+      "earliest": "2026-06-09T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:879ccd3ab306793418ca363a",
+          "title": "FireANTs Brings AI Speed and Geometric Precision to Medical Imaging",
+          "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxOSzdxYktjOFBJTUlQYmxhWnduemhjd0ZWQ2xaVEs1bUZRVW5oVnBRaVItdjZvR3REMTc4SF9KTEhHSVNubndZNEZWdklDc1FxenhVckRlZnlJUUlmZndxc2FJNnRRYlVIMnA3Nlc1ZjhwS0tfQ05XazdtYUl4Z1htaEV2SEJhS3R2WnptMWJWQ3cxOWZiVGU1bmR0bWZ4Si1nYmRTYzQtMFd0UnBTTWRR?oc=5",
+          "publishedAt": "2026-06-09T07:00:00.000Z"
+        },
+        {
+          "id": "news:e4f1ef0777b00987a1fa32ca",
+          "title": "FireANTs brings AI speed and geometric precision to medical imaging",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE10MUE5NW9hU1I5dlRQRTdBX1piMkpVbTV6T0RUdjJ1RmRqR040em1mLWtwa1FfRWFCZEM1ZVZBdUR4QlNBcElXbzVsTDVxMGtNcnRmVkZ6T2E1NUhB?oc=5",
+          "publishedAt": "2026-06-09T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:aaf914a72e2b447c31a90ca6",
+      "count": 2,
+      "publishers": [
+        "Radiological Society of North America",
+        "Radiological Society of North America | RSNA"
+      ],
+      "earliest": "2026-06-09T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:aaf914a72e2b447c31a90ca6",
+          "title": "AI Could Provide 'Early Alert' for Breast Cancer 6 Years in Advance",
+          "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE9zN1ZOUDBxNk9wVTBwdnNJNmJReEllVXJpSnpuSVl5QTlYdE1Ob1FrY2lRY280SmZzVXhRdmtacllSU2wzZVIxRjA0R191c0t1eUVJa0JKbEpLb2dteDRtSnk3bE5neVVUS2J4RXR0RElUQQ?oc=5",
+          "publishedAt": "2026-06-09T07:00:00.000Z"
+        },
+        {
+          "id": "news:b06a440510cfb60feca60577",
+          "title": "AI Could Provide ‘Early Alert’ for Breast Cancer 6 Years in Advance",
+          "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE0wVU1ET0FPd1pqb0hxdUZTRTNvdHFWS2VjVWNEbjNzSmZrX1p6TXR5VUk1TFVfalBJVW43RFVtOGNMMzhFQTlKRWlFTlYySTBaNUpIUA?oc=5",
+          "publishedAt": "2026-06-09T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:8c2d7630ddda55ec5807f55c",
+      "count": 2,
+      "publishers": [
+        "Aidoc",
+        "Imaging Technology News"
+      ],
+      "earliest": "2026-06-25T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:8c2d7630ddda55ec5807f55c",
+          "title": "FDA Grants Breakthrough Device Designation for AI That Drafts Radiology Reports",
+          "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQMG1TSlhnb1ZOZW9TcmliN3VNamR0Si1vYmk5M2JFN3hkcFlvZ3ZWRk0wVmNkX0pCSXctaEw5SVBNaTdBQktkb2NoOWJKQ1NZb2pMZVFPY0lnR08ydUM5ZnBXZ0pPR1RUTDR0UGxOVVZHaElQZzF1SklndnJWclNFSmRobmdTQzliLXBiM1VSWGF4UlRrblJGWU13aUg3dzhmNFNsNUt3cw?oc=5",
+          "publishedAt": "2026-06-25T07:00:00.000Z"
+        },
+        {
+          "id": "news:e8810fbd250086362f0f42cf",
+          "title": "Aidoc Receives FDA Breakthrough Device Designation for AI That Drafts Radiology Reports - Aidoc | Clinical AI",
+          "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxNQjJGRFB1Yjh1NTdJZlBvb1JMYzBWaEc3VkhoSzJpS3VFb2luNWVkS0Y5Z3plOU9TcW9ERi1ZazlvLW0zRmVKbmlpMlN1NC10YUtqVXdNQU04dnJuVFBSUW1vZF9jenJPeHh4eEEzbVVIM280MnB1NERqanZZNGhieXRlZDBpUUJ1UkhZQnNwLTBoV19DNFlCTkY1M1VFSkxFYjBYQk91Ukcxbm1jNHlLeDZQQ0lnYmFvMW1pREh3?oc=5",
+          "publishedAt": "2026-06-25T10:19:52.000Z"
+        }
+      ]
+    },
+    {
+      "id": "news-event:news:18eca28e5574d530086b2615",
+      "count": 2,
+      "publishers": [
+        "ScienceDirect.com",
+        "The Lancet"
+      ],
+      "earliest": "2026-07-27T07:00:00.000Z",
+      "members": [
+        {
+          "id": "news:18eca28e5574d530086b2615",
+          "title": "Towards a unified foundation model for medical imaging",
+          "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPOUw1ekFFc1R3N1BMTmR4NjVvQzBCaXdVOC1XX3NjUWhLOWxELU9EREtMTDNDWk4zWkFxLXFpaTFaVEdBcUg3ZllFeFlwLTRjUExqaDY4a2h2VHV4ZlEwcUg3Zi1JaDFMZ3lqSmtmYk5jSUpuRGJGeWhObWZnZUpGeFFzemhNRk1jaHNV?oc=5",
+          "publishedAt": "2026-07-27T07:00:00.000Z"
+        },
+        {
+          "id": "news:a201070189168175eb5ae644",
+          "title": "Towards a unified foundation model for medical imaging",
+          "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5SQl90djY1dVQ1dHRyVWdZdDF4c0ZacXRjbThRS1RxSGsxTmY2YjZhMmk3N1pKSkhqNWg2RVFueWI5WDNtOXNIVmRsNnZzZHJiQmFBcHdpVk9tblV5SWk0UFNiZ3lSdzl3LWVZMUY2b3AycU92M1E?oc=5",
+          "publishedAt": "2026-07-28T02:12:47.000Z"
+        }
+      ]
+    }
+  ]
+}

@@ -19,6 +19,7 @@ type Props = DashboardSlots & {
   onDrill: (drill: SignalDashboardDrill) => void;
   onBrowse: () => void;
   originalsCount?: number;
+  eventCount?: number;
 };
 type SummaryProps = Pick<Props, "model" | "onDrill"> & {
   sourceCheckedAt?: string | null;
@@ -136,7 +137,15 @@ export function NewsDashboardSummary({ model, onDrill, sourceCheckedAt, summaryO
   );
 }
 
-export function NewsDashboard({ model, onDrill, onBrowse, originalsCount, summary, filters }: Props) {
+export function NewsDashboard({
+  model,
+  onDrill,
+  onBrowse,
+  originalsCount,
+  eventCount,
+  summary,
+  filters,
+}: Props) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
   const count = (value: number) => value.toLocaleString(locale === "en" ? "en-US" : "zh-CN");
@@ -214,6 +223,11 @@ export function NewsDashboard({ model, onDrill, onBrowse, originalsCount, summar
           label={label(metric)}
           value={available ? count(metric.count) : "—"}
           hint={metricHints[metric.id]}
+          comparison={
+            metric.id === "total" && eventCount !== undefined
+              ? t(`去重后 ${count(eventCount)} 个事件`, `${count(eventCount)} clustered events`)
+              : undefined
+          }
           disabled={!available || !metric.count}
           onClick={() => open(metric)}
         />

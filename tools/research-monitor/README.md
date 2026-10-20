@@ -159,3 +159,11 @@ Views and filters are encoded in the URL fragment, for example `#/papers/library
 ### Research scope and diagnosis labels (2026-10-21)
 
 The default paper analysis scope now emphasizes computational imaging methods. Clinical imaging and all stored records remain selectable; personal saved papers are not hidden by scope. Scope is rule-based and imperfect. The independent diagnosis-task version removes standalone “diagnosis”, “diagnosed with” and differential-diagnosis mentions as sufficient signals; detection/classification actions or diagnostic-accuracy evidence are required. On the frozen 8,326-record archive, the diagnosis tag changes from 4,257 to 1,666 records, while the other nine direction counts are unchanged. These are classification changes, not a fall in research activity. On the provisional 400-paper AI audit, precision improves 48.9%→79.8%, recall 66.3%→64.4%; the precision target of 85% is still unmet. See `eval/p4-classifier-comparison.md`.
+
+### P4.9：新闻事件与原始报道
+
+新闻库默认按事件线索展示代表标题、发布者名称数、报道数与最早发布时间；展开后保留每篇报道的全文元数据、原文入口与显式论文关联，也可关闭“按事件整理”恢复逐篇浏览。总览保留原始报道计数，并在同一范围显示“去重后事件数”。初始总览使用 manifest 预计算值；旧 manifest 无事件字段时不虚构数量。
+
+事件采用 `NEWS_CLUSTER_VERSION=2026-10-21-v1`：标题 NFKC 规范化、小写、仅移除已识别发布者后缀、忽略标点与空格，计算 Unicode 字符 3-gram 集合的 Jaccard 相似度。阈值 ≥0.6 且原始发布时间跨度 ≤7×24 小时。同组每一对标题都必须达标，避免链式相似把不同事件串联；排序固定为发布时间与 ID，输入顺序不影响结果。缺失/非法日期或少于 10 个字母数字字符的短标题独立保留，不用采集时间填补发布时间。
+
+这是用于减少重复阅读的启发式线索，不是已验证的事件同一性；改写幅度较大的标题可能漏合并，类似标题也可能误合并。“来源数”按发布者名称忽略大小写和首尾空格计数，未合并机构别名，多家转载不代表多次独立效果验证。原始记录从不合并、修改或删除；方向图与时间序列继续按报道计数，事件数仅是并列参考。随筛选范围变化，事件在当前范围重新计算。测试覆盖 7 天边界、不同标题写法、链式误并、未知日期、全部原记录保留及旧 manifest 兼容。实测见 `eval/news-clustering-report.md`。

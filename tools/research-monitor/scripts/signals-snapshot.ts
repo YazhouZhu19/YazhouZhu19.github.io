@@ -1,3 +1,4 @@
+import { clusterNews, NEWS_CLUSTER_VERSION } from "../lib/news-cluster";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { copyFile, mkdir, readFile, readdir, rename, unlink, writeFile } from "node:fs/promises";
@@ -91,6 +92,7 @@ export function buildSignalOverviews(data: ResearchSignalsData): SignalsManifest
       browse: browseSummary(data.records.filter((record) => record.kind === "github")),
     },
     news: {
+      events: { version: NEWS_CLUSTER_VERSION, count: clusterNews(news.rows).length },
       model: {
         ...(compact(news) as SignalsManifest["overview"]["news"]["model"]),
         rowCount: news.rows.length,

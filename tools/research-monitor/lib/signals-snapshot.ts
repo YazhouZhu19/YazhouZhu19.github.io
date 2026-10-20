@@ -274,6 +274,10 @@ const githubOverview = z
   .strict();
 const newsOverview = z
   .object({
+    events: z
+      .object({ version: z.string().min(1).max(100), count })
+      .strict()
+      .optional(),
     model: newsModel,
     recent: z.array(NewsSignalSchema).max(4),
     originalsCount: count,
@@ -365,6 +369,8 @@ export function parseSignalsManifest(raw: unknown): SignalsManifest {
     github: githubOverview.parse(value.overview.github),
     news: newsOverview.parse(value.overview.news),
   };
+  if (overview.news.events && overview.news.events.count > overview.news.model.rowCount)
+    throw new SnapshotFormatError("News event count exceeds scoped records");
   const quality = overview.github.quality;
   if (
     quality &&

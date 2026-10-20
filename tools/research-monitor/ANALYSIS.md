@@ -74,3 +74,9 @@ positive, 8 negative and 21 uncertain annotations, awaiting human confirmation.
 Its balanced strata are not population weights. These counts are not an accepted
 accuracy result, and no claim that the direct-precision target has been achieved
 is made. No relevance rule has changed, so its before/after prediction is identical.
+
+### P4.9：新闻去重事件口径
+
+2026-10-20T14:35:32.144Z 快照包含 2,380 篇新闻，标题与发布时间聚类得到 2,318 个事件线索，其中 51 组包含 113 篇报道，最大组 4 篇。默认近 30 天（按新闻来源观测截止）450 篇报道对应 421 个事件线索。全部 2,380 条原始记录保留；原来的新闻量曲线、方向分布及检索分析分母仍按报道计数，不能用事件数替换它们或推断独立科研成果数。事件数在同一筛选范围内另行计算。
+
+P0.2 的标签集仅评价论文相关性，不评价新闻事件同一性，因此该任务的 precision/recall 为不适用，不伪报改善。20 个较大分组的标题元数据暂查支持重复阅读压缩用途，未做原文事件核验；评估方法与完整样例记录在 `eval/news-clustering-report.md` 和 `eval/news-clustering-samples.json`。
