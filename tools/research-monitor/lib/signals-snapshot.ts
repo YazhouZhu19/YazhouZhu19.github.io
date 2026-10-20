@@ -258,6 +258,15 @@ const browse = z
   .strict();
 const githubOverview = z
   .object({
+    quality: z
+      .object({
+        version: z.string().min(1).max(100),
+        asOf: z.string(),
+        counts: z.object({ established: count, active: count, early: count }).strict(),
+        defaultCount: count,
+      })
+      .strict()
+      .optional(),
     model: githubModel,
     recent: z.array(GitHubSignalSchema).max(4),
     browse,
@@ -356,6 +365,14 @@ export function parseSignalsManifest(raw: unknown): SignalsManifest {
     github: githubOverview.parse(value.overview.github),
     news: newsOverview.parse(value.overview.news),
   };
+  const quality = overview.github.quality;
+  if (
+    quality &&
+    (quality.asOf !== value.generatedAt ||
+      quality.counts.established + quality.counts.active + quality.counts.early !== counted.github ||
+      quality.defaultCount !== quality.counts.established + quality.counts.active)
+  )
+    throw new SnapshotFormatError("GitHub maturity summary counts or date differ");
   if (counted.github + counted.news > SIGNALS_MAX_RECORDS)
     throw new SnapshotFormatError("Too many signal records");
   for (const kind of kinds) {

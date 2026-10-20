@@ -1,0 +1,808 @@
+{
+  "status": "provisional; pending human confirmation",
+  "reviewer": "Codex; manual review of frozen public metadata only",
+  "sourceSha256": "6ed8ae3da71b0ccfed2ed15b7fc615e4810664679bbb76b36ddac93ec45e54cc",
+  "seed": "oevryn-github-direct-review-2026-10-21-v1",
+  "annotations": {
+    "github:samiran-dey/pathgen": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:maet3608/oct-viewer": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:forithmus/vlm3d-dockers": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:taruna06/retinalvesselsegmentation": {
+      "label": "uncertain",
+      "rationale": "只有仓库名中的视网膜血管分割线索，缺少摘要与README证据。"
+    },
+    "github:gomesgustavoo/dentistry-implant-planner": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:seungha164/a-narrative-review-of-foundation-models-for-medical-image-segmentation": {
+      "label": "no",
+      "rationale": "名称指向叙述综述，现存元数据未展示可用代码或数据工具。"
+    },
+    "github:pietroboiardiunibe/right-heart-morphology-segmentation-master-thesis": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:limingwu8/unet-pytorch": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:aican-research/h2g-net": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:sevaramardi/medical-imaging-and-diagnostics-3d-mri-and-ct-scans.-": {
+      "label": "uncertain",
+      "rationale": "只有医学MRI/CT仓库名，无法确认实现内容。"
+    },
+    "github:abvoban/rvnas": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ncullen93/neurocombat": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:amitj96/semantic-image-segmentation": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:leehoy/ctreconstruction": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:amayags/mustang": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:marcelluethi/elastix": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:danesed/flowlet": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ytongxie/mb-dcnn": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:raphi-d/rad-report-ai": {
+      "label": "uncertain",
+      "rationale": "放射报告整理工具可能相关，但元数据未明确影像输入或影像数据功能。"
+    },
+    "github:vic-warden/scanmetrics": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ghtara/dose_prediction": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:open-dicom/dicom_parser": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:davidiommi/pytorch--3d-medical-images-segmentation--salmon": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:carrend/medical-cross-modality-domain-adaptation": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:birajaghoshal/ukbb_cardiac": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:thuinet501/admm-drp": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:shakes76/shdr": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:iabhinav108/fedalyx": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:hdvucair/orthanccontribution": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:tauhidsakib/a-hierarchical-cascade-network-for-polyp-segmentation-and-classification": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:dcmkit/dcmclient": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:mrphysics-bonn/python-ismrmrd-reco": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:frodsantos/polyp-detection-segmentation-mask-rcnn": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:pramukhprakash17/meditrack": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ohif/viewer-testdata": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:scikit-rt/scikit-rt": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:aipmlab/facmic": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:christiangaser/neuronca": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:topasmc/dicom-interface": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:firmlab-pisa/mrtoeplitz": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:civa-lab/use-net": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:rosepy/graph4asd-challenge": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:magic-ai4med/radir": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:liob/dcm4nii": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:murraymeehan/ultrasoundsnake": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:divine-github-profile-name/bone-suppression": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ricklisz/anatomask": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:davidiommi/pytorch-unet3d-single_channel": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:yuanzhang7/fedsoda": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:nilearn/nilearn.github.io": {
+      "label": "no",
+      "rationale": "现存描述是项目网站，不足以把网站镜像当作医学影像代码或数据工具。"
+    },
+    "github:raniamostafa0/virtual-reality-simulation-of-retinal-diseases": {
+      "label": "no",
+      "rationale": "描述是视网膜疾病视觉体验的教育模拟，未指向医学影像采集、处理或数据工具。"
+    },
+    "github:evrimulgen/dicompacs": {
+      "label": "uncertain",
+      "rationale": "仅有DicomPACS名称，需确认是否有实现或有效数据工具。"
+    },
+    "github:mrirecon/bart": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:simontomaskarlsson/gan-mri": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:b-yassine88/pathmnist-xai-lightweight-explainable-cnn-for-medical-imaging": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:andreped/nocodeseg": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:hassan41saeed/docker-pacs-dcm4chee-ohif": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ashwinkumargb/merlin-nnunet": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:quqixun/brainprep": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:nafisfuadshahid/fed-crc-seg": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ohif/react-viewerbase": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:denizlab/2019_iwoai_challenge": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:learnerzx/swingan": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:sasanica/minitwinlab": {
+      "label": "uncertain",
+      "rationale": "综合患者数据与合成教学场景中提到imaging，无法确认实际影像处理部分。"
+    },
+    "github:key6oardwarrior/medical-imagery-annotations": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:mrgiovanni/simsid": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:marcgambi/3d-liver-tumor-segmentation-unet": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:adegirmenci/hdr-us": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:junyuchen245/mir": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:stefanowoerner/medimeta-pytorch": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:mmon8716/attentionbased-mis": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:amayags/protopathway": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:zahrael97/predicting-lung-cancer-survival-time": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:darkem0/brain-tumor-matlab": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:dev-aditya/x-ray-cone-beam-computed-tomography": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:haga-aki/pet-ct-radiomics-pipeline-public": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:dpetrini/prepare_datasets": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:brainwavebuddy/msc-thesis": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:imagingdatacommons/cloudsegmentator": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:tengfeixue-victor/medical-report-generation": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:deontaepharr/diagnosing-adhd-with-convlstm": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:chhsiao1981/nii-nn-explorer": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:khoa16122004/enhancing-endoscopic-image-retrieval-via-self-supervised-learning-and-large-vlm-based-re-ranking": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:daorre1202/skin-lesion-foundation-models": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:llenroc/handsfreedicomviewer": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:dcm4che/dcm4chee-arc-cs": {
+      "label": "no",
+      "rationale": "描述为DICOM一致性声明文档，不是独立的代码或数据工具。"
+    },
+    "github:harvard-ophthalmology-ai-lab/fairdomain": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:berni1557/ibs": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:mic-dkfz/niicat": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:snsten/diabetic_retinopathy_detection": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:algoverse-agatha-rmcj/algoverse-portpy-beam-optimization": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:warrenhows/raki-implementation": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:robertklee/mobile-chest-x-ray-analysis": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:genixtec/ios-dicom-image-processing": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:tejatalluri/retinal-image-processing": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:uwa-medical-physics-research-group/psmasegmentator": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:rhythm92/cnn3d_medical": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:bodoottentu/digital-subtraction-angiography": {
+      "label": "uncertain",
+      "rationale": "仅有数字减影血管造影名称，缺少实现证据。"
+    },
+    "github:4quant/bone-segmenter": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:batuhanerenler/uncertainty-estimation-in-medical-imaging-using-regression-u-net": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:amrzhd/mriskullstripping": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:medai-lab/ai-pps-npc": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:yuemingjin/mtrcnet-cl": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:5ynq/medical-image-denoising": {
+      "label": "uncertain",
+      "rationale": "仅有医学图像去噪名称，缺少实现证据。"
+    },
+    "github:ehdataai/healthcare-rispacs-analytics-demo": {
+      "label": "uncertain",
+      "rationale": "摘要指向RIS/PACS管理运营和合成分析，需核实是否处理影像或影像元数据。"
+    },
+    "github:bioimage-io/collection-bioimage-io": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:adieuadieu/retinal": {
+      "label": "no",
+      "rationale": "Retinal为通用AWS图像缩放服务名称；摘要没有医疗影像含义。"
+    },
+    "github:renato145/fastai_scans": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:tiancat/open-medical-ultrasound-datasets": {
+      "label": "no",
+      "rationale": "描述为超声数据集目录汇编，没有显示自身为数据集或处理工具。"
+    },
+    "github:juremaj/track2p": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:aim-harvard/pyradiomics": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:brainlesion/predictgbm": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:0215whx/gave2": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ivanvivasgar/radiographxpresslabmanager": {
+      "label": "no",
+      "rationale": "描述为实验室流程、报告与患者管理，未出现影像分析或影像数据工具。"
+    },
+    "github:simpleitk/slicersimplefilters": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:chantalmp/radialog": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:davyleroy/malaria-smear-classifier": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:fordanic/image-registration": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:microsoft/radfact": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ncip/national-biomedical-image-archive": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:niftk/niftynet": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:kr-hari/lesion_detection": {
+      "label": "uncertain",
+      "rationale": "仅有病灶检测名称，无法确认影像模态或实现内容。"
+    },
+    "github:riqianggao/gdp-hmm_aapmchallenge": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:chandimap/medfm-adapt3d": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:raniac/neuroimaging_with_python": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:faebstn96/helix2fan": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:bioimage-io/jdll": {
+      "label": "uncertain",
+      "rationale": "Java深度学习库的简介较泛，bioimage-io上下文有线索，但应确认生物医学影像用途。"
+    },
+    "github:nikhilroxtomar/skin-lesion-segmentation-in-tensorflow-2.0": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:laudos-ai/laibench-public": {
+      "label": "uncertain",
+      "rationale": "发现到报告的基准可能仅处理文本；是否直接服务影像分析需复核。"
+    },
+    "github:chemousesi/ima205-skin-lesion-challenge-2025": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:hadise-mgds/maxseg": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:agtenc/radiology-finalscribe-20-opensource": {
+      "label": "no",
+      "rationale": "描述为语音听写与报告生成，不包含影像输入或影像数据工具的明确证据。"
+    },
+    "github:filipcvetko/ml_pet": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:rikiyay/style-transfer-for-digital-pathology": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:kaz-k/robust-glioma-segmentation": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ua245/cortexa-medical-imaging-powered-by-ai": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:alkhasusan/thoracic-xray-classifier": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:galdude33/fetal-mri-segmentation": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:rootkiller6788/mini-biophysics": {
+      "label": "uncertain",
+      "rationale": "广泛生物物理教学中包含bioimaging，需确认影像代码部分。"
+    },
+    "github:dek924/perx2ct": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:histocartography/patho-quant-explainer": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:zhiwen-shi/marfe": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:beasygo1ng/oct-retinal-layer-segmenter": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:tasmia008/chest-xray-vlm-from-scratch": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:zakaudd/medical-imaging-datasets": {
+      "label": "uncertain",
+      "rationale": "仅有医学影像数据集名称，需确认实际数据或工具。"
+    },
+    "github:dchansen/radiomics": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:pnlbwh/pnlnipype": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ycwu1997/mc-net": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:omid-nejati/medvit": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:wadelab/codespaces-neuroimaging-demo": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:vraj0411/3d-tumor-reconstruction-from-medical-scans-panther-challenge-": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:neuropoly/domainadaptation": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:disha-kalbandhe/pancreasai-cdss": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:plokko/viewers": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:muvisualizationlab/virtual-endoscopy-generator": {
+      "label": "uncertain",
+      "rationale": "仅有虚拟内镜生成器名称，缺少实现证据。"
+    },
+    "github:aman0311x/medxai": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:kaiden118/cross-modality-conditional-diffusion-model": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:lokeshdhake/medical-lesion-detection": {
+      "label": "uncertain",
+      "rationale": "仅有医学病灶检测名称，缺少实现证据。"
+    },
+    "github:fuentesdt/mist": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:pohcee/dcmnorm": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:jzk00/ultrasound-image-based-radiomics": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:devavrattomar/sst": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:rishi9322/dentseg": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:wuwusky/liver_cancer_classify": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:yili-mri/mri-reconstruction-basics": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:khngterry/histopathology_images_classification": {
+      "label": "uncertain",
+      "rationale": "仅有组织病理图像分类名称，缺少实现证据。"
+    },
+    "github:hwei-hw/generalist_vision_foundation_models_for_medical_imaging": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:arpitmaheshwari213/epitome-extraction-and-tumour-classification-from-mris-of-brain": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:studio451/dicomimageviewer": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:mvhssriraj/brain-tumor-detection": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:sauravmishra1710/unet-plus-plus---brain-tumor-segmentation": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:microsoft/recursive-cascaded-networks": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:maryjis/mtcp": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:neurospin-deepinsight/nidl": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:vitalab/echo-toolkit": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:mlndshh/ohif-docker-compose": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:azure/azurechestxray": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:aiconslab/3dino": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:scanvidence/scanvidence": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:bioimagebook/bioimagebook.github.io": {
+      "label": "uncertain",
+      "rationale": "简介为生物图像分析图书网站，是否包含可用代码/数据工具需核实。"
+    },
+    "github:monteiro-sara/nifti_conversion_wrapper": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:computational-cell-analytics/peft-sam": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:varun1234321m/ai-medical-diagnosis-system-with-grad-cam": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:project-monai/monaibootcamp2021": {
+      "label": "uncertain",
+      "rationale": "MONAI培训材料可能包含实际代码，但简介不能确认；也需复核直接相关与教学资源的边界。"
+    },
+    "github:sunnynguyen-ai/medical-image-classifier": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:quanato607/xlstm-hved": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ircad/slip": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:oopil/flkdorganseg": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ai-in-cardiovascular-medicine/holorama": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:henriksson-lab/simpleitk-rs": {
+      "label": "uncertain",
+      "rationale": "只有SimpleITK Rust名称，需确认包装库的实现内容。"
+    },
+    "github:camma-public/convlstm-surgical-tool-tracker": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ztrura/seer": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:uni-medical/unet-benchmark": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:nagyistoce/pwwu-segmentation": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:nainye/radiomicsretrieval": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:liuwenhaha/automated_hybrid_idh": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:frederic-perez/lungs-bounding-boxer": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:reginabarzilaygroup/mirai": {
+      "label": "yes",
+      "rationale": "名称与简介明确指向医学/生物影像任务、影像数据集或处理工具；这是元数据暂定判断，未核验代码运行、许可或性能。"
+    },
+    "github:ravlennn/mgmt-radiomics": {
+      "label": "uncertain",
+      "rationale": "只有MGMT radiomics名称，缺少代码或数据描述。"
+    },
+    "github:fatihaybsn/brainmri-ood-10models": {
+      "label": "uncertain",
+      "rationale": "名称为BrainMRI，但简介称X-ray分类，医学影像用途明确但模态/实际内容需复核。"
+    }
+  }
+}

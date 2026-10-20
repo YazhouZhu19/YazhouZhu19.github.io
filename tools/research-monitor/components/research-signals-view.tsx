@@ -20,6 +20,13 @@ import {
   type SignalSourceState,
   safeSignalUrl,
 } from "@/lib/research-signals";
+import {
+  GITHUB_QUALITY_VERSION,
+  githubQuality,
+  githubQualitySummary,
+  matureGitHubRecords,
+} from "@/lib/github-quality";
+import { GitHubQualityControl } from "./github-quality-control";
 import { GITHUB_DISCOVERY_GROUPS } from "@/lib/github-discovery";
 import { NEWS_DISCOVERY_GROUPS, NEWS_QUERIES } from "@/lib/news-discovery";
 import { getSignalBrowseCategories, getSignalBrowseCategoryIds } from "@/lib/signal-browse-categories";
@@ -97,6 +104,7 @@ type BrowseState = {
   dateRange?: DashboardRange;
   githubClock?: "activity" | "creation";
   newsClock?: NewsDashboardClock;
+  includeEarly?: boolean;
 };
 const browseSessions = new Map<Props["kind"], BrowseState>();
 
@@ -175,6 +183,7 @@ export function ResearchSignalsView({
   const [newsClock, setNewsClock] = useState<NewsDashboardClock>(
     () => browseSessions.get(kind)?.newsClock ?? "publication",
   );
+  const [includeEarly, setIncludeEarly] = useState(() => browseSessions.get(kind)?.includeEarly ?? false);
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
@@ -195,6 +204,8 @@ export function ResearchSignalsView({
     [overview],
   );
   const defaultScope =
+    (kind !== "github" ||
+      (!includeEarly && manifest?.overview.github.quality?.version === GITHUB_QUALITY_VERSION)) &&
     dateRange === 30 &&
     category === "all" &&
     relevance === "all" &&
@@ -214,6 +225,23 @@ export function ResearchSignalsView({
     [snapshot, kind],
   );
   const recordCount = manifest?.counts[kind] ?? records.length;
+  const qualityAsOf = snapshot?.generatedAt ?? "";
+  const qualityById = useMemo(
+    () =>
+      new Map(
+        records
+          .filter((record): record is GitHubSignal => record.kind === "github")
+          .map((record) => [record.id, githubQuality(record, qualityAsOf)]),
+      ),
+    [records, qualityAsOf],
+  );
+  const qualitySummary = useMemo(
+    () =>
+      summaryOnly && manifest?.overview.github.quality
+        ? manifest.overview.github.quality
+        : githubQualitySummary(records, qualityAsOf),
+    [summaryOnly, manifest, records, qualityAsOf],
+  );
   const recordLinkIndex = useMemo(() => {
     const index = new Map<string, ResearchSignal[]>();
     for (const record of snapshot?.records ?? []) {
@@ -331,9 +359,14 @@ export function ResearchSignalsView({
           : record.relevance?.level !== "direct");
       const text =
         `${record.title} ${record.summary} ${record.publisher} ${record.topics.join(" ")} ${record.kind === "github" ? `${record.fullName} ${record.language ?? ""} ${record.readmeExcerpt}` : ""}`.toLowerCase();
-      return matchesCategory && matchesRelevance && (!search || text.includes(search));
+      const matchesMaturity =
+        kind !== "github" ||
+        view === "library" ||
+        includeEarly ||
+        qualityById.get(record.id)?.maturity !== "early";
+      return matchesMaturity && matchesCategory && matchesRelevance && (!search || text.includes(search));
     });
-  }, [records, categoryIndex, deferredQuery, category, relevance]);
+  }, [records, categoryIndex, deferredQuery, category, relevance, kind, view, includeEarly, qualityById]);
   const githubModel = useMemo(
     () =>
       kind !== "github"
@@ -447,6 +480,7 @@ export function ResearchSignalsView({
       dateRange,
       githubClock,
       newsClock,
+      includeEarly,
     });
   }, [
     kind,
@@ -464,6 +498,7 @@ export function ResearchSignalsView({
     dateRange,
     githubClock,
     newsClock,
+    includeEarly,
   ]);
   useEffect(() => {
     if (!snapshot || !recordsLoaded) return;
@@ -489,6 +524,7 @@ export function ResearchSignalsView({
     setDateRange(30);
     setGithubClock("activity");
     setNewsClock("publication");
+    setIncludeEarly(false);
   };
   const switchView = (next: BrowseState["view"]) => {
     selectionAction.invalidate();
@@ -504,12 +540,12 @@ export function ResearchSignalsView({
   };
   const openRankedRepositories = (metric: GitHubPopularityMetric) => {
     setSort(metric);
-    switchView("library");
-    setLimit(24);
-    requestAnimationFrame(() => {
-      contentRef.current?.focus({ preventScroll: true });
-      contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+    const total = githubModel?.scoped.metrics.find((item) => item.id === "total");
+    if (total)
+      void openDashboardRecords({
+        label: `${metric === "stars" ? "Stars" : "Forks"} ${t("完整排名", "full ranking")}`,
+        ids: total.recordIds,
+      });
   };
   const resolveSelection = useCallback(
     async (selection: SignalDashboardDrill) => {
@@ -526,7 +562,12 @@ export function ResearchSignalsView({
         return null;
       const model =
         kind === "github"
-          ? buildGitHubDashboard(complete.records, {}, manifest.generatedAt, manifest.generatedAt)
+          ? buildGitHubDashboard(
+              complete.records,
+              { baseRecords: matureGitHubRecords(complete.records, manifest.generatedAt) },
+              manifest.generatedAt,
+              manifest.generatedAt,
+            )
           : buildNewsDashboard(complete.records, {}, manifest.generatedAt, newsDashboardAsOf(complete) ?? "");
       return { ...selection, ids: preview.resolveIds(selection.ids, model) };
     },
@@ -895,6 +936,14 @@ export function ResearchSignalsView({
           {t("重置", "Reset")}
         </button>
       </div>
+      {kind === "github" && (recordsLoaded || manifest?.overview.github.quality) && (
+        <GitHubQualityControl
+          counts={qualitySummary.counts}
+          includeEarly={includeEarly}
+          library={view === "library"}
+          onChange={(value) => changeScope(() => setIncludeEarly(value))}
+        />
+      )}
       {dateRange === "custom" && (
         <div className="signals-filter-row">
           <div>
@@ -1096,10 +1145,15 @@ export function ResearchSignalsView({
                       "全局记录入口，独立于日期及相关性筛选。调整筛选后恢复当前范围。",
                       "Global records, independent of date and relevance filters. Changing a filter returns to the selected scope.",
                     )
-                  : t(
-                      "当前列表与仪表盘采用相同范围；点击上方“库内记录”可查看完整库。",
-                      "This list shares the dashboard scope. Click Records in library above to inspect the complete collection.",
-                    )}
+                  : kind === "github"
+                    ? t(
+                        "列表沿用日期、方向与相关性筛选，包含所有成熟度层级；点击上方“库内记录”可查看完整库。",
+                        "The list keeps date, area and relevance filters and includes every maturity level. Click Records in library to inspect the complete collection.",
+                      )
+                    : t(
+                        "当前列表与仪表盘采用相同范围；点击上方“库内记录”可查看完整库。",
+                        "This list shares the dashboard scope. Click Records in library above to inspect the complete collection.",
+                      )}
               </p>
               <div className="signals-results-heading">
                 <h2>
@@ -1368,6 +1422,13 @@ export function ResearchSignalsView({
                         )}
                         {record.kind === "github" && (
                           <div className="signal-repo-facts">
+                            <span>
+                              {qualityById.get(record.id)?.maturity === "established"
+                                ? t("已有积累", "Established")
+                                : qualityById.get(record.id)?.maturity === "active"
+                                  ? t("近期活跃", "Active")
+                                  : t("早期仓库", "Early")}
+                            </span>
                             <span>
                               <Star size={13} />
                               {record.stars.toLocaleString()}

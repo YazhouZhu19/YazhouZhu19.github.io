@@ -57,3 +57,20 @@ The directory prefers an available full name over a source's initials. A name-on
 Author grouping prefers a supplied ORCID, otherwise a normalized name. Name-only identities are explicitly uncertain; ORCID values are source metadata and are not independently verified. Repeat authors within a paper count once per identity. Coauthor pairs represent shared authorship only. Papers with more than forty distinct author identities are excluded from pair enumeration and counted in `coauthorExcludedLargePapers`; they remain in paper and author totals. Watchlists use the existing exact member/ORCID and optional affiliation matching. These features do not infer lab membership, competitive strength, or willingness to collaborate.
 
 中文说明：所有分析使用同一来源、感兴趣方向及来源发表日期筛选范围，并按记录 ID 去重。方向与器官/模态比例以范围内记录数为分母，方向×方法比例以该方向内记录数为分母，研究线索比例以有摘要记录数为分母。标签允许重叠，未识别并不表示没有。摘要内容为原文句子摘录，不调用模型生成总结。阅读候选依据组合覆盖、摘要线索和发表日期选取，不是论文质量排名；作者与共同署名分析也不用于判断团队实力。基础模型方向与同名方法的组合因定义重复而省略。
+
+## GitHub maturity and pending relevance review (P4.8)
+
+`GITHUB_QUALITY_VERSION = 2026-10-21-v1` adds a separate metadata maturity view;
+it does not modify `SIGNAL_RELEVANCE_VERSION`, direct evidence, paper scope or
+stored records. Thresholds and missing-data behavior are specified in `SIGNALS.md`.
+The snapshot of 2026-10-20 contains 48,410 repositories: 2,376 established, 4,864
+active and 41,170 early. The 30-day overview changes from 5,229 to 2,255 repositories
+under the default mature selection; all 48,410 remain in the library. Global
+collection totals remain unfiltered and are labelled separately.
+
+P0.2 is a paper evaluation set and cannot measure repository precision. The
+separate 200-direct-repository stratified metadata review has 171 provisional
+positive, 8 negative and 21 uncertain annotations, awaiting human confirmation.
+Its balanced strata are not population weights. These counts are not an accepted
+accuracy result, and no claim that the direct-precision target has been achieved
+is made. No relevance rule has changed, so its before/after prediction is identical.

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { copyFile, mkdir, readFile, readdir, rename, unlink, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
+import { githubQualitySummary, matureGitHubRecords } from "../lib/github-quality";
 import { buildGitHubDashboard, githubDashboardDate } from "../lib/github-dashboard";
 import { buildNewsDashboard, newsDashboardAsOf, newsDashboardDate } from "../lib/news-dashboard";
 import { getSignalBrowseCategoryIds } from "../lib/signal-browse-categories";
@@ -72,10 +73,16 @@ function recent<T extends ResearchSignal>(records: T[], date: (record: T) => str
 
 /** Same functions and defaults as the browser, evaluated at the snapshot instant. */
 export function buildSignalOverviews(data: ResearchSignalsData): SignalsManifest["overview"] {
-  const github = buildGitHubDashboard(data.records, {}, data.generatedAt, data.generatedAt);
+  const github = buildGitHubDashboard(
+    data.records,
+    { baseRecords: matureGitHubRecords(data.records, data.generatedAt) },
+    data.generatedAt,
+    data.generatedAt,
+  );
   const news = buildNewsDashboard(data.records, {}, data.generatedAt, newsDashboardAsOf(data) ?? "");
   return {
     github: {
+      quality: githubQualitySummary(data.records, data.generatedAt),
       model: {
         ...(compact(github) as SignalsManifest["overview"]["github"]["model"]),
         rowCount: github.rows.length,
