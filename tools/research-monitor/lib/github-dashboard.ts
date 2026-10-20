@@ -1,5 +1,6 @@
 import type { GitHubSignal, ResearchSignal } from "./research-signals";
 import { buildSignalDashboard, signalDashboardDate, type SignalDashboard, type SignalDashboardBucket } from "./signal-dashboard";
+import { buildGitHubPopularity, type GitHubPopularity } from "./github-popularity";
 
 const DAY = 86_400_000;
 const BEIJING_OFFSET = 8 * 60 * 60 * 1000;
@@ -26,6 +27,7 @@ export interface GitHubDashboardModel {
   global: { total: SignalDashboardBucket; today: SignalDashboardBucket; initial: SignalDashboardBucket };
   rows: GitHubSignal[];
   scoped: SignalDashboard;
+  popularity: GitHubPopularity;
   series: GitHubDashboardSeriesRow[];
   seriesGranularity: "day" | "month";
   filters: { range: NonNullable<GitHubDashboardFilters["range"]>; clock: NonNullable<GitHubDashboardFilters["clock"]> };
@@ -176,7 +178,7 @@ export function buildGitHubDashboard(allRecords: readonly ResearchSignal[], filt
   const shifted = rows.map(record => ({ ...record, publishedAt: shift(record.publishedAt), pushedAt: shift(record.pushedAt), releasedAt: shift(record.releasedAt) }));
   const scoped = buildSignalDashboard(shifted, "github", limit === null ? "" : new Date(limit + BEIJING_OFFSET).toISOString());
   scoped.asOf = snapshot === null ? "" : new Date(snapshot).toISOString();
-  return { global, rows, scoped, series, seriesGranularity, filters: { range, clock }, today, start, end, observedFrom, observedTo,
+  return { global, rows, scoped, popularity: buildGitHubPopularity(rows), series, seriesGranularity, filters: { range, clock }, today, start, end, observedFrom, observedTo,
     initialAt, initialDay, initialInScope, now: current === null ? null : new Date(current).toISOString(),
     asOf: snapshot === null ? null : new Date(snapshot).toISOString(), snapshotDay,
     snapshotStale: today !== null && snapshotDay !== null && snapshotDay < today,

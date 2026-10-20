@@ -7,10 +7,11 @@ import type { SignalDashboardDrill } from "./signal-dashboard";
 import { Button } from "./ui/button";
 import { SourceDashboardBars, SourceDashboardTimeline, SourceDashboardRing } from "./source-dashboard-charts";
 import { useI18n } from "./locale-provider";
+import { GitHubPopularity } from "./github-popularity";
 import "@/styles/spatial-charts.css";
 import "@/styles/github-dashboard.css";
 
-type DashboardProps = { model: GitHubDashboardModel; onDrill: (drill: SignalDashboardDrill) => void; onBrowse: () => void };
+type DashboardProps = { model: GitHubDashboardModel; onDrill: (drill: SignalDashboardDrill) => void; onBrowse: () => void; onRankedBrowse: (metric: "stars" | "forks") => void };
 type SummaryProps = Pick<DashboardProps, "model" | "onDrill">;
 const STATE_COLORS = ["var(--chart-4)", "var(--chart-1)", "var(--chart-2)", "var(--living-line)"];
 
@@ -31,7 +32,7 @@ export function GitHubDashboardSummary({ model, onDrill }: SummaryProps) {
   </div>;
 }
 
-export function GitHubDashboard({ model, onDrill, onBrowse }: DashboardProps) {
+export function GitHubDashboard({ model, onDrill, onBrowse, onRankedBrowse }: DashboardProps) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => locale === "en" ? en : zh;
   const count = (value: number) => value.toLocaleString(locale === "en" ? "en-US" : "zh-CN");
@@ -59,6 +60,8 @@ export function GitHubDashboard({ model, onDrill, onBrowse }: DashboardProps) {
       const unavailable = !model.referenceDateValid && ["recent90", "released"].includes(metric.id);
       return <button type="button" key={metric.id} className={`dash-metric${index === 0 ? " dash-metric-primary" : ""}`} disabled={unavailable || !metric.count} onClick={() => open(metric)}><span className="dash-metric-label"><Icon size={17}/>{label(metric)}<ArrowUpRight size={15}/></span><strong>{unavailable ? "—" : count(metric.count)}</strong><span className="dash-metric-hint">{unavailable ? t("快照日期不可用", "Snapshot date unavailable") : metricHints[metric.id]}</span></button>;
     })}</div>
+
+    <GitHubPopularity model={model} onDrill={onDrill} onRankedBrowse={onRankedBrowse}/>
 
     <div className="dash-main-grid github-main-grid">
       <section className="dash-panel github-trajectory"><div className="dash-panel-heading"><div><h2>{timelineTitle}</h2><p>{creation ? t("每个仓库按创建时间计数一次", "Each repository counted once by its creation date") : t("每个仓库按最新活动日期计数一次", "Each repository counted once by its latest activity date")}{monthly ? t(" · 长时间范围按月汇总", " · long windows aggregate by month") : t(" · 按日汇总", " · daily counts")}</p></div><span className="dash-unit">{t("单位：个", "Unit: repos")}</span></div>
