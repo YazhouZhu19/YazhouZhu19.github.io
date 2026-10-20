@@ -16,6 +16,7 @@ import { LOCAL_AI_MODELS, aiSampleLimit, fetchFreeAiModels, getLocalAiModel } fr
 import { beijingDay, type DashboardDrill } from "@/lib/dashboard";
 import type { Paper } from "@/lib/types";
 import { useI18n } from "./locale-provider";
+import { LoadingState, EmptyState, ErrorState } from "./state-views";
 import { useSignalsAccess } from "./signals-context";
 
 type AiResult = { report: AiReport; model: string; generatedAt: string };
@@ -776,28 +777,30 @@ function AiResearchScope({
             "Papers use the earliest known publication day; GitHub uses the latest push/release or creation day; news uses publication day. Repository and news snapshots must have been observed by the end date; current snapshots cannot reconstruct history.",
           )}
         </p>
-        {missingSignals && (
-          <p className="ai-help ai-field-full" role="status">
-            {signalAccess?.error
-              ? t(
-                  "所选来源尚未加载完成，请重试后再分析。",
-                  "A selected source could not be loaded. Retry before analysis.",
-                )
-              : t("正在加载所选来源的公开证据…", "Loading public evidence from the selected sources…")}
-            {signalAccess?.error && (
-              <button
-                type="button"
-                className="foresight-text-button"
-                onClick={() => {
-                  if (ensureKind)
-                    for (const kind of state.sources) if (kind !== "paper") void ensureKind(kind);
-                }}
-              >
-                {t("重新加载", "Retry loading")}
-              </button>
-            )}
-          </p>
-        )}
+        {missingSignals &&
+          (signalAccess?.error ? (
+            <ErrorState
+              compact
+              className="ai-field-full"
+              description={t(
+                "所选来源尚未加载完成，请重试后再分析。",
+                "A selected source could not be loaded. Retry before analysis.",
+              )}
+              retryLabel={t("重新加载", "Retry loading")}
+              onRetry={() => {
+                if (ensureKind) for (const kind of state.sources) if (kind !== "paper") void ensureKind(kind);
+              }}
+            />
+          ) : (
+            <LoadingState
+              compact
+              className="ai-field-full"
+              description={t(
+                "正在加载所选来源的公开证据…",
+                "Loading public evidence from the selected sources…",
+              )}
+            />
+          ))}
         <div className="ai-analysis-actions ai-field-full">
           <button
             type="submit"
@@ -843,29 +846,36 @@ function AiResearchScope({
         </div>
       )}
       {error && (
-        <div className="ai-error" role="alert">
-          <strong>{t("本次分析未完成", "Analysis did not complete")}</strong>
-          <p>{error}</p>
-          <p>
-            {t(
-              "可以调整模型或范围后重试。当前没有生成可用的 AI 结论。",
-              "Adjust the model or scope and retry. No usable AI assessment was generated.",
-            )}
-          </p>
-        </div>
+        <ErrorState
+          title={t("本次分析未完成", "Analysis did not complete")}
+          description={
+            <>
+              <p>{error}</p>
+              <p>
+                {t(
+                  "可以调整模型或范围后重试。当前没有生成可用的 AI 结论。",
+                  "Adjust the model or scope and retry. No usable AI assessment was generated.",
+                )}
+              </p>
+            </>
+          }
+        />
       )}
       {!pending && !error && evidence && !evidence.papers.length && (
-        <div className="ai-empty" role="status">
-          {evidence.retrieval
-            ? t(
-                "库中没有与该问题匹配的证据。可调整问题、来源或日期；空结果不代表这个问题没有研究。",
-                "No evidence in this library matches the question. Adjust the question, sources or dates; this does not mean the topic is unstudied.",
-              )
-            : t(
-                "所选来源与日期范围没有可用证据。可调整来源或日期；空结果不代表这个问题没有研究。",
-                "No usable evidence in the selected sources and dates. Adjust the scope; an empty result does not mean the question is unstudied.",
-              )}
-        </div>
+        <EmptyState
+          className="ai-empty"
+          description={
+            evidence.retrieval
+              ? t(
+                  "库中没有与该问题匹配的证据。可调整问题、来源或日期；空结果不代表这个问题没有研究。",
+                  "No evidence in this library matches the question. Adjust the question, sources or dates; this does not mean the topic is unstudied.",
+                )
+              : t(
+                  "所选来源与日期范围没有可用证据。可调整来源或日期；空结果不代表这个问题没有研究。",
+                  "No usable evidence in the selected sources and dates. Adjust the scope; an empty result does not mean the question is unstudied.",
+                )
+          }
+        />
       )}
       {result && evidence && (
         <div className="ai-result">
