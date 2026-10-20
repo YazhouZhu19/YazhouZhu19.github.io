@@ -16,7 +16,7 @@ scores must not be presented as independently validated accuracy.
 | Task | Status | Evidence / next step |
 | --- | --- | --- |
 | P0.1 | Complete | Measured entry graph and data; explicit per-resource regression budgets fail the build. |
-| P0.2 | Awaiting review | 400 provisional labels and frozen evidence prepared; user requested independent AI second review, in progress. |
+| P0.2 | AI review complete; gold pending | 400 frozen records reviewed; 51 records conservatively revised, originals retained; no human gold claim. |
 | P1.1 | Complete | Month/ID buckets, append-only URL dictionary and single atomic manifest replacement. |
 | P1.3 | Complete | Verified Cache Storage reuse, bounded generation retention and safe storage fallback. |
 | P1.6 | Complete | Both manifest readers use conditional revalidation; hidden-page suspension and bounded backoff integrated. |
@@ -138,3 +138,12 @@ scores must not be presented as independently validated accuracy.
   Before and after: 417 TypeScript + 25 local API tests pass. Typecheck, Vite, complete
   data copy/validation, publication retention and explicit budget checks pass. Lockfile
   changes are limited to Prettier; unrelated npm normalization was not retained.
+
+- **P0.2 / requested AI review:** Frozen 400-paper stratified sample and complete evidence
+  were independently reread in a second AI pass: 217 provisionally agreed, 67 changes suggested,
+  85 boundary cases and 31 missing abstracts. Reconciliation of all 67 against full abstracts
+  accepted 42, partially accepted 9 and deferred 16; 51 records changed in a separate AI-reviewed
+  CSV (3 scope changes and 50 track changes, overlapping). Original CSV, annotations and frozen
+  evidence remain byte-identical. Each new annotation explicitly remains humanConfirmed=false.
+  Ten evaluation tests, diagnostic reports and the strict gold rejection check passed. Metrics
+  remain provisional; the balanced audit sample is not a population accuracy estimate.

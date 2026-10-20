@@ -1,0 +1,2875 @@
+{
+  "doi:10.3171/2026.4.jns26111": {
+    "scope": "adjacent",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Compares bedside ultrasound diagnostic accuracy against CT; no computational method described."
+  },
+  "arxiv:2605.09977": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "registration"
+    ],
+    "notes": "Implicit neural reconstruction of thick-slice fetal MRI and spatiotemporal atlas construction."
+  },
+  "arxiv:2609.18109": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Differentiable inverse finite-element inference estimates geometry and material parameters from MRI-derived tissue models."
+  },
+  "arxiv:2602.00990": {
+    "scope": "adjacent",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Reader assessment of static versus cine thyroid ultrasound; imaging accuracy rather than algorithm development."
+  },
+  "arxiv:2606.00602": {
+    "scope": "core",
+    "tracks": [
+      "foundation",
+      "language"
+    ],
+    "notes": "Anatomy-aware volumetric pretraining uses radiology-report supervision for transferable representations."
+  },
+  "arxiv:2506.15626": {
+    "scope": "core",
+    "tracks": [
+      "prognosis",
+      "quantification"
+    ],
+    "notes": "Federated MRI BrainAGE modelling evaluates post-stroke outcome prediction."
+  },
+  "arxiv:2601.00973": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Neural likelihood approximation and normalizing flows estimate regional hemodynamic parameters from fMRI."
+  },
+  "arxiv:2602.15783": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Graph Transformers classify epithelial cells in histopathology; segmentation appears as background."
+  },
+  "arxiv:2609.21115": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Quantum-classical attention predicts molecular expression from histopathology."
+  },
+  "arxiv:2510.26834": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "foundation"
+    ],
+    "notes": "Foundational diffusion priors generate high-resolution volumetric brain MRI."
+  },
+  "arxiv:2606.15938": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "prognosis"
+    ],
+    "notes": "Paired chest X-ray vision-language pretraining models disease progression and progression captioning, not image reconstruction as an end task."
+  },
+  "doi:10.3389/fmed.2026.1889351": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Text-prompted SAM2 segmentation of fetal ultrasound anatomy."
+  },
+  "arxiv:2606.22144": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "diagnosis"
+    ],
+    "notes": "Expert-annotated GI endoscopy dataset evaluates multimodal diagnosis, reports and hallucinations."
+  },
+  "arxiv:2602.19322": {
+    "scope": "core",
+    "tracks": [
+      "foundation"
+    ],
+    "notes": "Joint-embedding self-supervision learns transferable ultrasound representations."
+  },
+  "arxiv:2607.29266": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "human_loop"
+    ],
+    "notes": "Explicit human-in-the-loop bone-tumor segmentation framework; maintainer should verify actual clinician interaction in full text."
+  },
+  "arxiv:2609.30223": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Instance-aware connected-component loss directly addresses lesion segmentation."
+  },
+  "doi:10.5937/jomb0-61610": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Laboratory HALP, ESR and rheumatoid-factor analysis; automated blood analysers are not image-analysis methods."
+  },
+  "arxiv:2605.20459": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Compares deep-learning architectures for pixel-level lung-lesion segmentation on CT."
+  },
+  "arxiv:2608.16233": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "MSCNet reconstructs missing prostate MRI contrasts and restores degraded acquisitions."
+  },
+  "doi:10.13703/j.0255-2930.20250418-k0002": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "intervention"
+    ],
+    "notes": "Applies a software 3D CT reconstruction pipeline to quantify safe needle trajectories; computational application boundary needs review."
+  },
+  "doi:10.64898/2026.08.26.26361434": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "MOSAIC-Age derives CT organ-aging clocks and evaluates future disease and mortality associations."
+  },
+  "doi:10.1007/s10278-026-02379-z": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "UNet/Transformer framework segments OCT angiography vessels under motion artefacts."
+  },
+  "arxiv:2606.30183": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Deep registration model controls deformation through variational difference modelling."
+  },
+  "arxiv:2510.00009": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Combines MRI elastography and deformable-registration networks to estimate glioma stress and assess survival association."
+  },
+  "arxiv:2404.14019": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Multimodal Mamba-Transformer segmentation handles missing brain MRI modalities."
+  },
+  "doi:10.64898/2026.07.07.26357474": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Spatiotemporal fusion framework detects breast cancer using longitudinal mammography."
+  },
+  "epmc:PMC:PMC1341814": {
+    "scope": "adjacent",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Title describes ultrasound screening for hip abnormalities; abstract missing, tentative title-only label requiring review."
+  },
+  "arxiv:2511.12257": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Bayesian sampling algorithm is evaluated on PET reconstruction as well as generic inverse problems."
+  },
+  "doi:10.1109/cvprf71909.2026.00500": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "foundation"
+    ],
+    "notes": "Language-mediated pathology embeddings use multimodal foundation models to mitigate institution effects."
+  },
+  "arxiv:2609.36991": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Yarn-path extraction from woven textiles is industrial imaging, not medical imaging."
+  },
+  "epmc:PMC:PMC12493938": {
+    "scope": "adjacent",
+    "tracks": [
+      "intervention"
+    ],
+    "notes": "Title reports MRI target delineation for radiosurgery planning; abstract absent and no computational contribution established."
+  },
+  "arxiv:2606.16153": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Survey explicitly reviews computational medical-image segmentation and benchmarks; methods-review scope needs maintainer confirmation."
+  },
+  "doi:10.32687/0869-866x-2026-34-4-851-856": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "human_loop"
+    ],
+    "notes": "Evaluates AI technology in mammographic screening and workflow integration."
+  },
+  "doi:10.64898/2026.08.13.26360270": {
+    "scope": "core",
+    "tracks": [
+      "intervention"
+    ],
+    "notes": "3D Slicer software automatically localises intracranial electrode contacts for SEEG workflows."
+  },
+  "arxiv:2607.03593": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Interpretable deep radiomic signatures support tumor classification."
+  },
+  "doi:10.64898/2026.08.17.26360254": {
+    "scope": "core",
+    "tracks": [
+      "human_loop"
+    ],
+    "notes": "Prospective randomized study evaluates AI-assisted ultrasound software and human workflow, so randomization does not imply out."
+  },
+  "arxiv:2604.21636": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "intervention"
+    ],
+    "notes": "Microwave super-resolution imaging is evaluated for intraoperative breast-margin mapping."
+  },
+  "arxiv:2601.03321": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "Reinforcement-learning framework generates radiology reports using explicit reasoning and summarization."
+  },
+  "arxiv:2512.17612": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "quantification"
+    ],
+    "notes": "Self-supervised, physics-informed method reconstructs high-resolution quantitative MRI."
+  },
+  "arxiv:2602.00128": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Quantum model parallelism classifies Alzheimer disease stages from MRI."
+  },
+  "arxiv:2602.10155": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "intervention"
+    ],
+    "notes": "Computational review covers brain deformation registration and biomechanical models for image-guided neurosurgery."
+  },
+  "doi:10.2214/ajr.26.35721": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Reply/commentary about explainability of VLMs; no abstract or concrete evaluation of image-processing methods established."
+  },
+  "doi:10.1111/vru.70252": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "human_loop",
+      "language"
+    ],
+    "notes": "Evaluates multimodal LLMs and novice/expert radiographic readers; veterinary biomedical imaging boundary needs review."
+  },
+  "doi:10.1101/2025.04.07.25325351": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Automatic cvi42/suiteHEART image processing derives cardiac measurements and prognostic centile categories."
+  },
+  "arxiv:2608.25970": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "prognosis"
+    ],
+    "notes": "Multimodal prototype alignment is tested on Alzheimer MRI classification and pathology survival prediction."
+  },
+  "arxiv:2607.12896": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Unified in-context medical segmentation foundation model across 2D/3D and prompt settings."
+  },
+  "arxiv:2510.13768": {
+    "scope": "core",
+    "tracks": [
+      "foundation"
+    ],
+    "notes": "Self-supervised vision-transformer foundation modelling of functional MRI flat maps."
+  },
+  "doi:10.1093/bioinformatics/btag704": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "ShadoNet detects and classifies cells for quantitative Ki-67 histopathology."
+  },
+  "doi:10.1016/j.ijmedinf.2026.106685": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Healthcare adoption/policy review; imaging is one broad domain, not a specific image-analysis method evaluation."
+  },
+  "doi:10.1109/tuson.2025.3649027": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "registration",
+      "quantification"
+    ],
+    "notes": "Computational beamforming improves ultrasound strain imaging and tissue-motion estimation."
+  },
+  "doi:10.64898/2026.09.10.26362169": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "quantification"
+    ],
+    "notes": "Automated multiphase CT subtraction pipeline registers volumes and derives enhancement maps."
+  },
+  "doi:10.3390/jimaging12080338": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "Explainable vision-language Transformers generate breast ultrasound reports."
+  },
+  "arxiv:2502.12713": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "segmentation"
+    ],
+    "notes": "Contour sampling propagates uncertainty into automated echocardiographic measurements."
+  },
+  "epmc:PMC:PMC13660074": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Title explicitly names ultrasound radiomics for neuropathy detection; abstract missing and validation needs review."
+  },
+  "epmc:PMC:PMC13673992": {
+    "scope": "core",
+    "tracks": [
+      "foundation"
+    ],
+    "notes": "Title explicitly concerns retinal foundation-model representation transfer; abstract missing."
+  },
+  "doi:10.64898/2026.06.09.26355170": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Automated algorithm characterizes airways from segmented lung CT and assesses cystic fibrosis."
+  },
+  "arxiv:2507.16761": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Interpretable B-cos networks diagnose from chest radiographs."
+  },
+  "arxiv:2505.02779": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Unsupervised keypoint and descriptor learning is evaluated as retinal image registration."
+  },
+  "arxiv:2508.13068": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Gaze-supervised multimodal model diagnoses chest X-rays and generates reports; gaze training alone is not a clinician-in-loop evaluation."
+  },
+  "arxiv:2508.12410": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Mamba attention network segments pathological liver regions in volumetric MRI."
+  },
+  "arxiv:2601.15891": {
+    "scope": "core",
+    "tracks": [
+      "foundation",
+      "language"
+    ],
+    "notes": "Chest X-ray joint-embedding encoder transfers to report generation and other downstream tasks."
+  },
+  "doi:10.1002/2056-4538.70119": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "segmentation",
+      "registration",
+      "quantification"
+    ],
+    "notes": "Optimizes imaging/denoising, alignment and segmentation workflow for micro-CT prostate tissue; application boundary needs review."
+  },
+  "doi:10.1016/j.neuroimage.2026.122215": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Applies SuStaIn computational subtyping to MRI volumes and compares prognostic models."
+  },
+  "doi:10.5005/jp-journals-10078-1520": {
+    "scope": "adjacent",
+    "tracks": [],
+    "notes": "Retrospective misdiagnosis investigation uses imaging as evidence; AI is only a future recommendation, not an evaluated method."
+  },
+  "epmc:PMC:PMC13597306": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Title explicitly evaluates deep-learning super-resolution for pediatric low-field MRI; abstract missing."
+  },
+  "doi:10.1007/s10278-026-02241-2": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Deep-learning pipeline deidentifies and restores medical images."
+  },
+  "doi:10.21037/cdt-2025-1-653": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Deep radiomics from CTA/CT-FFR identifies high-risk plaques and predicts cardiovascular events."
+  },
+  "doi:10.64898/2026.07.16.26356882": {
+    "scope": "core",
+    "tracks": [
+      "human_loop"
+    ],
+    "notes": "Prospective evaluation of AI-guided ultrasound acquisition by novice operators with remote clinician interpretation."
+  },
+  "arxiv:2504.06185": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Automated wound segmentation enables mobile monitoring."
+  },
+  "doi:10.1148/ryct.250521": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "registration",
+      "diagnosis"
+    ],
+    "notes": "GAN synthesizes contrast-enhanced thoracic CT with registration guidance and lymph-node detection evaluation."
+  },
+  "doi:10.1109/trpms.2025.3613981": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Neural detector positioning and signal demultiplexing support PET image formation; instrumentation boundary needs review."
+  },
+  "doi:10.1109/tuson.2025.3643144": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Boundary-aware thresholding automatically selects placental ultrasound regions for quantitative analysis."
+  },
+  "epmc:PMC:PMC13674572": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Title names morphological reconstruction for retinal lesion segmentation; abstract missing."
+  },
+  "epmc:PMC:PMC1488488": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Title concerns recruitment to screening rather than image analysis; no abstract available to establish a method."
+  },
+  "arxiv:2603.05911": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Reinforcement-learning reasoning method segments complex medical lesions."
+  },
+  "arxiv:2601.04785": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Generator network translates medical images using direct reconstruction."
+  },
+  "epmc:PMC:PMC1546679": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Symphysis-fundus height is a physical examination measurement, not medical-image analysis; abstract missing."
+  },
+  "doi:10.64898/2026.08.20.26360908": {
+    "scope": "core",
+    "tracks": [
+      "human_loop",
+      "diagnosis",
+      "foundation"
+    ],
+    "notes": "User study evaluates interactive foundation-model heatmaps during radiologist chest X-ray diagnosis."
+  },
+  "arxiv:2509.23097": {
+    "scope": "core",
+    "tracks": [
+      "foundation"
+    ],
+    "notes": "Cross-magnification distillation compresses pathology foundation-model representations."
+  },
+  "doi:10.1007/978-3-032-06329-8_3": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "intervention"
+    ],
+    "notes": "Differentiable physics-based renderer synthesizes ultrasound from volumes for intervention guidance."
+  },
+  "arxiv:2507.09227": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Diffusion and super-resolution synthesize panoramic dental radiographs."
+  },
+  "epmc:PMC:PMC12493913": {
+    "scope": "adjacent",
+    "tracks": [],
+    "notes": "Title describes consensus definitions of post-radiotherapy MRI abnormalities; no abstract or computational method evidence."
+  },
+  "arxiv:2604.09468": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Swin Transformer classifies multi-cancer histopathology."
+  },
+  "arxiv:2512.03449": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Automated cartilage and subchondral-bone segmentation supplies regions for radiomics."
+  },
+  "doi:10.1016/j.cjco.2026.05.008": {
+    "scope": "adjacent",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Manual CT artery diameter association with post-TAVR mortality; no image-processing algorithm evaluated."
+  },
+  "doi:10.3960/jslrt.26029": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Individual lymphoma treatment case and CD20 assay findings; imaging is incidental to drug activity."
+  },
+  "doi:10.1109/isbi60581.2025.10980799": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Self-supervised learned primal-dual reconstruction of MRI."
+  },
+  "doi:10.64898/2026.06.25.26356440": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "human_loop"
+    ],
+    "notes": "Expert-reader experiment evaluates the authenticity of AI-generated radiological images."
+  },
+  "doi:10.1093/nop/npag034": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Liquid-biopsy feasibility is the primary contribution; manual MRI volumes are ancillary."
+  },
+  "arxiv:2603.18660": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "foundation"
+    ],
+    "notes": "Multimodal pathology representation learning and compression build on foundation models."
+  },
+  "doi:10.1016/j.ajodo.2026.07.016": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "quantification"
+    ],
+    "notes": "Applies surface registration and voxel analysis to quantify changes in serial dental CBCT."
+  },
+  "arxiv:2202.04785": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Thresholding validated on a natural porous material sample, not medical imaging despite CT terminology."
+  },
+  "doi:10.64898/2026.06.25.26356599": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "diagnosis"
+    ],
+    "notes": "Four AI models segment perfusion defects on scintigraphy and are compared with annotators."
+  },
+  "arxiv:2610.24044": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Conditional flow matching synthesizes missing glioma MRI sequences."
+  },
+  "arxiv:2505.05855": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Self-supervised implicit representations synthesize and super-resolve MRI contrasts."
+  },
+  "doi:10.1016/j.ejrai.2026.100107": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Two-stage foundation model segments bladder tumors across sites."
+  },
+  "arxiv:2503.20652": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Attention model classifies abnormalities in 3D CT; simulated scrolling does not establish a human-in-loop study."
+  },
+  "doi:10.1136/jcp.27.2.172-a": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Title appears to be a breast-imaging clinical diagnosis volume; no abstract or primary computational study established."
+  },
+  "arxiv:2606.19300": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Evaluates uncertainty reliability of MC dropout in brain tumor segmentation."
+  },
+  "arxiv:2607.27537": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "prognosis"
+    ],
+    "notes": "Diffusion Transformer synthesizes future brain MRI from longitudinal scans."
+  },
+  "epmc:PMC:PMC1260334": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Title resembles an anatomical/morphometric reference volume; no abstract or computational study evidence, requiring maintainer review."
+  },
+  "doi:10.1109/tuson.2026.3667582": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Resolution-distribution method evaluates ultrasound localization reconstruction and acquisition quality."
+  },
+  "arxiv:2311.16707": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "reconstruction",
+      "registration"
+    ],
+    "notes": "MLP architecture evaluates dense medical prediction across restoration, registration and segmentation."
+  },
+  "doi:10.1097/bot.0000000000003215": {
+    "scope": "adjacent",
+    "tracks": [],
+    "notes": "Prospective CTA study measures occult vascular abnormalities in fractures; no computational contribution."
+  },
+  "doi:10.1002/nbm.70421": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Mathematical qT1 transformations generate optimized MRI and automated atlas segmentation for substantia-nigra measurements."
+  },
+  "arxiv:2507.22791": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Broad cross-domain visual feature-matching survey; medical registration is only one application among RGB, LiDAR and SLAM."
+  },
+  "doi:10.1002/nbm.70405": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "quantification"
+    ],
+    "notes": "Open-source MRpro framework implements MRI reconstruction and quantitative parameter estimation."
+  },
+  "epmc:PMC:PMC1650382": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Historical therapeutic/radiographic manual, not a computational imaging methods study; abstract missing."
+  },
+  "arxiv:2603.29492": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "GRPO-based confidence calibration for radiology report generation."
+  },
+  "arxiv:2609.18578": {
+    "scope": "core",
+    "tracks": [
+      "foundation",
+      "diagnosis",
+      "prognosis"
+    ],
+    "notes": "Self-supervised adaptive-token pathology model is evaluated on cancer classification and survival tasks."
+  },
+  "doi:10.18502/jthc.v20i2.19711": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Rare postoperative cardiac-rupture case; imaging confirms the complication rather than supplying a computational contribution."
+  },
+  "arxiv:2602.24013": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Diffusion models generate fundus images with ordinal conditioning."
+  },
+  "doi:10.1117/12.3086220": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Modular segmentation/detection pipelines are evaluated for quantitative Banff histopathology scoring."
+  },
+  "arxiv:2604.05649": {
+    "scope": "core",
+    "tracks": [
+      "foundation",
+      "diagnosis"
+    ],
+    "notes": "Foundation model applies analogical reasoning to endoscopy diagnosis."
+  },
+  "epmc:PMC:PMC12493369": {
+    "scope": "adjacent",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Title examines quantitative PET/MRI predictors of glioma prognosis; abstract missing, computational pipeline not established."
+  },
+  "arxiv:2512.21372": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Teacher-student dual-stream vision Transformers classify GI disease images."
+  },
+  "doi:10.1117/12.3087226": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "SAM-based semiautomatic lung tumor segmentation; interactivity alone does not prove a clinician study."
+  },
+  "doi:10.64898/2026.10.17.26365809": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Evaluates multimodal LLM decisions from MRI versus referral text for glioma/abscess discrimination."
+  },
+  "arxiv:2508.17299": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "foundation"
+    ],
+    "notes": "Foundational diffusion model denoises low-dose CT across dose and anatomy domains."
+  },
+  "doi:10.1515/iss-2025-0010": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Orbital malformation treatment case report; reconstructive surgery is not image reconstruction."
+  },
+  "arxiv:2511.18089": {
+    "scope": "core",
+    "tracks": [
+      "prognosis"
+    ],
+    "notes": "Multimodal alignment/distinctiveness method predicts cancer survival from histopathology and genomics."
+  },
+  "doi:10.64898/2026.09.25.26362274": {
+    "scope": "adjacent",
+    "tracks": [
+      "prognosis"
+    ],
+    "notes": "Clinical MRI/MRCP signs are associated with subsequent PSC diagnosis; no algorithm contribution shown."
+  },
+  "epmc:PMC:PMC491715": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Title resembles a clinical Doppler-ultrasound reference work; missing abstract prevents establishing a computational research study."
+  },
+  "doi:10.64898/2026.04.10.26347909": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Ensembles multimodal LLMs to detect pneumonia in pediatric radiographs."
+  },
+  "arxiv:2506.10633": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Weakly supervised anatomical prompt tuning conditions chest X-ray diffusion generation."
+  },
+  "doi:10.1002/ase.70357": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Correspondence about multimodal-model performance; no abstract or independent evaluation established."
+  },
+  "doi:10.1055/a-2811-1781": {
+    "scope": "adjacent",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Examines radiographic carpal-height association with surgical outcomes without computational method evidence."
+  },
+  "arxiv:2603.26794": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Reproducible open-source multi-sequence MRI brain-tumor classifier."
+  },
+  "doi:10.64898/2026.10.15.26365547": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Computes a new distance-based vascular CT biomarker from segmentations and validates mortality association."
+  },
+  "arxiv:2608.27240": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Unified fetal ultrasound model performs segmentation and limb measurement."
+  },
+  "doi:10.64898/2026.08.24.26361169": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Benchmarks open-source VLMs on MRI brain-metastasis assessment."
+  },
+  "arxiv:2511.08328": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "prognosis"
+    ],
+    "notes": "Evaluates longitudinal mammogram alignment in deep-learning breast-cancer risk modelling."
+  },
+  "doi:10.1016/j.jdent.2026.107087": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "registration",
+      "intervention"
+    ],
+    "notes": "AI segmentation and multimodal dental fusion construct a patient-specific implant-planning model."
+  },
+  "doi:10.5005/jp-journals-10024-3984": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Questionnaire about dentists' technology awareness; mentions AI/CBCT without evaluating image analysis."
+  },
+  "doi:10.18502/jthc.v20i2.19708": {
+    "scope": "adjacent",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Clinical association of CT muscle area/density with mortality; no image-processing method contribution."
+  },
+  "arxiv:2610.07071": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Quaternion filtering converts sharp-kernel CT to soft-kernel images."
+  },
+  "doi:10.53045/jprs.2025-0100": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Single postoperative breast-reconstruction case; volumetric follow-up does not establish an imaging computational method."
+  },
+  "doi:10.3332/ecancer.2026.2151": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Randomized radiation-fractionation treatment trial; routine CT planning is ancillary, not a new/evaluated image-processing method."
+  },
+  "arxiv:2605.29133": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Develops a digital breast-tomosynthesis reconstruction algorithm to improve resolution and contrast."
+  },
+  "arxiv:2512.22570": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Radiomics-enhanced 3D residual network addresses glioma segmentation and characterization."
+  },
+  "arxiv:2609.16775": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Interactive volume-segmentation software with test-time adaptation; annotation workflow is not automatically human-AI clinical diagnosis."
+  },
+  "doi:10.1007/s00330-026-12937-2": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Applies deep-learning prostate MRI segmentation to derive volume and PSA-density reference values."
+  },
+  "arxiv:2610.02269": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "foundation"
+    ],
+    "notes": "Confidence-gated cloud/edge cascade performs chest X-ray triage using multimodal foundation models."
+  },
+  "doi:10.64898/2026.09.09.26362661": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Evaluates repeatability and functional associations of MRI radiomic features."
+  },
+  "epmc:MED:42775365": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Volumetric large-kernel network performs medical-image segmentation."
+  },
+  "doi:10.3238/arztebl.m2026.0172": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "General ataxia diagnosis/genetics/treatment review; MRI is one routine diagnostic aid."
+  },
+  "arxiv:2511.19394": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Background-subdivision method improves small biomedical-lesion segmentation."
+  },
+  "arxiv:2508.20734": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Bayesian recurrent network predicts cardiac motion through shape-guided deformable MRI registration."
+  },
+  "arxiv:2409.14204": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Deep-learning registration framework corrects medical-imaging motion."
+  },
+  "epmc:PMC:PMC13575548": {
+    "scope": "core",
+    "tracks": [
+      "human_loop",
+      "language"
+    ],
+    "notes": "Title evaluates AI triage and report generation in radiology workflow; abstract missing and methods require review."
+  },
+  "arxiv:2511.19667": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "segmentation"
+    ],
+    "notes": "Attention-based multimodal mammography model segments findings and predicts structured diagnostic features."
+  },
+  "doi:10.2147/imcrj.s583050": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Takayasu arteritis case report; CTA confirms disease but no computational method is evaluated."
+  },
+  "arxiv:2604.23184": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Fractional sparse-recovery algorithm is experimentally applied to MRI reconstruction."
+  },
+  "doi:10.1007/s10278-026-02329-9": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Combines clinical, CT and learned features to distinguish malignant from inflammatory pulmonary nodules."
+  },
+  "doi:10.1177/014107688407701132": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Clinical endoscopy reference volume; no abstract or computational study evidence."
+  },
+  "arxiv:2606.05628": {
+    "scope": "core",
+    "tracks": [
+      "intervention"
+    ],
+    "notes": "Computational topology optimization supports focused-ultrasound therapy and monitoring."
+  },
+  "arxiv:2603.17415": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Importance-weighted inference and structured covariance estimation for image registration."
+  },
+  "arxiv:2505.09274": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Medical segmentation methods survey evaluates advances and challenges; methods-review boundary requires confirmation."
+  },
+  "arxiv:2606.04792": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "foundation",
+      "human_loop"
+    ],
+    "notes": "Gastric pathology foundation model includes clinical validation and reader-study motivation; verify reported reader-study results."
+  },
+  "doi:10.1007/978-1-0716-5539-9_21": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Reviews/applies diffusion image generation for cancer and stem-cell imaging."
+  },
+  "doi:10.64898/2026.09.21.26362872": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "foundation"
+    ],
+    "notes": "Foundation-model temporal scoring selects ultrasound video frames for optic-nerve-sheath diameter measurement."
+  },
+  "arxiv:2504.15928": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "foundation"
+    ],
+    "notes": "Generalizable ophthalmic foundation-model diagnostic framework without fine-tuning."
+  },
+  "arxiv:2507.09562": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Cross-domain SAM prompt-engineering survey; medical imaging is an example alongside remote sensing and industrial inspection."
+  },
+  "arxiv:2505.20928": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Studies effects of segmentation-label quality in medical datasets."
+  },
+  "arxiv:2603.17304": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "3D CNN evaluates Alzheimer MRI classification with subject-level leakage control."
+  },
+  "arxiv:2508.12226": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Generative neural physics reconstructs ultrasound tomography using wave-propagation models."
+  },
+  "arxiv:2610.15003": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Hardware/software Gabor-feature accelerator is evaluated for brain-tumor detection."
+  },
+  "arxiv:2603.13007": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Diffusion models accelerate stroke MRI reconstruction with pretraining and fine-tuning."
+  },
+  "doi:10.3390/diagnostics16152399": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "CNN-Transformer ensembles detect pediatric pneumonia on images."
+  },
+  "arxiv:2505.06592": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "Multimodal batch-augmentation method includes an ultrasound dataset evaluation, despite also evaluating food images."
+  },
+  "arxiv:2607.02156": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "registration"
+    ],
+    "notes": "Articulated CT digital-twin algorithm fits anatomy and synthesizes pose-dependent radiographs."
+  },
+  "epmc:PMC:PMC1214808": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Clinical fundus differential-diagnosis reference title; no abstract or computational research established."
+  },
+  "doi:10.1101/2024.03.26.24304935": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "registration"
+    ],
+    "notes": "Multi-b reversed-polarity-gradient algorithm corrects prostate DWI distortion."
+  },
+  "arxiv:2501.00277": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Generic active-learning method mentions radiology only as motivation; abstract does not establish a medical-image evaluation."
+  },
+  "arxiv:2511.02086": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "intervention"
+    ],
+    "notes": "Markerless registration is clinically evaluated for augmented-reality surgical guidance."
+  },
+  "arxiv:2311.08493": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Compares neural image-classification architectures on breast sonograms and BI-RADS."
+  },
+  "arxiv:2501.06540": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Fundus vision Transformer diagnoses high myopia and predicts axial length."
+  },
+  "doi:10.64898/2026.10.05.26364781": {
+    "scope": "adjacent",
+    "tracks": [
+      "intervention"
+    ],
+    "notes": "Clinical MRI simulation/acquisition protocol for radiotherapy; abstract does not evaluate a computational image-analysis method."
+  },
+  "arxiv:2410.14948": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Multiview medical vision-language framework links diagnostic decisions to image evidence."
+  },
+  "doi:10.1016/j.ctarc.2025.101062": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Clinical sarcoma-metastasis review; AI appears only as a future research suggestion."
+  },
+  "doi:10.1109/tip.2026.3732294": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Uncertainty-estimation method for source-free medical segmentation."
+  },
+  "arxiv:2412.09529": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Benchmarks radiology agents on real images with grounding, diagnosis and reporting tools."
+  },
+  "arxiv:2510.17529": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Dual-input Mamba attention segments prostate MRI longitudinally."
+  },
+  "doi:10.1177/20551169261462693": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Veterinary developmental-lung-disease case report, not computational image analysis."
+  },
+  "arxiv:2606.19867": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Differentiable back-projection and attention reconstruct pediatric skull CT from sparse radiographs."
+  },
+  "arxiv:2608.09991": {
+    "scope": "core",
+    "tracks": [
+      "prognosis",
+      "foundation"
+    ],
+    "notes": "Longitudinal volumetric foundation model predicts breast-cancer treatment response."
+  },
+  "doi:10.5624/isd.20260079": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "CNN-derived mandibular radiomic attributes estimate age from panoramic radiographs."
+  },
+  "epmc:PMC:PMC13580684": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Title describes referenceless MRI motion correction using pilot-tone signals; abstract missing."
+  },
+  "arxiv:2510.01730": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "diagnosis"
+    ],
+    "notes": "Hardware-aware multi-model pipeline synthesizes MRI from CT and performs diagnosis."
+  },
+  "doi:10.1016/j.media.2026.104335": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "reconstruction"
+    ],
+    "notes": "Physics-informed neural representation jointly corrects MRI motion and reconstructs volume."
+  },
+  "arxiv:2506.07044": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "foundation"
+    ],
+    "notes": "Generalist multimodal medical foundation model supports visual reasoning."
+  },
+  "arxiv:2604.11197": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "foundation"
+    ],
+    "notes": "Medical CLIP region-aware pretraining aligns images and semantic annotations."
+  },
+  "epmc:PMC:PMC496574": {
+    "scope": "adjacent",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Title describes ultrasound diagnosis of brain disease; absent abstract and no computational contribution established."
+  },
+  "doi:10.64898/2026.09.14.26363026": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Calibrates pixelwise uncertainty for low-dose radiograph denoising."
+  },
+  "doi:10.1016/j.prnil.2026.01.004": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Androgen-deprivation schedule and testosterone/oncologic outcomes study; imaging is not the analytical contribution."
+  },
+  "doi:10.64898/2026.06.20.26356152": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "segmentation"
+    ],
+    "notes": "Deep learning detects ischemic stroke and segments lesions on non-contrast CT."
+  },
+  "doi:10.21203/rs.3.rs-10728055/v1": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "VLM pipeline estimates nodule attributes/diameter and generates descriptions and recommendations."
+  },
+  "doi:10.4103/jmau.jmau_3_23": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Therapeutic/pathological discussion of intraoral neurofibroma; no computational imaging method."
+  },
+  "arxiv:2607.02585": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Registration-quality framework scores reliability of CT-MRI alignment; clinical uses are motivation rather than evaluated endpoints."
+  },
+  "doi:10.1177/10732748261494374": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Population survey of screening access and English proficiency; no analysis of images."
+  },
+  "arxiv:2606.31502": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Deep segmentation quantifies retinal atrophy and ellipsoid-zone thickness in OCT."
+  },
+  "doi:10.1007/s00259-026-08190-w": {
+    "scope": "adjacent",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Exploratory PET uptake and MRI scoring associations; no computational method contribution established."
+  },
+  "doi:10.20944/preprints202610.1394.v1": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "reconstruction"
+    ],
+    "notes": "CNN jointly registers repeated DWI acquisitions and reconstructs super-resolution images."
+  },
+  "arxiv:2505.03380": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation",
+      "language",
+      "human_loop",
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Text-conditioned segmentation foundation model includes clinician refinement and radiomics/survival evaluation."
+  },
+  "arxiv:2510.00053": {
+    "scope": "core",
+    "tracks": [
+      "prognosis"
+    ],
+    "notes": "Prototype evidential fusion predicts survival from whole-slide pathology."
+  },
+  "arxiv:2412.12660": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Semantic-guided SAM performs unified medical-image segmentation."
+  },
+  "doi:10.64898/2026.06.16.26355803": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Fine-tunes SAM2 for coronary-vessel segmentation in fluoroscopy."
+  },
+  "doi:10.1148/rycan.250617": {
+    "scope": "core",
+    "tracks": [
+      "prognosis"
+    ],
+    "notes": "Multimodal CT/pathology Transformer predicts postoperative risk and treatment benefit."
+  },
+  "arxiv:2509.12090": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "reconstruction"
+    ],
+    "notes": "Recovers dynamic heart meshes and motion from dense/sparse cardiac MRI."
+  },
+  "doi:10.1016/j.annonc.2026.07.001": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "prognosis",
+      "intervention"
+    ],
+    "notes": "Applies deep learning to quantify thymic image features and explores radiation-plan reoptimization."
+  },
+  "arxiv:2503.17543": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "segmentation"
+    ],
+    "notes": "Spatiotemporal echocardiography network estimates ejection fraction from endocardial measurements."
+  },
+  "arxiv:2610.12134": {
+    "scope": "core",
+    "tracks": [
+      "prognosis",
+      "language"
+    ],
+    "notes": "Multimodal multi-agent framework predicts knee-osteoarthritis progression with evidence-linked interpretation."
+  },
+  "doi:10.1016/j.jhep.2026.03.004": {
+    "scope": "adjacent",
+    "tracks": [
+      "diagnosis",
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Liver-imaging clinical review mainly covers acquisition, diagnosis and prognosis; radiomics/AI are emerging subsections, boundary needs review."
+  },
+  "arxiv:2608.06126": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "CT-based synthetic-depth generation trains automated patient-pose assessment before radiography."
+  },
+  "arxiv:2510.15042": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "foundation"
+    ],
+    "notes": "Large-scale volumetric language-image pretraining enables 3D medical understanding."
+  },
+  "arxiv:2604.26288": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "diagnosis"
+    ],
+    "notes": "Releases a multimodal chest X-ray reasoning/attention dataset for model development."
+  },
+  "doi:10.21037/gs-2026-0143": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Ultrasound radiomics and clinical variables predict thyroid-nodule malignancy."
+  },
+  "doi:10.64898/2026.07.30.26359276": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "quantification"
+    ],
+    "notes": "Compares ultrasound fascia tracking algorithms for displacement and muscle-function measurement."
+  },
+  "arxiv:2603.13044": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Benchmarks general-purpose and specialized models for 2D medical segmentation."
+  },
+  "arxiv:2603.00156": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "language"
+    ],
+    "notes": "Language-image consistency framework improves medical segmentation."
+  },
+  "doi:10.64898/2026.10.03.26364663": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Interactive annotation method for intraoperative ultrasound; expert annotation alone is not a clinical human-AI diagnosis study."
+  },
+  "arxiv:2603.21597": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "prognosis",
+      "language"
+    ],
+    "notes": "Multimodal AI-agent board characterizes dementia and estimates risk."
+  },
+  "arxiv:2604.08322": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "diagnosis"
+    ],
+    "notes": "Reasoning-enhanced multimodal model interprets fundus images."
+  },
+  "arxiv:2404.07239": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Focused methods review evaluates thyroid-cancer radiomics/AI diagnosis; review inclusion needs maintainer confirmation."
+  },
+  "arxiv:2512.01362": {
+    "scope": "core",
+    "tracks": [
+      "prognosis"
+    ],
+    "notes": "Directed-evolution computational model predicts cochlear-implant outcomes from preoperative MRI."
+  },
+  "doi:10.4103/jiaps.jiaps_90_26": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Evaluates multimodal LLM grading of reflux from pediatric cystourethrogram images."
+  },
+  "arxiv:2605.30972": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Triaxial bidirectional Mamba performs volumetric medical segmentation."
+  },
+  "arxiv:2505.09829": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Semisupervised boundary-aware multitask method segments 3D medical images."
+  },
+  "arxiv:2503.00972": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "intervention"
+    ],
+    "notes": "Semantic nonrigid point-cloud registration supports computer-aided interventions."
+  },
+  "doi:10.64898/2026.09.04.26362236": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "registration"
+    ],
+    "notes": "Compares fMRI preprocessing, motion correction and learned denoising pipelines across acquisition sites."
+  },
+  "doi:10.1177/003591577707000334": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Urological radiology reference volume; no abstract or computational study established."
+  },
+  "doi:10.21203/rs.3.rs-10529306/v1": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Multi-phase tomography segmentation is for materials characterization rather than medical imaging."
+  },
+  "doi:10.1016/j.ultrasmedbio.2026.08.003": {
+    "scope": "core",
+    "tracks": [
+      "human_loop",
+      "diagnosis"
+    ],
+    "notes": "AI guidance and automatic capture of B-line ultrasound clips are evaluated with nonexpert operators."
+  },
+  "doi:10.64898/2026.08.17.742355": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "registration",
+      "quantification"
+    ],
+    "notes": "Open aligned histology/omics dataset and software apply registration and cell segmentation for quantitative spatial analysis."
+  },
+  "doi:10.1016/j.amjcard.2026.09.014": {
+    "scope": "adjacent",
+    "tracks": [
+      "intervention",
+      "prognosis"
+    ],
+    "notes": "Clinical outcomes comparison of IVUS versus angiographic guidance, without computational method evaluation."
+  },
+  "arxiv:2604.22700": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "prognosis",
+      "foundation"
+    ],
+    "notes": "Longitudinal diffusion model generates/predicts neurodegenerative brain anatomy."
+  },
+  "arxiv:2503.05916": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Data augmentation improves small-structure ultrasound segmentation."
+  },
+  "doi:10.12688/f1000research.178239.1": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Systematic review specifically evaluates CT radiomics/ML adnexal-mass classifiers."
+  },
+  "arxiv:2410.03086": {
+    "scope": "adjacent",
+    "tracks": [],
+    "notes": "Robotic ultrasound end-effector and force-control hardware study evaluates acquisition quality, not an image-processing method; boundary needs review."
+  },
+  "arxiv:2602.19213": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Token-level mixture-of-experts architecture for medical segmentation."
+  },
+  "doi:10.1148/rg.250166": {
+    "scope": "adjacent",
+    "tracks": [],
+    "notes": "Technical clinical neurography acquisition/protocol review without a computational analysis contribution."
+  },
+  "arxiv:2605.10521": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Mixture-of-experts model improves subgroup fairness and robustness on medical segmentation benchmarks."
+  },
+  "doi:10.34133/csbj.0082": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "AI processes wearable ultrasound/movement signals for deep-vein-thrombosis detection."
+  },
+  "arxiv:2501.12632": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Text-distilled object-localization method includes histopathology benchmark evaluation."
+  },
+  "doi:10.12968/bjon.2026.0117": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Governance and implementation perspective explicitly emphasizes pathway design rather than algorithm performance."
+  },
+  "arxiv:2509.25594": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Knowledge-guided universal prompt-integrated medical segmentation model."
+  },
+  "doi:10.64898/2026.03.27.26349508": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "diagnosis"
+    ],
+    "notes": "Fourier multiscale mammographic asymmetry analysis evaluates association with breast cancer."
+  },
+  "doi:10.1016/j.media.2026.104327": {
+    "scope": "core",
+    "tracks": [
+      "foundation"
+    ],
+    "notes": "Title describes magnification-sampling methodology for pathology foundation models; abstract missing."
+  },
+  "doi:10.1109/tuson.2026.3659798": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Acoustic holography software for levitation/haptics and broad applications, not processing medical images."
+  },
+  "arxiv:2602.03317": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Physics-structured VAE estimates quantitative MRI parameters with uncertainty."
+  },
+  "arxiv:2504.13754": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Compact contrastive pathology network classifies peripheral neuroblastic tumors."
+  },
+  "arxiv:2609.17800": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Injects expert-model evidence into dental VLMs and releases bone-loss detection annotations."
+  },
+  "arxiv:1307.2965": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Learned semantic-context forests segment knee cartilage on MRI."
+  },
+  "arxiv:2505.11909": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Domain-generalization method transfers medical segmentation across MRI and CT."
+  },
+  "arxiv:2606.15910": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "Evaluates calibration estimators for medical vision-language question answering."
+  },
+  "doi:10.1007/978-3-030-87231-1_26": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "diagnosis"
+    ],
+    "notes": "Denoising method improves deep detection of cerebral microbleeds."
+  },
+  "doi:10.1016/j.isci.2026.117455": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Transformer registration aligns CBCT/CT with topology-preserving regularization."
+  },
+  "doi:10.64898/2026.09.08.26362537": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "reconstruction",
+      "quantification"
+    ],
+    "notes": "Evaluates effects of deep MRI reconstruction on automated brain segmentation and volumetry."
+  },
+  "doi:10.1002/jfa2.70226": {
+    "scope": "adjacent",
+    "tracks": [
+      "prognosis"
+    ],
+    "notes": "Clinical radiographic hallux-valgus association with fracture outcomes; no computational method evidence."
+  },
+  "doi:10.7759/cureus.114517": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Surgical case report; imaging supplies anatomy for screw placement rather than a computational analysis contribution."
+  },
+  "doi:10.1109/tmi.2026.3739833": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Distilled CNNs segment neurons in electron-microscopy volumes."
+  },
+  "arxiv:2510.23224": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "Vision-language alignment enables multimodal whole-slide retrieval."
+  },
+  "doi:10.1002/jfa2.70222": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Biomechanics and functional-status study; ultrasound muscle sizes are ancillary and no image-processing method is evaluated."
+  },
+  "doi:10.12688/f1000research.166604.2": {
+    "scope": "adjacent",
+    "tracks": [
+      "intervention",
+      "prognosis"
+    ],
+    "notes": "Clinical associations of standard brachytherapy dose indices with response, without computational image-method contribution."
+  },
+  "doi:10.1002/gin2.70067": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Treatment-guideline protocol for achalasia; endoscopy is a therapy context."
+  },
+  "arxiv:2609.33611": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "segmentation"
+    ],
+    "notes": "Segmentation-guided generative pipeline synthesizes contrast-enhanced breast MRI."
+  },
+  "doi:10.64898/2026.08.03.26359612": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Biomechanically supervised network estimates liver deformation for registration."
+  },
+  "arxiv:2609.19190": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "CPU/CUDA software accelerates standardized radiomic feature extraction and spatial maps."
+  },
+  "arxiv:2610.18926": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "intervention"
+    ],
+    "notes": "Patient-context and deformation-history method personalizes registration for adaptive radiotherapy."
+  },
+  "arxiv:2502.16697": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Biology-informed graphs provide interpretable retinal disease predictions."
+  },
+  "arxiv:2507.00673": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "language"
+    ],
+    "notes": "Prompt-conditioned multi-organ/multi-disease chest-radiograph segmentation."
+  },
+  "doi:10.1016/j.hroo.2026.06.011": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Arrhythmia-radioablation clinical mechanisms/outcomes review; imaging integration is a procedural topic rather than evaluated computational analysis."
+  },
+  "doi:10.64898/2026.08.26.26361112": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "quantification",
+      "reconstruction"
+    ],
+    "notes": "Study protocol specifies automated segmentation, quantitative MRI mapping and pseudo-CT generation; prospective protocol status needs review."
+  },
+  "arxiv:2511.09394": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Agentic multimodal ophthalmology system provides image-based clinical decision support."
+  },
+  "doi:10.1109/tmi.2026.3741804": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Title explicitly names pulmonary-segment segmentation method; abstract missing."
+  },
+  "arxiv:2602.05387": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "intervention"
+    ],
+    "notes": "Transformer MRI-to-CT synthesis supports MRI-only radiotherapy planning."
+  },
+  "doi:10.3389/fonc.2026.1728616": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Radiomics/deep-learning PET-CT model identifies synchronous metastasis, not future disease progression."
+  },
+  "doi:10.1097/ms9.0000000000005474": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Gallstone-fistula surgical case report; imaging is incidental clinical evidence."
+  },
+  "arxiv:2412.19990": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Long-range-dependency network segments hepatic vessels on CT."
+  },
+  "arxiv:2406.11868": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Ethical/governance framework for imaging AI rather than computational method development or evaluation."
+  },
+  "arxiv:2610.26475": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Computational study of 3D generative diffusion models for medical imaging."
+  },
+  "arxiv:2204.09334": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Unsupervised adaptation improves cardiac segmentation using structural mutual information."
+  },
+  "arxiv:2609.07188": {
+    "scope": "core",
+    "tracks": [
+      "human_loop"
+    ],
+    "notes": "Medical OOD detector uses sparse feedback; actual versus simulated human participation requires maintainer verification."
+  },
+  "epmc:PMC:PMC1416436": {
+    "scope": "adjacent",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Title compares barium and ultrasound reflux diagnosis in children; abstract missing, no computational method established."
+  },
+  "arxiv:2610.02755": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "quantification"
+    ],
+    "notes": "Vision-language model organizes diffusion-MRI white-matter streamlines into anatomical clusters."
+  },
+  "arxiv:2607.02091": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Multimodal image/clinical/text fusion classifies breast fibroadenoma versus phyllodes tumors."
+  },
+  "doi:10.1016/j.patcog.2026.113973": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Probabilistic weak supervision improves volumetric medical segmentation."
+  },
+  "doi:10.64898/2026.06.16.26355800": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Deep-learning mammographic calcification quantification is evaluated for cardiovascular-risk prediction."
+  },
+  "arxiv:2503.19945": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Transfer learning, resolution and multiview models are compared for mammographic cancer detection."
+  },
+  "arxiv:2602.16991": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Radiation mapping concerns nuclear emergencies/environmental sources, not medical images."
+  },
+  "arxiv:2610.06094": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "intervention"
+    ],
+    "notes": "Diffusion refinement improves CBCT for image-guided radiation therapy."
+  },
+  "arxiv:2512.17080": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Interpretable metric evaluates synthetic medical-image utility across several modalities."
+  },
+  "doi:10.1136/jcp.44.4.352-c": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Ocular-histopathology differential-diagnosis reference volume; no abstract or computational study established."
+  },
+  "arxiv:2610.08849": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Anatomical labels are translated into physics-based synthetic abdominal ultrasound."
+  },
+  "arxiv:2502.14009": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Benchmarks self-supervised accelerated-MRI reconstruction methods."
+  },
+  "arxiv:2503.23179": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Oncology image-registration challenge enables algorithm validation with privacy protection."
+  },
+  "arxiv:2608.10002": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "LoRA cycle adaptation translates histology into hierarchical phase-contrast CT."
+  },
+  "doi:10.64898/2026.09.10.26362809": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Frequency-domain nnU-Net improves nasal/sinus CT segmentation with limited training data."
+  },
+  "doi:10.1109/tuson.2026.3687801": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Stochastic phase-encoding optimization reconstructs ultrasound sound-speed images."
+  },
+  "arxiv:2506.16556": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "reconstruction"
+    ],
+    "notes": "Distance-field priors reconstruct and segment vascular networks from sparse CT slices."
+  },
+  "arxiv:2604.23481": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Uses spatial transcriptomics as weak supervision for histopathology nucleus classification."
+  },
+  "doi:10.1097/rlu.0000000000006648": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Single prostate-cancer therapy-response case; PET/SPECT follow-up is clinical evidence."
+  },
+  "doi:10.1016/j.hroo.2026.06.001": {
+    "scope": "adjacent",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Manual CT wall-thickness measurements assess amyloidosis diagnostic discrimination; routine multiplanar viewing is not a reconstruction method contribution."
+  },
+  "arxiv:2601.15884": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Paired contrast-imaging benchmark and universal flow model synthesize missing modalities."
+  },
+  "doi:10.1136/bmj.307.6909.940-b": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "General histopathology diagnosis/reference title; no abstract or computational study established."
+  },
+  "arxiv:2608.29944": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Evaluates MRI sequence effects on brain-tumor segmentation generalization."
+  },
+  "doi:10.5603/fm.112832": {
+    "scope": "adjacent",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Anatomical imaging review uses AI only on pooled literature variables, not on patient images."
+  },
+  "doi:10.1007/s13193-025-02482-7": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Clinical lymphoma spectrum/survival study; histopathology defines diagnosis rather than computational imaging analysis."
+  },
+  "arxiv:2509.23176": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Confidence calibration adapts SAM for brain MRI segmentation under domain shift."
+  },
+  "doi:10.1101/2025.10.24.25338153": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Deep MRI classifier grades central-canal stenosis with uncertainty estimation."
+  },
+  "doi:10.1080/20905998.2026.2623583": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Postoperative clip-migration cases and clinical literature review; no image-analysis method."
+  },
+  "doi:10.1109/tuson.2026.3683326": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "GPU processing enables real-time erythrocyte ultrasound super-resolution."
+  },
+  "doi:10.1109/iros60139.2025.11246546": {
+    "scope": "core",
+    "tracks": [
+      "intervention"
+    ],
+    "notes": "Robotic microsurgery system integrates real-time volumetric OCT image feedback."
+  },
+  "arxiv:2601.07871": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "registration",
+      "foundation"
+    ],
+    "notes": "Methodological review explicitly compares multimodal fusion, spatial alignment and image-to-expression pipelines in cardiovascular imaging."
+  },
+  "doi:10.1227/neuprac.0000000000000216": {
+    "scope": "adjacent",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Clinical study evaluates incidence and diagnostic value of radiographic IIH markers."
+  },
+  "arxiv:2609.31376": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Self-supervised frame learning and multiple-instance Transformer screen fetal ultrasound studies for congenital heart disease."
+  },
+  "doi:10.64898/2026.10.16.26365733": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Cross-validated OPLS-DA classifies Alzheimer stages from MR spectroscopy features; spectroscopy inclusion needs maintainer review."
+  },
+  "doi:10.1016/j.oooo.2026.07.005": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "human_loop"
+    ],
+    "notes": "Systematic review evaluates human-AI collaboration on bitewing caries detection."
+  },
+  "arxiv:2607.20037": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Releases raw pelvic CBCT projections for reconstruction and correction algorithm evaluation."
+  },
+  "arxiv:2509.18159": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Computational colonoscopy polyp segmentation with explainability analysis."
+  },
+  "arxiv:2605.09697": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Generic synthetic-data metric cites medical imaging as motivation but names no medical dataset or evaluation; provisional boundary requires review."
+  },
+  "doi:10.1016/j.ard.2026.06.024": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Filgotinib efficacy/safety placebo-controlled phase III trial; radiographic axSpA is a patient definition, not image-analysis research."
+  },
+  "epmc:PMC:PMC13658689": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Title names experimental adaptation of SAM3 to lesion segmentation; abstract missing."
+  },
+  "arxiv:2607.19099": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Open-source BART computational-MRI sequence toolbox jointly supports acquisition and reconstruction."
+  },
+  "doi:10.1097/ms9.0000000000005589": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Paraquat-poisoning treatment case report; no computational image-analysis contribution."
+  },
+  "doi:10.1021/cbmi.6c00066": {
+    "scope": "adjacent",
+    "tracks": [],
+    "notes": "Broad biomedical/chemical imaging instrumentation perspective; no image-processing algorithm evaluation established."
+  },
+  "arxiv:2608.24237": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "Multi-agent temporal reasoning generates verified longitudinal radiology reports."
+  },
+  "arxiv:2409.16183": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "diagnosis",
+      "foundation"
+    ],
+    "notes": "Medical vision-language foundation model undergoes broad real-world radiology evaluation."
+  },
+  "doi:10.1007/s13534-026-00590-z": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Semisupervised consistency co-optimization improves medical segmentation."
+  },
+  "arxiv:2508.04101": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "Adaptation/regularization method improves medical vision-language understanding."
+  },
+  "doi:10.1186/s12880-026-02794-2": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Unsupervised deep inverse framework reconstructs computed tomography."
+  },
+  "doi:10.1109/tuson.2026.3666270": {
+    "scope": "adjacent",
+    "tracks": [],
+    "notes": "Ultrasound transducer fabrication and phantom-resolution characterization, without a computational image-processing contribution."
+  },
+  "arxiv:2607.26799": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Patient-specific symmetry matching classifies breast MRI findings into three categories."
+  },
+  "doi:10.24963/ijcai.2024/610": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Generic visual-prompt learning paper uses clinician cancer diagnosis as an example; abstract does not identify a medical experimental dataset."
+  },
+  "doi:10.64898/2026.08.10.26359935": {
+    "scope": "adjacent",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Physiological hypoxia MRI experiment compares volumetry/perfusion/metabolites; no computational pipeline contribution established."
+  },
+  "arxiv:2605.29429": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Interactive foundation-model adaptation performs cell-instance segmentation; annotation prompting is not clinical human-AI diagnosis."
+  },
+  "doi:10.1136/bmj.300.6718.194": {
+    "scope": "adjacent",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Title describes clinical ovarian-cancer ultrasound screening; abstract missing."
+  },
+  "arxiv:2605.02720": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "foundation"
+    ],
+    "notes": "Domain-literature dataset and pretraining improve fundus vision-language models."
+  },
+  "arxiv:2608.12904": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "reconstruction",
+      "foundation"
+    ],
+    "notes": "CT world model jointly answers questions, generates reports and synthesizes/denoises volumes."
+  },
+  "doi:10.3389/fonc.2026.1751817": {
+    "scope": "adjacent",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Manual-region quantitative MRI follow-up assesses treatment response without image-processing method evaluation."
+  },
+  "arxiv:2508.21041": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "foundation"
+    ],
+    "notes": "Fine-tunes DINOv3 for atypical mitosis classification across pathology domains."
+  },
+  "arxiv:2608.00831": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "intervention",
+      "foundation"
+    ],
+    "notes": "Foundation-model registration supports predictive anatomical twins for adaptive proton therapy."
+  },
+  "arxiv:2410.14083": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "foundation"
+    ],
+    "notes": "SAM-derived region correspondences drive medical-image registration."
+  },
+  "doi:10.1109/tuson.2025.3648199": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Compares model-based ultrasound reconstruction algorithms with a spatially encoded carotid probe."
+  },
+  "arxiv:2511.05782": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "language"
+    ],
+    "notes": "Text-driven alignment transfers medical segmentation across domains."
+  },
+  "arxiv:2608.29611": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Action segmentation is tested on Breakfast/Desktop Assembly videos, not medical images."
+  },
+  "doi:10.21203/rs.3.rs-10975699/v1": {
+    "scope": "adjacent",
+    "tracks": [],
+    "notes": "Clinical-care systematic review after CT coronary-calcification reporting, not a detector evaluation."
+  },
+  "arxiv:2605.16980": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Deep segmentation and implicit skinning derive statistical hand shape from CT."
+  },
+  "arxiv:2609.22377": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Regression and flow matching predict contrast-tracer MRI distributions from baseline imaging."
+  },
+  "arxiv:2605.18878": {
+    "scope": "core",
+    "tracks": [
+      "quantification",
+      "prognosis"
+    ],
+    "notes": "Machine-learning lung-ultrasound biomarkers predict 30-day heart-failure readmission."
+  },
+  "arxiv:2602.06761": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "quantification"
+    ],
+    "notes": "Annotation-free motion-trajectory learning detects fetal cardiac phases in echocardiography."
+  },
+  "arxiv:2609.25088": {
+    "scope": "core",
+    "tracks": [
+      "prognosis"
+    ],
+    "notes": "Interpretable hypergraph network predicts glioblastoma survival from tissue-image patches."
+  },
+  "arxiv:2510.10679": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Cross-modal memory framework segments brain tumors in 3D."
+  },
+  "arxiv:2606.05113": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "prognosis"
+    ],
+    "notes": "Latent diffusion predicts post-radiotherapy glioma MRI volumes."
+  },
+  "arxiv:2606.30651": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Delirium classifier uses administrative/laboratory data and a radiology-derived text indicator, not medical images."
+  },
+  "arxiv:2602.23782": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "foundation"
+    ],
+    "notes": "Foundation-model adaptation enables label-efficient 3D vessel segmentation."
+  },
+  "arxiv:2607.22332": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Low-latency click-prompt method refines 3D medical segmentation; annotation is not itself clinical human-AI diagnosis."
+  },
+  "arxiv:2609.08148": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "segmentation"
+    ],
+    "notes": "Signed-distance model reconstructs ventricular surface from sparsely annotated cardiac MRI."
+  },
+  "arxiv:2605.02376": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "Graph-augmented dual-stream method generates medical reports."
+  },
+  "arxiv:2608.24626": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Studies scaling and uncertainty in AI virtual histological staining."
+  },
+  "doi:10.3390/diagnostics16152385": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "Wavelet diffusion outpaints 3D MRI while preserving pathology."
+  },
+  "doi:10.64898/2026.08.27.26361537": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "CTA-derived computational-fluid-dynamics models estimate stenotic pressure gradients."
+  },
+  "doi:10.1002/mp.70711": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction"
+    ],
+    "notes": "CNN reduces metal artefacts in photon-counting CT."
+  },
+  "arxiv:2606.18887": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Gradient integration accelerates registration for ultrasound localization microscopy."
+  },
+  "arxiv:2509.22874": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "KAN implicit neural representations perform deformable medical registration."
+  },
+  "doi:10.64898/2026.06.29.26356847": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "Prospective validation of a DenseNet chest-radiograph triage algorithm."
+  },
+  "arxiv:2609.28081": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Uncertainty-gated recursion improves learned registration reliability."
+  },
+  "epmc:PMC:PMC12493889": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Title explicitly describes a brain-metastasis segmentation algorithm challenge; abstract missing."
+  },
+  "arxiv:2606.29599": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Biomaterial hydrogel/theranostic platform uses MRI guidance; no computational image-processing contribution established."
+  },
+  "doi:10.36721/pjps.2026.39.12.346.1": {
+    "scope": "out",
+    "tracks": [],
+    "notes": "Naloxone/hemoperfusion treatment study of renal failure; not medical-image analysis."
+  },
+  "doi:10.64898/2026.08.03.26359608": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Local agentic radiology-analysis software is validated in mammography."
+  },
+  "arxiv:2607.29182": {
+    "scope": "core",
+    "tracks": [
+      "intervention"
+    ],
+    "notes": "CT-based few-shot neural surrogate predicts acoustic phase/amplitude corrections for focused-ultrasound treatment."
+  },
+  "arxiv:2604.06482": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "registration",
+      "intervention"
+    ],
+    "notes": "Spatiotemporal Gaussian model jointly reconstructs dynamic MRI and estimates motion for adaptive radiotherapy."
+  },
+  "arxiv:2601.08701": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "External validation of nnU-Net stroke lesion segmentation."
+  },
+  "arxiv:2512.08216": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Tumor-feature random forests detect out-of-distribution cases in CT segmentation."
+  },
+  "doi:10.3389/fradi.2026.1912277": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Multimodal MRI/genetic vision-language model analyzes Alzheimer disease."
+  },
+  "arxiv:2608.09989": {
+    "scope": "core",
+    "tracks": [
+      "quantification"
+    ],
+    "notes": "Compression-distance metric and filters quantify OCT retinal structural change."
+  },
+  "arxiv:2607.04249": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Distribution-aware alignment improves semisupervised medical segmentation."
+  },
+  "arxiv:2510.07277": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "foundation"
+    ],
+    "notes": "Evaluates fundus foundation models for diabetic-macular-edema detection."
+  },
+  "doi:10.20944/preprints202609.0266.v1": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "foundation"
+    ],
+    "notes": "Methods survey explicitly analyzes models for pathology, volumetric radiology and surgical video; broad review scope needs confirmation."
+  },
+  "doi:10.20944/preprints202608.1013.v1": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification",
+      "foundation"
+    ],
+    "notes": "Focused review compares multimodal AI using cardiac imaging for detection and automated measurement."
+  },
+  "doi:10.64898/2026.09.03.26362159": {
+    "scope": "core",
+    "tracks": [
+      "registration",
+      "quantification"
+    ],
+    "notes": "Applies rigid PET-frame registration to quantify head motion and derive severity thresholds."
+  },
+  "doi:10.3389/fradi.2026.1875905": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "Vision-language report generator includes multi-agent verification."
+  },
+  "doi:10.1177/15330338261490262": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "Ultrasound radiomics/deep learning predicts nodal metastasis and molecular mutation status, not a longitudinal endpoint."
+  },
+  "epmc:PMC:PMC13617412": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "foundation"
+    ],
+    "notes": "Title evaluates pathology foundation embeddings for lung-carcinoma subtyping; abstract missing."
+  },
+  "arxiv:2507.05193": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Wrist radiograph dataset benchmarks bone-instance segmentation and erosion severity scoring."
+  },
+  "arxiv:2505.02787": {
+    "scope": "core",
+    "tracks": [
+      "registration"
+    ],
+    "notes": "Unsupervised learned descriptors enable retinal registration."
+  },
+  "arxiv:2508.16129": {
+    "scope": "core",
+    "tracks": [
+      "language",
+      "diagnosis"
+    ],
+    "notes": "Ophthalmic multimodal reasoning dataset/model supports image interpretation."
+  },
+  "arxiv:2508.11450": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Ensemble cross-domain label transfer segments subcortical structures in CT."
+  },
+  "arxiv:2601.16753": {
+    "scope": "core",
+    "tracks": [
+      "language"
+    ],
+    "notes": "LLM annotation standardizes evaluation of image-derived longitudinal reports; report-only method boundary needs review."
+  },
+  "doi:10.3174/ajnr.a9296": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "quantification"
+    ],
+    "notes": "MRI radiomics classifies BRAF mutation states in pediatric glioma."
+  },
+  "doi:10.1117/12.3085625": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "language"
+    ],
+    "notes": "Vision-language models classify glomerular disease patterns."
+  },
+  "doi:10.1109/trpms.2026.3656480": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "quantification"
+    ],
+    "notes": "Physiologically guided self-supervision denoises dynamic PET and quantitative Ki maps."
+  },
+  "doi:10.1111/dmcn.70460": {
+    "scope": "core",
+    "tracks": [
+      "reconstruction",
+      "registration",
+      "segmentation",
+      "quantification"
+    ],
+    "notes": "Focused methods review covers computational fetal MRI reconstruction, registration, segmentation and biometry."
+  },
+  "doi:10.3390/s26154817": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "language"
+    ],
+    "notes": "Implemented agentic prototype uses real CT lung-segmentation metrics; synthetic monitoring overlays do not establish clinical human participation."
+  },
+  "doi:10.64898/2026.09.20.26363529": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis"
+    ],
+    "notes": "MRI transfer-learning and handcrafted models classify prostate cancer with computational auditing."
+  },
+  "doi:10.1007/s00234-026-04135-0": {
+    "scope": "core",
+    "tracks": [
+      "diagnosis",
+      "human_loop"
+    ],
+    "notes": "Multicenter reader study tests AI assistance for pituitary microadenoma diagnosis."
+  },
+  "doi:10.1007/s13193-026-02534-6": {
+    "scope": "adjacent",
+    "tracks": [
+      "intervention"
+    ],
+    "notes": "Manual 4D-CT phase delineation/dosimetric comparison informs gating; no computational image-method contribution established."
+  },
+  "arxiv:2603.01295": {
+    "scope": "core",
+    "tracks": [
+      "segmentation",
+      "diagnosis"
+    ],
+    "notes": "Bidirectional joint model couples breast-ultrasound segmentation and classification."
+  },
+  "arxiv:2509.25549": {
+    "scope": "core",
+    "tracks": [
+      "segmentation"
+    ],
+    "notes": "Hybrid AI method segments lesions in fundus images."
+  }
+}
