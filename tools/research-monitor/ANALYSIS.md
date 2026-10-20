@@ -18,6 +18,14 @@ Since `2026-10-21-diagnosis-v2`, `diagnosis` requires an explicit detection/clas
 
 `TASK_CLASSIFIER_VERSION` identifies this change independently from scope and the stable interest taxonomy. Public validation recalculates the derived tags in the Worker before indexes and charts consume them; collection and `--reclassify-only` use the same classifier. The other nine direction rules and IDs are unchanged. Historical counts can change because classification changed, not because new publications appeared; consumers should show the rule-version date when comparing counts.
 
+## Publication-date evidence / 发表日期证据
+
+Europe PMC normalization compares `firstPublicationDate`, `electronicPublicationDate` and `firstIndexDate`, choosing the earliest valid calendar date no later than the UTC collection day. Every supplied raw value and the chosen field remain in provenance. `firstIndexDate` is a source-observation fallback, not proof of the bibliographic publication date. Impossible days, partial dates and malformed timestamps do not become fabricated January 1 or collection dates.
+
+When all valid candidates are future dates, the preferred original value remains in `publishedAt` with `dateAnomaly: "future"`. Records remain in the library. Overview trends (including discovery-clock views), reading clues and AI evidence exclude both flagged records and dates later than their current Beijing-day window. A later normalization can clear the flag once a valid elapsed date is available; merging incoming corrections evaluates dates independently from metadata-version precedence.
+
+The unchanged 8,326-record snapshot collected on 2026-10-20 contains 43 future-dated records, all from Europe PMC. Their stored metadata has no alternative date candidates, so a local pass can flag them but cannot invent corrected dates. Source retrieval is needed to obtain any earlier electronic/index dates. No source snapshot was rewritten during this implementation.
+
 ## Shared scope and denominators
 
 `buildPreliminaryAnalysis` applies the selected source, research interest, and publication-date window together. Publication dates remain the clock even if a caller passes a discovery-clock filter. Paper IDs are deduplicated; malformed dates, impossible calendar dates, and future publication dates are excluded. All charts, drill-down IDs, reading candidates, author counts, and watchlist matches use those same records.

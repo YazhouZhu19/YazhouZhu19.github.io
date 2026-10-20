@@ -2,6 +2,7 @@ import { buildPaperAnalysis, type EvidenceSignalId, type PaperAnalysis } from ".
 import { normalizeDoi, normalizedName, textOnly } from "./classify";
 import { beijingDay, matchesTeam } from "./dashboard";
 import type { Paper } from "./types";
+import { publicationDateStatus, strictPublicationDay } from "./publication-date";
 import type {
   Bilingual,
   ForesightCard,
@@ -40,12 +41,7 @@ type Candidate = {
   abstractOnly?: boolean;
 };
 
-export function publicationDay(value: string): string | null {
-  if (!/^\d{4}-\d{2}-\d{2}(?:$|T|\s)/.test(value) || !Number.isFinite(Date.parse(value))) return null;
-  const day = value.slice(0, 10),
-    date = new Date(day + "T00:00:00Z");
-  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === day ? day : null;
-}
+export const publicationDay = strictPublicationDay;
 function offset(day: string, days: number): string {
   return new Date(Date.parse(day) + days * DAY).toISOString().slice(0, 10);
 }
@@ -797,16 +793,17 @@ export function buildForesight(papers: Paper[], options: ForesightOptions = {}):
     const scoped = group.filter(matches);
     if (!scoped.length) continue;
     const valid = group.flatMap((paper) => {
-      const day = publicationDay(paper.publishedAt);
-      return day && day <= asOf ? [{ paper, day }] : [];
+      return publicationDateStatus(paper, asOf) === "valid"
+        ? [{ paper, day: paper.publishedAt.slice(0, 10) }]
+        : [];
     });
     const eligible = scoped.filter((paper) => {
-      const day = publicationDay(paper.publishedAt);
-      if (!day) {
+      const dateStatus = publicationDateStatus(paper, asOf);
+      if (dateStatus === "invalid") {
         excludedInvalid++;
         return false;
       }
-      if (day > asOf) {
+      if (dateStatus === "future") {
         excludedFuture++;
         return false;
       }

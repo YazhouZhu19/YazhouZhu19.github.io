@@ -4,6 +4,7 @@ import { beijingDay } from "./dashboard";
 import { groupWorks, publicationDay } from "./foresight";
 import type { Paper } from "./types";
 import type { ResearchSignal } from "./research-signals";
+import { publicationDateStatus } from "./publication-date";
 
 export type AiSourceKind = "paper" | "github" | "news";
 /** Signal adapters exist only in the analysis request, never in the paper library. */
@@ -153,10 +154,10 @@ export function prepareAiEvidence(
   let excludedInvalid = 0,
     excludedFuture = 0;
   for (const paper of papers) {
-    const day = publicationDay(paper.publishedAt);
-    if (!day) excludedInvalid++;
-    else if (day > today) excludedFuture++;
-    else dates.set(paper, day);
+    const dateStatus = publicationDateStatus(paper, today);
+    if (dateStatus === "invalid") excludedInvalid++;
+    else if (dateStatus === "future") excludedFuture++;
+    else dates.set(paper, paper.publishedAt.slice(0, 10));
   }
   const works: Work[] = [];
   let totalRecords = 0;

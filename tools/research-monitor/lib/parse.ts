@@ -1,6 +1,7 @@
 import { normalizeDoi, textOnly } from "./classify";
 import { normalizeRecord } from "./record";
 import type { Paper } from "./types";
+import { selectPublicationDate } from "./publication-date";
 
 const decode = (value: string) =>
   value.replace(/&#(x[\da-f]+|\d+);/gi, (_, code: string) => {
@@ -36,6 +37,14 @@ export function parseEpmc(hit: any, url: string, now: string, track?: string): P
   const doi = normalizeDoi(hit.doi);
   const preprint =
     hit.source === "PPR" || (hit.pubTypeList?.pubType ?? []).some((x: string) => /preprint/i.test(x));
+  const publication = selectPublicationDate(
+    {
+      firstPublicationDate: hit.firstPublicationDate,
+      electronicPublicationDate: hit.electronicPublicationDate,
+      firstIndexDate: hit.firstIndexDate,
+    },
+    now,
+  );
   return normalizeRecord(
     {
       id: `epmc:${hit.source}:${hit.id}`,
@@ -50,14 +59,19 @@ export function parseEpmc(hit: any, url: string, now: string, track?: string): P
       source: "Europe PMC",
       sourceCollection: hit.source,
       status: preprint ? "preprint" : "published",
-      publishedAt: hit.firstPublicationDate ?? "",
+      publishedAt: publication.publishedAt,
+      dateAnomaly: publication.dateAnomaly,
       updatedAt: hit.dateOfRevision ?? null,
       firstSeenAt: now,
       venue: hit.journalInfo?.journal?.title ?? null,
       url: doi ? `https://doi.org/${doi}` : `https://europepmc.org/article/${hit.source}/${hit.id}`,
       version: hit.versionNumber,
       versions: hit.versionList?.version ?? [],
-      provenance: provenance(url, now, String(hit.id), track),
+      provenance: provenance(url, now, String(hit.id), track).map((entry) => ({
+        ...entry,
+        publicationDates: publication.originalDates,
+        publicationDateField: publication.selectedDateField,
+      })),
     },
     now,
   );

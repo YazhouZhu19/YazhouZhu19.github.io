@@ -1,6 +1,7 @@
 import { normalizedName, textOnly, TRACKS } from "./classify";
 import { beijingDay, matchesTeam, type DashboardFilters } from "./dashboard";
 import type { Author, MonitorData, Paper, Team } from "./types";
+import { publicationDateStatus } from "./publication-date";
 
 export const SIGNAL_LABELS = {
   external_validation: "外部验证线索",
@@ -221,12 +222,6 @@ export function buildPaperAnalysis(paper: Paper): PaperAnalysis {
   return result;
 }
 
-function validPublicationDay(value: string): string | null {
-  if (!/^\d{4}-\d{2}-\d{2}(?:$|T|\s)/.test(value) || !Number.isFinite(Date.parse(value))) return null;
-  const day = value.slice(0, 10);
-  const date = new Date(day + "T00:00:00Z");
-  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === day ? day : null;
-}
 function countRow(id: string, label: string, paperIds: string[], denominator: number): AnalysisCount {
   return {
     id,
@@ -287,16 +282,16 @@ export function buildPreliminaryAnalysis(
     excludedFuture = 0;
   const rows = unique
     .filter((paper) => {
-      const day = validPublicationDay(paper.publishedAt);
-      if (!day) {
+      const dateStatus = publicationDateStatus(paper, today);
+      if (dateStatus === "invalid") {
         excludedInvalidDate++;
         return false;
       }
-      if (day > today) {
+      if (dateStatus === "future") {
         excludedFuture++;
         return false;
       }
-      return !start || day >= start;
+      return !start || paper.publishedAt.slice(0, 10) >= start;
     })
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id));
   const total = rows.length;

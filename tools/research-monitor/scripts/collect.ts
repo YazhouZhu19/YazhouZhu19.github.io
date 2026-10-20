@@ -2,7 +2,9 @@ import { resolve } from "node:path";
 import { collectAll } from "../lib/collect";
 import { parseMonitorData } from "../lib/record";
 import { reclassifyPapers, SCOPE_CLASSIFIER_VERSION, TASK_CLASSIFIER_VERSION } from "../lib/classify";
+import { normalizePaperPublicationDate } from "../lib/publication-date";
 import { readSnapshotFile, writeSnapshotFile } from "./snapshot-files";
+import type { Paper } from "../lib/types";
 
 function argumentsFor(argv: string[]) {
   let input = "data/papers.json",
@@ -34,7 +36,9 @@ async function main() {
   const snapshot = await readSnapshotFile(input);
   if (reclassifyOnly) {
     // A migration must not merge IDs or fabricate source/successful-sync timestamps.
-    const papers = reclassifyPapers(snapshot.papers);
+    const papers = reclassifyPapers<Paper>(snapshot.papers).map((paper) =>
+      normalizePaperPublicationDate(paper, snapshot.collectedAt),
+    );
     const reclassified = {
       ...snapshot,
       papers,

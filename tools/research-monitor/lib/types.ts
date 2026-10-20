@@ -1,3 +1,5 @@
+import type { PublicationDateField, PublicationDates } from "./publication-date";
+
 export type Author = { name: string; displayName?: string; orcid?: string | null; affiliations: string[] };
 export type PaperScope = "core" | "adjacent" | "out";
 export type Paper = {
@@ -16,6 +18,7 @@ export type Paper = {
   sourceCollection?: string;
   status: "preprint" | "published" | "unknown";
   publishedAt: string;
+  dateAnomaly?: "future";
   updatedAt: string | null;
   firstSeenAt: string;
   venue: string | null;
@@ -35,7 +38,14 @@ export type Paper = {
   scopeClassifierVersion?: string;
   taskClassifierVersion?: string;
   reviewStatus: string;
-  provenance: { queryUrl?: string; queryTrack?: string; collectedAt: string; sourceRecordId?: string }[];
+  provenance: {
+    queryUrl?: string;
+    queryTrack?: string;
+    collectedAt: string;
+    sourceRecordId?: string;
+    publicationDates?: PublicationDates;
+    publicationDateField?: PublicationDateField;
+  }[];
 };
 export type SyncRun = {
   id: string;

@@ -1,5 +1,6 @@
 import { INTEREST_TAXONOMY_VERSION, classify, normalizeDoi, textOnly } from "./classify";
 import type { MonitorData, Paper, RequestLog, SyncRun } from "./types";
+import { normalizePaperPublicationDate } from "./publication-date";
 
 type Raw = Record<string, any>;
 const unique = <T>(items: T[]) => [...new Set(items)];
@@ -10,7 +11,7 @@ export const COVERAGE =
   "有限范围的官方元数据采集，不代表完整文献库。Europe PMC：10个感兴趣方向的发表/首次收录重叠窗口，每方向最多300条；arXiv：10个方向各按版本更新时间最近100条，成功后同一UTC日复用缓存；medRxiv：radiology and imaging分类，最多240条版本记录。方向间可能重叠，关键词规则允许一文多类。保留历史入库论文，不据此推断发文趋势。";
 
 /** arXiv's journal DOI is a relationship, not the preprint's identity. */
-export function normalizeRecord(raw: Raw, firstSeenFallback: string): Paper {
+export function normalizeRecord(raw: Raw, firstSeenFallback: string, dateAsOf = firstSeenFallback): Paper {
   const title = textOnly(raw.title),
     abstract = textOnly(raw.abstract);
   const doi = normalizeDoi(raw.doi);
@@ -33,7 +34,7 @@ export function normalizeRecord(raw: Raw, firstSeenFallback: string): Paper {
       affiliations: unique((a.affiliations ?? []).map(textOnly)) as string[],
     };
   });
-  return {
+  const normalized: Paper = {
     ...raw,
     id,
     title,
@@ -62,6 +63,7 @@ export function normalizeRecord(raw: Raw, firstSeenFallback: string): Paper {
     ...classify(title, abstract),
     reviewStatus: raw.reviewStatus ?? "keyword_candidate",
   };
+  return normalizePaperPublicationDate(normalized, dateAsOf);
 }
 
 function earliest(a: string, b: string): string {
@@ -79,7 +81,7 @@ export function mergeRecord(old: Paper, incoming: Paper): Paper {
     fallback = newer ? old : incoming;
   const title = base.title || fallback.title,
     abstract = base.abstract || fallback.abstract;
-  return {
+  const merged: Paper = {
     ...fallback,
     ...base,
     id: incoming.id.startsWith("doi:") ? incoming.id : old.id,
@@ -102,6 +104,33 @@ export function mergeRecord(old: Paper, incoming: Paper): Paper {
     versions: uniqueObjects([...(old.versions ?? []), ...(incoming.versions ?? [])]),
     ...classify(title, abstract),
   };
+  const dateAsOf = [
+    ...merged.provenance.map((entry) => entry.collectedAt),
+    old.firstSeenAt,
+    incoming.firstSeenAt,
+  ]
+    .filter((value) => Number.isFinite(Date.parse(value)))
+    .sort((a, b) => Date.parse(a) - Date.parse(b))
+    .at(-1)!;
+  // Publication corrections are independent of metadata-version precedence.
+  // An old future date must not prevent an incoming valid earlier date from winning.
+  const dateCandidates = normalizePaperPublicationDate(
+    {
+      ...merged,
+      provenance: [
+        ...merged.provenance,
+        {
+          collectedAt: dateAsOf,
+          publicationDates: {
+            firstPublicationDate: old.publishedAt,
+            electronicPublicationDate: incoming.publishedAt,
+          },
+        },
+      ],
+    },
+    dateAsOf,
+  );
+  return { ...dateCandidates, provenance: merged.provenance };
 }
 
 /** Native identifiers also connect a previously DOI-less record when its DOI arrives. */
@@ -242,7 +271,7 @@ export function applyOutcomes(
   const hadSuccessfulSync = runs.some((run) => run.status !== "error" && !run.error);
   return {
     ...previous,
-    papers,
+    papers: papers.map((paper) => normalizePaperPublicationDate(paper, completedAt)),
     totalStored: papers.length,
     interestTaxonomyVersion: INTEREST_TAXONOMY_VERSION,
     sourceTaxonomyVersions,

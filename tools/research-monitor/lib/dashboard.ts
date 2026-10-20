@@ -1,5 +1,6 @@
 import { TASKS, TRACKS, normalizedName } from "./classify";
 import type { Author, MonitorData, Paper, Team } from "./types";
+import { publicationDateStatus } from "./publication-date";
 
 export type DashboardFilters = {
   days: string;
@@ -97,6 +98,15 @@ export function buildDashboard(
   const isInitial = (p: Paper) => Date.parse(p.firstSeenAt) === initialTime;
   // Reuse each record's date across scope selection, buckets and exclusions in this build.
   const dates = new Map<Paper, string>();
+  const dateStatuses = new Map<Paper, ReturnType<typeof publicationDateStatus>>();
+  const statusOf = (paper: Paper) => {
+    let status = dateStatuses.get(paper);
+    if (!status) {
+      status = publicationDateStatus(paper, today);
+      dateStatuses.set(paper, status);
+    }
+    return status;
+  };
   const dateOf = (p: Paper) => {
     let date = dates.get(p);
     if (date === undefined) {
@@ -111,13 +121,16 @@ export function buildDashboard(
       (filters.source === "all" || p.sources.includes(filters.source)),
   );
   const rows = pool.filter((p) => {
+    if (statusOf(p) !== "valid") return false;
     const date = dateOf(p);
     return (
       date && date <= today && (!start || date >= start) && (filters.clock !== "discovery" || !isInitial(p))
     );
   });
   const initialCount = pool.filter(isInitial).length;
-  const newToday = data.papers.filter((p) => !isInitial(p) && beijingDay(p.firstSeenAt) === today);
+  const newToday = data.papers.filter(
+    (p) => statusOf(p) === "valid" && !isInitial(p) && beijingDay(p.firstSeenAt) === today,
+  );
   const directions = Object.entries(TRACKS).map(([id, label]) => ({
     id,
     label,
@@ -217,6 +230,7 @@ export function buildDashboard(
     matrix,
     methods,
     sources,
-    futureCount: pool.filter((p) => dateOf(p) > today).length,
+    futureCount: pool.filter((p) => statusOf(p) === "future" || dateOf(p) > today).length,
+    invalidDateCount: pool.filter((p) => statusOf(p) === "invalid").length,
   };
 }
