@@ -43,8 +43,8 @@
         "gzipBytes": 2155520
       },
       "assets/main.css": {
-        "rawBytes": 167936,
-        "gzipBytes": 31744
+        "rawBytes": 120000,
+        "gzipBytes": 22000
       },
       "assets/main.js": {
         "rawBytes": 163840,
@@ -225,8 +225,8 @@
         "gzipBytes": 210944
       },
       "initialCss": {
-        "rawBytes": 167936,
-        "gzipBytes": 31744
+        "rawBytes": 120000,
+        "gzipBytes": 22000
       },
       "optionalJs": {
         "rawBytes": 12558336,
@@ -269,6 +269,7 @@
     "P1.2 switches startup measurement to v3: 50,501,670 raw / 10,649,085 gzip bytes for all 8,326 papers. Fewer, denser shards have larger per-shard gzip size; the unchanged 4 MiB raw cap still applies.",
     "P2.1/P2.2: explicit React/Radix groups, lazy paper views, separate source dashboards and AI settings. Measured main is 131483 raw / 41129 gzip; a 110000-byte gzip cap enforces the plan target. Main-file reduction is not a claim that all startup JS fell by the same amount.",
     "P2.2 integration includes P4 draft classification code in both Worker and validated fallback. Total startup JS is 655719 raw / 205184 gzip (all shared vendors and Worker counted), versus P1 643341 / 195386. New explicit chunk budgets plus a 210944-byte startup gzip ceiling expose this cost; no automatic rebasing occurs.",
-    "P2.1 removes unused vendor CSS (pre-token main 164624 raw / 30803 gzip). P3 moves view CSS into optional resources; optional CSS allowance reflects that relocation and does not waive the main CSS target still under work."
+    "P2.1 removes unused vendor CSS (pre-token main 164624 raw / 30803 gzip). P3 moves view CSS into optional resources; optional CSS allowance reflects that relocation and does not waive the main CSS target still under work.",
+    "P3.3: tokens, lazy styles and removal of 20 obsolete notice/personal-gate selectors reduce main CSS to 119450 raw bytes in the browser fixture build. The final enforced cap is 120000 raw / 22000 gzip; later feature changes must continue to fit."
   ]
 }

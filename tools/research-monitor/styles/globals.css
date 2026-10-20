@@ -339,25 +339,6 @@
   .account-link:hover {
     background: var(--background);
   }
-  .public-personal-gate {
-    padding: var(--space-56) var(--space-24);
-    text-align: center;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-12);
-  }
-  .public-personal-gate > svg {
-    margin: 0 auto var(--space-18);
-    color: var(--primary);
-  }
-  .public-personal-gate h2 {
-    font-size: var(--text-21);
-    margin-bottom: var(--space-12);
-  }
-  .public-personal-gate p {
-    color: var(--muted-foreground);
-    margin: 0 0 var(--space-22);
-  }
   .homepage-link {
     display: flex;
     align-items: center;
@@ -467,48 +448,6 @@
   }
 
   /* Ten interests remain readable in the navigation, selector and analysis panel. */
-
-  .snapshot-check {
-    margin: calc(var(--space-8) * -1) 0 var(--space-17);
-    padding: var(--space-11) var(--space-14);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-8);
-    background: var(--card);
-    color: var(--muted-foreground);
-    font-size: var(--text-12);
-    line-height: 1.6;
-  }
-  .snapshot-check > p {
-    margin: 0;
-  }
-  .snapshot-check-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-6) var(--space-16);
-    margin-top: var(--space-3);
-  }
-  .snapshot-check-meta > button {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-4);
-    color: var(--primary);
-  }
-  .snapshot-check-result:not(:empty) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3) var(--space-14);
-    margin-top: var(--space-7);
-    padding-top: var(--space-7);
-    border-top: 1px solid var(--border);
-    color: var(--primary);
-  }
-  .snapshot-check-result.is-error {
-    color: var(--status-error);
-  }
-  .snapshot-check-result time {
-    color: var(--muted-foreground);
-    white-space: nowrap;
-  }
 }
 @layer app-surface {
   /* White glass surfaces. Presentation only; all existing content and geometry remain. */
@@ -790,38 +729,8 @@
   .page-heading > button:focus-visible {
     outline-color: var(--ring);
   }
-  .snapshot-check {
-    margin: 0 0 var(--space-22);
-    padding: var(--space-13) var(--space-18);
-    border-color: var(--living-line);
-    border-radius: var(--radius-14);
-    background: var(--living-paper);
-    color: var(--living-muted);
-  }
-  .snapshot-check-meta {
-    margin-top: var(--space-5);
-  }
-  .snapshot-check-meta > button,
-  .snapshot-check-result:not(:empty) {
-    color: var(--living-ink);
-  }
-  .snapshot-check-result:not(:empty) {
-    border-color: var(--living-line);
-  }
-  .snapshot-check-result.is-error {
-    color: var(--status-error);
-  }
-  .snapshot-check-result time {
-    color: var(--living-muted);
-  }
 
   /* Decorative glass remains still to keep dense research views calm. */
-  .public-personal-gate {
-    border-color: var(--living-line);
-    border-radius: var(--living-radius);
-    background: var(--living-paper);
-    box-shadow: var(--glass-shadow);
-  }
 
   /* Reading, discovery, personal records and source provenance. */
   [data-slot="select-content"],
@@ -957,9 +866,6 @@
   [data-slot="table-row"][data-state="selected"] {
     background: color-mix(in srgb, var(--foreground) 5.5%, transparent);
   }
-  .public-personal-gate > svg {
-    color: var(--muted-foreground);
-  }
   .local-import-confirm {
     background: color-mix(in srgb, var(--foreground) 6.5%, transparent);
     color: var(--status-error);
@@ -1063,10 +969,6 @@
     .page-heading::before {
       right: -155px;
       opacity: 0.55;
-    }
-    .snapshot-check {
-      padding: var(--space-13) var(--space-15);
-      margin-bottom: var(--space-20);
     }
   }
   @media (prefers-reduced-motion: reduce) {
