@@ -1,6 +1,5 @@
 "use client";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "./locale-provider";
 
 /** Shared selection control for dashboard filters and chart date selectors. */
@@ -21,17 +20,20 @@ export function DashboardChoice({
 }) {
   const { tr } = useI18n();
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger id={id} aria-label={tr(label)} aria-describedby={describedBy}>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {options.map(([key, name]) => (
-          <SelectItem key={key} value={key}>
-            {tr(name)}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <select
+      id={id}
+      data-slot="select-trigger"
+      aria-label={tr(label)}
+      aria-describedby={describedBy}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      className="h-10 max-w-full rounded-md border border-input bg-card px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+    >
+      {options.map(([key, name]) => (
+        <option key={key} value={key}>
+          {tr(name)}
+        </option>
+      ))}
+    </select>
   );
 }
