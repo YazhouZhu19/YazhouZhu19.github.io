@@ -26,7 +26,7 @@ scores must not be presented as independently validated accuracy.
 | P1.7 | Implemented; live timing pending | Shallow checkout, fail-closed verification, 800 MB guard and exact generation cleanup tested. |
 | P3.1 | Complete | Prettier 3.6.2, width 110; formatting-only pass preserves 417 + 25 passing tests and build. |
 | P3.2 | Complete | Workspace reduced from 1,389 to 253 lines; 14 extracted files ≤253 lines, bilingual SSR unchanged. |
-| P2.1 | Pending | Remove verified-unused UI modules and dependencies. |
+| P2.1 | Complete | Removed 48 unreachable UI modules, an orphan chart view and 13 unused dependencies. |
 | P2.2 | Pending | Measure and reduce the initial JavaScript bundle. |
 | P2.3 | Pending | List containment, stable chart inputs and shared derived indexes. |
 | P2.4 | Pending | Shareable hash state and browser navigation. |
@@ -149,3 +149,5 @@ scores must not be presented as independently validated accuracy.
   remain provisional; the balanced audit sample is not a population accuracy estimate.
 
 - **P3.2:** Extracted snapshot/personal/library hooks and sidebar, header, filters, library and detail components. All 14 files are at most 253 formatted lines; the 87-module import graph is acyclic. Chinese and English initial server-rendered HTML matches the original apart from generated React IDs. 420 TypeScript and 25 local API tests, typecheck, Vite and data-copy checks passed; final resource budgets are rechecked with P2.2 splitting.
+
+- **P2.1:** Import-graph and CSS audits identify 48 unreachable UI modules and the orphan Recharts view. Removed 13 direct packages; runtime dependencies fall from 24 to 11 and lockfile entries from 292 to 234, with no surviving package version changes. Kept sonner, animation CSS and 13 reachable UI modules. Typecheck and 420 + 25 tests pass. Resource measurements are finalized with P2.2; no data records changed.
