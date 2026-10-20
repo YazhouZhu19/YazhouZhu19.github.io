@@ -108,3 +108,11 @@ test("joint candidate cap spans kinds and selection keeps time/source diversity"
   assert.equal(result.retrieval?.candidates, 40);
   assert.equal(new Set(result.selected.map((w) => w.paper.source)).size, 2);
 });
+
+test("cached record vectors invalidate on content changes and old snapshots do not affect new records", () => {
+  const identity = {};
+  const document = { id: "a", title: "thyroid", abstract: "ultrasound", tags: [], cacheIdentity: identity };
+  assert.equal(retrieve([document], "thyroid", 6).ranked.length, 1);
+  assert.equal(retrieve([{ ...document, title: "cardiac", abstract: "MRI" }], "thyroid", 6).ranked.length, 0);
+  assert.equal(retrieve([{ ...document, cacheIdentity: {} }], "thyroid", 6).ranked.length, 1);
+});
