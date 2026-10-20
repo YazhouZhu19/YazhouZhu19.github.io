@@ -309,7 +309,7 @@ export default function MonitorWorkspace() {
                 />
               ) : view === "teams" && scopedData ? (
                 <TeamForesight
-                  data={data}
+                  data={scopedData}
                   signals={sourceRecords}
                   preferences={teamPreferences}
                   onPreferencesChange={setTeamPreferences}
@@ -317,7 +317,7 @@ export default function MonitorWorkspace() {
                   onChange={refreshPersonal}
                   openPaper={openPaper}
                   onDrill={(d) => openDrill(d, "teams")}
-                  storageAvailable={!!data.personalStorageAvailable}
+                  storageAvailable={!!scopedData.personalStorageAvailable}
                 />
               ) : view === "sources" ? (
                 <SourcesView data={data} />
