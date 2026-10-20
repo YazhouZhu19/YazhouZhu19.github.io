@@ -58,6 +58,12 @@ jobs:
         id: evaluate
         run: node --import tsx scripts/eval-classifier.ts
 
+      - name: Install Chromium for browser checks
+        run: npx playwright install --with-deps chromium
+
+      - name: Check local-fixture flows and accessibility
+        run: npm run e2e
+
       - name: Publish evaluation job summary
         if: always() && steps.evaluate.outcome == 'success'
         run: |
