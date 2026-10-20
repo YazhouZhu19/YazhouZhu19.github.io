@@ -16,7 +16,7 @@
   height: 42px;
   border-color: var(--living-line);
   border-radius: 12px;
-  background: var(--living-paper, rgba(255, 255, 255, .94));
+  background: var(--living-paper, rgba(255, 255, 255, 0.94));
   color: var(--living-ink, #202124);
   box-shadow: none;
 }
@@ -25,7 +25,7 @@
   height: 42px;
   border-color: var(--living-line);
   border-radius: 12px;
-  background: var(--living-paper, rgba(255, 255, 255, .94));
+  background: var(--living-paper, rgba(255, 255, 255, 0.94));
   color: var(--living-ink);
   box-shadow: none;
 }
@@ -59,7 +59,7 @@
   margin-bottom: 18px;
   border: 1px solid var(--living-line);
   border-radius: var(--living-radius, 22px);
-  background: var(--living-paper, rgba(255, 255, 255, .94));
+  background: var(--living-paper, rgba(255, 255, 255, 0.94));
   color: var(--living-ink, #202124);
   box-shadow: var(--glass-shadow);
 }
@@ -121,7 +121,7 @@
 .analysis-empty {
   border-color: var(--living-line);
   border-radius: var(--living-radius, 22px);
-  background: var(--living-paper, rgba(255, 255, 255, .94));
+  background: var(--living-paper, rgba(255, 255, 255, 0.94));
   box-shadow: var(--glass-shadow);
 }
 
@@ -155,7 +155,7 @@
 
 .analysis-topic-track,
 .analysis-combination-share > i {
-  background: var(--glass-hover, rgba(0, 0, 0, .04));
+  background: var(--glass-hover, rgba(0, 0, 0, 0.04));
   border-radius: 10px;
 }
 
@@ -223,7 +223,9 @@
   border-color: var(--living-line);
   border-radius: 15px;
   background: var(--living-paper);
-  transition: background-color 160ms ease, border-color 160ms ease;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
 }
 
 .analysis-signal-grid strong {
@@ -263,7 +265,7 @@
   min-width: 28px;
   min-height: 28px;
   border-radius: 9px;
-  background: var(--living-sage, rgba(0, 0, 0, .035));
+  background: var(--living-sage, rgba(0, 0, 0, 0.035));
   color: var(--living-muted);
 }
 
@@ -278,7 +280,7 @@
 .analysis-reading-reasons > .analysis-reason {
   padding: 4px 8px;
   border-radius: 6px;
-  background: var(--glass-hover, rgba(0, 0, 0, .04));
+  background: var(--glass-hover, rgba(0, 0, 0, 0.04));
   color: var(--living-ink);
 }
 

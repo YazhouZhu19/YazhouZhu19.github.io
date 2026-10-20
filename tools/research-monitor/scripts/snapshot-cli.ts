@@ -5,7 +5,9 @@ import { readSnapshotFile, writeSnapshotFile } from "./snapshot-files";
 
 const [command, input, output] = process.argv.slice(2);
 if (!input || !["export", "migrate", "check"].includes(command) || (command === "export" && !output)) {
-  throw new Error("Usage: tsx scripts/snapshot-cli.ts <check|migrate|export> <data/papers.json> [export.json]");
+  throw new Error(
+    "Usage: tsx scripts/snapshot-cli.ts <check|migrate|export> <data/papers.json> [export.json]",
+  );
 }
 const file = resolve(input);
 const data = await readSnapshotFile(file);

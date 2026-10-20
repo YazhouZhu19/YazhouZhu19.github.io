@@ -14,7 +14,11 @@ export type TeamDirectoryEntry = {
 };
 
 function normalizeOrcid(value: string | null | undefined): string | null {
-  const candidate = (value ?? "").trim().replace(/^https?:\/\/(?:www\.)?orcid\.org\//i, "").replace(/\/$/, "").toUpperCase();
+  const candidate = (value ?? "")
+    .trim()
+    .replace(/^https?:\/\/(?:www\.)?orcid\.org\//i, "")
+    .replace(/\/$/, "")
+    .toUpperCase();
   return /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(candidate) ? candidate : null;
 }
 
@@ -23,16 +27,20 @@ function isAbbreviated(name: string): boolean {
   if (/^[\p{Script=Han}]{2,}$/u.test(name.trim())) return false;
   // Initials and isolated names are deliberately kept out of the default list.
   // Searching still exposes them, with the identity warning in the UI.
-  if (tokens.length < 2 || tokens.some(token => /^[A-Za-z]$/.test(token))) return true;
-  const allCapitalized = tokens.every(token => /^[A-Z]+$/.test(token));
-  return !allCapitalized && tokens.some(token => /^[A-Z]{2,3}$/.test(token));
+  if (tokens.length < 2 || tokens.some((token) => /^[A-Za-z]$/.test(token))) return true;
+  const allCapitalized = tokens.every((token) => /^[A-Z]+$/.test(token));
+  return !allCapitalized && tokens.some((token) => /^[A-Z]{2,3}$/.test(token));
 }
 
 function authorIdentity(author: Author) {
   const name = author.displayName?.trim() || author.name.trim();
   const orcid = normalizeOrcid(author.orcid);
   const normalized = normalizedName(name);
-  return { name, orcid, id: orcid ? `directory:orcid:${orcid}` : normalized ? `directory:name:${normalized}` : "" };
+  return {
+    name,
+    orcid,
+    id: orcid ? `directory:orcid:${orcid}` : normalized ? `directory:name:${normalized}` : "",
+  };
 }
 
 function validDay(value: string): boolean {
@@ -42,20 +50,29 @@ function validDay(value: string): boolean {
 }
 
 function compareEntries(a: TeamDirectoryEntry, b: TeamDirectoryEntry): number {
-  return b.papers.length - a.papers.length || Number(!!b.orcid) - Number(!!a.orcid)
-    || Number(a.abbreviated) - Number(b.abbreviated) || a.name.localeCompare(b.name) || a.id.localeCompare(b.id);
+  return (
+    b.papers.length - a.papers.length ||
+    Number(!!b.orcid) - Number(!!a.orcid) ||
+    Number(a.abbreviated) - Number(b.abbreviated) ||
+    a.name.localeCompare(b.name) ||
+    a.id.localeCompare(b.id)
+  );
 }
 
 function scopeEntry(entry: TeamDirectoryEntry, papers: Paper[]): TeamDirectoryEntry {
   const affiliations = new Set<string>();
-  for (const paper of papers) for (const author of paper.authors) {
-    if (authorIdentity(author).id !== entry.id) continue;
-    for (const affiliation of author.affiliations) if (affiliation.trim()) affiliations.add(affiliation.trim());
-  }
+  for (const paper of papers)
+    for (const author of paper.authors) {
+      if (authorIdentity(author).id !== entry.id) continue;
+      for (const affiliation of author.affiliations)
+        if (affiliation.trim()) affiliations.add(affiliation.trim());
+    }
   return {
     ...entry,
-    papers: [...papers].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id)),
-    tracks: [...new Set(papers.flatMap(paper => paper.tracks))].sort(),
+    papers: [...papers].sort(
+      (a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id),
+    ),
+    tracks: [...new Set(papers.flatMap((paper) => paper.tracks))].sort(),
     affiliations: [...affiliations].sort(),
   };
 }
@@ -68,14 +85,26 @@ export function buildTeamDirectory(papers: Paper[], asOf: string): TeamDirectory
   for (const paper of papers) {
     const publishedAt = paper.publishedAt;
     const day = publishedAt.slice(0, 10);
-    if (!paper.tracks.length || !validDay(day) || day > asOf
-      || !/^\d{4}-\d{2}-\d{2}(?:$|T)/.test(publishedAt) || !Number.isFinite(Date.parse(publishedAt))) continue;
+    if (
+      !paper.tracks.length ||
+      !validDay(day) ||
+      day > asOf ||
+      !/^\d{4}-\d{2}-\d{2}(?:$|T)/.test(publishedAt) ||
+      !Number.isFinite(Date.parse(publishedAt))
+    )
+      continue;
     for (const author of paper.authors) {
       const { id, name, orcid } = authorIdentity(author);
       if (!id) continue;
       const entry = entries.get(id) ?? {
-        id, name: name || orcid!, member: orcid || name, orcid,
-        affiliations: [], papers: [], tracks: [], abbreviated: isAbbreviated(name),
+        id,
+        name: name || orcid!,
+        member: orcid || name,
+        orcid,
+        affiliations: [],
+        papers: [],
+        tracks: [],
+        abbreviated: isAbbreviated(name),
       };
       if (name && entry.abbreviated && !isAbbreviated(name)) {
         entry.name = name;
@@ -90,19 +119,31 @@ export function buildTeamDirectory(papers: Paper[], asOf: string): TeamDirectory
       entries.set(id, entry);
     }
   }
-  return [...entries.values()].map(entry => scopeEntry(entry, entry.papers)).sort(compareEntries);
+  return [...entries.values()].map((entry) => scopeEntry(entry, entry.papers)).sort(compareEntries);
 }
 
 /** Recounts the exact direction scope before ranking, searching, or hiding weak candidates. */
-export function filterTeamDirectory(entries: TeamDirectoryEntry[], options: { track: string; query: string }): TeamDirectoryEntry[] {
+export function filterTeamDirectory(
+  entries: TeamDirectoryEntry[],
+  options: { track: string; query: string },
+): TeamDirectoryEntry[] {
   const query = normalizedName(normalizeOrcid(options.query) ?? options.query);
-  const scopedEntries = !options.track || options.track === "all" ? entries : entries.flatMap(entry => {
-    const papers = entry.papers.filter(paper => paper.tracks.includes(options.track));
-    return papers.length ? [scopeEntry(entry, papers)] : [];
-  });
+  const scopedEntries =
+    !options.track || options.track === "all"
+      ? entries
+      : entries.flatMap((entry) => {
+          const papers = entry.papers.filter((paper) => paper.tracks.includes(options.track));
+          return papers.length ? [scopeEntry(entry, papers)] : [];
+        });
   return scopedEntries
-    .filter(entry => entry.papers.length > 0 && (query
-      ? normalizedName(`${entry.name} ${entry.orcid ?? ""} ${entry.affiliations.join(" ")}`).includes(query)
-      : entry.papers.length >= 2 && (!!entry.orcid || !entry.abbreviated)))
+    .filter(
+      (entry) =>
+        entry.papers.length > 0 &&
+        (query
+          ? normalizedName(`${entry.name} ${entry.orcid ?? ""} ${entry.affiliations.join(" ")}`).includes(
+              query,
+            )
+          : entry.papers.length >= 2 && (!!entry.orcid || !entry.abbreviated)),
+    )
     .sort(compareEntries);
 }

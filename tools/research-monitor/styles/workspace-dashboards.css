@@ -42,9 +42,22 @@
   outline-offset: 3px;
 }
 @media (max-width: 650px) {
-  .dashboard-section-tabs { gap: 6px 19px; }
-  .dashboard-section-tabs > button { font-size: 12px; gap: 5px; }
-  .topbar .topbar-label { min-width: 0; }
-  .topbar .topbar-label > strong { white-space: normal; line-height: 1.4; font-size: 12px; }
-  .topbar .account-controls { flex-shrink: 0; }
+  .dashboard-section-tabs {
+    gap: 6px 19px;
+  }
+  .dashboard-section-tabs > button {
+    font-size: 12px;
+    gap: 5px;
+  }
+  .topbar .topbar-label {
+    min-width: 0;
+  }
+  .topbar .topbar-label > strong {
+    white-space: normal;
+    line-height: 1.4;
+    font-size: 12px;
+  }
+  .topbar .account-controls {
+    flex-shrink: 0;
+  }
 }

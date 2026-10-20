@@ -1,10 +1,18 @@
 import { createManifestLoader } from "./manifest-loader";
 import { monitorDataSchema, type VerifiedPublicData } from "./public-data-schema";
 import { createShardCache } from "./shard-cache";
-import { parseSnapshotManifest, resolveSnapshot, SnapshotFormatError, type SnapshotManifest } from "./snapshot";
+import {
+  parseSnapshotManifest,
+  resolveSnapshot,
+  SnapshotFormatError,
+  type SnapshotManifest,
+} from "./snapshot";
 
 export class PublicDataLoadError extends Error {
-  constructor(public readonly kind: "format" | "network", options?: ErrorOptions) {
+  constructor(
+    public readonly kind: "format" | "network",
+    options?: ErrorOptions,
+  ) {
     super(kind === "format" ? "Invalid public paper data" : "Public paper data unavailable", options);
     this.name = "PublicDataLoadError";
   }
@@ -17,13 +25,14 @@ export function createPublicPaperLoader(baseUrl: string, options: PaperLoaderOpt
   const fetcher: typeof fetch = options.fetcher ?? ((input, init) => fetch(input, init));
   const cache = options.shardCache ?? createShardCache("papers");
   const root = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-  const endpoints = ["public-papers-v3.json", "public-papers-v2.json", "papers.json"].map(file => {
+  const endpoints = ["public-papers-v3.json", "public-papers-v2.json", "papers.json"].map((file) => {
     const url = `${root}data/${file}`;
     const loader = createManifestLoader(url, {
       fetcher,
-      validate: raw => {
+      validate: (raw) => {
         if (raw && typeof raw === "object" && "schema" in raw) return parseSnapshotManifest(raw);
-        if (!monitorDataSchema.safeParse(raw).success) throw new SnapshotFormatError("Invalid legacy paper snapshot");
+        if (!monitorDataSchema.safeParse(raw).success)
+          throw new SnapshotFormatError("Invalid legacy paper snapshot");
         return raw;
       },
     });
@@ -51,18 +60,27 @@ export function createPublicPaperLoader(baseUrl: string, options: PaperLoaderOpt
           if (request !== newestRequest) throw new DOMException("Superseded paper load", "AbortError");
           const isManifest = !!raw && typeof raw === "object" && "schema" in raw;
           const key = isManifest ? JSON.stringify(raw) : undefined;
-          if (verified?.url === endpoint.url && (verified.raw === raw || (key && verified.key === key))) return verified.snapshot;
+          if (verified?.url === endpoint.url && (verified.raw === raw || (key && verified.key === key)))
+            return verified.snapshot;
           const manifest: SnapshotManifest | undefined = isManifest ? parseSnapshotManifest(raw) : undefined;
-          const shards = new Map(manifest?.shards.map(shard => [shard.path, shard]));
-          const decoded = await resolveSnapshot(raw, async path => {
+          const shards = new Map(manifest?.shards.map((shard) => [shard.path, shard]));
+          const decoded = await resolveSnapshot(raw, async (path) => {
             attempt.signal.throwIfAborted();
             const shard = shards.get(path);
             if (!shard) throw new SnapshotFormatError("Unlisted paper shard");
-            return cache.read(shard, async () => {
-              const response = await fetcher(`${root}data/${path}`, { cache: "force-cache", credentials: "omit", signal: attempt.signal });
-              if (!response.ok) throw new PublicDataLoadError("network");
-              return response.text();
-            }, attempt.signal);
+            return cache.read(
+              shard,
+              async () => {
+                const response = await fetcher(`${root}data/${path}`, {
+                  cache: "force-cache",
+                  credentials: "omit",
+                  signal: attempt.signal,
+                });
+                if (!response.ok) throw new PublicDataLoadError("network");
+                return response.text();
+              },
+              attempt.signal,
+            );
           });
           attempt.signal.throwIfAborted();
           const result = monitorDataSchema.safeParse(decoded);

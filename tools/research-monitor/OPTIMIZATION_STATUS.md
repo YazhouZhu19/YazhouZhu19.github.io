@@ -24,7 +24,7 @@ scores must not be presented as independently validated accuracy.
 | P1.2 | Complete | Lossless v3 transport; raw shards reduced 30.001%; v1/v2 compatibility retained. |
 | P1.5 | Complete | Worker fetch/decode/validate/index/search, cancellation and validated fallback; initial local longest task 97 ms. |
 | P1.7 | Implemented; live timing pending | Shallow checkout, fail-closed verification, 800 MB guard and exact generation cleanup tested. |
-| P3.1 | Pending | Formatting-only commit. |
+| P3.1 | Complete | Prettier 3.6.2, width 110; formatting-only pass preserves 417 + 25 passing tests and build. |
 | P3.2 | Pending | Split workspace responsibilities into hooks and components. |
 | P2.1 | Pending | Remove verified-unused UI modules and dependencies. |
 | P2.2 | Pending | Measure and reduce the initial JavaScript bundle. |
@@ -131,3 +131,10 @@ scores must not be presented as independently validated accuracy.
   assembled output enforce 800,000,000 bytes. Actual CI checkout time and hourly commit
   delta require a deployed run and are not claimed here. Long-term branch/history options
   are documented only; history and synchronization frequency remain unchanged.
+
+- **P3.1:** Added pinned Prettier 3.6.2 and format/format:check scripts (width 110).
+  Reformatted lib/components/scripts/styles/hooks/tests and entry/config files without logic
+  edits. Large data, output, vendored code and frozen evaluation records are ignored.
+  Before and after: 417 TypeScript + 25 local API tests pass. Typecheck, Vite, complete
+  data copy/validation, publication retention and explicit budget checks pass. Lockfile
+  changes are limited to Prettier; unrelated npm normalization was not retained.

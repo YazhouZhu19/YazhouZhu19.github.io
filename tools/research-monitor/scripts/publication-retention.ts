@@ -11,9 +11,14 @@ type Reference = { path: string; bytes: number; sha256: string; source: string }
 
 async function checkedFile(file: string, optional = false): Promise<Buffer | undefined> {
   let info;
-  try { info = await lstat(file); }
-  catch (error: any) { if (optional && error.code === "ENOENT") return; throw error; }
-  if (!info.isFile() || info.isSymbolicLink()) throw new Error(`Publication input must be a regular file: ${file}`);
+  try {
+    info = await lstat(file);
+  } catch (error: any) {
+    if (optional && error.code === "ENOENT") return;
+    throw error;
+  }
+  if (!info.isFile() || info.isSymbolicLink())
+    throw new Error(`Publication input must be a regular file: ${file}`);
   if (info.size > MAX_SHARD_BYTES) throw new Error(`Publication manifest/shard exceeds 4 MiB: ${file}`);
   return readFile(file);
 }
@@ -21,23 +26,32 @@ async function checkedFile(file: string, optional = false): Promise<Buffer | und
 async function collectReferences(dataDirectory: string, optional: boolean) {
   for (const directory of ["", "papers", "signals-v2", "signals-v2/shards"]) {
     let info;
-    try { info = await lstat(join(dataDirectory, directory)); }
-    catch (error: any) { if (error.code === "ENOENT" && (optional || directory)) continue; throw error; }
-    if (!info.isDirectory() || info.isSymbolicLink()) throw new Error(`Publication shard directory must be real: ${join(dataDirectory, directory)}`);
+    try {
+      info = await lstat(join(dataDirectory, directory));
+    } catch (error: any) {
+      if (error.code === "ENOENT" && (optional || directory)) continue;
+      throw error;
+    }
+    if (!info.isDirectory() || info.isSymbolicLink())
+      throw new Error(`Publication shard directory must be real: ${join(dataDirectory, directory)}`);
   }
   const references: Reference[] = [];
   for (const name of paperManifests) {
     const body = await checkedFile(join(dataDirectory, name), optional);
     if (!body) continue;
     const manifest = parseSnapshotManifest(JSON.parse(body.toString("utf8")));
-    for (const shard of manifest.shards) references.push({ ...shard, source: join(dataDirectory, shard.path) });
+    for (const shard of manifest.shards)
+      references.push({ ...shard, source: join(dataDirectory, shard.path) });
   }
   const body = await checkedFile(join(dataDirectory, signalManifest), optional);
   if (body) {
     const manifest = parseSignalsManifest(JSON.parse(body.toString("utf8")));
-    for (const shard of manifest.shards) references.push({
-      ...shard, path: `signals-v2/${shard.path}`, source: join(dataDirectory, "signals-v2", shard.path),
-    });
+    for (const shard of manifest.shards)
+      references.push({
+        ...shard,
+        path: `signals-v2/${shard.path}`,
+        source: join(dataDirectory, "signals-v2", shard.path),
+      });
   }
   return references;
 }
@@ -59,8 +73,12 @@ export async function prunePublishedShards(dataDirectory: string, previousDataDi
   for (const reference of keep.values()) {
     const target = join(dataDirectory, reference.path);
     const existing = await checkedFile(target, true);
-    const body = existing ?? await checkedFile(reference.source);
-    if (!body || body.length !== reference.bytes || createHash("sha256").update(body).digest("hex") !== reference.sha256) {
+    const body = existing ?? (await checkedFile(reference.source));
+    if (
+      !body ||
+      body.length !== reference.bytes ||
+      createHash("sha256").update(body).digest("hex") !== reference.sha256
+    ) {
       throw new Error(`Retained publication shard failed integrity: ${reference.path}`);
     }
     if (!existing) {
@@ -93,15 +111,19 @@ export async function prunePublishedShards(dataDirectory: string, previousDataDi
 /** Portable logical-file bytes; CI additionally checks GNU du's apparent size. */
 export async function publicationSize(directory: string) {
   const root = await lstat(directory);
-  if (!root.isDirectory() || root.isSymbolicLink()) throw new Error("Publication directory must not be a symbolic link");
-  let bytes = 0, files = 0;
+  if (!root.isDirectory() || root.isSymbolicLink())
+    throw new Error("Publication directory must not be a symbolic link");
+  let bytes = 0,
+    files = 0;
   async function walk(path: string) {
     for (const entry of await readdir(path, { withFileTypes: true })) {
       const file = join(path, entry.name);
       if (entry.isSymbolicLink()) throw new Error(`Publication contains a symbolic link: ${file}`);
       if (entry.isDirectory()) await walk(file);
-      else if (entry.isFile()) { bytes += (await lstat(file)).size; files++; }
-      else throw new Error(`Publication contains a special file: ${file}`);
+      else if (entry.isFile()) {
+        bytes += (await lstat(file)).size;
+        files++;
+      } else throw new Error(`Publication contains a special file: ${file}`);
     }
   }
   await walk(directory);
@@ -110,6 +132,9 @@ export async function publicationSize(directory: string) {
 
 export async function checkPublicationSize(directory: string, limit = PUBLICATION_MAX_BYTES) {
   const size = await publicationSize(directory);
-  if (size.bytes > limit) throw new Error(`Publication is ${size.bytes} bytes, exceeding the ${limit}-byte budget. Remove unreferenced generated shards before publishing.`);
+  if (size.bytes > limit)
+    throw new Error(
+      `Publication is ${size.bytes} bytes, exceeding the ${limit}-byte budget. Remove unreferenced generated shards before publishing.`,
+    );
   return size;
 }

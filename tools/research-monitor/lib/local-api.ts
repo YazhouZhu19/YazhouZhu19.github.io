@@ -26,16 +26,48 @@ const kindSchema = z.enum(["持续关注", "竞争观察", "合作候选"]);
 const timestamp = z.string().max(40).datetime({ offset: true });
 const paperId = z.string().min(1).max(500);
 const name = z.string().trim().min(1).max(160);
-const collectionInput = z.object({ paperId, note: z.string().max(20000).default(""), stage: stageSchema.default("待读") }).strict();
-const collectionSchema = z.object({ paperId, note: z.string().max(20000), stage: stageSchema, createdAt: timestamp, updatedAt: timestamp }).strict()
-  .refine(v => Date.parse(v.updatedAt) >= Date.parse(v.createdAt));
-const teamInput = z.object({ name, members: z.array(name).min(1).max(30), institution: z.string().max(250).default(""), kind: kindSchema.default("持续关注") }).strict();
-const teamSchema = z.object({ id: z.string().uuid(), name, members: z.array(name).min(1).max(30), institution: z.string().max(250), kind: kindSchema, createdAt: timestamp }).strict();
+const collectionInput = z
+  .object({ paperId, note: z.string().max(20000).default(""), stage: stageSchema.default("待读") })
+  .strict();
+const collectionSchema = z
+  .object({
+    paperId,
+    note: z.string().max(20000),
+    stage: stageSchema,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  })
+  .strict()
+  .refine((v) => Date.parse(v.updatedAt) >= Date.parse(v.createdAt));
+const teamInput = z
+  .object({
+    name,
+    members: z.array(name).min(1).max(30),
+    institution: z.string().max(250).default(""),
+    kind: kindSchema.default("持续关注"),
+  })
+  .strict();
+const teamSchema = z
+  .object({
+    id: z.string().uuid(),
+    name,
+    members: z.array(name).min(1).max(30),
+    institution: z.string().max(250),
+    kind: kindSchema,
+    createdAt: timestamp,
+  })
+  .strict();
 const personalShape = {
   schema: z.literal(BACKUP_SCHEMA),
   version: z.literal(1),
-  collections: z.array(collectionSchema).max(5000).refine(rows => new Set(rows.map(r => r.paperId)).size === rows.length),
-  teams: z.array(teamSchema).max(500).refine(rows => new Set(rows.map(r => r.id)).size === rows.length),
+  collections: z
+    .array(collectionSchema)
+    .max(5000)
+    .refine((rows) => new Set(rows.map((r) => r.paperId)).size === rows.length),
+  teams: z
+    .array(teamSchema)
+    .max(500)
+    .refine((rows) => new Set(rows.map((r) => r.id)).size === rows.length),
 };
 const personalSchema = z.object(personalShape).strict();
 export const backupSchema = z.object({ ...personalShape, exportedAt: timestamp }).strict();
@@ -51,27 +83,40 @@ export type LocalMonitorData = MonitorData & {
 export type LocalStorageStatus = { available: boolean; readable: boolean; error?: string };
 
 function localError(error: unknown): Error {
-  if (error instanceof Error && Object.values(LOCAL_ERRORS).some(message => error.message === message)) return error;
+  if (error instanceof Error && Object.values(LOCAL_ERRORS).some((message) => error.message === message))
+    return error;
   const errorName = error && typeof error === "object" && "name" in error ? error.name : "";
-  return new Error(errorName === "QuotaExceededError" || errorName === "NS_ERROR_DOM_QUOTA_REACHED" ? LOCAL_ERRORS.quota : LOCAL_ERRORS.unavailable);
+  return new Error(
+    errorName === "QuotaExceededError" || errorName === "NS_ERROR_DOM_QUOTA_REACHED"
+      ? LOCAL_ERRORS.quota
+      : LOCAL_ERRORS.unavailable,
+  );
 }
 
 function storage(): Storage {
   try {
     if (typeof window === "undefined" || !window.localStorage) throw new Error(LOCAL_ERRORS.unavailable);
     return window.localStorage;
-  } catch (error) { throw localError(error); }
+  } catch (error) {
+    throw localError(error);
+  }
 }
 
 function emptyData(): PersonalData {
   return { schema: BACKUP_SCHEMA, version: 1, collections: [], teams: [] };
 }
 
-function byteLength(value: string): number { return new TextEncoder().encode(value).byteLength; }
+function byteLength(value: string): number {
+  return new TextEncoder().encode(value).byteLength;
+}
 
 function checkedStringify(value: unknown, invalidMessage: string): string {
   let text: string;
-  try { text = JSON.stringify(value); } catch { throw new Error(invalidMessage); }
+  try {
+    text = JSON.stringify(value);
+  } catch {
+    throw new Error(invalidMessage);
+  }
   if (typeof text !== "string") throw new Error(invalidMessage);
   if (byteLength(text) > MAX_BACKUP_BYTES) throw new Error(LOCAL_ERRORS.tooLarge);
   return text;
@@ -79,10 +124,18 @@ function checkedStringify(value: unknown, invalidMessage: string): string {
 
 function readData(target = storage()): PersonalData {
   let raw: string | null;
-  try { raw = target.getItem(LOCAL_DATA_KEY); } catch (error) { throw localError(error); }
+  try {
+    raw = target.getItem(LOCAL_DATA_KEY);
+  } catch (error) {
+    throw localError(error);
+  }
   if (raw === null) return emptyData();
   if (byteLength(raw) > MAX_BACKUP_BYTES) throw new Error(LOCAL_ERRORS.corrupt);
-  try { return personalSchema.parse(JSON.parse(raw)); } catch { throw new Error(LOCAL_ERRORS.corrupt); }
+  try {
+    return personalSchema.parse(JSON.parse(raw));
+  } catch {
+    throw new Error(LOCAL_ERRORS.corrupt);
+  }
 }
 
 function ensureWritable(target: Storage): void {
@@ -92,16 +145,29 @@ function ensureWritable(target: Storage): void {
     if (target.getItem(probe) !== "1") throw new Error(LOCAL_ERRORS.unavailable);
     target.removeItem(probe);
   } catch (error) {
-    try { target.removeItem(probe); } catch { /* Retain the original failure. */ }
+    try {
+      target.removeItem(probe);
+    } catch {
+      /* Retain the original failure. */
+    }
     throw localError(error);
   }
 }
 
 export function getLocalStorageStatus(): LocalStorageStatus {
   let target: Storage;
-  try { target = storage(); readData(target); } catch (error) { return { available: false, readable: false, error: localError(error).message }; }
-  try { ensureWritable(target); return { available: true, readable: true }; }
-  catch (error) { return { available: false, readable: true, error: localError(error).message }; }
+  try {
+    target = storage();
+    readData(target);
+  } catch (error) {
+    return { available: false, readable: false, error: localError(error).message };
+  }
+  try {
+    ensureWritable(target);
+    return { available: true, readable: true };
+  } catch (error) {
+    return { available: false, readable: true, error: localError(error).message };
+  }
 }
 
 function writeData(target: Storage, data: PersonalData): void {
@@ -116,7 +182,9 @@ function writeData(target: Storage, data: PersonalData): void {
   try {
     target.setItem(LOCAL_DATA_KEY, text);
     if (target.getItem(LOCAL_DATA_KEY) !== text) throw new Error(LOCAL_ERRORS.unavailable);
-  } catch (error) { throw localError(error); }
+  } catch (error) {
+    throw localError(error);
+  }
 }
 
 export function validateBackup(parsed: unknown): PersonalBackup {
@@ -138,7 +206,12 @@ export function importBackup(parsed: unknown): { collections: number; teams: num
   const backup = validateBackup(parsed);
   const target = storage();
   ensureWritable(target);
-  writeData(target, { schema: backup.schema, version: backup.version, collections: backup.collections, teams: backup.teams });
+  writeData(target, {
+    schema: backup.schema,
+    version: backup.version,
+    collections: backup.collections,
+    teams: backup.teams,
+  });
   return { collections: backup.collections.length, teams: backup.teams.length };
 }
 
@@ -148,19 +221,31 @@ export function clearLocalData(): void {
   try {
     target.removeItem(LOCAL_DATA_KEY);
     if (target.getItem(LOCAL_DATA_KEY) !== null) throw new Error(LOCAL_ERRORS.unavailable);
-  } catch (error) { throw localError(error); }
+  } catch (error) {
+    throw localError(error);
+  }
 }
 
 let knownPaperIds: Set<string> | undefined;
 let paperClient: ReturnType<typeof createDataWorkerClient> | undefined;
 let latestPaperResult: PaperDataResult | undefined;
 function getPaperClient() {
-  return paperClient ??= createDataWorkerClient({ baseUrl: import.meta.env?.BASE_URL ?? "/research-monitor/" });
+  return (paperClient ??= createDataWorkerClient({
+    baseUrl: import.meta.env?.BASE_URL ?? "/research-monitor/",
+  }));
 }
-export function getLoadedPaperSnapshot() { return latestPaperResult; }
-export async function searchPublicPapers(query: string, signal?: AbortSignal, generation = latestPaperResult?.generation) {
+export function getLoadedPaperSnapshot() {
+  return latestPaperResult;
+}
+export async function searchPublicPapers(
+  query: string,
+  signal?: AbortSignal,
+  generation = latestPaperResult?.generation,
+) {
   if (!latestPaperResult) return [];
-  return (await getPaperClient().search(query, { generation: generation ?? latestPaperResult.generation, signal })).ids;
+  return (
+    await getPaperClient().search(query, { generation: generation ?? latestPaperResult.generation, signal })
+  ).ids;
 }
 export function disposePaperData() {
   paperClient?.dispose();
@@ -171,8 +256,12 @@ export function disposePaperData() {
 function withPersonalStorage(data: VerifiedPublicData): LocalMonitorData {
   const personal = getLocalStorageStatus();
   return {
-    ...data, storageAvailable: true, publicDataAvailable: true,
-    personalStorageAvailable: personal.available, personalStorageReadable: personal.readable, personalStorageError: personal.error,
+    ...data,
+    storageAvailable: true,
+    publicDataAvailable: true,
+    personalStorageAvailable: personal.available,
+    personalStorageReadable: personal.readable,
+    personalStorageError: personal.error,
   };
 }
 
@@ -181,7 +270,7 @@ async function readPublicData(init?: RequestInit): Promise<LocalMonitorData> {
     const result = await getPaperClient().load(init?.signal ?? undefined);
     init?.signal?.throwIfAborted();
     latestPaperResult = result;
-    knownPaperIds = new Set(result.data.papers.map(paper => paper.id));
+    knownPaperIds = new Set(result.data.papers.map((paper) => paper.id));
     return withPersonalStorage(result.data);
   } catch (error) {
     init?.signal?.throwIfAborted();
@@ -195,7 +284,9 @@ function parseBody<T extends z.ZodTypeAny>(schema: T, init?: RequestInit): z.out
   try {
     if (typeof init?.body !== "string" || byteLength(init.body) > 100000) throw new Error(LOCAL_ERRORS.input);
     return schema.parse(JSON.parse(init.body));
-  } catch { throw new Error(LOCAL_ERRORS.input); }
+  } catch {
+    throw new Error(LOCAL_ERRORS.input);
+  }
 }
 
 type CollectionResponse = { collections: Collection[]; ok?: true };
@@ -203,16 +294,24 @@ type TeamResponse = { teams: Team[]; team?: Team; ok?: true };
 export function api(url: "/api/papers", init?: RequestInit): Promise<LocalMonitorData>;
 export function api(url: "/api/collections", init?: RequestInit): Promise<CollectionResponse>;
 export function api(url: "/api/teams", init?: RequestInit): Promise<TeamResponse>;
-export function api(url: string, init?: RequestInit): Promise<LocalMonitorData | CollectionResponse | TeamResponse>;
-export async function api(url: string, init?: RequestInit): Promise<LocalMonitorData | CollectionResponse | TeamResponse> {
+export function api(
+  url: string,
+  init?: RequestInit,
+): Promise<LocalMonitorData | CollectionResponse | TeamResponse>;
+export async function api(
+  url: string,
+  init?: RequestInit,
+): Promise<LocalMonitorData | CollectionResponse | TeamResponse> {
   const method = (init?.method ?? "GET").toUpperCase();
   if (url === "/api/papers" && method === "GET") return readPublicData(init);
-  if ((url !== "/api/collections" && url !== "/api/teams") || !["GET", "POST", "DELETE"].includes(method)) throw new Error(LOCAL_ERRORS.unsupported);
+  if ((url !== "/api/collections" && url !== "/api/teams") || !["GET", "POST", "DELETE"].includes(method))
+    throw new Error(LOCAL_ERRORS.unsupported);
   const target = storage();
   const data = readData(target);
-  if (method === "GET") return url === "/api/collections"
-    ? { collections: data.collections.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)) }
-    : { teams: data.teams.sort((a, b) => b.createdAt.localeCompare(a.createdAt)) };
+  if (method === "GET")
+    return url === "/api/collections"
+      ? { collections: data.collections.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)) }
+      : { teams: data.teams.sort((a, b) => b.createdAt.localeCompare(a.createdAt)) };
 
   if (url === "/api/collections") {
     if (method === "POST") {
@@ -222,16 +321,17 @@ export async function api(url: string, init?: RequestInit): Promise<LocalMonitor
       // Fetching the public snapshot may yield; reread to preserve intervening
       // changes made by another tab before doing the synchronous write.
       const current = readData(target);
-      const existing = current.collections.find(row => row.paperId === value.paperId);
+      const existing = current.collections.find((row) => row.paperId === value.paperId);
       const now = new Date().toISOString();
-      const updatedAt = existing && Date.parse(existing.updatedAt) > Date.parse(now) ? existing.updatedAt : now;
+      const updatedAt =
+        existing && Date.parse(existing.updatedAt) > Date.parse(now) ? existing.updatedAt : now;
       const saved = { ...value, createdAt: existing?.createdAt ?? now, updatedAt };
-      current.collections = [saved, ...current.collections.filter(row => row.paperId !== value.paperId)];
+      current.collections = [saved, ...current.collections.filter((row) => row.paperId !== value.paperId)];
       writeData(target, current);
       return { ok: true, collections: current.collections };
     }
     const { paperId: id } = parseBody(z.object({ paperId }).strict(), init);
-    data.collections = data.collections.filter(row => row.paperId !== id);
+    data.collections = data.collections.filter((row) => row.paperId !== id);
     writeData(target, data);
     return { ok: true, collections: data.collections };
   }
@@ -243,7 +343,7 @@ export async function api(url: string, init?: RequestInit): Promise<LocalMonitor
     return { ok: true, team, teams: data.teams };
   }
   const { id } = parseBody(z.object({ id: z.string().uuid() }).strict(), init);
-  data.teams = data.teams.filter(row => row.id !== id);
+  data.teams = data.teams.filter((row) => row.id !== id);
   writeData(target, data);
   return { ok: true, teams: data.teams };
 }

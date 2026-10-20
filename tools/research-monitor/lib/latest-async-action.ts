@@ -2,7 +2,9 @@
 export function createLatestAsyncAction() {
   let revision = 0;
   return {
-    invalidate() { revision++; },
+    invalidate() {
+      revision++;
+    },
     async run<T>(read: () => Promise<T>, apply: (value: T) => void): Promise<boolean> {
       const current = ++revision;
       const value = await read();

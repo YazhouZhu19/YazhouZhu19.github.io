@@ -1,17 +1,28 @@
 import type { Paper } from "./types";
 
-export const PAPER_FACETS = ["modalities", "organs", "methods", "sources", "tasks", "tracks", "humanSignals"] as const;
+export const PAPER_FACETS = [
+  "modalities",
+  "organs",
+  "methods",
+  "sources",
+  "tasks",
+  "tracks",
+  "humanSignals",
+] as const;
 type Facet = (typeof PAPER_FACETS)[number];
 export type PaperIndexSummary = Record<Facet, string[]> & { statuses: string[] };
 export type PaperSearchIndex = { rows: { id: string; text: string }[]; summary: PaperIndexSummary };
 
 /** Preserve the existing literal substring search, including DOI and affiliations. */
 export function paperSearchText(paper: Paper) {
-  return `${paper.title} ${paper.abstract} ${paper.authors.map(author => author.name).join(" ")} ${paper.affiliations.join(" ")} ${paper.doi ?? ""}`.toLowerCase();
+  return `${paper.title} ${paper.abstract} ${paper.authors.map((author) => author.name).join(" ")} ${paper.affiliations.join(" ")} ${paper.doi ?? ""}`.toLowerCase();
 }
 
 function accumulator() {
-  const facets = Object.fromEntries(PAPER_FACETS.map(key => [key, new Set<string>()])) as Record<Facet, Set<string>>;
+  const facets = Object.fromEntries(PAPER_FACETS.map((key) => [key, new Set<string>()])) as Record<
+    Facet,
+    Set<string>
+  >;
   const statuses = new Set<string>();
   const rows: PaperSearchIndex["rows"] = [];
   return {
@@ -21,7 +32,10 @@ function accumulator() {
       statuses.add(paper.status);
     },
     finish(): PaperSearchIndex {
-      const summary = Object.fromEntries(PAPER_FACETS.map(key => [key, [...facets[key]].sort()])) as Record<Facet, string[]>;
+      const summary = Object.fromEntries(PAPER_FACETS.map((key) => [key, [...facets[key]].sort()])) as Record<
+        Facet,
+        string[]
+      >;
       return { rows, summary: { ...summary, statuses: [...statuses].sort() } };
     },
   };
@@ -33,10 +47,13 @@ export function buildPaperIndex(papers: readonly Paper[]): PaperSearchIndex {
   return builder.finish();
 }
 
-const yieldToEventLoop = () => new Promise<void>(resolve => setTimeout(resolve, 0));
+const yieldToEventLoop = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 /** Yield in the fallback too, so indexing never requires a single unbounded task. */
-export async function buildPaperIndexAsync(papers: readonly Paper[], signal?: AbortSignal): Promise<PaperSearchIndex> {
+export async function buildPaperIndexAsync(
+  papers: readonly Paper[],
+  signal?: AbortSignal,
+): Promise<PaperSearchIndex> {
   const builder = accumulator();
   for (let index = 0; index < papers.length; index++) {
     signal?.throwIfAborted();

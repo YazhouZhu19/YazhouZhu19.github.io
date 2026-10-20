@@ -16,21 +16,43 @@ export type SnapshotManifest = {
 };
 
 export class SnapshotFormatError extends Error {
-  constructor(message: string) { super(message); this.name = "SnapshotFormatError"; }
+  constructor(message: string) {
+    super(message);
+    this.name = "SnapshotFormatError";
+  }
 }
 
 export function parseSnapshotManifest(raw: unknown): SnapshotManifest {
   const value = raw as SnapshotManifest;
-  const fail = () => { throw new SnapshotFormatError("Invalid paper snapshot manifest"); };
-  if (!value || typeof value !== "object" || Array.isArray(value) || ![SNAPSHOT_SCHEMA, PUBLIC_SNAPSHOT_SCHEMA, PUBLIC_SNAPSHOT_V3_SCHEMA].includes(value.schema) || !value.metadata || typeof value.metadata !== "object"
-    || Array.isArray(value.metadata) || "papers" in value.metadata || !Number.isSafeInteger(value.totalStored)
-    || value.totalStored < 0 || value.metadata.totalStored !== value.totalStored || !Array.isArray(value.shards)) fail();
+  const fail = () => {
+    throw new SnapshotFormatError("Invalid paper snapshot manifest");
+  };
+  if (
+    !value ||
+    typeof value !== "object" ||
+    Array.isArray(value) ||
+    ![SNAPSHOT_SCHEMA, PUBLIC_SNAPSHOT_SCHEMA, PUBLIC_SNAPSHOT_V3_SCHEMA].includes(value.schema) ||
+    !value.metadata ||
+    typeof value.metadata !== "object" ||
+    Array.isArray(value.metadata) ||
+    "papers" in value.metadata ||
+    !Number.isSafeInteger(value.totalStored) ||
+    value.totalStored < 0 ||
+    value.metadata.totalStored !== value.totalStored ||
+    !Array.isArray(value.shards)
+  )
+    fail();
   if (value.schema !== SNAPSHOT_SCHEMA) {
     if (!Array.isArray(value.queryUrls)) fail();
     const urls = new Set<string>();
     for (const url of value.queryUrls!) {
-      if (typeof url !== "string" || url.length > 12000 || !/^https?:\/\//i.test(url) || urls.has(url)) fail();
-      try { new URL(url); } catch { fail(); }
+      if (typeof url !== "string" || url.length > 12000 || !/^https?:\/\//i.test(url) || urls.has(url))
+        fail();
+      try {
+        new URL(url);
+      } catch {
+        fail();
+      }
       urls.add(url);
     }
   }
@@ -45,20 +67,39 @@ export function parseSnapshotManifest(raw: unknown): SnapshotManifest {
   let count = 0;
   const paths = new Set<string>();
   for (const shard of value.shards) {
-    if (!shard || typeof shard !== "object" || Array.isArray(shard) || typeof shard.sha256 !== "string"
-      || !/^[a-f0-9]{64}$/.test(shard.sha256) || shard.path !== `papers/${shard.sha256}.json`
-      || !Number.isSafeInteger(shard.count) || shard.count <= 0 || !Number.isSafeInteger(shard.bytes)
-      || shard.bytes <= 0 || shard.bytes > MAX_SHARD_BYTES || paths.has(shard.path)) fail();
-    if (shard.bucket !== undefined && (typeof shard.bucket !== "string"
-      || !/^(?:\d{4}-(?:0[1-9]|1[0-2])|undated)(?:\.part-[1-9]\d*)?$/.test(shard.bucket))) fail();
-    paths.add(shard.path); count += shard.count;
+    if (
+      !shard ||
+      typeof shard !== "object" ||
+      Array.isArray(shard) ||
+      typeof shard.sha256 !== "string" ||
+      !/^[a-f0-9]{64}$/.test(shard.sha256) ||
+      shard.path !== `papers/${shard.sha256}.json` ||
+      !Number.isSafeInteger(shard.count) ||
+      shard.count <= 0 ||
+      !Number.isSafeInteger(shard.bytes) ||
+      shard.bytes <= 0 ||
+      shard.bytes > MAX_SHARD_BYTES ||
+      paths.has(shard.path)
+    )
+      fail();
+    if (
+      shard.bucket !== undefined &&
+      (typeof shard.bucket !== "string" ||
+        !/^(?:\d{4}-(?:0[1-9]|1[0-2])|undated)(?:\.part-[1-9]\d*)?$/.test(shard.bucket))
+    )
+      fail();
+    paths.add(shard.path);
+    count += shard.count;
   }
   if (count !== value.totalStored) fail();
   return value;
 }
 
 /** Restore the existing library order after independently loading month buckets. */
-export function compareSnapshotPapers(a: { id: string; publishedAt?: unknown }, b: { id: string; publishedAt?: unknown }) {
+export function compareSnapshotPapers(
+  a: { id: string; publishedAt?: unknown },
+  b: { id: string; publishedAt?: unknown },
+) {
   const dateA = typeof a.publishedAt === "string" ? a.publishedAt : "";
   const dateB = typeof b.publishedAt === "string" ? b.publishedAt : "";
   return dateB.localeCompare(dateA) || a.id.localeCompare(b.id);
@@ -69,18 +110,25 @@ function decodePaper(record: any, queryUrls: string[]) {
   if (!record || typeof record !== "object" || Array.isArray(record) || !Array.isArray(record.provenance)) {
     throw new SnapshotFormatError("Invalid encoded paper provenance");
   }
-  return { ...record, provenance: record.provenance.map((item: any) => {
-    if (!item || typeof item !== "object" || Array.isArray(item)) throw new SnapshotFormatError("Invalid encoded paper provenance");
-    if (!("queryUrl" in item)) return item;
-    if (!Number.isSafeInteger(item.queryUrl) || item.queryUrl < 0 || item.queryUrl >= queryUrls.length) {
-      throw new SnapshotFormatError("Invalid paper query URL reference");
-    }
-    return { ...item, queryUrl: queryUrls[item.queryUrl] };
-  }) };
+  return {
+    ...record,
+    provenance: record.provenance.map((item: any) => {
+      if (!item || typeof item !== "object" || Array.isArray(item))
+        throw new SnapshotFormatError("Invalid encoded paper provenance");
+      if (!("queryUrl" in item)) return item;
+      if (!Number.isSafeInteger(item.queryUrl) || item.queryUrl < 0 || item.queryUrl >= queryUrls.length) {
+        throw new SnapshotFormatError("Invalid paper query URL reference");
+      }
+      return { ...item, queryUrl: queryUrls[item.queryUrl] };
+    }),
+  };
 }
 
 /** Load a complete, verified snapshot. Never return a partially loaded library. */
-export async function resolveSnapshot(raw: unknown, readShard: (path: string) => Promise<string>): Promise<any> {
+export async function resolveSnapshot(
+  raw: unknown,
+  readShard: (path: string) => Promise<string>,
+): Promise<any> {
   if (raw && typeof raw === "object" && !("schema" in raw)) return raw; // Legacy single-file snapshot.
   const manifest = parseSnapshotManifest(raw);
   const parts: any[][] = new Array(manifest.shards.length);
@@ -94,30 +142,51 @@ export async function resolveSnapshot(raw: unknown, readShard: (path: string) =>
         const shard = manifest.shards[index];
         const text = await readShard(shard.path);
         const bytes = new TextEncoder().encode(text);
-        if (bytes.byteLength !== shard.bytes) throw new SnapshotFormatError(`Paper shard size mismatch: ${shard.path}`);
-        const hash = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map(b => b.toString(16).padStart(2, "0")).join("");
-        if (hash !== shard.sha256) throw new SnapshotFormatError(`Paper shard checksum mismatch: ${shard.path}`);
+        if (bytes.byteLength !== shard.bytes)
+          throw new SnapshotFormatError(`Paper shard size mismatch: ${shard.path}`);
+        const hash = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+        if (hash !== shard.sha256)
+          throw new SnapshotFormatError(`Paper shard checksum mismatch: ${shard.path}`);
         let records: unknown;
-        try { records = JSON.parse(text); } catch { throw new SnapshotFormatError(`Invalid paper shard: ${shard.path}`); }
-        if (!Array.isArray(records) || records.length !== shard.count) throw new SnapshotFormatError(`Paper shard count mismatch: ${shard.path}`);
-        parts[index] = manifest.schema === SNAPSHOT_SCHEMA ? records : records.map(record => {
-          if (manifest.schema === PUBLIC_SNAPSHOT_V3_SCHEMA) {
-            try { record = decodeV3Paper(record, manifest.affiliations!); }
-            catch (error) { throw new SnapshotFormatError(error instanceof Error ? error.message : "Invalid v3 paper"); }
-          }
-          return decodePaper(record, manifest.queryUrls!);
-        });
-      } catch (error) { failed = true; throw error; }
+        try {
+          records = JSON.parse(text);
+        } catch {
+          throw new SnapshotFormatError(`Invalid paper shard: ${shard.path}`);
+        }
+        if (!Array.isArray(records) || records.length !== shard.count)
+          throw new SnapshotFormatError(`Paper shard count mismatch: ${shard.path}`);
+        parts[index] =
+          manifest.schema === SNAPSHOT_SCHEMA
+            ? records
+            : records.map((record) => {
+                if (manifest.schema === PUBLIC_SNAPSHOT_V3_SCHEMA) {
+                  try {
+                    record = decodeV3Paper(record, manifest.affiliations!);
+                  } catch (error) {
+                    throw new SnapshotFormatError(
+                      error instanceof Error ? error.message : "Invalid v3 paper",
+                    );
+                  }
+                }
+                return decodePaper(record, manifest.queryUrls!);
+              });
+      } catch (error) {
+        failed = true;
+        throw error;
+      }
     }
   }
   await Promise.all(Array.from({ length: Math.min(4, manifest.shards.length) }, worker));
   const papers = parts.flat();
   const ids = new Set<string>();
   for (const paper of papers) {
-    if (!paper || typeof paper.id !== "string" || !paper.id || ids.has(paper.id)) throw new SnapshotFormatError("Missing or duplicate paper ID in snapshot");
+    if (!paper || typeof paper.id !== "string" || !paper.id || ids.has(paper.id))
+      throw new SnapshotFormatError("Missing or duplicate paper ID in snapshot");
     ids.add(paper.id);
   }
   // Legacy manifests retain their original array order.
-  if (manifest.shards.some(shard => shard.bucket !== undefined)) papers.sort(compareSnapshotPapers);
+  if (manifest.shards.some((shard) => shard.bucket !== undefined)) papers.sort(compareSnapshotPapers);
   return { ...manifest.metadata, papers };
 }

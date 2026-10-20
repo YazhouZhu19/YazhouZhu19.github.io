@@ -28,16 +28,24 @@ export function startManifestPolling(
   function queue() {
     clear();
     if (!stopped && visibility.visibilityState === "visible") {
-      timer = schedule(() => { timer = undefined; void run(); }, manifestPollDelay(failures));
+      timer = schedule(() => {
+        timer = undefined;
+        void run();
+      }, manifestPollDelay(failures));
     }
   }
   async function run() {
     if (stopped || running || visibility.visibilityState !== "visible") return;
     running = true;
     clear();
-    try { failures = await check() ? 0 : failures + 1; }
-    catch { failures += 1; }
-    finally { running = false; queue(); }
+    try {
+      failures = (await check()) ? 0 : failures + 1;
+    } catch {
+      failures += 1;
+    } finally {
+      running = false;
+      queue();
+    }
   }
   function onVisibility() {
     clear();

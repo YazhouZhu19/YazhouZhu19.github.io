@@ -1,7 +1,10 @@
 /* Academic reading typography, using local fonts so no font download blocks reading. */
 :root {
-  --font-reading: Georgia, "Times New Roman", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", STSong, SimSun, serif;
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --font-reading:
+    Georgia, "Times New Roman", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", STSong, SimSun, serif;
+  --font-ui:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Helvetica, Arial,
+    sans-serif;
   --font-data: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
@@ -11,7 +14,16 @@ body {
 }
 
 /* Compact controls retain the reference's clear sans-serif treatment. */
-:where(button, input, textarea, select, [data-slot="button"], [role="combobox"], [role="option"], [role="menuitem"]),
+:where(
+  button,
+  input,
+  textarea,
+  select,
+  [data-slot="button"],
+  [role="combobox"],
+  [role="option"],
+  [role="menuitem"]
+),
 .font-sans,
 .topbar,
 [data-sidebar="content"],
@@ -102,14 +114,16 @@ h3,
 }
 
 /* Shared wordmark and compact bilingual subtitle. */
-.brand-copy { min-width: 0; }
+.brand-copy {
+  min-width: 0;
+}
 .brand strong,
 html[lang="en"] .brand strong {
   display: block;
   font-family: var(--font-ui);
   font-size: 16px;
   font-weight: 700;
-  letter-spacing: -.025em;
+  letter-spacing: -0.025em;
   line-height: 1.4;
   white-space: nowrap;
 }

@@ -2,7 +2,11 @@ import { parseResearchSignalsData, SIGNALS_MAX_BYTES, type ResearchSignalsData }
 
 export class ResearchSignalsLoadError extends Error {
   constructor(public readonly kind: "request" | "format") {
-    super(kind === "format" ? "The research signal snapshot has an unsupported format." : "The research signal snapshot could not be loaded.");
+    super(
+      kind === "format"
+        ? "The research signal snapshot has an unsupported format."
+        : "The research signal snapshot could not be loaded.",
+    );
     this.name = "ResearchSignalsLoadError";
   }
 }
@@ -16,7 +20,9 @@ export async function fetchResearchSignals(
   let response: Response;
   try {
     response = await fetcher(`${baseUrl.replace(/\/?$/, "/")}data/research-signals.json`, {
-      signal, cache: "no-cache", credentials: "omit",
+      signal,
+      cache: "no-cache",
+      credentials: "omit",
     });
   } catch {
     if (signal.aborted) throw signal.reason;
@@ -44,10 +50,13 @@ export async function fetchResearchSignals(
           text += decoder.decode(chunk.value, { stream: true });
         }
         text += decoder.decode();
-      } finally { reader.releaseLock(); }
+      } finally {
+        reader.releaseLock();
+      }
     } else {
       text = await response.text();
-      if (new TextEncoder().encode(text).byteLength > SIGNALS_MAX_BYTES) throw new Error("Snapshot too large");
+      if (new TextEncoder().encode(text).byteLength > SIGNALS_MAX_BYTES)
+        throw new Error("Snapshot too large");
     }
     const value: unknown = JSON.parse(text);
     return parseResearchSignalsData(value);

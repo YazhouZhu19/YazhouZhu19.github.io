@@ -11,8 +11,12 @@ export type SignalsState = {
   checkedAt: string | null;
 };
 const emptyState = (): SignalsState => ({
-  manifest: null, snapshot: null, loaded: { github: false, news: false },
-  loading: false, error: false, checkedAt: null,
+  manifest: null,
+  snapshot: null,
+  loaded: { github: false, news: false },
+  loading: false,
+  error: false,
+  checkedAt: null,
 });
 
 function untilAborted<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
@@ -25,7 +29,11 @@ function untilAborted<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
 }
 
 /** Public signals stay unloaded until a view or an explicit source selection asks for them. */
-export function createSignalsStore(baseUrl: string, loaderFactory?: () => Promise<Loader>, options: { timeoutMs?: number } = {}) {
+export function createSignalsStore(
+  baseUrl: string,
+  loaderFactory?: () => Promise<Loader>,
+  options: { timeoutMs?: number } = {},
+) {
   let state = emptyState();
   const listeners = new Set<() => void>();
   let loader: Promise<Loader> | undefined;
@@ -39,15 +47,24 @@ export function createSignalsStore(baseUrl: string, loaderFactory?: () => Promis
   };
   const getLoader = () => {
     if (!loader) {
-      const request = Promise.resolve().then(() => loaderFactory ? loaderFactory() :
-        import("./signals-snapshot").then(module => module.createSignalsSnapshotLoader({ baseUrl })))
-        .catch(error => { if (loader === request) loader = undefined; throw error; });
+      const request = Promise.resolve()
+        .then(() =>
+          loaderFactory
+            ? loaderFactory()
+            : import("./signals-snapshot").then((module) => module.createSignalsSnapshotLoader({ baseUrl })),
+        )
+        .catch((error) => {
+          if (loader === request) loader = undefined;
+          throw error;
+        });
       loader = request;
     }
     return loader;
   };
   const dataFor = (manifest: SignalsManifest, records: ResearchSignal[]): ResearchSignalsData => ({
-    schemaVersion: 1, generatedAt: manifest.generatedAt, sources: manifest.sources,
+    schemaVersion: 1,
+    generatedAt: manifest.generatedAt,
+    sources: manifest.sources,
     limitations: manifest.limitations,
     ...(manifest.discoveryState ? { discoveryState: manifest.discoveryState } : {}),
     records,
@@ -55,54 +72,76 @@ export function createSignalsStore(baseUrl: string, loaderFactory?: () => Promis
   function operation(key: string, kind?: SignalKind) {
     if (pending.has(key)) return pending.get(key)!;
     const currentEpoch = epoch;
-    const request = queue.catch(() => null).then(async () => {
-      if (currentEpoch !== epoch) return null;
-      const controller = new AbortController();
-      active = controller;
-      const timer = setTimeout(() => controller.abort(new Error("Signal loading timed out")), options.timeoutMs ?? 60_000);
-      publish({ loading: true, error: false });
-      try {
-        const initialization = getLoader();
-        const reader = await untilAborted(initialization, controller.signal).catch(error => {
-          // A timed-out import/factory must not keep the next request waiting on it.
-          if (controller.signal.aborted && loader === initialization) loader = undefined;
-          throw error;
-        });
-        controller.signal.throwIfAborted();
-        const manifest = key === "manifest" && state.manifest ? state.manifest
-          : kind && state.manifest ? state.manifest : await untilAborted(reader.loadManifest(controller.signal), controller.signal);
-        const changed = manifest !== state.manifest;
-        const kinds = (["github", "news"] as const).filter(item => item === kind || (changed && state.loaded[item]));
-        const loaded = { ...state.loaded };
-        let records = state.snapshot?.records ?? [];
-        for (const item of kinds) {
-          if (!changed && loaded[item]) continue;
-          const next = await untilAborted(reader.loadKind(manifest, item, controller.signal), controller.signal);
-          records = [...records.filter(record => record.kind !== item), ...next];
-          loaded[item] = true;
-        }
-        controller.signal.throwIfAborted();
+    const request = queue
+      .catch(() => null)
+      .then(async () => {
         if (currentEpoch !== epoch) return null;
-        const snapshot = !changed && records === state.snapshot?.records ? state.snapshot : dataFor(manifest, records);
-        publish({ manifest, snapshot, loaded, checkedAt: new Date().toISOString(), error: false });
-        return snapshot;
-      } catch {
-        if (currentEpoch === epoch) publish({ error: true });
-        return null;
-      } finally {
-        clearTimeout(timer);
-        if (active === controller) active = undefined;
-        if (currentEpoch === epoch) publish({ loading: false });
-      }
-    });
+        const controller = new AbortController();
+        active = controller;
+        const timer = setTimeout(
+          () => controller.abort(new Error("Signal loading timed out")),
+          options.timeoutMs ?? 60_000,
+        );
+        publish({ loading: true, error: false });
+        try {
+          const initialization = getLoader();
+          const reader = await untilAborted(initialization, controller.signal).catch((error) => {
+            // A timed-out import/factory must not keep the next request waiting on it.
+            if (controller.signal.aborted && loader === initialization) loader = undefined;
+            throw error;
+          });
+          controller.signal.throwIfAborted();
+          const manifest =
+            key === "manifest" && state.manifest
+              ? state.manifest
+              : kind && state.manifest
+                ? state.manifest
+                : await untilAborted(reader.loadManifest(controller.signal), controller.signal);
+          const changed = manifest !== state.manifest;
+          const kinds = (["github", "news"] as const).filter(
+            (item) => item === kind || (changed && state.loaded[item]),
+          );
+          const loaded = { ...state.loaded };
+          let records = state.snapshot?.records ?? [];
+          for (const item of kinds) {
+            if (!changed && loaded[item]) continue;
+            const next = await untilAborted(
+              reader.loadKind(manifest, item, controller.signal),
+              controller.signal,
+            );
+            records = [...records.filter((record) => record.kind !== item), ...next];
+            loaded[item] = true;
+          }
+          controller.signal.throwIfAborted();
+          if (currentEpoch !== epoch) return null;
+          const snapshot =
+            !changed && records === state.snapshot?.records ? state.snapshot : dataFor(manifest, records);
+          publish({ manifest, snapshot, loaded, checkedAt: new Date().toISOString(), error: false });
+          return snapshot;
+        } catch {
+          if (currentEpoch === epoch) publish({ error: true });
+          return null;
+        } finally {
+          clearTimeout(timer);
+          if (active === controller) active = undefined;
+          if (currentEpoch === epoch) publish({ loading: false });
+        }
+      });
     pending.set(key, request);
     queue = request;
-    void request.finally(() => { if (pending.get(key) === request) pending.delete(key); });
+    void request.finally(() => {
+      if (pending.get(key) === request) pending.delete(key);
+    });
     return request;
   }
   return {
     getSnapshot: () => state,
-    subscribe: (listener: () => void) => { listeners.add(listener); return () => { listeners.delete(listener); }; },
+    subscribe: (listener: () => void) => {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
     ensureManifest: () => operation("manifest"),
     ensureKind: (kind: SignalKind) => operation(kind, kind),
     refresh: () => operation("refresh"),

@@ -13,5 +13,7 @@ import "./styles/ai-research.css";
 
 const locale = document.documentElement.lang === "en" ? "en" : "zh";
 createRoot(document.getElementById("root")!).render(
-  <LocaleProvider locale={locale}><MonitorWorkspace /></LocaleProvider>,
+  <LocaleProvider locale={locale}>
+    <MonitorWorkspace />
+  </LocaleProvider>,
 );

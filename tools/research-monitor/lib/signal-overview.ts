@@ -9,11 +9,16 @@ export function adaptSignalOverview(overview: GitHubSignalOverview | NewsSignalO
     if (Array.isArray(value)) return value.map((item, index) => expand(item, [...path, index]));
     if (!value || typeof value !== "object") return value;
     const row = value as Record<string, unknown>;
-    const result = Object.fromEntries(Object.entries(row).map(([key, item]) => [key, expand(item, [...path, key])]));
+    const result = Object.fromEntries(
+      Object.entries(row).map(([key, item]) => [key, expand(item, [...path, key])]),
+    );
     if (today && row.isToday && typeof row.date === "string") result.isToday = today.startsWith(row.date);
-    const keys = typeof row.date === "string" && "observed" in row
-      ? ["recordIds", "directRecordIds", "candidateRecordIds"]
-      : typeof row.id === "string" && "count" in row ? ["recordIds"] : [];
+    const keys =
+      typeof row.date === "string" && "observed" in row
+        ? ["recordIds", "directRecordIds", "candidateRecordIds"]
+        : typeof row.id === "string" && "count" in row
+          ? ["recordIds"]
+          : [];
     for (const key of keys) {
       const ids: string[] = [];
       selectors.set(ids, [...path, key]);
@@ -33,7 +38,7 @@ export function adaptSignalOverview(overview: GitHubSignalOverview | NewsSignalO
         if (!value || typeof value !== "object") return [];
         value = (value as Record<string | number, unknown>)[key];
       }
-      return Array.isArray(value) && value.every(id => typeof id === "string") ? value : [];
+      return Array.isArray(value) && value.every((id) => typeof id === "string") ? value : [];
     },
   };
 }

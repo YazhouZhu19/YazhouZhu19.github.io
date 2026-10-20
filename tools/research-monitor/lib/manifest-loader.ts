@@ -15,7 +15,10 @@ export function createManifestLoader<T>(
       const headers = new Headers();
       if (previous?.etag) headers.set("If-None-Match", previous.etag);
       const response = await (options.fetcher ?? fetch)(url, {
-        cache: "no-cache", credentials: "omit", headers, signal,
+        cache: "no-cache",
+        credentials: "omit",
+        headers,
+        signal,
       });
       signal?.throwIfAborted();
       if (response.status === 304) {
@@ -42,7 +45,11 @@ export function createManifestLoader<T>(
           chunks.push(result.value);
         }
       } catch (error) {
-        try { await reader.cancel(); } catch { /* Preserve the read failure. */ }
+        try {
+          await reader.cancel();
+        } catch {
+          /* Preserve the read failure. */
+        }
         throw error;
       } finally {
         reader.releaseLock();
@@ -50,7 +57,10 @@ export function createManifestLoader<T>(
       signal?.throwIfAborted();
       const joined = new Uint8Array(bytes);
       let offset = 0;
-      for (const chunk of chunks) { joined.set(chunk, offset); offset += chunk.byteLength; }
+      for (const chunk of chunks) {
+        joined.set(chunk, offset);
+        offset += chunk.byteLength;
+      }
       const text = new TextDecoder("utf-8", { fatal: true }).decode(joined);
       // Some hosts do not support conditional requests. Reuse the validated
       // object even when they send the same body with a 200 response.
