@@ -1,6 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildWorkIndex, groupWorks, normalizedWorkTitle, titleAuthorMatch } from "../lib/paper-works";
+import {
+  buildWorkIndex,
+  createWorkGroupingCache,
+  groupWorks,
+  normalizedWorkTitle,
+  titleAuthorMatch,
+} from "../lib/paper-works";
 import { normalizeRecord } from "../lib/record";
 import type { Paper } from "../lib/types";
 
@@ -106,4 +112,16 @@ test("ambiguous overlap bridges do not join incompatible authors and grouping is
       .sort();
   assert.deepEqual(ids([a, b, c]), [["a", "b"], ["c"]]);
   assert.deepEqual(ids([c, b, a]), [["a", "b"], ["c"]]);
+});
+
+test("reused normalized identities retain independent subset and replacement-record grouping", () => {
+  const a = paper("a", title, ["Alice Smith"]);
+  const b = paper("b", title, ["Alice Smith", "Bob Jones"]);
+  const c = paper("c", title, ["Bob Jones"]);
+  const cache = createWorkGroupingCache();
+  assert.equal(buildWorkIndex([a, b, c], cache).workCount, 2);
+  // A full-snapshot group projection would incorrectly keep b and c separate.
+  assert.equal(buildWorkIndex([b, c], cache).workCount, 1);
+  for (const rows of [[a, c], [c, b, a], [b], [{ ...b, title: "A corrected title" }, c]])
+    assert.deepEqual(buildWorkIndex(rows, cache), buildWorkIndex(rows));
 });

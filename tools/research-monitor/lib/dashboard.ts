@@ -1,7 +1,14 @@
 import { TASKS, TRACKS, normalizedName } from "./classify";
 import type { Author, MonitorData, Paper, Team } from "./types";
-import { publicationDateStatus } from "./publication-date";
 import { compareCategoryWindows } from "./trend-statistics";
+import {
+  beijingDay,
+  createDashboardBase,
+  dashboardBaseMatches,
+  dashboardSourceFacts,
+  type DashboardBase,
+} from "./dashboard-base";
+export { beijingDay } from "./dashboard-base";
 
 export type DashboardFilters = {
   days: string;
@@ -17,17 +24,6 @@ export const defaultDashboardFilters: DashboardFilters = {
   source: "all",
 };
 const dayMs = 86400000;
-const beijingFormatter = new Intl.DateTimeFormat("sv-SE", {
-  timeZone: "Asia/Shanghai",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-export function beijingDay(value: string | Date): string {
-  const d = new Date(value);
-  if (!Number.isFinite(d.getTime())) return "";
-  return beijingFormatter.format(d);
-}
 export function matchesMember(author: Author, members: string[]) {
   const identity = (v: string) => normalizedName(v.trim().replace(/^https?:\/\/(?:www\.)?orcid\.org\//i, ""));
   return members.some((m) =>
@@ -42,13 +38,12 @@ export function matchesTeam(p: Paper, t: Team) {
   );
 }
 /** Source age changes within a day; callers can refresh this without rebuilding every chart. */
-export function buildSourceHealth(data: MonitorData, now = new Date()) {
-  return ["Europe PMC", "arXiv", "medRxiv"].map((name) => {
-    const sourceRuns = data.runs
-      .filter((r) => r.source === name)
-      .sort((a, b) => b.completedAt.localeCompare(a.completedAt));
-    const last = sourceRuns[0];
-    const success = sourceRuns.find((r) => r.status !== "error" && !r.error);
+export function buildSourceHealth(data: MonitorData, now = new Date(), cachedBase?: DashboardBase) {
+  const facts =
+    cachedBase && dashboardBaseMatches(cachedBase, data, beijingDay(now))
+      ? cachedBase.sourceFacts
+      : dashboardSourceFacts(data);
+  return facts.map(({ name, last, success, count }) => {
     const updatedAt = success?.completedAt ?? null;
     const stale = !!updatedAt && now.getTime() - Date.parse(updatedAt) > dayMs;
     const failed = last?.status === "error" || !!last?.error;
@@ -73,7 +68,7 @@ export function buildSourceHealth(data: MonitorData, now = new Date()) {
       warning: !data.storageAvailable || stale || failed,
       limited: last?.status === "partial" && !failed,
       initial: !success,
-      count: data.papers.filter((p) => p.sources.includes(name)).length,
+      count,
     };
   });
 }
@@ -82,40 +77,22 @@ export function buildDashboard(
   teams: Team[],
   filters: DashboardFilters,
   now = new Date(),
+  cachedBase?: DashboardBase,
 ) {
   const today = beijingDay(now);
   const start =
     filters.days === "all"
       ? ""
       : new Date(Date.parse(today) - (Number(filters.days) - 1) * dayMs).toISOString().slice(0, 10);
-  // collectedAt advances on each refresh; the initial import must remain anchored.
-  const firstSeenDates = data.papers.map((p) => Date.parse(p.firstSeenAt)).filter(Number.isFinite);
-  const initialTime =
-    typeof data.initialCollectedAt === "string" && Number.isFinite(Date.parse(data.initialCollectedAt))
-      ? Date.parse(data.initialCollectedAt)
-      : firstSeenDates.length
-        ? Math.min(...firstSeenDates)
-        : Date.parse(data.collectedAt);
-  const isInitial = (p: Paper) => Date.parse(p.firstSeenAt) === initialTime;
-  // Reuse each record's date across scope selection, buckets and exclusions in this build.
-  const dates = new Map<Paper, string>();
-  const dateStatuses = new Map<Paper, ReturnType<typeof publicationDateStatus>>();
-  const statusOf = (paper: Paper) => {
-    let status = dateStatuses.get(paper);
-    if (!status) {
-      status = publicationDateStatus(paper, today);
-      dateStatuses.set(paper, status);
-    }
-    return status;
-  };
-  const dateOf = (p: Paper) => {
-    let date = dates.get(p);
-    if (date === undefined) {
-      date = filters.clock === "discovery" ? beijingDay(p.firstSeenAt) : p.publishedAt.slice(0, 10);
-      dates.set(p, date);
-    }
-    return date;
-  };
+  // The UI supplies a snapshot/day memo; direct callers still get fresh calculations.
+  const base =
+    cachedBase && dashboardBaseMatches(cachedBase, data, today)
+      ? cachedBase
+      : createDashboardBase(data, today);
+  const { initialTime, newToday } = base;
+  const isInitial = (paper: Paper) => base.dates.get(paper)!.initial;
+  const statusOf = (paper: Paper) => base.dates.get(paper)!.status;
+  const dateOf = (paper: Paper) => base.dates.get(paper)![filters.clock];
   const sourcePool = data.papers.filter(
     (p) => filters.source === "all" || p.sources.includes(filters.source),
   );
@@ -140,9 +117,6 @@ export function buildDashboard(
       )
     : null;
   const initialCount = pool.filter(isInitial).length;
-  const newToday = data.papers.filter(
-    (p) => statusOf(p) === "valid" && !isInitial(p) && beijingDay(p.firstSeenAt) === today,
-  );
   const directions = Object.entries(TRACKS).map(([id, label]) => ({
     id,
     label,
@@ -220,7 +194,7 @@ export function buildDashboard(
   const methods = [...new Set(rows.flatMap((p) => p.methods))]
     .map((name) => ({ name, papers: rows.filter((p) => p.methods.includes(name)) }))
     .sort((a, b) => b.papers.length - a.papers.length);
-  const sources = buildSourceHealth(data, now);
+  const sources = buildSourceHealth(data, now, base);
   return {
     rows,
     directionDenominator: denominatorRows.length,

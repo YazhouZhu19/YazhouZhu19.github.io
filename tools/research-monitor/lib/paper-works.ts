@@ -45,6 +45,14 @@ function identityKeys(paper: Paper): string[] {
 
 export const WORK_GROUPING_VERSION = "2026-10-21-title-authors-v1";
 
+type WorkIdentity = { keys: string[]; title?: string };
+export type WorkGroupingCache = WeakMap<Paper, WorkIdentity>;
+
+/** Callers own this cache for one immutable snapshot; every subset is still grouped afresh. */
+export function createWorkGroupingCache(): WorkGroupingCache {
+  return new WeakMap();
+}
+
 /** Exact normalized equality only: no semantic, substring or fuzzy title matching. */
 export function normalizedWorkTitle(title: string): string {
   return textOnly(title)
@@ -107,10 +115,21 @@ export function titleAuthorMatch(a: Paper, b: Paper): TitleAuthorMatch | null {
 }
 
 /** Group known identifiers first, then exact-title matches with explicit author support. */
-export function groupWorks(papers: Paper[], options: { titleAuthors?: boolean } = {}): Paper[][] {
+export function groupWorks(
+  papers: Paper[],
+  options: { titleAuthors?: boolean; cache?: WorkGroupingCache } = {},
+): Paper[][] {
   const parent = papers.map((_, index) => index);
   const members = papers.map((_, index) => [index]);
   const keys = new Map<string, number>();
+  const identities = papers.map((paper) => {
+    let identity = options.cache?.get(paper);
+    if (!identity) {
+      identity = { keys: identityKeys(paper) };
+      options.cache?.set(paper, identity);
+    }
+    return identity;
+  });
   const root = (index: number): number => {
     while (parent[index] !== index) {
       parent[index] = parent[parent[index]];
@@ -128,7 +147,7 @@ export function groupWorks(papers: Paper[], options: { titleAuthors?: boolean } 
     members[b] = [];
   };
   papers.forEach((paper, index) => {
-    for (const key of identityKeys(paper)) {
+    for (const key of identities[index].keys) {
       const previous = keys.get(key);
       if (previous === undefined) keys.set(key, index);
       else join(index, previous);
@@ -136,7 +155,9 @@ export function groupWorks(papers: Paper[], options: { titleAuthors?: boolean } 
   });
   if (options.titleAuthors !== false) {
     const titles = new Map<string, number[]>();
-    const titleKeys = papers.map((paper) => normalizedWorkTitle(paper.title));
+    const titleKeys = papers.map(
+      (paper, index) => (identities[index].title ??= normalizedWorkTitle(paper.title)),
+    );
     papers.forEach((paper, index) => {
       const title = titleKeys[index];
       if (!title || !paper.authors.length) return;
@@ -178,8 +199,8 @@ export function groupWorks(papers: Paper[], options: { titleAuthors?: boolean } 
 }
 
 /** One shared index supports headline counts and version links without modifying source records. */
-export function buildWorkIndex(papers: Paper[]) {
-  const groups = groupWorks(papers);
+export function buildWorkIndex(papers: Paper[], cache?: WorkGroupingCache) {
+  const groups = groupWorks(papers, { cache });
   const byPaperId = new Map<string, Paper[]>();
   for (const group of groups) for (const paper of group) byPaperId.set(paper.id, group);
   return {

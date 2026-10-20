@@ -8,6 +8,7 @@ import {
   matchesMember,
 } from "../lib/dashboard";
 import { TASKS, TRACKS } from "../lib/classify";
+import { createDashboardBase } from "../lib/dashboard-base";
 import type { MonitorData, Paper, SyncRun } from "../lib/types";
 
 const now = new Date("2026-09-18T04:00:00Z");
@@ -90,6 +91,46 @@ const sample = () =>
     paper("diagnosis", { tracks: ["diagnosis"], tasks: ["diagnosis"] }),
     paper("future", { publishedAt: "2026-10-01" }),
   ]);
+
+test("snapshot/day date reuse preserves all dashboard filters and exact drill IDs", () => {
+  const data = sample();
+  data.papers.push(paper("invalid", { publishedAt: "2026-02-30" }));
+  const base = createDashboardBase(data, beijingDay(now));
+  for (const clock of ["publication", "discovery"] as const) {
+    for (const days of ["7", "all"]) {
+      for (const source of ["all", "arXiv", "Europe PMC"]) {
+        for (const track of ["all", "foundation", "diagnosis"]) {
+          const filters = { clock, days, source, track };
+          assert.deepEqual(
+            buildDashboard(data, [], filters, now, base),
+            buildDashboard(data, [], filters, now),
+          );
+        }
+      }
+    }
+  }
+});
+
+test("a replaced snapshot, import anchor or Beijing day invalidates dashboard date reuse", () => {
+  const data = sample();
+  const base = createDashboardBase(data, beijingDay(now));
+  const replacement = {
+    ...data,
+    papers: data.papers.map((paper) =>
+      paper.id === "future" ? { ...paper, publishedAt: "2026-09-18" } : paper,
+    ),
+  };
+  const cases = [
+    { data: replacement, now },
+    { data: { ...data, initialCollectedAt: "2026-09-16T03:00:00Z" }, now },
+    { data, now: new Date("2026-10-02T00:00:00Z") },
+  ];
+  for (const current of cases)
+    assert.deepEqual(
+      buildDashboard(current.data, [], defaultDashboardFilters, current.now, base),
+      buildDashboard(current.data, [], defaultDashboardFilters, current.now),
+    );
+});
 
 test("new interest filtering controls status counts, trends, matrix and drill record IDs", () => {
   const result = buildDashboard(
@@ -371,6 +412,11 @@ test("source-only refresh preserves the strict 24-hour stale boundary within the
   ];
   const atBoundary = buildSourceHealth(data, new Date("2026-09-18T04:00:00.000Z"));
   const afterBoundary = buildSourceHealth(data, new Date("2026-09-18T04:00:00.001Z"));
+  const base = createDashboardBase(data, beijingDay(now));
+  assert.deepEqual(buildSourceHealth(data, new Date("2026-09-18T04:00:00.000Z"), base), atBoundary);
+  assert.deepEqual(buildSourceHealth(data, new Date("2026-09-18T04:00:00.001Z"), base), afterBoundary);
+  const refreshed = { ...data, runs: [{ ...data.runs[0], completedAt: now.toISOString() }] };
+  assert.deepEqual(buildSourceHealth(refreshed, now, base), buildSourceHealth(refreshed, now));
   assert.equal(atBoundary[0].state, "窗口采集完成");
   assert.equal(atBoundary[0].warning, false);
   assert.equal(afterBoundary[0].state, "超过 24 小时");

@@ -1,4 +1,4 @@
-import { buildWorkIndex } from "@/lib/paper-works";
+import { buildWorkIndex, createWorkGroupingCache } from "@/lib/paper-works";
 ("use client");
 import { EmptyState } from "./state-views";
 
@@ -25,6 +25,7 @@ import { getLoadedPaperSnapshot } from "@/lib/local-api";
 import { TRACKS, SCOPE_CLASSIFIER_VERSION } from "@/lib/classify";
 import { paperCollectionMarkers } from "@/lib/trend-statistics";
 import { WindowComparisonReadout } from "./trend-annotations";
+import { createDashboardBase } from "@/lib/dashboard-base";
 import {
   beijingDay,
   buildDashboard,
@@ -73,12 +74,13 @@ export const ResearchDashboard = memo(function ResearchDashboard({
     return () => clearInterval(timer);
   }, []);
   const day = beijingDay(now);
+  const base = useMemo(() => createDashboardBase(data, day), [data, day]);
   // Only daily boundaries change chart scope; source freshness still updates every minute.
   const m = useMemo(
-    () => buildDashboard(data, teams, filters, new Date(`${day}T12:00:00+08:00`)),
-    [data, teams, filters, day],
+    () => buildDashboard(data, teams, filters, new Date(`${day}T12:00:00+08:00`), base),
+    [data, teams, filters, day, base],
   );
-  const sources = useMemo(() => buildSourceHealth(data, now), [data, now]);
+  const sources = useMemo(() => buildSourceHealth(data, now, base), [data, now, base]);
   const changeMarkers = useMemo(
     () =>
       paperCollectionMarkers({
@@ -113,7 +115,8 @@ export const ResearchDashboard = memo(function ResearchDashboard({
         .slice(0, 4),
     [m.rows, filters.clock],
   );
-  const workIndex = useMemo(() => buildWorkIndex(m.rows), [m.rows]);
+  const workGroupingCache = useMemo(() => createWorkGroupingCache(), [data.papers]);
+  const workIndex = useMemo(() => buildWorkIndex(m.rows, workGroupingCache), [m.rows, workGroupingCache]);
   const saved = useMemo(() => {
     const ids = new Set(m.rows.map((p) => p.id));
     return collections.filter((c) => ids.has(c.paperId));
