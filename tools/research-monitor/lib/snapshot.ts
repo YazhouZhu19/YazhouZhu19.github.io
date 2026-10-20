@@ -2,7 +2,7 @@
 export const SNAPSHOT_SCHEMA = "research-monitor-shards-v1";
 export const PUBLIC_SNAPSHOT_SCHEMA = "research-monitor-shards-v2";
 export const MAX_SHARD_BYTES = 4 * 1024 * 1024;
-export type SnapshotShard = { path: string; count: number; bytes: number; sha256: string };
+export type SnapshotShard = { path: string; count: number; bytes: number; sha256: string; bucket?: string };
 export type SnapshotManifest = {
   schema: typeof SNAPSHOT_SCHEMA | typeof PUBLIC_SNAPSHOT_SCHEMA;
   metadata: Record<string, unknown>;
@@ -37,10 +37,19 @@ export function parseSnapshotManifest(raw: unknown): SnapshotManifest {
       || !/^[a-f0-9]{64}$/.test(shard.sha256) || shard.path !== `papers/${shard.sha256}.json`
       || !Number.isSafeInteger(shard.count) || shard.count <= 0 || !Number.isSafeInteger(shard.bytes)
       || shard.bytes <= 0 || shard.bytes > MAX_SHARD_BYTES || paths.has(shard.path)) fail();
+    if (shard.bucket !== undefined && (typeof shard.bucket !== "string"
+      || !/^(?:\d{4}-(?:0[1-9]|1[0-2])|undated)(?:\.part-[1-9]\d*)?$/.test(shard.bucket))) fail();
     paths.add(shard.path); count += shard.count;
   }
   if (count !== value.totalStored) fail();
   return value;
+}
+
+/** Restore the existing library order after independently loading month buckets. */
+export function compareSnapshotPapers(a: { id: string; publishedAt?: unknown }, b: { id: string; publishedAt?: unknown }) {
+  const dateA = typeof a.publishedAt === "string" ? a.publishedAt : "";
+  const dateB = typeof b.publishedAt === "string" ? b.publishedAt : "";
+  return dateB.localeCompare(dateA) || a.id.localeCompare(b.id);
 }
 
 /** Hashes cover wire bytes; dictionary references are expanded only afterward. */
@@ -90,5 +99,7 @@ export async function resolveSnapshot(raw: unknown, readShard: (path: string) =>
     if (!paper || typeof paper.id !== "string" || !paper.id || ids.has(paper.id)) throw new SnapshotFormatError("Missing or duplicate paper ID in snapshot");
     ids.add(paper.id);
   }
+  // Legacy manifests retain their original array order.
+  if (manifest.shards.some(shard => shard.bucket !== undefined)) papers.sort(compareSnapshotPapers);
   return { ...manifest.metadata, papers };
 }

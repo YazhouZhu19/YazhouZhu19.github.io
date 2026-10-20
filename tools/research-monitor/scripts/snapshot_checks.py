@@ -39,6 +39,8 @@ def verify_snapshot(manifest_bytes, read_shard, *, return_data=False):
         require(isinstance(digest, str) and re.fullmatch(r'[a-f0-9]{64}', digest), 'checksum format')
         require(path == f'papers/{digest}.json' and path not in paths, 'unsafe or duplicate shard path')
         require(type(count) is int and count > 0 and type(size) is int and 0 < size <= MAX_BYTES, 'shard bounds')
+        if 'bucket' in shard:
+            require(isinstance(shard['bucket'], str) and re.fullmatch(r'(?:\d{4}-(?:0[1-9]|1[0-2])|undated)(?:\.part-[1-9]\d*)?', shard['bucket']), 'bucket')
         paths.add(path)
         body = read_shard(path)
         require(len(body) == size and hashlib.sha256(body).hexdigest() == digest, 'shard size/checksum')
@@ -61,4 +63,9 @@ def verify_snapshot(manifest_bytes, read_shard, *, return_data=False):
             if return_data:
                 papers.append(record)
     require(len(ids) == total, 'total count mismatch')
+    if return_data:
+        # Normalize both legacy and bucketed order for cross-format equality.
+        # Python's portable ordering is independent of the browser's ICU locale.
+        papers.sort(key=lambda paper: paper['id'])
+        papers.sort(key=lambda paper: paper.get('publishedAt') if isinstance(paper.get('publishedAt'), str) else '', reverse=True)
     return {**metadata, 'papers': papers} if return_data else total

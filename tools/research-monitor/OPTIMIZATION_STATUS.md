@@ -17,7 +17,7 @@ scores must not be presented as independently validated accuracy.
 | --- | --- | --- |
 | P0.1 | Complete | Measured entry graph and data; explicit per-resource regression budgets fail the build. |
 | P0.2 | In progress | Export a reproducible 400-paper sample, provisional labels and evaluation tooling. |
-| P1.1 | Designed | Stable month buckets also need append-only provenance URL dictionaries. |
+| P1.1 | Complete | Month/ID buckets, append-only URL dictionary and single atomic manifest replacement. |
 | P1.3 | Pending | Cache only verified shards; retain current and previous generations. |
 | P1.6 | Pending | Conditional manifest requests and polling backoff. |
 | P1.4 | Pending | Separate GitHub/news transport, preaggregated overview and on-demand loading. |
@@ -67,3 +67,10 @@ scores must not be presented as independently validated accuracy.
   budget validation passed; `dist/budget-report.json` contains no violations.
   The runtime provides Node but no npm executable, so the scripts were run using their equivalent
   direct Node commands. These byte measurements are not browser timings.
+- **P1.1:** Real-archive simulation appended five records (8,326 → 8,331): only one current-month
+  shard changed in both archive (84 shards) and public v2 (64 shards). Other months stayed identical.
+  The v2 payload is 68,822,944 raw / 11,140,619 gzip bytes; month boundaries add 10,452 raw bytes
+  and save 74,909 gzip bytes compared with the original baseline. Eight new stability tests, the
+  snapshot CLI integrity check and Python full-field v1/v2 comparison passed. Final shared-tree
+  validation: 353 TypeScript + 24 local API + 9 Python tests, typecheck and complete build/budget
+  passed. Changes to historical records or their provenance legitimately change their own buckets.

@@ -4,7 +4,7 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { PUBLIC_SNAPSHOT_SCHEMA, parseSnapshotManifest, resolveSnapshot } from "../lib/snapshot";
+import { PUBLIC_SNAPSHOT_SCHEMA, compareSnapshotPapers, parseSnapshotManifest, resolveSnapshot } from "../lib/snapshot";
 import { monitorDataSchema } from "../lib/local-api";
 import { readSnapshotFile, writeSnapshotFile } from "../scripts/snapshot-files";
 import { writePublicSnapshot } from "../scripts/public-snapshot";
@@ -34,7 +34,7 @@ test("public dictionary round-trips every original field and provenance entry wi
   assert.equal(manifest.queryUrls!.length, 2);
   assert.deepEqual(source, original);
   assert.deepEqual(await readFile(sourceFile), sourceBytes);
-  assert.deepEqual(await readSnapshotFile(file), source);
+  assert.deepEqual(await readSnapshotFile(file), { ...source, papers: [...source.papers].sort(compareSnapshotPapers) });
   for (const shard of manifest.shards) {
     const bytes = await readFile(join(dir, "public", shard.path));
     assert.ok(bytes.length <= 1500);
@@ -117,5 +117,5 @@ test("a dictionary exceeding the manifest budget falls back losslessly to bounde
   assert.equal(manifest.schema, "research-monitor-shards-v1");
   assert.equal(manifest.queryUrls, undefined);
   assert.ok(manifest.shards.length > 1);
-  assert.deepEqual(await readSnapshotFile(file), source);
+  assert.deepEqual(await readSnapshotFile(file), { ...source, papers: [...source.papers].sort(compareSnapshotPapers) });
 });
