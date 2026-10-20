@@ -5,6 +5,7 @@ import { groupWorks, publicationDay } from "./foresight";
 import type { Paper } from "./types";
 import type { ResearchSignal } from "./research-signals";
 import { publicationDateStatus } from "./publication-date";
+import { retrieve, diversityPick, type RetrievalMetadata } from "./retrieval";
 
 export type AiSourceKind = "paper" | "github" | "news";
 /** Signal adapters exist only in the analysis request, never in the paper library. */
@@ -38,6 +39,7 @@ export type AiEvidence = {
   excludedFuture: number;
   sourceCoverage?: AiSourceCoverage;
   excludedUnobserved?: number;
+  retrieval?: RetrievalMetadata;
 };
 export type AiFinding = {
   title: string;
@@ -89,57 +91,90 @@ export function evidenceFingerprint(value: string): string {
   return (a >>> 0).toString(16).padStart(8, "0") + (b >>> 0).toString(16).padStart(8, "0");
 }
 
-type Work = { paper: Paper; day: string };
-function balancedSample(works: Work[], spec: AiSpec, limit: number): Work[] {
-  if (works.length <= limit) return works;
+export type EvidenceWork = { paper: AiEvidenceItem; day: string };
+function retrievalDocument(work: EvidenceWork) {
+  const signal = work.paper.signal;
+  return {
+    id: work.paper.id,
+    title: textOnly(work.paper.title),
+    abstract: signal
+      ? `${signal.summary} ${signal.kind === "github" ? signal.readmeExcerpt : ""}`
+      : abstractOf(work.paper),
+    tags: signal ? signal.topics : [...work.paper.tracks, ...work.paper.methods, ...work.paper.modalities],
+    work,
+  };
+}
+/** The candidate cap applies across all selected evidence kinds before stratification. */
+export function selectAiEvidence(works: EvidenceWork[], spec: AiSpec, limit: number) {
+  const hasQuestion = spec.mode !== "landscape" && !!spec.question.trim();
+  const documents = works.map(retrievalDocument);
+  const retrieval = hasQuestion ? retrieve(documents, spec.question, limit) : null;
+  const candidates = retrieval ? retrieval.ranked.map(({ document }) => document) : documents;
+  const scores = new Map(retrieval?.ranked.map(({ document, score }) => [document.id, score]) ?? []);
+  if (candidates.length <= limit)
+    return {
+      selected: candidates
+        .map(({ work }) => work)
+        .sort((a, b) => compare(b.day, a.day) || compare(a.paper.id, b.paper.id)),
+      retrieval: retrieval?.metadata,
+    };
   const start = Date.parse(spec.from),
     span = (Date.parse(spec.to) - start) / dayMs + 1;
   const bins = Math.min(6, Math.ceil(span), limit);
-  const buckets = new Map<string, Work[]>();
-  for (const work of works) {
+  const buckets = new Map<string, typeof documents>();
+  for (const document of candidates) {
+    const { work } = document;
     const bin = Math.min(bins - 1, Math.floor(((Date.parse(work.day) - start) / dayMs / span) * bins));
     const source =
       work.paper.source
         .trim()
         .toLowerCase()
         .replace(/[\s_-]+/g, "") || "unknown";
-    const key = `${bin}:${source}`;
+    const key = `${work.paper.signal?.kind ?? "paper"}:${bin}:${source}`;
     const bucket = buckets.get(key) ?? [];
-    bucket.push(work);
+    bucket.push(document);
     buckets.set(key, bucket);
   }
-  // Equal turns across time/source strata deliberately do not estimate prevalence.
-  const queues = [...buckets]
-    .sort(([a], [b]) => compare(a, b))
-    .map(([, rows]) =>
-      rows.sort(
-        (a, b) =>
-          compare(evidenceFingerprint(a.paper.id), evidenceFingerprint(b.paper.id)) ||
-          compare(a.paper.id, b.paper.id),
-      ),
-    );
-  const sampled: Work[] = [];
-  let round = 0;
-  while (sampled.length < limit) {
-    const active = queues.filter((rows) => rows.length > round);
-    if (!active.length) break;
-    const available = Math.min(active.length, limit - sampled.length);
-    // If the last round is partial, spread its picks across the remaining strata.
-    for (let index = 0; index < available; index++) {
-      sampled.push(active[Math.floor(((index + 0.5) * active.length) / available)][round]);
+  const kindQueues = ["paper", "github", "news"].map((kind) => {
+    const queues = [...buckets]
+      .filter(([key]) => key.startsWith(`${kind}:`))
+      .sort(([a], [b]) => compare(a, b))
+      .map(([, rows]) =>
+        rows.sort((a, b) => (scores.get(b.id) ?? 0) - (scores.get(a.id) ?? 0) || compare(a.id, b.id)),
+      );
+    const sampled: typeof documents = [];
+    while (sampled.length < limit) {
+      const active = queues.filter((rows) => rows.length);
+      if (!active.length) break;
+      const available = Math.min(active.length, limit - sampled.length);
+      for (let index = 0; index < available; index++) {
+        const queue = active[Math.floor(((index + 0.5) * active.length) / available)];
+        const next = retrieval ? queue[0] : diversityPick(queue, sampled);
+        sampled.push(next);
+        queue.splice(queue.indexOf(next), 1);
+      }
     }
-    round++;
+    return sampled;
+  });
+  const sampled: typeof documents = [];
+  for (let round = 0; sampled.length < limit; round++) {
+    const active = kindQueues.filter((queue) => queue[round]);
+    if (!active.length) break;
+    for (const queue of active) {
+      if (sampled.length >= limit) break;
+      sampled.push(queue[round]);
+    }
   }
-  return sampled.sort((a, b) => compare(b.day, a.day) || compare(a.paper.id, b.paper.id));
+  return {
+    selected: sampled
+      .map(({ work }) => work)
+      .sort((a, b) => compare(b.day, a.day) || compare(a.paper.id, b.paper.id)),
+    retrieval: retrieval?.metadata,
+  };
 }
 
 /** Caller supplies the exact public-paper scope, including any author identity filtering. */
-export function prepareAiEvidence(
-  papers: Paper[],
-  input: AiSpec,
-  maxPapers = 48,
-  now = new Date(),
-): AiEvidence {
+export function collectAiPaperEvidence(papers: Paper[], input: AiSpec, maxPapers = 48, now = new Date()) {
   const spec: AiSpec = specSchema.parse(input);
   const today = beijingDay(now);
   if (!today) throw new Error("AI evidence requires a valid current date");
@@ -159,7 +194,7 @@ export function prepareAiEvidence(
     else if (dateStatus === "future") excludedFuture++;
     else dates.set(paper, paper.publishedAt.slice(0, 10));
   }
-  const works: Work[] = [];
+  const works: EvidenceWork[] = [];
   let totalRecords = 0;
   for (const group of groupWorks(papers)) {
     const valid = group.filter((paper) => dates.has(paper));
@@ -183,15 +218,30 @@ export function prepareAiEvidence(
     works.push({ paper: available[0], day: firstDay });
   }
   works.sort((a, b) => compare(b.day, a.day) || compare(a.paper.id, b.paper.id));
-  const selected = balancedSample(works, spec, maxPapers);
-  const metadata = {
+  return {
+    spec,
+    works,
     totalWorks: works.length,
     totalRecords,
     duplicatesRemoved: totalRecords - works.length,
     missingAbstracts: works.filter((work) => !abstractOf(work.paper)).length,
-    sampled: selected.length < works.length,
     excludedInvalid,
     excludedFuture,
+  };
+}
+
+export function prepareAiEvidence(
+  papers: Paper[],
+  input: AiSpec,
+  maxPapers = 48,
+  now = new Date(),
+): AiEvidence {
+  const { works, spec, ...coverage } = collectAiPaperEvidence(papers, input, maxPapers, now);
+  const { selected, retrieval } = selectAiEvidence(works, spec, maxPapers);
+  const metadata = {
+    ...coverage,
+    sampled: selected.length < works.length,
+    ...(retrieval ? { retrieval } : {}),
   };
   const key =
     "ai-evidence:" +
@@ -365,6 +415,7 @@ export function buildAiMessages(evidence: AiEvidence): { role: "system" | "user"
       totalWorks: evidence.totalWorks,
       suppliedWorks: evidence.papers.length,
       sampled: evidence.sampled,
+      ...(evidence.retrieval ? { retrieval: evidence.retrieval } : {}),
       missingAbstractsAcrossEligibleWorks: evidence.missingAbstracts,
       selection:
         "Distinct works grouped by linked identifiers, included by earliest known publication date. Source record version dates are preserved. No version published after the selected end date is supplied. Sampling balances publication time and source and does not preserve population proportions.",

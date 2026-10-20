@@ -157,7 +157,7 @@ test("transitive DOI/version grouping chooses one source record and preserves so
   assert.equal(prepareAiEvidence([...rows].reverse(), spec, 48, now).key, result.key);
 });
 
-test("all classifications and Chinese independent questions keep the complete scoped evidence", () => {
+test("Chinese questions with no matching text keep coverage but supply no arbitrary evidence", () => {
   const rows = [
     paper("unclassified"),
     paper("classified", { tracks: ["segmentation"], modalities: ["MRI"] }),
@@ -169,7 +169,8 @@ test("all classifications and Chinese independent questions keep the complete sc
     now,
   );
   assert.equal(result.totalWorks, 2);
-  assert.deepEqual(new Set(result.papers.map((row) => row.id)), new Set(["unclassified", "classified"]));
+  assert.deepEqual(result.papers, []);
+  assert.equal(result.retrieval?.candidates, 0);
   assert.throws(
     () => prepareAiEvidence(rows, { ...spec, mode: "interest", question: "   " }, 48, now),
     /research question/,

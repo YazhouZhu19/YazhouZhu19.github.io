@@ -689,6 +689,16 @@ function AiResearchScope({
                 {evidence.missingAbstracts > 0 &&
                   ` ${t(`范围内 ${evidence.missingAbstracts} 项缺少摘要。`, `${evidence.missingAbstracts} works in scope lack abstracts.`)}`}
               </p>
+              {evidence.retrieval && (
+                <p className="ai-help">
+                  {t(
+                    `按问题检索到 ${evidence.retrieval.candidates} 项候选，抽取 ${evidence.papers.length} 项。`,
+                    `${evidence.retrieval.candidates} candidates matched the question; ${evidence.papers.length} selected.`,
+                  )}
+                  {evidence.retrieval.expandedTerms.length > 0 &&
+                    ` ${t("扩展检索词", "Expanded terms")}: ${evidence.retrieval.expandedTerms.join(", ")}`}
+                </p>
+              )}
               {evidence.sourceCoverage && (
                 <p className="ai-help">
                   {(["paper", "github", "news"] as AiSourceKind[])
@@ -838,10 +848,15 @@ function AiResearchScope({
       )}
       {!pending && !error && evidence && !evidence.papers.length && (
         <div className="ai-empty" role="status">
-          {t(
-            "所选来源与日期范围没有可用证据。可调整来源或日期；空结果不代表这个问题没有研究。",
-            "No usable evidence in the selected sources and dates. Adjust the scope; an empty result does not mean the question is unstudied.",
-          )}
+          {evidence.retrieval
+            ? t(
+                "库中没有与该问题匹配的证据。可调整问题、来源或日期；空结果不代表这个问题没有研究。",
+                "No evidence in this library matches the question. Adjust the question, sources or dates; this does not mean the topic is unstudied.",
+              )
+            : t(
+                "所选来源与日期范围没有可用证据。可调整来源或日期；空结果不代表这个问题没有研究。",
+                "No usable evidence in the selected sources and dates. Adjust the scope; an empty result does not mean the question is unstudied.",
+              )}
         </div>
       )}
       {result && evidence && (

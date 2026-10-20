@@ -3,6 +3,8 @@ import { publicationDay } from "./foresight";
 import {
   evidenceFingerprint,
   prepareAiEvidence,
+  collectAiPaperEvidence,
+  selectAiEvidence,
   type AiEvidence,
   type AiEvidenceItem,
   type AiSourceCoverage,
@@ -129,33 +131,6 @@ function signalItem(signal: ResearchSignal, association?: SignalAssociation): Ai
   };
 }
 
-/** Equal time strata within a signal kind; no star ranking or implicit popularity estimate. */
-function sampleSignals(rows: AiEvidenceItem[], spec: AiSpec, limit: number): AiEvidenceItem[] {
-  const bins = new Map<number, AiEvidenceItem[]>();
-  const start = Date.parse(spec.from),
-    span = Date.parse(spec.to) - start + 86400000;
-  for (const row of rows) {
-    const bin = Math.min(5, Math.floor(((Date.parse(row.publishedAt.slice(0, 10)) - start) / span) * 6));
-    const bucket = bins.get(bin) ?? [];
-    bucket.push(row);
-    bins.set(bin, bucket);
-  }
-  const queues = [...bins]
-    .sort(([a], [b]) => a - b)
-    .map(([, bucket]) =>
-      bucket.sort((a, b) => evidenceFingerprint(a.id).localeCompare(evidenceFingerprint(b.id))),
-    );
-  const chosen: AiEvidenceItem[] = [];
-  for (let round = 0; chosen.length < limit; round++) {
-    const active = queues.filter((queue) => queue[round]);
-    if (!active.length) break;
-    const count = Math.min(active.length, limit - chosen.length);
-    for (let index = 0; index < count; index++)
-      chosen.push(active[Math.floor(((index + 0.5) * active.length) / count)][round]);
-  }
-  return chosen;
-}
-
 export function prepareCombinedAiEvidence(
   papers: Paper[],
   signals: ResearchSignal[],
@@ -165,8 +140,8 @@ export function prepareCombinedAiEvidence(
   now = new Date(),
 ): AiEvidence {
   const selected = new Set(sources);
-  const base = prepareAiEvidence(selected.has("paper") ? papers : [], spec, limit, now);
-  if (sources.length === 1 && sources[0] === "paper") return base;
+  if (sources.length === 1 && sources[0] === "paper") return prepareAiEvidence(papers, spec, limit, now);
+  const { works, ...base } = collectAiPaperEvidence(selected.has("paper") ? papers : [], spec, limit, now);
   const today = beijingDay(now),
     to = base.spec.to;
   const historicalPapers = papers.filter((paper) => {
@@ -220,20 +195,18 @@ export function prepareCombinedAiEvidence(
     seen.add(key);
     eligible[signal.kind].push(signalItem(signal, associations.get(signal.id)));
   }
-  const queues: Record<AiSourceKind, AiEvidenceItem[]> = {
-    paper: base.papers,
-    github: sampleSignals(eligible.github, spec, limit),
-    news: sampleSignals(eligible.news, spec, limit),
-  };
-  const items: AiEvidenceItem[] = [];
-  for (let round = 0; items.length < limit; round++) {
-    const active = kinds.filter((kind) => queues[kind][round]);
-    if (!active.length) break;
-    for (const kind of active) {
-      if (items.length >= limit) break;
-      items.push(queues[kind][round]);
-    }
-  }
+  const { selected: sampled, retrieval } = selectAiEvidence(
+    [
+      ...works,
+      ...[...eligible.github, ...eligible.news].map((paper) => ({
+        paper,
+        day: paper.publishedAt.slice(0, 10),
+      })),
+    ],
+    spec,
+    limit,
+  );
+  const items = sampled.map(({ paper }) => paper);
   const sourceCoverage: AiSourceCoverage = {
     paper: { eligible: base.totalWorks, supplied: 0 },
     github: { eligible: eligible.github.length, supplied: 0 },
@@ -244,6 +217,7 @@ export function prepareCombinedAiEvidence(
   const totalRecords = base.totalRecords + signalRecords;
   return {
     ...base,
+    ...(retrieval ? { retrieval } : {}),
     papers: items,
     sourceCoverage,
     excludedUnobserved,
@@ -253,6 +227,6 @@ export function prepareCombinedAiEvidence(
     totalRecords,
     duplicatesRemoved: totalRecords - totalWorks,
     sampled: items.length < totalWorks,
-    key: `ai-combined:${evidenceFingerprint(JSON.stringify({ base: base.key, sources: [...selected].sort(), items, sourceCoverage, excludedUnobserved, totalRecords }))}`,
+    key: `ai-combined:${evidenceFingerprint(JSON.stringify({ base, retrieval, sources: [...selected].sort(), items, sourceCoverage, excludedUnobserved, totalRecords }))}`,
   };
 }
