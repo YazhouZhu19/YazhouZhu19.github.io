@@ -1,7 +1,9 @@
+import { buildWorkIndex } from "@/lib/paper-works";
+import type { Paper } from "@/lib/types";
 import "@/styles/paper-library.css";
 import { useI18n } from "./locale-provider";
 import { Button } from "@/components/ui/button";
-import { lazy, Suspense, type ReactNode } from "react";
+import { lazy, Suspense, useMemo, type ReactNode } from "react";
 import { ArrowUpRight, Check, RefreshCw } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,12 +21,14 @@ type Props = Pick<
   PersonalDataState,
   "selected" | "setSelected" | "note" | "setNote" | "stage" | "setStage" | "saving" | "savePaper"
 > & {
+  papers: Paper[];
   storageAvailable: boolean;
   authenticated: boolean;
   accountControl: ReactNode;
 };
 export function PaperDetailSheet({
   selected,
+  papers,
   setSelected,
   note,
   setNote,
@@ -37,6 +41,10 @@ export function PaperDetailSheet({
   accountControl,
 }: Props) {
   const { tr, locale } = useI18n();
+  const workIndex = useMemo(() => buildWorkIndex(papers), [papers]);
+  const versions = selected
+    ? (workIndex.byPaperId.get(selected.id) ?? []).filter((paper) => paper.id !== selected.id)
+    : [];
   return (
     <Sheet
       open={!!selected}
@@ -77,6 +85,29 @@ export function PaperDetailSheet({
                 <ArrowUpRight size={16} />
               </a>
             </Button>
+            {versions.length > 0 && (
+              <section aria-label={locale === "en" ? "Possible other versions" : "可能的其他版本"}>
+                <h3>{locale === "en" ? "Possible other versions" : "可能的其他版本"}</h3>
+                <p>
+                  {locale === "en"
+                    ? "Grouped by explicit identifiers or matching title and authors; source records remain separate."
+                    : "根据明确标识或一致标题与作者分组；各来源记录仍独立保留。"}
+                </p>
+                <ul>
+                  {versions.map((version) => (
+                    <li key={version.id}>
+                      <button
+                        type="button"
+                        className="foresight-text-button"
+                        onClick={() => setSelected(version)}
+                      >
+                        {version.title} · {version.source} · {version.publishedAt.slice(0, 10)}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
             <dl className="detail-dates">
               <div>
                 <dt>{selected.source === "medRxiv" ? tr("该版本发布日期") : tr("来源发表 / 提交日期")}</dt>

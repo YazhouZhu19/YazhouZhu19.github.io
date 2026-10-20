@@ -337,6 +337,7 @@ export default function MonitorWorkspace() {
           <Suspense fallback={viewFallback}>
             <PaperDetailSheet
               {...personal}
+              papers={papers}
               authenticated={authenticated}
               accountControl={accountControl}
               storageAvailable={!!data?.personalStorageAvailable}

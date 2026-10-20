@@ -1,4 +1,5 @@
-"use client";
+import { buildWorkIndex } from "@/lib/paper-works";
+("use client");
 import { EmptyState } from "./state-views";
 
 import "@/styles/dashboard-common.css";
@@ -102,6 +103,7 @@ export const ResearchDashboard = memo(function ResearchDashboard({
         .slice(0, 4),
     [m.rows, filters.clock],
   );
+  const workIndex = useMemo(() => buildWorkIndex(m.rows), [m.rows]);
   const saved = useMemo(() => {
     const ids = new Set(m.rows.map((p) => p.id));
     return collections.filter((c) => ids.has(c.paperId));
@@ -302,6 +304,11 @@ export const ResearchDashboard = memo(function ResearchDashboard({
             accent
             label={tr("当前范围记录")}
             value={count(m.rows.length)}
+            comparison={
+              locale === "en"
+                ? `${count(workIndex.workCount)} distinct works`
+                : `去重后作品数 ${count(workIndex.workCount)}`
+            }
             hint={tr("DOI / 来源标识去重")}
             icon={BookOpen}
             onClick={() => drill("当前仪表盘范围", m.rows)}
