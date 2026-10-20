@@ -602,9 +602,12 @@
       flex-basis: 100%;
     }
     .library-primary-filters .filter-select {
-      flex: 1;
-      min-width: 0;
+      flex: 1 1 160px;
+      min-width: 160px;
       max-width: none;
+    }
+    .library-primary-filters > .filter-select:first-of-type {
+      flex-basis: 100%;
     }
   }
 }

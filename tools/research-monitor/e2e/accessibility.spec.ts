@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import type { Locator, Page } from "@playwright/test";
-import { test, expect, openHome, openLibrary, mainView } from "./test-support";
+import { test, expect, openHome, openLibrary, mainView, navLabels } from "./test-support";
 
 for (const view of ["home", "library", "github", "teams"] as const) {
   test(`axe: ${view} has no serious or critical violation`, async ({ page }, testInfo) => {
@@ -96,6 +96,14 @@ test("375px sidebar, filter panel and detail drawer open and close with 40px tar
   await paperNav.click();
   await expect(sidebar).not.toBeVisible();
   await openLibrary(page, en);
+  const clipped = await page
+    .locator('.library-primary-filters [data-slot="select-value"]')
+    .evaluateAll((values) =>
+      values
+        .filter((element) => element.scrollWidth > element.clientWidth + 1)
+        .map((element) => element.textContent),
+    );
+  expect(clipped, "Primary library choices should be readable without clipping").toEqual([]);
   const filters = page.getByRole("button", { name: en ? "More filters" : "高级筛选", exact: true });
   await minimumTarget(filters);
   await filters.click();
@@ -114,7 +122,13 @@ test("375px sidebar, filter panel and detail drawer open and close with 40px tar
   await close.click();
   await expect(detail).not.toBeVisible();
   for (const index of [1, 2]) {
-    await mainView(page, en, index);
+    await trigger.click();
+    const navigation = page.getByRole("dialog");
+    await navigation.getByRole("button", { name: navLabels(en)[index], exact: true }).click();
+    await expect(navigation).not.toBeVisible();
+    await expect(
+      page.locator(index === 1 ? ".github-dashboard-summary" : ".news-dashboard-summary"),
+    ).toBeVisible();
     await changeNativeControl(
       page.getByRole("combobox", { name: en ? "Time range" : "统计时间", exact: true }),
       "7",
@@ -124,5 +138,17 @@ test("375px sidebar, filter panel and detail drawer open and close with 40px tar
     expect(nextValue).toBeTruthy();
     await changeNativeControl(category, nextValue!);
     await visibleTargets(page);
+  }
+  await page.setViewportSize({ width: 768, height: 900 });
+  for (let index = 0; index < 5; index++) {
+    await mainView(page, en, index);
+    const widths = await page.evaluate(() => ({
+      viewport: innerWidth,
+      page: document.documentElement.scrollWidth,
+    }));
+    expect(
+      widths.page,
+      `768px entry ${index} must fit without page-level horizontal scrolling`,
+    ).toBeLessThanOrEqual(widths.viewport + 1);
   }
 });

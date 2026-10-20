@@ -415,6 +415,14 @@
     max-width: none;
     margin: 0;
   }
+  @media (min-width: 701px) and (max-width: 1100px) {
+    .team-directory-controls {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .team-directory-controls > .team-author-search {
+      grid-column: 1 / -1;
+    }
+  }
   .team-directory-controls .team-author-search > div {
     border: 1px solid var(--border);
     border-radius: var(--radius-6);

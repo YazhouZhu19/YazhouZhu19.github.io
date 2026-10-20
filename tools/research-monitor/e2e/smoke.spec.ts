@@ -29,6 +29,14 @@ test("five main entries load, including lazy signals v2", async ({ page }, testI
       await expect
         .poll(() => responses.filter((url) => /\/signals-v2\/shards\/.*\.json/.test(url)).length)
         .toBeGreaterThan(i - 1);
+      if (i === 2) {
+        const event = page.locator(".news-event-card").first();
+        await event.locator("summary").click();
+        await expect(event.locator(".news-event-reports .signal-card").first()).toBeVisible();
+        await expect(
+          event.getByRole("link", { name: en ? "Read original" : "查看原文", exact: true }).first(),
+        ).toHaveAttribute("href", /^https:\/\/example\.org\//);
+      }
     }
   }
   expect(responses.some((url) => url.includes("/signals-v2/manifest.json"))).toBeTruthy();
