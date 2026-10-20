@@ -41,7 +41,7 @@ backdrop-filter fallbacks remain in place.
   `foresight-shell.css`; assessment views import it.
 - The AI component imports `ai-research.css`. It is no longer an entry-page
   import, nor an eager import in the public-source library.
-- `main.tsx` imports only the shared globals and typography styles.
+- `main.tsx` imports shared globals, typography and accessibility styles.
 
 Tailwind scans `components/` and `main.tsx` explicitly. Paper data, build scripts,
 tests and documentation are not UI utility sources; their words should not

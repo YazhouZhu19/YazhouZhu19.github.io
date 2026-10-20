@@ -63,16 +63,16 @@
         "gzipBytes": 6144
       },
       "assets/research-signals-view.js": {
-        "rawBytes": 61440,
-        "gzipBytes": 21504
+        "rawBytes": 73728,
+        "gzipBytes": 25600
       },
       "assets/research-signals-view.css": {
         "rawBytes": 32768,
         "gzipBytes": 6144
       },
       "assets/team-foresight.js": {
-        "rawBytes": 25600,
-        "gzipBytes": 9216
+        "rawBytes": 28672,
+        "gzipBytes": 11264
       },
       "assets/team-foresight.css": {
         "rawBytes": 14336,
@@ -123,8 +123,8 @@
         "gzipBytes": 4096
       },
       "assets/foresight.js": {
-        "rawBytes": 56320,
-        "gzipBytes": 23552
+        "rawBytes": 62464,
+        "gzipBytes": 25600
       },
       "assets/github-dashboard.js": {
         "rawBytes": 20480,
@@ -135,8 +135,8 @@
         "gzipBytes": 2048
       },
       "assets/locale-provider.js": {
-        "rawBytes": 51200,
-        "gzipBytes": 20480
+        "rawBytes": 55296,
+        "gzipBytes": 21504
       },
       "assets/news-dashboard.js": {
         "rawBytes": 16384,
@@ -167,7 +167,7 @@
         "gzipBytes": 1024
       },
       "assets/preliminary-analysis.css": {
-        "rawBytes": 22528,
+        "rawBytes": 24576,
         "gzipBytes": 4096
       },
       "assets/rolldown-runtime.js": {
@@ -191,7 +191,7 @@
         "gzipBytes": 5120
       },
       "assets/source-dashboard-charts.css": {
-        "rawBytes": 4096,
+        "rawBytes": 6144,
         "gzipBytes": 2048
       },
       "assets/textarea.js": {
@@ -217,12 +217,36 @@
       "assets/ai-research-panel.css": {
         "rawBytes": 10240,
         "gzipBytes": 3072
+      },
+      "assets/button.js": {
+        "rawBytes": 30720,
+        "gzipBytes": 10240
+      },
+      "assets/publication-date.js": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/trend-statistics.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/monitor-views.css": {
+        "rawBytes": 25600,
+        "gzipBytes": 5120
+      },
+      "assets/paper-library.css": {
+        "rawBytes": 12288,
+        "gzipBytes": 3072
+      },
+      "assets/check.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
       }
     },
     "totals": {
       "initialJs": {
-        "rawBytes": 671744,
-        "gzipBytes": 210944
+        "rawBytes": 696320,
+        "gzipBytes": 220160
       },
       "initialCss": {
         "rawBytes": 120000,
@@ -233,8 +257,8 @@
         "gzipBytes": 4457472
       },
       "optionalCss": {
-        "rawBytes": 103424,
-        "gzipBytes": 20480
+        "rawBytes": 141312,
+        "gzipBytes": 26624
       },
       "initialData": {
         "rawBytes": 53026816,
@@ -270,6 +294,9 @@
     "P2.1/P2.2: explicit React/Radix groups, lazy paper views, separate source dashboards and AI settings. Measured main is 131483 raw / 41129 gzip; a 110000-byte gzip cap enforces the plan target. Main-file reduction is not a claim that all startup JS fell by the same amount.",
     "P2.2 integration includes P4 draft classification code in both Worker and validated fallback. Total startup JS is 655719 raw / 205184 gzip (all shared vendors and Worker counted), versus P1 643341 / 195386. New explicit chunk budgets plus a 210944-byte startup gzip ceiling expose this cost; no automatic rebasing occurs.",
     "P2.1 removes unused vendor CSS (pre-token main 164624 raw / 30803 gzip). P3 moves view CSS into optional resources; optional CSS allowance reflects that relocation and does not waive the main CSS target still under work.",
-    "P3.3: tokens, lazy styles and removal of 20 obsolete notice/personal-gate selectors reduce main CSS to 119450 raw bytes in the browser fixture build. The final enforced cap is 120000 raw / 22000 gzip; later feature changes must continue to fit."
+    "P3.3: tokens, lazy styles and removal of 20 obsolete notice/personal-gate selectors reduce main CSS to 119450 raw bytes in the browser fixture build. The final enforced cap is 120000 raw / 22000 gzip; later feature changes must continue to fit.",
+    "P3/P4 reviewed chunk changes: button and publication-date are shared extraction boundaries; monitor-views and paper-library CSS move existing styles out of main. Preliminary-analysis/source-chart CSS limits account for the same lazy relocation, not a relaxation of the 120000-byte main CSS cap.",
+    "P4 explicit feature allowances cover bilingual scope/version labels, question retrieval and model budgets, PI author-position/identity hints, source maturity/event views, and shared trend-statistics. Each named resource remains bounded; newly emitted unlisted keys still fail. Final startup and optional totals are independently measured and reviewed.",
+    "Final P3/P4 integration: main JS 152757 raw / 49300 gzip; total initial JS including Worker/shared vendors is 681436 / 215802, versus P0 571063 / 176919. The increase pays for scope/date validation, work grouping, comparative statistics and recovery UI and is explicitly reported. Reviewed total ceilings allow about 2% headroom. Optional CSS 137796 / 25858 reflects lazy style relocation; main CSS remains 119567 / 19966 under the unchanged 120000 raw cap. New check.js is a 163-byte extracted icon. No build automatically updates any limit."
   ]
 }
