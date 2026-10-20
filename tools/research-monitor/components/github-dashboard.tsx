@@ -12,10 +12,10 @@ import "@/styles/spatial-charts.css";
 import "@/styles/github-dashboard.css";
 
 type DashboardProps = { model: GitHubDashboardModel; onDrill: (drill: SignalDashboardDrill) => void; onBrowse: () => void; onRankedBrowse: (metric: "stars" | "forks") => void };
-type SummaryProps = Pick<DashboardProps, "model" | "onDrill">;
+type SummaryProps = Pick<DashboardProps, "model" | "onDrill"> & { summaryOnly?: boolean };
 const STATE_COLORS = ["var(--chart-4)", "var(--chart-1)", "var(--chart-2)", "var(--living-line)"];
 
-export function GitHubDashboardSummary({ model, onDrill }: SummaryProps) {
+export function GitHubDashboardSummary({ model, onDrill, summaryOnly = false }: SummaryProps) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => locale === "en" ? en : zh;
   const count = (value: number) => value.toLocaleString(locale === "en" ? "en-US" : "zh-CN");
@@ -24,7 +24,7 @@ export function GitHubDashboardSummary({ model, onDrill }: SummaryProps) {
   return <div className="github-dashboard-summary source-dashboard-summary">
     <div className="dash-global-strip">
       <button type="button" onClick={() => open(model.global.total, t("GitHub 全部库内记录", "All GitHub library records"))}><Database size={15}/>{t("库内", "In library")} <b>{count(model.global.total.count)}</b> {t("条记录", "records")}<ArrowUpRight size={13}/></button>
-      <button type="button" disabled={!model.nowValid || !model.referenceDateValid} onClick={() => open(model.global.today, t("今日入库 · 不含最早采集批次", "Added today · excluding earliest batch"))}><Radio size={15}/>{t("今日入库", "Added today")} <b>{model.nowValid && model.referenceDateValid ? count(model.global.today.count) : "—"}</b><ArrowUpRight size={13}/></button>
+      <button type="button" disabled={!model.nowValid || !model.referenceDateValid} onClick={() => open(model.global.today, summaryOnly ? t("快照当日入库 · 不含最早采集批次", "Added on snapshot day · excluding earliest batch") : t("今日入库 · 不含最早采集批次", "Added today · excluding earliest batch"))}><Radio size={15}/>{summaryOnly ? t("快照当日入库", "Added on snapshot day") : t("今日入库", "Added today")} <b>{model.nowValid && model.referenceDateValid ? count(model.global.today.count) : "—"}</b><ArrowUpRight size={13}/></button>
       <button type="button" onClick={() => open(model.global.initial, t("最早采集批次 · 推定基线", "Earliest collection batch · inferred baseline"))} title={t("按现存记录最早的首次发现时间推定，不代表完整初始建库。", "Inferred from the earliest first-seen timestamp in retained records; not a complete initial-import history.")}><Layers3 size={14}/>{t("最早采集批次", "Earliest batch")} <b>{count(model.global.initial.count)}</b><ArrowUpRight size={13}/></button>
       <span className="dash-clock"><time dateTime={model.now ?? undefined}>{clock}</time> {t("北京时间", "Beijing time")}</span>
     </div>

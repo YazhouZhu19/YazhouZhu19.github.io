@@ -19,8 +19,8 @@ scores must not be presented as independently validated accuracy.
 | P0.2 | Awaiting review | 400 provisional labels and frozen evidence prepared; user requested independent AI second review, in progress. |
 | P1.1 | Complete | Month/ID buckets, append-only URL dictionary and single atomic manifest replacement. |
 | P1.3 | Complete | Verified Cache Storage reuse, bounded generation retention and safe storage fallback. |
-| P1.6 | Integrating | Conditional manifest reader and tested visibility/backoff scheduler ready; signals wiring follows P1.4. |
-| P1.4 | Pending | Separate GitHub/news transport, preaggregated overview and on-demand loading. |
+| P1.6 | Complete | Both manifest readers use conditional revalidation; hidden-page suspension and bounded backoff integrated. |
+| P1.4 | Complete | Kind/month shards, compact exact overview and on-demand records; retry and stale-drill guards verified. |
 | P1.2 | Complete | Lossless v3 transport; raw shards reduced 30.001%; v1/v2 compatibility retained. |
 | P1.5 | Pending | Worker loading, validation and search with a fallback path. |
 | P1.7 | Pending | Shallow checkout, directory size guard and generation cleanup. |
@@ -94,3 +94,13 @@ scores must not be presented as independently validated accuracy.
   Python comparisons preserve every source field, unknown extras, missing values and nulls.
   Nine v3 TypeScript and eleven snapshot Python checks passed, including strict malformed-input
   rejection. The browser preference/fallback integration is committed with P1.5's shared loader.
+
+- **P1.4 / P1.6 integration:** 48,410 GitHub + 2,380 news records round-trip exactly.
+  The signals overview manifest is 259,124 raw / 36,437 gzip bytes; 227 kind/month shards
+  total 25,261,240 raw / 7,487,431 gzip bytes. The default paper view makes no signals
+  requests; each source overview needs only the manifest, while library, custom filters,
+  drill-through and explicit AI source selection request that kind's records. Snapshot-day
+  aggregates are labeled as such. The old flat endpoint remains available. Tests cover
+  exact aggregate/drill equivalence, first-load retry, stale selection cancellation, importer
+  failure, and an aborted reader that never settles. Conditional polling touches only
+  manifests for already requested sources and retains complete previous data on failure.

@@ -3,6 +3,7 @@ import { monitorDataSchema } from "../lib/local-api";
 import { writePublicSnapshot, writePublicSnapshotV3 } from "./public-snapshot";
 import { copyPreviousSnapshotShards } from "./snapshot-install";
 import { parseResearchSignalsData, SIGNALS_MAX_BYTES } from "../lib/research-signals";
+import { writeSignalsSnapshot } from "./signals-snapshot";
 
 // Verify the complete source snapshot before publishing any data.
 const data = await readSnapshotFile("data/papers.json");
@@ -28,5 +29,8 @@ const signals = parseResearchSignalsData(JSON.parse(signalBytes.toString("utf8")
 await copyFile("data/research-signals.json", "dist/data/research-signals.json");
 assert.deepEqual(await readFile("dist/data/research-signals.json"), signalBytes);
 console.log(`Verified public signal snapshot: ${signals.records.length} GitHub and news records`);
+const signalManifest = await writeSignalsSnapshot("dist/data/signals-v2/manifest.json", signals,
+  "../../research-monitor/data/signals-v2/manifest.json");
+console.log(`Verified sharded signals: ${signalManifest.shards.length} shards; overview metadata loads independently of records`);
 import assert from "node:assert/strict";
 import { copyFile, readFile, readdir } from "node:fs/promises";

@@ -34,7 +34,7 @@ export function GitHubPopularity({ model, onDrill, onRankedBrowse }: Props) {
   return <section className="github-popularity" aria-label={t("Star 与 Fork 统计及排行", "Star and fork statistics and rankings")}>
     <div className="github-popularity-heading">
       <h2>{t("开源关注与衍生", "Stars and forks")}</h2>
-      <span>{t("当前筛选范围", "Current filters")} · {count(model.rows.length)} {t("个仓库", "repositories")}</span>
+      <span>{t("当前筛选范围", "Current filters")} · {count(model.scoped.total)} {t("个仓库", "repositories")}</span>
     </div>
     <div className="github-popularity-metrics">
       {metrics.map(({ key, label, name, icon: Icon }) => {
@@ -54,7 +54,7 @@ export function GitHubPopularity({ model, onDrill, onRankedBrowse }: Props) {
     <p className="github-popularity-note">
       {t("数值为各仓库最近采集的累计快照，不是所选时段的增量；Star 合计不代表去重用户数。", "Counts are each repository’s latest collected cumulative snapshot, not gains during the selected period. Total stars are not unique users.")}
       {observedRange && <span>{t(" 数值采集日期：", " Counts collected: ")}{observedRange}{t("（北京时间）。", " (Beijing time).")}</span>}
-      {popularity.observedCount < model.rows.length && <span>{t(" 部分仓库缺少有效的采集日期。", " Some repositories have no valid observation date.")}</span>}
+      {popularity.observedCount < model.scoped.total && <span>{t(" 部分仓库缺少有效的采集日期。", " Some repositories have no valid observation date.")}</span>}
     </p>
     <div className="github-ranking-grid">
       {metrics.map(({ key, name, icon: Icon }) => {

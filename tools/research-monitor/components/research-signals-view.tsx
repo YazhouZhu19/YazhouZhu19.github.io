@@ -11,6 +11,9 @@ import { buildGitHubDashboard, githubDashboardDate } from "@/lib/github-dashboar
 import { compareGitHubPopularity, type GitHubPopularityMetric } from "@/lib/github-popularity";
 import { buildNewsDashboard, newsDashboardAsOf, newsDashboardDate, type NewsDashboardClock } from "@/lib/news-dashboard";
 import { beijingDay } from "@/lib/dashboard";
+import type { SignalKind, SignalsManifest } from "@/lib/signals-snapshot";
+import { adaptSignalOverview } from "@/lib/signal-overview";
+import { createLatestAsyncAction } from "@/lib/latest-async-action";
 import { RELEVANCE_REASON_LABELS } from "@/lib/signal-relevance";
 import { explicitEvidenceKeys, findRelatedSignals } from "@/lib/signal-evidence";
 import type { Paper } from "@/lib/types";
@@ -29,6 +32,9 @@ import "@/styles/foresight.css";
 type Props = {
   kind: "github" | "news";
   snapshot: ResearchSignalsData | null;
+  manifest: SignalsManifest | null;
+  recordsLoaded: boolean;
+  onLoadRecords: (kind: SignalKind) => Promise<ResearchSignalsData | null>;
   loading: boolean;
   error: boolean;
   onRefresh: () => void;
@@ -62,7 +68,7 @@ function SourceLink({ url, children }: { url: string | null | undefined; childre
   return safeSignalUrl(url) ? <a href={url} target="_blank" rel="noopener noreferrer">{children}<ArrowUpRight size={13}/></a> : null;
 }
 
-export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh, papers, onPaper, onDrill }: Props) {
+export function ResearchSignalsView({ kind, snapshot, manifest, recordsLoaded, onLoadRecords, loading, error, onRefresh, papers, onPaper, onDrill }: Props) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => locale === "en" ? en : zh;
   const [query, setQuery] = useState(() => browseSessions.get(kind)?.query ?? "");
@@ -84,8 +90,26 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
   useEffect(() => { const timer = setInterval(() => setNow(new Date()), 60000); return () => clearInterval(timer); }, []);
   const analysisRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const selectionAction = useRef(createLatestAsyncAction()).current;
+  const recordsRequested = useRef(false);
+  const currentManifest = useRef(manifest);
+  currentManifest.current = manifest;
+  useEffect(() => () => selectionAction.invalidate(), [selectionAction, kind, manifest]);
   const fieldId = useId();
+  const overview = manifest?.overview[kind];
+  const summaryOnly = !recordsLoaded && !!overview;
+  const preview = useMemo(() => overview ? adaptSignalOverview(overview, beijingDay(new Date().toISOString())) : null, [overview]);
+  const defaultScope = dateRange === 30 && category === "all" && relevance === "all"
+    && !query.trim() && !from && !to && (kind === "github" ? githubClock === "activity" : newsClock === "publication");
+  const needsRecords = view === "library" || analyze || !defaultScope || compareIds.length > 0;
+  useEffect(() => {
+    if (needsRecords && !recordsLoaded) {
+      recordsRequested.current = true;
+      void onLoadRecords(kind);
+    }
+  }, [needsRecords, recordsLoaded, onLoadRecords, kind]);
   const records = useMemo(() => (snapshot?.records ?? []).filter(record => record.kind === kind), [snapshot, kind]);
+  const recordCount = manifest?.counts[kind] ?? records.length;
   const recordLinkIndex = useMemo(() => {
     const index = new Map<string, ResearchSignal[]>();
     for (const record of snapshot?.records ?? []) {
@@ -109,17 +133,19 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
       byRecord.set(record.id, ids);
       for (const id of ids) counts.set(id, (counts.get(id) ?? 0) + 1);
     }
+    if (summaryOnly && overview) for (const [id, count] of Object.entries(overview.browse.categories)) counts.set(id, count);
     return { byRecord, counts };
-  }, [records]);
+  }, [records, summaryOnly, overview]);
   const discoveryCatalog = kind === "github" ? GITHUB_DISCOVERY_GROUPS : NEWS_DISCOVERY_GROUPS;
-  const discoveryCounts = useMemo(() => new Map(discoveryCatalog.map(group => [group.id, records.filter(record => record.discoveryGroups?.includes(group.id)).length])), [records, discoveryCatalog]);
-  const directCount = records.filter(record => record.relevance?.level === "direct").length;
-  const candidateCount = records.length - directCount;
+  const discoveryCounts = useMemo(() => new Map(discoveryCatalog.map(group => [group.id,
+    summaryOnly && overview ? overview.browse.discoveryGroups[group.id] ?? 0 : records.filter(record => record.discoveryGroups?.includes(group.id)).length])), [records, discoveryCatalog, summaryOnly, overview]);
+  const directCount = summaryOnly && overview ? overview.browse.direct : records.filter(record => record.relevance?.level === "direct").length;
+  const candidateCount = recordCount - directCount;
   const sources = useMemo(() => (snapshot?.sources ?? []).filter(source => source.kind === kind)
     .sort((a, b) => Number(b.id.startsWith("rss-news-")) - Number(a.id.startsWith("rss-news-"))), [snapshot, kind]);
   const sourceCheckedAt = useMemo(() => sources.map(source => source.checkedAt).filter((value): value is string => value !== null && Number.isFinite(Date.parse(value))).sort((a, b) => Date.parse(a) - Date.parse(b)).at(-1), [sources]);
   const googleSourceCount = sources.filter(source => new URL(source.url).hostname === "news.google.com").length;
-  const publisherCount = useMemo(() => new Set(records.map(record => record.publisher.trim().toLocaleLowerCase("en")).filter(name => name && !/^(unknown|unspecified|n\/?a|none|null|未知|未注明|未提供)$/.test(name))).size, [records]);
+  const publisherCount = useMemo(() => summaryOnly && overview ? overview.browse.publishers : new Set(records.map(record => record.publisher.trim().toLocaleLowerCase("en")).filter(name => name && !/^(unknown|unspecified|n\/?a|none|null|未知|未注明|未提供)$/.test(name))).size, [records, summaryOnly, overview]);
   const invalidDates = dateRange === "custom" && !!from && !!to && from > to;
   const baseRecords = useMemo(() => {
     const search = deferredQuery.trim().toLowerCase();
@@ -130,12 +156,12 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
       return matchesCategory && matchesRelevance && (!search || text.includes(search));
     });
   }, [records, categoryIndex, deferredQuery, category, relevance]);
-  const githubModel = useMemo(() => kind === "github" ? buildGitHubDashboard(records, { baseRecords, range: dateRange, clock: githubClock, from, to }, now, snapshot?.generatedAt ?? "") : null, [kind, records, baseRecords, dateRange, githubClock, from, to, now, snapshot?.generatedAt]);
+  const githubModel = useMemo(() => kind !== "github" ? null : summaryOnly && preview ? preview.github : buildGitHubDashboard(records, { baseRecords, range: dateRange, clock: githubClock, from, to }, now, snapshot?.generatedAt ?? ""), [kind, summaryOnly, preview, records, baseRecords, dateRange, githubClock, from, to, now, snapshot?.generatedAt]);
   const newsAsOf = useMemo(() => newsDashboardAsOf(snapshot), [snapshot]);
-  const newsModel = useMemo(() => kind === "news" ? buildNewsDashboard(records, { baseRecords, range: dateRange, clock: newsClock, from, to }, now, newsAsOf ?? "") : null, [kind, records, baseRecords, dateRange, newsClock, from, to, now, newsAsOf]);
+  const newsModel = useMemo(() => kind !== "news" ? null : summaryOnly && preview ? preview.news : buildNewsDashboard(records, { baseRecords, range: dateRange, clock: newsClock, from, to }, now, newsAsOf ?? ""), [kind, summaryOnly, preview, records, baseRecords, dateRange, newsClock, from, to, now, newsAsOf]);
   const dashboardModel = githubModel ?? newsModel;
   const scopedRecords = useMemo(() => {
-    if (invalidDates) return [];
+    if (invalidDates || !recordsLoaded) return [];
     const rows: ResearchSignal[] = dashboardModel?.rows ?? [];
     return [...rows].sort((a, b) => {
       if ((sort === "stars" || sort === "forks") && a.kind === "github" && b.kind === "github") return compareGitHubPopularity(a, b, sort);
@@ -144,7 +170,7 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
       if (!left || !right) return left ? -1 : right ? 1 : a.id.localeCompare(b.id);
       return (sort === "oldest" ? left.localeCompare(right) : right.localeCompare(left)) || a.id.localeCompare(b.id);
     });
-  }, [dashboardModel, selectedDatesById, sort, invalidDates]);
+  }, [dashboardModel, selectedDatesById, sort, invalidDates, recordsLoaded]);
   const filtered = useMemo(() => {
     if (!drill) return scopedRecords;
     const ids = new Set(drill.ids);
@@ -166,25 +192,49 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
   useEffect(() => { setLimit(24); }, [deferredQuery, category, relevance, from, to, sort, drill, dateRange, githubClock, newsClock]);
   useEffect(() => { browseSessions.set(kind, { query, category, relevance, from, to, sort, limit, compareIds, analyze, view, drill, dateRange, githubClock, newsClock }); }, [kind, query, category, relevance, from, to, sort, limit, compareIds, analyze, view, drill, dateRange, githubClock, newsClock]);
   useEffect(() => {
-    if (!snapshot) return;
+    if (!snapshot || !recordsLoaded) return;
     const available = new Set(records.map(record => record.id));
     setCompareIds(ids => ids.some(id => !available.has(id)) ? ids.filter(id => available.has(id)) : ids);
-  }, [snapshot, records]);
-  const changeScope = (change: () => void) => { setDrill(null); change(); };
-  const reset = () => { setDrill(null); setQuery(""); setCategory("all"); setRelevance("all"); setFrom(""); setTo(""); setSort("latest"); setDateRange(30); setGithubClock("activity"); setNewsClock("publication"); };
-  const switchView = (next: BrowseState["view"]) => { setView(next); setDrill(null); };
+  }, [snapshot, records, recordsLoaded]);
+  const changeScope = (change: () => void) => { selectionAction.invalidate(); setDrill(null); change(); };
+  const reset = () => { selectionAction.invalidate(); setDrill(null); setQuery(""); setCategory("all"); setRelevance("all"); setFrom(""); setTo(""); setSort("latest"); setDateRange(30); setGithubClock("activity"); setNewsClock("publication"); };
+  const switchView = (next: BrowseState["view"]) => { selectionAction.invalidate(); setView(next); setDrill(null); };
+  const retrySources = () => {
+    selectionAction.invalidate();
+    onRefresh();
+    // Refresh alone does not load a kind whose first shard request failed.
+    // The store queues this after the manifest refresh, using its current version.
+    if (!recordsLoaded && (needsRecords || recordsRequested.current)) void onLoadRecords(kind);
+  };
   const openRankedRepositories = (metric: GitHubPopularityMetric) => {
     setSort(metric); switchView("library"); setLimit(24);
     requestAnimationFrame(() => { contentRef.current?.focus({ preventScroll: true }); contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
   };
-  const openDashboardRecords = (selection: SignalDashboardDrill) => {
-    setDrill({ ...selection, exactIds: true }); setView("library"); setLimit(24);
-    requestAnimationFrame(() => { contentRef.current?.focus({ preventScroll: true }); contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
+  const resolveSelection = async (selection: SignalDashboardDrill) => {
+    if (recordsLoaded) return selection;
+    recordsRequested.current = true;
+    const complete = await onLoadRecords(kind);
+    if (!complete || !preview || !manifest || currentManifest.current !== manifest
+      || complete.generatedAt !== manifest.generatedAt) return null;
+    const model = kind === "github"
+      ? buildGitHubDashboard(complete.records, {}, manifest.generatedAt, manifest.generatedAt)
+      : buildNewsDashboard(complete.records, {}, manifest.generatedAt, newsDashboardAsOf(complete) ?? "");
+    return { ...selection, ids: preview.resolveIds(selection.ids, model) };
   };
-  const openGlobalRecords = (selection: SignalDashboardDrill) => {
-    setQuery(""); setCategory("all"); setRelevance("all"); setFrom(""); setTo(""); setDateRange("all"); setGithubClock("activity"); setNewsClock("publication"); setSort("latest");
-    setDrill({ ...selection, global: true }); setView("library"); setLimit(24);
-    requestAnimationFrame(() => { contentRef.current?.focus({ preventScroll: true }); contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
+  const openDashboardRecords = async (input: SignalDashboardDrill) => {
+    await selectionAction.run(() => resolveSelection(input), selection => {
+      if (!selection) return;
+      setDrill({ ...selection, exactIds: true }); setView("library"); setLimit(24);
+      requestAnimationFrame(() => { contentRef.current?.focus({ preventScroll: true }); contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
+    });
+  };
+  const openGlobalRecords = async (input: SignalDashboardDrill) => {
+    await selectionAction.run(() => resolveSelection(input), selection => {
+      if (!selection) return;
+      setQuery(""); setCategory("all"); setRelevance("all"); setFrom(""); setTo(""); setDateRange("all"); setGithubClock("activity"); setNewsClock("publication"); setSort("latest");
+      setDrill({ ...selection, global: true }); setView("library"); setLimit(24);
+      requestAnimationFrame(() => { contentRef.current?.focus({ preventScroll: true }); contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
+    });
   };
   const showAnalysis = () => {
     setAnalyze(true);
@@ -195,7 +245,7 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
   const choiceControl = (id: string, label: string, value: string, onChange: (value: string) => void, options: [string, string][], describedBy?: string) => <DashboardChoice id={id} label={label} value={value} onChange={onChange} options={options} describedBy={describedBy}/>;
   const sortOptions: [string, string][] = [["latest", t("最近日期优先", "Newest first")], ["oldest", t("最早日期优先", "Oldest first")], ["title", t("名称", "Name")]];
   if (kind === "github") sortOptions.push(["stars", t("Star 数量最多", "Most stars")], ["forks", t("Fork 数量最多", "Most forks")]);
-  const sortControl = <div className="dash-control"><label htmlFor={`${fieldId}-sort`}>{t("列表排序", "Library sort")}</label>{choiceControl(`${fieldId}-sort`, t("列表排序", "Library sort"), sort, setSort, sortOptions)}</div>;
+  const sortControl = <div className="dash-control"><label htmlFor={`${fieldId}-sort`}>{t("列表排序", "Library sort")}</label>{choiceControl(`${fieldId}-sort`, t("列表排序", "Library sort"), sort, value => { selectionAction.invalidate(); setSort(value); }, sortOptions)}</div>;
 
   const sourceHealth = <details className="signals-source-health">
       <summary>{t("采集范围与来源状态", "Collection scope and source status")}<span>{sources.length} {t("个检索 / 采集入口", "collection endpoints")}{pending.length > 0 ? ` · ${pending.length} ${t("项待首次检查", "awaiting first check")}` : ""}{backfilling.length > 0 ? ` · ${backfilling.length} ${t("项历史补采中", "backfill in progress")}` : ""}{unhealthy.length > 0 ? ` · ${unhealthy.length} ${t("项需留意", "need attention")}` : ""} · {t("快照", "Snapshot")} {dateLabel(snapshot?.generatedAt, noDate)}</span></summary>
@@ -209,18 +259,18 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
     </details>;
 
   return <div className={`research-signals source-signals ${kind}-signals`}>
-    <nav className="dashboard-section-tabs signals-dashboard-tabs" aria-label={kind === "github" ? t("开源洞察视图", "Open-source insights views") : t("前沿动态视图", "Frontier updates views")}><button type="button" className={view === "overview" ? "active" : ""} aria-pressed={view === "overview"} onClick={() => switchView("overview")}>{t("统计总览", "Overview")}</button><button type="button" className={view === "library" ? "active" : ""} aria-pressed={view === "library"} onClick={() => switchView("library")}>{kind === "github" ? t("项目库", "Repository library") : t("新闻库", "News library")}<span>{records.length.toLocaleString()}</span></button></nav>
+    <nav className="dashboard-section-tabs signals-dashboard-tabs" aria-label={kind === "github" ? t("开源洞察视图", "Open-source insights views") : t("前沿动态视图", "Frontier updates views")}><button type="button" className={view === "overview" ? "active" : ""} aria-pressed={view === "overview"} onClick={() => switchView("overview")}>{t("统计总览", "Overview")}</button><button type="button" className={view === "library" ? "active" : ""} aria-pressed={view === "library"} onClick={() => switchView("library")}>{kind === "github" ? t("项目库", "Repository library") : t("新闻库", "News library")}<span>{recordCount.toLocaleString()}</span></button></nav>
 
-    {kind === "github" && githubModel && snapshot && <GitHubDashboardSummary model={githubModel} onDrill={openGlobalRecords}/>}
-    {kind === "news" && newsModel && snapshot && <NewsDashboardSummary model={newsModel} onDrill={openGlobalRecords} sourceCheckedAt={sourceCheckedAt}/>}
-    {error && <div className="signals-notice" role="alert"><p>{snapshot ? t("最新快照暂时无法读取，以下保留上次载入的结果。", "The latest snapshot could not be loaded. Previously loaded results are retained below.") : t("此数据源暂时无法读取；论文库仍可独立使用。", "This source could not be loaded. The paper library remains available independently.")}</p><button type="button" className="foresight-button" onClick={onRefresh} disabled={loading}>{t("重新读取", "Retry")}</button></div>}
+    {kind === "github" && githubModel && snapshot && <GitHubDashboardSummary model={githubModel} summaryOnly={summaryOnly} onDrill={openGlobalRecords}/>}
+    {kind === "news" && newsModel && snapshot && <NewsDashboardSummary model={newsModel} summaryOnly={summaryOnly} onDrill={openGlobalRecords} sourceCheckedAt={sourceCheckedAt}/>}
+    {error && <div className="signals-notice" role="alert"><p>{snapshot ? t("最新快照暂时无法读取，以下保留上次载入的结果。", "The latest snapshot could not be loaded. Previously loaded results are retained below.") : t("此数据源暂时无法读取；论文库仍可独立使用。", "This source could not be loaded. The paper library remains available independently.")}</p><button type="button" className="foresight-button" onClick={retrySources} disabled={loading}>{t("重新读取", "Retry")}</button></div>}
 
     <section className="signals-filters" aria-label={t("统计与列表共同筛选", "Shared dashboard and library filters")}>
       <div className="signals-filter-toolbar source-filter-toolbar">
           <div className="dash-control"><label htmlFor={`${fieldId}-range`}>{t("统计时间", "Time range")}</label><DashboardChoice id={`${fieldId}-range`} label={t("统计时间", "Time range")} value={String(dateRange)} onChange={value => changeScope(() => { setDateRange(["7", "30", "90"].includes(value) ? Number(value) as 7 | 30 | 90 : value as "all" | "custom"); setFrom(""); setTo(""); })} options={[["7", t("近 7 天", "Last 7 days")], ["30", t("近 30 天", "Last 30 days")], ["90", t("近 90 天", "Last 90 days")], ["all", t("全部日期", "All dates")], ["custom", t("自定义日期", "Custom dates")]]}/></div>
           <div className="dash-control"><label htmlFor={`${fieldId}-clock`}>{t("日期口径", "Date basis")}</label>{kind === "github" ? <DashboardChoice id={`${fieldId}-clock`} label={t("日期口径", "Date basis")} value={githubClock} onChange={value => changeScope(() => setGithubClock(value as "activity" | "creation"))} options={[["activity", t("仓库最近活动", "Latest repository activity")], ["creation", t("仓库最初发布时间", "Initial repository publication")]]}/> : <DashboardChoice id={`${fieldId}-clock`} label={t("日期口径", "Date basis")} value={newsClock} onChange={value => changeScope(() => setNewsClock(value as NewsDashboardClock))} options={[["publication", t("消息发布时间", "Announcement publication")], ["discovery", t("平台入库时间", "Library discovery date")]]}/>}</div>
-        <div className="dash-control"><label htmlFor={`${fieldId}-category`}>{t("研究方向", "Research area")}</label>{choiceControl(`${fieldId}-category`, t("研究方向", "Research area"), category, value => changeScope(() => setCategory(value)), [["all", `${t("全部方向", "All directions")} (${records.length})`], ...categories.map((group): [string, string] => [group.id, `${t(group.labelZh, group.labelEn)} (${categoryIndex.counts.get(group.id) ?? 0})`])], `${fieldId}-category-hint`)}</div>
-        <div className="dash-control"><label htmlFor={`${fieldId}-relevance`}>{t("相关性", "Relevance")}</label>{choiceControl(`${fieldId}-relevance`, t("相关性", "Relevance"), relevance, value => changeScope(() => setRelevance(value as RelevanceFilter)), [["direct", `${t("高相关", "Directly relevant")} (${directCount})`], ["candidate", `${t("待复核", "Needs review")} (${candidateCount})`], ["all", `${t("全部线索", "All leads")} (${records.length})`]], `${fieldId}-relevance-hint`)}</div>
+        <div className="dash-control"><label htmlFor={`${fieldId}-category`}>{t("研究方向", "Research area")}</label>{choiceControl(`${fieldId}-category`, t("研究方向", "Research area"), category, value => changeScope(() => setCategory(value)), [["all", `${t("全部方向", "All directions")} (${recordCount})`], ...categories.map((group): [string, string] => [group.id, `${t(group.labelZh, group.labelEn)} (${categoryIndex.counts.get(group.id) ?? 0})`])], `${fieldId}-category-hint`)}</div>
+        <div className="dash-control"><label htmlFor={`${fieldId}-relevance`}>{t("相关性", "Relevance")}</label>{choiceControl(`${fieldId}-relevance`, t("相关性", "Relevance"), relevance, value => changeScope(() => setRelevance(value as RelevanceFilter)), [["direct", `${t("高相关", "Directly relevant")} (${directCount})`], ["candidate", `${t("待复核", "Needs review")} (${candidateCount})`], ["all", `${t("全部线索", "All leads")} (${recordCount})`]], `${fieldId}-relevance-hint`)}</div>
         <button type="button" className="foresight-button" onClick={reset}>{t("重置", "Reset")}</button>
       </div>
       {dateRange === "custom" && <div className="signals-filter-row"><div><label htmlFor={`${fieldId}-from`}>{t("起始日期", "From")}</label><input id={`${fieldId}-from`} type="date" value={from} max={to || undefined} onChange={event => changeScope(() => setFrom(event.target.value))}/></div><div><label htmlFor={`${fieldId}-to`}>{t("截止日期", "To")}</label><input id={`${fieldId}-to`} type="date" value={to} min={from || undefined} onChange={event => changeScope(() => setTo(event.target.value))}/></div></div>}
@@ -235,15 +285,16 @@ export function ResearchSignalsView({ kind, snapshot, loading, error, onRefresh,
     </section>
 
     <div ref={contentRef} className="signals-view-content" tabIndex={-1}>
-    {view === "overview" ? loading && !snapshot ? <div className="signals-empty" role="status" aria-busy="true">{t("正在读取公开数据…", "Loading public data…")}</div> : kind === "github" && githubModel ? <GitHubDashboard model={githubModel} onDrill={openDashboardRecords} onBrowse={() => switchView("library")} onRankedBrowse={openRankedRepositories}/> : newsModel ? <NewsDashboard model={newsModel} onDrill={openDashboardRecords} onBrowse={() => switchView("library")}/> : null : <>
-    {drill && <div className="signals-dashboard-drill"><span>{t("来自统计图表：", "From dashboard: ")}<strong>{drill.label}</strong> · {filtered.length.toLocaleString()} {t("条记录", "records")}</span><div><button type="button" className="foresight-button" onClick={() => setDrill(null)}>{t("显示筛选范围全部记录", "Show all filtered records")}</button><button type="button" className="foresight-button" onClick={() => switchView("overview")}>{t("返回统计总览", "Back to overview")}</button></div></div>}
+    {summaryOnly && <p className="signals-filter-hint">{t(`总览截至 ${manifest?.generatedAt.slice(0, 10)}；“当日入库”指快照当日。`, `Overview as of ${manifest?.generatedAt.slice(0, 10)}; additions refer to the snapshot day.`)}</p>}
+    {view === "overview" ? !snapshot || !defaultScope && !recordsLoaded ? <div className="signals-empty" role="status" aria-busy="true">{t("正在读取公开数据…", "Loading public data…")}</div> : kind === "github" && githubModel ? <GitHubDashboard model={githubModel} onDrill={openDashboardRecords} onBrowse={() => switchView("library")} onRankedBrowse={openRankedRepositories}/> : newsModel ? <NewsDashboard model={newsModel} originalsCount={summaryOnly ? manifest?.overview.news.originalsCount : undefined} onDrill={openDashboardRecords} onBrowse={() => switchView("library")}/> : null : <>
+    {drill && <div className="signals-dashboard-drill"><span>{t("来自统计图表：", "From dashboard: ")}<strong>{drill.label}</strong> · {filtered.length.toLocaleString()} {t("条记录", "records")}</span><div><button type="button" className="foresight-button" onClick={() => changeScope(() => {})}>{t("显示筛选范围全部记录", "Show all filtered records")}</button><button type="button" className="foresight-button" onClick={() => switchView("overview")}>{t("返回统计总览", "Back to overview")}</button></div></div>}
 
     <p className="signals-filter-hint">{drill?.global ? t("全局记录入口，独立于日期及相关性筛选。调整筛选后恢复当前范围。", "Global records, independent of date and relevance filters. Changing a filter returns to the selected scope.") : t("当前列表与仪表盘采用相同范围；点击上方“库内记录”可查看完整库。", "This list shares the dashboard scope. Click Records in library above to inspect the complete collection.")}</p>
     <div className="signals-results-heading"><h2>{filtered.length}<span> / {records.length} {kind === "github" ? t("个项目", "repositories") : t("条发布", "announcements")}</span></h2><button type="button" className="foresight-button foresight-button-primary" disabled={!analysisRecords.length || loading} onClick={showAnalysis}>{t("分析当前结果", "Analyze these results")}<ArrowUpRight size={14}/></button></div>
     {filtered.length > analysisRecords.length && <p className="signals-analysis-exclusion">{t(`当前结果含 ${filtered.length - analysisRecords.length} 条待复核线索。分析仅使用其中 ${analysisRecords.length} 条高相关记录。`, `These results include ${filtered.length - analysisRecords.length} leads needing review. Analysis uses only the ${analysisRecords.length} directly relevant records.`)}</p>}
     {kind === "github" && compared.length > 0 && <section className="signals-compare" aria-label={t("项目对照", "Repository comparison")}><div className="signals-compare-heading"><div><h3>{t("项目对照", "Repository comparison")} <span>{compared.length} / 3</span></h3><p>{t("帮助选择复现候选；可用性与模型效果仍需在原仓库核实。", "Compare candidates for reproduction; verify usability and model performance in the original repository.")}</p></div><button type="button" className="foresight-button" onClick={() => setCompareIds([])}>{t("清空对照", "Clear")}</button></div><div className="signals-table-scroll"><table><thead><tr><th>{t("检查项", "Check")}</th>{compared.map(record => <th key={record.id}><SourceLink url={record.url}>{record.fullName}</SourceLink><button type="button" aria-label={t(`移除 ${record.fullName}`, `Remove ${record.fullName}`)} onClick={() => setCompareIds(ids => ids.filter(id => id !== record.id))}><X size={13}/></button></th>)}</tr></thead><tbody><tr><th>{t("代码许可", "Code license")}</th>{compared.map(record => <td key={record.id}>{record.license || t("未识别 · 查看仓库", "Not identified · check repository")}</td>)}</tr><tr><th>{t("最近推送", "Latest push")}</th>{compared.map(record => <td key={record.id}>{dateLabel(record.pushedAt, noDate)}</td>)}</tr><tr><th>{t("最近 Release", "Latest release")}</th>{compared.map(record => <td key={record.id}>{record.releaseUrl ? <SourceLink url={record.releaseUrl}>{dateLabel(record.releasedAt, noDate)}</SourceLink> : t("未采集到", "Not collected")}</td>)}</tr><tr><th>{t("维护状态", "Repository state")}</th>{compared.map(record => <td key={record.id}>{record.archived ? t("已归档", "Archived") : t("未归档", "Not archived")}</td>)}</tr><tr><th>{t("Stars 快照", "Stars snapshot")}</th>{compared.map(record => <td key={record.id}>{record.stars.toLocaleString(locale === "en" ? "en-US" : "zh-CN")}</td>)}</tr><tr><th>{t("Forks 快照", "Forks snapshot")}</th>{compared.map(record => <td key={record.id}>{record.forks.toLocaleString(locale === "en" ? "en-US" : "zh-CN")}</td>)}</tr></tbody></table></div><p className="signals-filter-hint">{t("代码许可证不自动涵盖模型权重、训练数据或临床使用授权；请查阅项目具体条款。", "A code license does not automatically cover model weights, training data, or clinical-use permissions; check the project terms.")}</p></section>}
 
-    {loading && !snapshot ? <div className="signals-empty" role="status" aria-busy="true">{t("正在读取公开数据…", "Loading public data…")}</div> : filtered.length === 0 ? <div className="signals-empty"><Search size={23}/><h3>{t("没有符合条件的记录", "No matching records")}</h3><p>{records.length ? t("尝试缩小关键词、移除日期筛选，或切换到全部线索。", "Try fewer keywords, remove date filters, or switch to all leads.") : t("尚未载入此来源的数据，请查看采集状态或稍后重试。", "No records from this source are loaded. Check its collection status or retry later.")}</p></div> : <div className="signals-list">{filtered.slice(0, limit).map(record => {
+    {!recordsLoaded && !error ? <div className="signals-empty" role="status" aria-busy="true">{t("正在读取公开数据…", "Loading public data…")}</div> : filtered.length === 0 ? <div className="signals-empty"><Search size={23}/><h3>{t("没有符合条件的记录", "No matching records")}</h3><p>{records.length ? t("尝试缩小关键词、移除日期筛选，或切换到全部线索。", "Try fewer keywords, remove date filters, or switch to all leads.") : t("尚未载入此来源的数据，请查看采集状态或稍后重试。", "No records from this source are loaded. Check its collection status or retry later.")}</p></div> : <div className="signals-list">{filtered.slice(0, limit).map(record => {
       const related = relatedRecords(record, recordLinkIndex);
       const paperLinks = (relatedPapers.get(record.id) ?? []).map(id => paperById.get(id)).filter((paper): paper is Paper => !!paper);
       const comparing = compareIds.includes(record.id);

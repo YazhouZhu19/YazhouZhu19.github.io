@@ -11,10 +11,10 @@ import { useI18n } from "./locale-provider";
 import "@/styles/github-dashboard.css";
 import "@/styles/news-dashboard.css";
 
-type Props = { model: NewsDashboardModel; onDrill: (drill: SignalDashboardDrill) => void; onBrowse: () => void };
-type SummaryProps = Pick<Props, "model" | "onDrill"> & { sourceCheckedAt?: string | null };
+type Props = { model: NewsDashboardModel; onDrill: (drill: SignalDashboardDrill) => void; onBrowse: () => void; originalsCount?: number };
+type SummaryProps = Pick<Props, "model" | "onDrill"> & { sourceCheckedAt?: string | null; summaryOnly?: boolean };
 
-export function NewsDashboardSummary({ model, onDrill, sourceCheckedAt }: SummaryProps) {
+export function NewsDashboardSummary({ model, onDrill, sourceCheckedAt, summaryOnly = false }: SummaryProps) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => locale === "en" ? en : zh;
   const count = (value: number) => value.toLocaleString(locale === "en" ? "en-US" : "zh-CN");
@@ -24,7 +24,7 @@ export function NewsDashboardSummary({ model, onDrill, sourceCheckedAt }: Summar
   return <div className="news-dashboard-summary source-dashboard-summary">
     <div className="dash-global-strip">
       <button type="button" onClick={() => open(model.global.total, t("全部公开消息库内记录", "All public news library records"))}><Database size={15}/>{t("库内", "In library")} <b>{count(model.global.total.count)}</b> {t("条消息", "news records")}<ArrowUpRight size={13}/></button>
-      <button type="button" disabled={!model.nowValid || !model.referenceDateValid} onClick={() => open(model.global.today, t("今日入库消息 · 不含最早采集批次", "News added today · excluding earliest batch"))}><Radio size={15}/>{t("今日入库", "Added today")} <b>{model.nowValid && model.referenceDateValid ? count(model.global.today.count) : "—"}</b><ArrowUpRight size={13}/></button>
+      <button type="button" disabled={!model.nowValid || !model.referenceDateValid} onClick={() => open(model.global.today, summaryOnly ? t("快照当日入库消息 · 不含最早采集批次", "News added on snapshot day · excluding earliest batch") : t("今日入库消息 · 不含最早采集批次", "News added today · excluding earliest batch"))}><Radio size={15}/>{summaryOnly ? t("快照当日入库", "Added on snapshot day") : t("今日入库", "Added today")} <b>{model.nowValid && model.referenceDateValid ? count(model.global.today.count) : "—"}</b><ArrowUpRight size={13}/></button>
       <button type="button" onClick={() => open(model.global.initial, t("消息最早采集批次 · 推定基线", "Earliest news collection batch · inferred baseline"))} title={t("按现存消息最早的首次发现时间推定，不代表完整初始建库。", "Inferred from the earliest first-seen timestamp in retained news, not a complete initial-import history.")}><Layers3 size={14}/>{t("最早采集批次", "Earliest batch")} <b>{count(model.global.initial.count)}</b><ArrowUpRight size={13}/></button>
       <span className="dash-clock"><time dateTime={model.now ?? undefined}>{clock}</time> {t("北京时间", "Beijing time")}</span>
     </div>
@@ -32,7 +32,7 @@ export function NewsDashboardSummary({ model, onDrill, sourceCheckedAt }: Summar
   </div>;
 }
 
-export function NewsDashboard({ model, onDrill, onBrowse }: Props) {
+export function NewsDashboard({ model, onDrill, onBrowse, originalsCount }: Props) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => locale === "en" ? en : zh;
   const count = (value: number) => value.toLocaleString(locale === "en" ? "en-US" : "zh-CN");
@@ -59,7 +59,7 @@ export function NewsDashboard({ model, onDrill, onBrowse }: Props) {
     <div className="dash-scope"><span>{model.start ?? "—"} — {model.end ?? "—"} · {discovery ? t("平台首次入库", "First added to platform") : t("消息发布日期", "News publication date")} · {t("北京时间", "Beijing time")}</span><span>{t("数字与图表均可点击查看消息", "Click counts and charts to inspect news")}</span></div>
     <div className="dash-metrics">{model.scoped.metrics.map((metric, index) => {
       const Icon = icons[index];
-      return <button type="button" key={metric.id} className={`dash-metric${index === 0 ? " dash-metric-primary" : ""}`} disabled={!available || !metric.recordIds.length} onClick={() => open(metric)}><span className="dash-metric-label"><Icon size={17}/>{label(metric)}<ArrowUpRight size={15}/></span><strong>{available ? count(metric.count) : "—"}</strong><span className="dash-metric-hint">{metricHints[metric.id]}</span></button>;
+      return <button type="button" key={metric.id} className={`dash-metric${index === 0 ? " dash-metric-primary" : ""}`} disabled={!available || !metric.count} onClick={() => open(metric)}><span className="dash-metric-label"><Icon size={17}/>{label(metric)}<ArrowUpRight size={15}/></span><strong>{available ? count(metric.count) : "—"}</strong><span className="dash-metric-hint">{metricHints[metric.id]}</span></button>;
     })}</div>
 
     <div className="dash-main-grid news-main-grid">
@@ -76,6 +76,6 @@ export function NewsDashboard({ model, onDrill, onBrowse }: Props) {
     <div className="dash-bottom-grid news-bottom-grid"><section className="dash-panel"><div className="dash-panel-heading"><div><h2>{t("发布者分布", "Publisher distribution")}</h2><p>{t("前 8 个名称与其他、未注明 · 按消息数统计", "Top 8 names, other, and unknown · counts of news records")}</p></div></div><SourceDashboardBars kind="news" profile="publisher" buckets={model.scoped.publishers} title={t("发布者", "Publisher")} onDrill={onDrill}/><p className="dash-note">{t("发布者可能是机构、媒体或企业；仅按名称归并，别名未合并，报道数量不代表独立研究产出。", "Publishers can be institutions, media, or companies. Names are grouped without alias resolution; report counts are not independent research output.")}</p></section><section className="dash-panel"><div className="dash-panel-heading"><div><h2>{discovery ? t("当前范围的近期入库消息", "Recently added news in scope") : t("当前范围的近期发布消息", "Recently published news in scope")}</h2><p>{discovery ? t("按首次发现时间排序 · 点击定位消息卡片", "Sorted by first-seen time · click for the news card") : t("按来源发布日期排序 · 点击定位消息卡片", "Sorted by publication date · click for the news card")}</p></div><Button variant="ghost" size="sm" onClick={onBrowse}>{t("查看全部", "View all")}<ArrowUpRight size={14}/></Button></div><div className="dash-recent-list">{latest.map(({ record, date }) => <button type="button" key={record.id} onClick={() => onDrill({ label: record.title, ids: [record.id] })}><span className="dash-recent-meta">{beijingStamp(date)}<span>{record.relevance?.level === "direct" ? t("高相关", "Directly relevant") : t("待复核", "Needs review")}</span></span><strong>{record.title}</strong><span className="news-recent-description">{record.summary || t("来源未提供消息摘要。", "No summary was supplied by the source.")}</span><span className="dash-recent-source">{t("发布者：", "Publisher: ")}{record.publisher}<ArrowUpRight size={14}/></span></button>)}{!latest.length && <p className="dash-note">{t("当前范围暂无消息。", "No news in this scope.")}</p>}</div></section></div>
 
     {exclusions.length > 0 && <details className="news-excluded"><summary>{t("查看本次统计单列的记录", "Inspect records outside the statistics")}</summary><p>{t("以下消息仍保留在库中；采集基线、缺失或异常日期与时间范围分开处理。", "These news records remain in the library; collection baselines, missing, and unverified dates are handled separately from the time window.")}</p><div>{exclusions.map(bucket => <button type="button" key={bucket.id} onClick={() => open(bucket)}>{label(bucket)} <b>{count(bucket.count)}</b><ArrowUpRight size={12}/></button>)}</div></details>}
-    <p className="dash-footnote">{t(`当前范围 ${count(originals.length)} 条消息已收录原文链接。`, `${count(originals.length)} news records in this scope have collected original-article links.`)}{t("检索摘要不是原文，发布声明不等于独立验证。消息通过 Google 新闻检索与发布者订阅源采集，原始发布者保留在消息卡片；各采集入口的更新时间见下方状态。", " Search snippets are not full articles, and announcements are not independent validation. News is collected through Google News searches and publisher feeds; cards retain original publishers. Collection timestamps are listed in the source status below.")}</p>
+    <p className="dash-footnote">{t(`当前范围 ${count(originalsCount ?? originals.length)} 条消息已收录原文链接。`, `${count(originalsCount ?? originals.length)} news records in this scope have collected original-article links.`)}{t("检索摘要不是原文，发布声明不等于独立验证。消息通过 Google 新闻检索与发布者订阅源采集，原始发布者保留在消息卡片；各采集入口的更新时间见下方状态。", " Search snippets are not full articles, and announcements are not independent validation. News is collected through Google News searches and publisher feeds; cards retain original publishers. Collection timestamps are listed in the source status below.")}</p>
   </div>;
 }

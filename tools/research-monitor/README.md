@@ -119,3 +119,16 @@ Both locale entry pages include static Open Graph and Twitter `summary_large_ima
 Use **Actions → Research monitor sync → Run workflow** for an immediate refresh. Partial source outages publish the available result with source errors. When all sources fail, the workflow publishes validated failure metadata while retaining the library and marks the run failed. Pages output is checked against a deployment marker and public data SHA-256 before success is reported.
 
 The existing homepage publishes from `main` at the repository root. This workflow preserves that setting and unrelated homepage files. GitHub may delay schedules or disable scheduled workflows after prolonged repository inactivity; check the Actions page if updates stop.
+
+### On-demand source snapshots
+
+`data/signals-v2/manifest.json` provides exact build-time GitHub/news overview aggregates, with
+kind/month columnar record shards verified by byte size and hash. The paper landing page does
+not initialize this loader. Source overviews first load only this manifest; opening a library,
+changing its scope, drilling through a statistic, or selecting that source for AI evidence
+loads the relevant kind. Precomputed dates refer to the snapshot day, explicitly labeled in
+the UI. Existing `data/research-signals.json` remains published for compatibility.
+
+Both public loaders conditionally revalidate manifests. The 5-minute scheduler suspends while
+the page is hidden and backs off after failures to 10/20/40/60 minutes. Unchanged ETags avoid
+bodies; unchanged 200 responses preserve data objects but still incur their response bytes.

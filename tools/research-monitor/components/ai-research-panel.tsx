@@ -9,6 +9,7 @@ import { LOCAL_AI_MODELS, aiSampleLimit, fetchFreeAiModels, getLocalAiModel } fr
 import { beijingDay, type DashboardDrill } from "@/lib/dashboard";
 import type { Paper } from "@/lib/types";
 import { useI18n } from "./locale-provider";
+import { useSignalsAccess } from "./signals-context";
 
 type AiResult = { report: AiReport; model: string; generatedAt: string };
 type PanelState = {
@@ -124,6 +125,12 @@ function AiResearchScope({ papers, signals = NO_SIGNALS, initialSources, title: 
   const settings = useSyncExternalStore(subscribeAiSettings, getAiSettings, getAiSettings);
   const sessionKey = `${mode}:${subjectId ?? "all"}`;
   const [state, setState] = useState<PanelState>(() => ({ ...initialState(initialSources), ...panelSessions.get(sessionKey) }));
+  const signalAccess = useSignalsAccess();
+  const ensureKind = signalAccess?.ensureKind;
+  const missingSignals = !!signalAccess && state.sources.some(kind => kind !== "paper" && !signalAccess.loaded[kind]);
+  useEffect(() => {
+    if (ensureKind) for (const kind of state.sources) if (kind !== "paper") void ensureKind(kind);
+  }, [ensureKind, state.sources]);
   const [pending, setPending] = useState(false);
   const [progress, setProgress] = useState("");
   const [error, setError] = useState("");
@@ -187,7 +194,7 @@ function AiResearchScope({ papers, signals = NO_SIGNALS, initialSources, title: 
     setProgress(t("本次分析已取消。", "Analysis canceled."));
   };
   const analyze = async () => {
-    if (!evidence || !evidence.papers.length || pending || needsKey || needsModel) return;
+    if (!evidence || !evidence.papers.length || pending || needsKey || needsModel || missingSignals) return;
     request.current.controller?.abort();
     const controller = new AbortController();
     const id = request.current.id + 1;
@@ -228,7 +235,8 @@ function AiResearchScope({ papers, signals = NO_SIGNALS, initialSources, title: 
       </div>
       {!!evidence?.papers.some(paper => paper.signal) && <details className="ai-field-full ai-finding-evidence"><summary>{t("查看将用于分析的仓库／新闻", "Inspect repository / news evidence")}</summary><ol>{evidence.papers.filter(paper => paper.signal && safeSignalUrl(paper.url)).map(paper => <li key={paper.id}><a href={paper.url} target="_blank" rel="noreferrer">[{sourceLabel(paper.signal!.kind)}] {paper.title} ↗</a><p>{t("事件日期", "Event date")}: {paper.publishedAt.slice(0, 10)} · {t("观察日期", "Observed")}: {paper.signal!.observedAt.slice(0, 10)}{paper.signal!.summaryKind === "search-snippet" ? ` · ${t("检索摘要，原文未核验", "Search snippet; original unverified")}` : ""}</p></li>)}</ol></details>}
       <p className="ai-help ai-field-full">{t("论文按首次已知发表日；GitHub 按最近推送／发布日（或创建日）；新闻按发布时间。仓库和新闻仅使用截止日前已观察到的快照，不能用当前快照回推历史。", "Papers use the earliest known publication day; GitHub uses the latest push/release or creation day; news uses publication day. Repository and news snapshots must have been observed by the end date; current snapshots cannot reconstruct history.")}</p>
-      <div className="ai-analysis-actions ai-field-full"><button type="submit" className="foresight-button foresight-button-primary" disabled={pending || !evidence?.papers.length || needsKey || needsModel}>{pending ? t("AI 分析中…", "Analyzing…") : result ? t("重新分析", "Analyze again") : settings.provider === "local" ? t("免费 AI 分析", "Analyze with free AI") : settings.paid ? t("使用付费 API 分析", "Analyze with paid API") : t("免费云端分析", "Analyze with free cloud AI")}</button>{pending && <button type="button" className="foresight-button" onClick={cancel}>{t("取消", "Cancel")}</button>}<p className="ai-help">{needsKey ? t("请先填写上方的个人 API key。", "Enter your personal API key above.") : needsModel ? t("请先填写需要调用的模型 ID。", "Enter the model ID to call above.") : settings.provider === "local" ? t(`所选 ${localModel.name} 首次下载约 ${localModel.downloadLabel}，另需运行库；速度取决于设备。`, `The first use of ${localModel.name} downloads about ${localModel.downloadLabel}, plus the runtime; speed depends on your device.`) : t("仅将本次样本与问题发送给模型。", "Only this sample and question are sent to the model.")}</p></div>
+      {missingSignals && <p className="ai-help ai-field-full" role="status">{signalAccess?.error ? t("所选来源尚未加载完成，请重试后再分析。", "A selected source could not be loaded. Retry before analysis.") : t("正在加载所选来源的公开证据…", "Loading public evidence from the selected sources…")}{signalAccess?.error && <button type="button" className="foresight-text-button" onClick={() => { if (ensureKind) for (const kind of state.sources) if (kind !== "paper") void ensureKind(kind); }}>{t("重新加载", "Retry loading")}</button>}</p>}
+      <div className="ai-analysis-actions ai-field-full"><button type="submit" className="foresight-button foresight-button-primary" disabled={pending || missingSignals || !evidence?.papers.length || needsKey || needsModel}>{pending ? t("AI 分析中…", "Analyzing…") : result ? t("重新分析", "Analyze again") : settings.provider === "local" ? t("免费 AI 分析", "Analyze with free AI") : settings.paid ? t("使用付费 API 分析", "Analyze with paid API") : t("免费云端分析", "Analyze with free cloud AI")}</button>{pending && <button type="button" className="foresight-button" onClick={cancel}>{t("取消", "Cancel")}</button>}<p className="ai-help">{needsKey ? t("请先填写上方的个人 API key。", "Enter your personal API key above.") : needsModel ? t("请先填写需要调用的模型 ID。", "Enter the model ID to call above.") : settings.provider === "local" ? t(`所选 ${localModel.name} 首次下载约 ${localModel.downloadLabel}，另需运行库；速度取决于设备。`, `The first use of ${localModel.name} downloads about ${localModel.downloadLabel}, plus the runtime; speed depends on your device.`) : t("仅将本次样本与问题发送给模型。", "Only this sample and question are sent to the model.")}</p></div>
     </form>
     {(pending || progress) && <div className="ai-progress" role="status" aria-live="polite">{pending && <span className="ai-progress-dot" aria-hidden="true" />}{progress}</div>}
     {error && <div className="ai-error" role="alert"><strong>{t("本次分析未完成", "Analysis did not complete")}</strong><p>{error}</p><p>{t("可以调整模型或范围后重试。当前没有生成可用的 AI 结论。", "Adjust the model or scope and retry. No usable AI assessment was generated.")}</p></div>}

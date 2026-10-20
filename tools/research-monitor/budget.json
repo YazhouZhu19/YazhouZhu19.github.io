@@ -14,33 +14,104 @@
     ]
   },
   "initialData": [
-    { "id": "papers", "kind": "paper-snapshot", "path": "data/public-papers-v2.json" },
-    { "id": "signals", "kind": "file", "path": "data/research-signals.json" }
+    {
+      "id": "papers",
+      "kind": "paper-snapshot",
+      "path": "data/public-papers-v2.json"
+    }
   ],
   "limits": {
     "assets": {
-      "assets/ai-research-panel.js": { "rawBytes": 98304, "gzipBytes": 38912 },
-      "assets/ai-worker.js": { "rawBytes": 6247424, "gzipBytes": 2203648 },
-      "assets/analysis.js": { "rawBytes": 10240, "gzipBytes": 5120 },
-      "assets/foresight-view.js": { "rawBytes": 2048, "gzipBytes": 1024 },
-      "assets/lib.js": { "rawBytes": 6030336, "gzipBytes": 2155520 },
-      "assets/main.css": { "rawBytes": 269312, "gzipBytes": 45056 },
-      "assets/main.js": { "rawBytes": 582656, "gzipBytes": 181248 },
-      "assets/monitor-views.js": { "rawBytes": 15360, "gzipBytes": 6144 },
-      "assets/paper-analysis.js": { "rawBytes": 3072, "gzipBytes": 2048 },
-      "assets/preliminary-analysis.js": { "rawBytes": 14336, "gzipBytes": 6144 },
-      "assets/research-signals-view.js": { "rawBytes": 117760, "gzipBytes": 34816 },
-      "assets/research-signals-view.css": { "rawBytes": 32768, "gzipBytes": 6144 },
-      "assets/team-foresight.js": { "rawBytes": 25600, "gzipBytes": 9216 },
-      "assets/team-foresight.css": { "rawBytes": 12288, "gzipBytes": 3072 }
+      "assets/ai-research-panel.js": {
+        "rawBytes": 98304,
+        "gzipBytes": 38912
+      },
+      "assets/ai-worker.js": {
+        "rawBytes": 6247424,
+        "gzipBytes": 2203648
+      },
+      "assets/analysis.js": {
+        "rawBytes": 10240,
+        "gzipBytes": 5120
+      },
+      "assets/foresight-view.js": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/lib.js": {
+        "rawBytes": 6030336,
+        "gzipBytes": 2155520
+      },
+      "assets/main.css": {
+        "rawBytes": 269312,
+        "gzipBytes": 45056
+      },
+      "assets/main.js": {
+        "rawBytes": 582656,
+        "gzipBytes": 181248
+      },
+      "assets/monitor-views.js": {
+        "rawBytes": 15360,
+        "gzipBytes": 6144
+      },
+      "assets/paper-analysis.js": {
+        "rawBytes": 3072,
+        "gzipBytes": 2048
+      },
+      "assets/preliminary-analysis.js": {
+        "rawBytes": 14336,
+        "gzipBytes": 6144
+      },
+      "assets/research-signals-view.js": {
+        "rawBytes": 117760,
+        "gzipBytes": 35840
+      },
+      "assets/research-signals-view.css": {
+        "rawBytes": 32768,
+        "gzipBytes": 6144
+      },
+      "assets/team-foresight.js": {
+        "rawBytes": 25600,
+        "gzipBytes": 9216
+      },
+      "assets/team-foresight.css": {
+        "rawBytes": 12288,
+        "gzipBytes": 3072
+      },
+      "assets/research-signals.js": {
+        "rawBytes": 5120,
+        "gzipBytes": 2048
+      },
+      "assets/signals-snapshot.js": {
+        "rawBytes": 8192,
+        "gzipBytes": 4096
+      }
     },
     "totals": {
-      "initialJs": { "rawBytes": 582656, "gzipBytes": 181248 },
-      "initialCss": { "rawBytes": 269312, "gzipBytes": 45056 },
-      "optionalJs": { "rawBytes": 12558336, "gzipBytes": 4457472 },
-      "optionalCss": { "rawBytes": 45056, "gzipBytes": 9216 },
-      "initialData": { "rawBytes": 123325440, "gzipBytes": 20017152 },
-      "initialMeasuredResources": { "rawBytes": 124203008, "gzipBytes": 20248576 }
+      "initialJs": {
+        "rawBytes": 582656,
+        "gzipBytes": 181248
+      },
+      "initialCss": {
+        "rawBytes": 269312,
+        "gzipBytes": 45056
+      },
+      "optionalJs": {
+        "rawBytes": 12558336,
+        "gzipBytes": 4457472
+      },
+      "optionalCss": {
+        "rawBytes": 45056,
+        "gzipBytes": 9216
+      },
+      "initialData": {
+        "rawBytes": 72253440,
+        "gzipBytes": 11777024
+      },
+      "initialMeasuredResources": {
+        "rawBytes": 73105408,
+        "gzipBytes": 12003328
+      }
     },
     "datasets": {
       "papers": {
