@@ -5,6 +5,9 @@ export const LOCAL_AI_MODELS = [
     id: "Qwen3-0.6B-q4f16_1-MLC",
     name: "Qwen3-0.6B",
     downloadLabel: "350 MB",
+    contextTokens: 8192,
+    inputTokens: 4200,
+    outputTokens: 2200,
     tierZh: "轻量试用",
     tierEn: "Lightweight trial",
   },
@@ -12,6 +15,9 @@ export const LOCAL_AI_MODELS = [
     id: "Qwen3-1.7B-q4f16_1-MLC",
     name: "Qwen3-1.7B",
     downloadLabel: "1 GB",
+    contextTokens: 8192,
+    inputTokens: 5200,
+    outputTokens: 2200,
     tierZh: "均衡",
     tierEn: "Balanced",
   },
@@ -19,6 +25,9 @@ export const LOCAL_AI_MODELS = [
     id: "Qwen3-4B-q4f16_1-MLC",
     name: "Qwen3-4B",
     downloadLabel: "2.3 GB",
+    contextTokens: 8192,
+    inputTokens: 5600,
+    outputTokens: 2200,
     tierZh: "较大模型",
     tierEn: "Larger model",
   },
@@ -33,7 +42,13 @@ export function isFreeApiModel(id: string) {
   return id === "openrouter/free" || (id.trim() === id && /^[\w.-]+\/[\w.-]+:free$/.test(id));
 }
 
-export function aiSampleLimit(profile: "quick" | "expanded", provider: "local" | "openrouter") {
+export function aiSampleLimit(
+  profile: "quick" | "expanded",
+  provider: "local" | "openrouter",
+  modelId?: string,
+) {
+  if (profile === "quick" && provider === "local" && getLocalAiModel(modelId ?? "").name === "Qwen3-0.6B")
+    return 4;
   return profile === "quick" ? (provider === "local" ? 6 : 12) : provider === "local" ? 24 : 80;
 }
 
@@ -129,4 +144,14 @@ export async function fetchFreeAiModels(
     clearTimeout(timer);
     signal?.removeEventListener("abort", relay);
   }
+}
+
+/** Approximation only: Latin characters /4 and Han characters /1.5, plus framing overhead. */
+export function estimatedInputTokens(messages: { content: string }[]) {
+  return Math.ceil(
+    messages.reduce((sum, { content }) => {
+      const han = [...content].filter((character) => /\p{Script=Han}/u.test(character)).length;
+      return sum + han / 1.5 + ([...content].length - han) / 4;
+    }, 200),
+  );
 }

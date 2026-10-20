@@ -83,7 +83,7 @@ export type PreliminaryAnalysis = {
 };
 
 const DAY = 86400000;
-const signalRules: Record<EvidenceSignalId, RegExp> = {
+export const signalRules: Record<EvidenceSignalId, RegExp> = {
   external_validation:
     /extern(?:al|ally)[ -](?:validat|evaluat|test)|(?:validat|evaluat|test)\w*\b.{0,70}\bexternal (?:cohort|dataset|data set|test|data|hospital|population)|independent external/i,
   multicentre:
@@ -102,7 +102,7 @@ const futureOrBackground =
 const negation = /\b(?:no|not|without|never|neither|lack(?:s|ed|ing)?)\b/i;
 const performed =
   /\b(?:included|involved|enrolled|recruited|collected|conducted|performed|evaluated|validated|assessed|tested|demonstrated|achieved|showed|found|used|using)\b|\bwe (?:evaluat|validat|assess|test|conduct|perform|enroll|recruit|collect|analy[sz])/i;
-function sentences(abstract: string): string[] {
+export function sentences(abstract: string): string[] {
   return (" " + abstract)
     .replace(
       /\s+((?:BACKGROUND|OBJECTIVES?|PURPOSE|AIMS?|(?:MATERIALS\s*(?:&|AND)\s*)?METHODS?|RESULTS?|CONCLUSIONS?|FINDINGS):)/gi,

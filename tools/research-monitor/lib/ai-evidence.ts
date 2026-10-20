@@ -4,6 +4,7 @@ import { beijingDay } from "./dashboard";
 import { groupWorks, publicationDay } from "./foresight";
 import type { Paper } from "./types";
 import type { ResearchSignal } from "./research-signals";
+import { sentences, signalRules } from "./analysis";
 import { publicationDateStatus } from "./publication-date";
 import { retrieve, diversityPick, type RetrievalMetadata } from "./retrieval";
 
@@ -55,13 +56,55 @@ export type AiReport = { summary: string; findings: AiFinding[]; limitations: st
 const dayMs = 86400000;
 const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 const abstractOf = (paper: Paper) => textOnly(paper.originalAbstract?.trim() || paper.abstract);
-function abstractExcerpt(paper: Paper): string {
+/** Preserve methods/results and stated limitations, with visible gaps, in source order. */
+export function abstractExcerpt(paper: Paper, maxCharacters = 900): string {
   const abstract = abstractOf(paper);
-  if (abstract.length <= 900) return abstract;
-  const omitted = "\n[... excerpt omitted ...]\n";
-  const headLength = 440,
-    tailLength = 900 - headLength - omitted.length;
-  return abstract.slice(0, headLength) + omitted + abstract.slice(-tailLength);
+  if (abstract.length <= maxCharacters) return abstract;
+  const gap = "\n[... excerpt omitted ...]\n";
+  if (maxCharacters <= gap.length) return abstract.slice(0, Math.max(0, maxCharacters));
+  const lines = sentences(abstract);
+  const ranked = lines
+    .map((text, index) => ({
+      text,
+      index,
+      score:
+        (/^(?:methods?|materials|results?|findings)\b|\b(?:we propose|we develop|achieved|outperformed|demonstrated|evaluated)\b|方法|结果/i.test(
+          text,
+        )
+          ? 3
+          : 0) +
+        (/^(?:conclusions?|limitations?)\b|not superior|clinical benefit|结论|局限/i.test(text) ? 2 : 0) +
+        (Object.values(signalRules).some((rule) => rule.test(text)) ? 1 : 0),
+    }))
+    .sort((a, b) => b.score - a.score || a.index - b.index);
+  const compact = (text: string, size: number) => {
+    if (text.length <= size) return text;
+    const body = size - gap.length;
+    return text.slice(0, Math.ceil(body / 2)) + gap + text.slice(-Math.floor(body / 2));
+  };
+  const priority = ranked.filter((row) => row.score > 0).slice(0, 4);
+  const limitation = ranked.find((row) =>
+    /^(?:conclusions?|limitations?)\b|clinical benefit|局限|结论/i.test(row.text),
+  );
+  if (limitation && !priority.includes(limitation)) {
+    if (priority.length === 4) priority.pop();
+    priority.push(limitation);
+  }
+  if (!priority.length) return compact(abstract, maxCharacters);
+  let remaining = maxCharacters - gap.length * (priority.length + 1);
+  const selected = priority
+    .map((row, index) => {
+      const allowance = Math.floor(remaining / (priority.length - index));
+      const text = compact(row.text, Math.max(gap.length + 2, allowance));
+      remaining -= text.length;
+      return { ...row, text };
+    })
+    .sort((a, b) => a.index - b.index);
+  return (
+    (selected[0].index ? gap : "") +
+    selected.map((row) => row.text).join(gap) +
+    (selected.at(-1)!.index < lines.length - 1 ? gap : "")
+  ).slice(0, maxCharacters);
 }
 const daySchema = z
   .string()
@@ -328,7 +371,10 @@ export function parseAiReport(raw: string, allowedIds: string[]): AiReport {
   return report;
 }
 
-export function buildAiMessages(evidence: AiEvidence): { role: "system" | "user"; content: string }[] {
+export function buildAiMessages(
+  evidence: AiEvidence,
+  abstractCharacters = 900,
+): { role: "system" | "user"; content: string }[] {
   const { spec } = evidence;
   const combined = !!evidence.sourceCoverage;
   const task =
@@ -367,7 +413,7 @@ export function buildAiMessages(evidence: AiEvidence): { role: "system" | "user"
   const records = evidence.papers.map((paper) => ({
     id: paper.id,
     title: textOnly(paper.title).slice(0, 500),
-    abstract: abstractExcerpt(paper),
+    abstract: abstractExcerpt(paper, abstractCharacters),
     date: paper.publishedAt,
     source: paper.source.slice(0, 100),
     status: paper.status,
@@ -379,7 +425,10 @@ export function buildAiMessages(evidence: AiEvidence): { role: "system" | "user"
       id: paper.id,
       kind: signal.kind,
       title: textOnly(signal.title).slice(0, 350),
-      summary: textOnly(signal.summary).slice(0, signal.kind === "github" ? 350 : 650),
+      summary: textOnly(signal.summary).slice(
+        0,
+        Math.min(abstractCharacters, signal.kind === "github" ? 350 : 650),
+      ),
       summaryKind: signal.summaryKind,
       publisher: textOnly(signal.publisher).slice(0, 100),
       eventDate: paper.publishedAt,
@@ -393,7 +442,7 @@ export function buildAiMessages(evidence: AiEvidence): { role: "system" | "user"
     return signal.kind === "github"
       ? {
           ...common,
-          readmeExcerpt: textOnly(signal.readmeExcerpt).slice(0, 350),
+          readmeExcerpt: textOnly(signal.readmeExcerpt).slice(0, Math.min(350, abstractCharacters)),
           pushedAt: signal.pushedAt,
           releasedAt: signal.releasedAt,
           stars: signal.stars,

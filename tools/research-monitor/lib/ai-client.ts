@@ -1,5 +1,5 @@
 import { buildAiMessages, parseAiReport, type AiEvidence, type AiReport } from "./ai-evidence";
-import { getLocalAiModel, isFreeApiModel } from "./ai-models";
+import { getLocalAiModel, isFreeApiModel, estimatedInputTokens } from "./ai-models";
 import type { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
 
 export const LOCAL_AI_MODEL = "Qwen3-1.7B-q4f16_1-MLC";
@@ -197,7 +197,7 @@ async function loadLocal(modelId: string, options: RunOptions, locale: string) {
               );
           },
         },
-        { context_window_size: 8192 },
+        { context_window_size: model.contextTokens },
       ).then(resolve, reject);
     });
     const engine = await interruptible(
@@ -365,51 +365,61 @@ function concise(messages: Message[]): Message[] {
   );
 }
 
-// Conservative size guard, followed by bounded model context. It is not a tokenizer.
-function estimatedTokens(messages: Message[]) {
-  return messages.reduce(
-    (sum, message) =>
-      sum +
-      [...message.content].reduce((count, character) => count + (character.charCodeAt(0) < 128 ? 0.5 : 3), 0),
-    200,
+/** Adapt source excerpts before splitting; never truncate a question or citation identifier. */
+export function buildBudgetedAiMessages(evidence: AiEvidence, local: boolean, modelId = LOCAL_AI_MODEL) {
+  const budget = local ? getLocalAiModel(modelId).inputTokens : 28000;
+  for (const size of [900, 700, 500, 300, 180, 80]) {
+    const messages = concise(buildAiMessages(evidence, size));
+    if (estimatedInputTokens(messages) <= budget) return messages;
+  }
+  throw new Error(
+    local
+      ? text(
+          "问题或单篇论文超出免费模型的上下文，请缩短问题或使用 API 模式。",
+          "The question or a paper exceeds the local model context. Shorten the question or use the API mode.",
+          evidence.spec.locale,
+        )
+      : text(
+          "问题或单篇论文超出云端分析的输入预算，请缩短问题后重试。",
+          "The question or a paper exceeds the cloud input budget. Shorten the question and retry.",
+          evidence.spec.locale,
+        ),
   );
 }
-export function aiEvidenceBatches(evidence: AiEvidence, local: boolean): AiEvidence["papers"][] {
+export function aiEvidenceBatches(
+  evidence: AiEvidence,
+  local: boolean,
+  modelId = LOCAL_AI_MODEL,
+): AiEvidence["papers"][] {
   const batches: AiEvidence["papers"][] = [];
-  const inputBudget = local ? 5200 : 28000;
   let current: AiEvidence["papers"] = [];
   for (const paper of evidence.papers) {
     const candidate = [...current, paper];
-    if (
-      current.length &&
-      (candidate.length > (local ? 6 : 40) ||
-        estimatedTokens(concise(buildAiMessages({ ...evidence, papers: candidate }))) > inputBudget)
-    ) {
+    let fits = candidate.length <= (local ? 6 : 40);
+    if (fits) {
+      try {
+        buildBudgetedAiMessages({ ...evidence, papers: candidate }, local, modelId);
+      } catch {
+        fits = false;
+      }
+    }
+    if (current.length && !fits) {
       batches.push(current);
       current = [paper];
     } else current = candidate;
-    if (estimatedTokens(concise(buildAiMessages({ ...evidence, papers: current }))) > inputBudget) {
-      throw new Error(
-        local
-          ? text(
-              "问题或单篇论文超出免费模型的上下文，请缩短问题或使用 API 模式。",
-              "The question or a paper exceeds the local model context. Shorten the question or use the API mode.",
-              evidence.spec.locale,
-            )
-          : text(
-              "问题或单篇论文超出云端分析的输入预算，请缩短问题后重试。",
-              "The question or a paper exceeds the cloud input budget. Shorten the question and retry.",
-              evidence.spec.locale,
-            ),
-      );
-    }
+    buildBudgetedAiMessages({ ...evidence, papers: current }, local, modelId);
   }
   if (current.length) batches.push(current);
   return batches;
 }
 
 /** Fit preliminary observations without truncating the user's question or citation IDs. */
-export function buildAiSynthesis(evidence: AiEvidence, reports: AiReport[], local: boolean) {
+export function buildAiSynthesis(
+  evidence: AiEvidence,
+  reports: AiReport[],
+  local: boolean,
+  modelId = LOCAL_AI_MODEL,
+) {
   const system = buildAiMessages({ ...evidence, papers: [] })[0];
   for (const [titleLimit, observationLimit, limitationLimit, findingLimit] of [
     [70, 120, 80, 3],
@@ -461,7 +471,8 @@ export function buildAiSynthesis(evidence: AiEvidence, reports: AiReport[], loca
         }),
       },
     ]);
-    if (!local || estimatedTokens(messages) <= 5200) return { messages, ids };
+    if (estimatedInputTokens(messages) <= (local ? getLocalAiModel(modelId).inputTokens : 28000))
+      return { messages, ids };
   }
   throw new Error(
     text(
@@ -499,7 +510,7 @@ export async function runAiAnalysis(
   };
   options.signal.addEventListener("abort", abortLocal, { once: true });
   try {
-    const batches = aiEvidenceBatches(evidence, config.provider === "local");
+    const batches = aiEvidenceBatches(evidence, config.provider === "local", config.localModel);
     const localModel = getLocalAiModel(config.localModel);
     const engine = config.provider === "local" ? await loadLocal(localModel.id, options, locale) : null;
     const parse = (raw: string, ids: string[]) => {
@@ -544,7 +555,7 @@ export async function runAiAnalysis(
         models.add(reply.model);
         return reply.content;
       }
-      if (estimatedTokens(messages) > 5200)
+      if (estimatedInputTokens(messages) > localModel.inputTokens)
         throw new Error(
           text(
             "合并内容超出免费模型上下文，请缩小范围或改用 API 模式。",
@@ -575,7 +586,7 @@ export async function runAiAnalysis(
         engine.chat.completions.create({
           messages,
           temperature: 0.2,
-          max_tokens: 2200,
+          max_tokens: localModel.outputTokens,
           response_format: { type: "json_object", schema: JSON.stringify(schema) },
           ...(localModel.id.startsWith("Qwen3-") ? { extra_body: { enable_thinking: false } } : {}),
         }),
@@ -620,12 +631,10 @@ export async function runAiAnalysis(
             ),
       );
       const papers = batches[index];
-      const messages = concise(
-        buildAiMessages({
-          ...evidence,
-          papers,
-          sampled: evidence.sampled || papers.length < evidence.totalWorks,
-        }),
+      const messages = buildBudgetedAiMessages(
+        { ...evidence, papers, sampled: evidence.sampled || papers.length < evidence.totalWorks },
+        config.provider === "local",
+        config.localModel,
       );
       const raw = await infer(
         messages,
@@ -653,6 +662,7 @@ export async function runAiAnalysis(
           evidence,
           stage.slice(index, index + 2),
           !!engine,
+          config.localModel,
         );
         if (!ids.length) {
           next.push(stage[index]);

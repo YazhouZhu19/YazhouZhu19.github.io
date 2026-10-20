@@ -346,7 +346,7 @@ function AiResearchScope({
   const fieldId = useId();
   const today = beijingDay(new Date());
   const localModel = getLocalAiModel(settings.localModel);
-  const sampleLimit = aiSampleLimit(state.profile, settings.provider);
+  const sampleLimit = aiSampleLimit(state.profile, settings.provider, settings.localModel);
   const title =
     customTitle ??
     (mode === "landscape"
@@ -645,17 +645,25 @@ function AiResearchScope({
           >
             <option value="quick">
               {t(
-                `快速预览 · 最多 ${aiSampleLimit("quick", settings.provider)} 项`,
-                `Quick preview · up to ${aiSampleLimit("quick", settings.provider)} works`,
+                `快速预览 · 最多 ${aiSampleLimit("quick", settings.provider, settings.localModel)} 项`,
+                `Quick preview · up to ${aiSampleLimit("quick", settings.provider, settings.localModel)} works`,
               )}
             </option>
             <option value="expanded">
               {t(
-                `扩展分析 · 最多 ${aiSampleLimit("expanded", settings.provider)} 项`,
-                `Expanded analysis · up to ${aiSampleLimit("expanded", settings.provider)} works`,
+                `扩展分析 · 最多 ${aiSampleLimit("expanded", settings.provider, settings.localModel)} 项`,
+                `Expanded analysis · up to ${aiSampleLimit("expanded", settings.provider, settings.localModel)} works`,
               )}
             </option>
           </select>
+          {settings.provider === "local" && localModel.name === "Qwen3-0.6B" && (
+            <p className="ai-help">
+              {t(
+                "轻量模型的快速预览限4项，为方法与结果证据保留输入空间。",
+                "Quick preview is limited to four items on this lightweight model to preserve space for methods and results.",
+              )}
+            </p>
+          )}
           <p className="ai-help">
             {state.profile === "quick"
               ? t(

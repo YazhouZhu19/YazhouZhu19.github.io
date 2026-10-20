@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   aiEvidenceBatches,
+  buildBudgetedAiMessages,
   aiModelLabel,
   buildAiSynthesis,
   callOpenRouter,
@@ -13,7 +14,7 @@ import {
   updateAiSettings,
   type AiSettings,
 } from "../lib/ai-client";
-import { getLocalAiModel, LOCAL_AI_MODELS } from "../lib/ai-models";
+import { getLocalAiModel, LOCAL_AI_MODELS, estimatedInputTokens } from "../lib/ai-models";
 import { parseAiReport, prepareAiEvidence, type AiReport, type AiSpec } from "../lib/ai-evidence";
 import type { Paper } from "../lib/types";
 
@@ -230,7 +231,10 @@ test("local engines reuse the selected model and release the old worker on model
       if (request.kind === "reload") {
         this.model = request.content.modelId[0];
         this.loads++;
-        assert.equal(request.content.chatOpts[0].context_window_size, 8192);
+        assert.equal(
+          request.content.chatOpts[0].context_window_size,
+          getLocalAiModel(this.model).contextTokens,
+        );
       } else {
         assert.equal(request.kind, "chatCompletionNonStreaming");
         assert.deepEqual(request.content.modelId, [this.model]);
@@ -638,7 +642,7 @@ test("adaptive batches preserve every selected paper while respecting local and 
   assert.deepEqual(aiEvidenceBatches({ ...data, papers: [] }, true), []);
 });
 
-test("Chinese source text shrinks local batches and retains full paper evidence without silent truncation", () => {
+test("Chinese source excerpts fit local batches without increasing batch count or changing records", () => {
   const data = prepareAiEvidence(
     Array.from({ length: 8 }, (_, index) => ({
       ...paper(`chinese-${index}`),
@@ -649,10 +653,12 @@ test("Chinese source text shrinks local batches and retains full paper evidence 
     new Date("2026-10-14T04:00:00Z"),
   );
   const local = aiEvidenceBatches(data, true);
-  assert.deepEqual(
-    local.map((batch) => batch.length),
-    Array.from({ length: 8 }, () => 1),
-  );
+  assert.ok(local.length <= 8);
+  for (const batch of local)
+    assert.ok(
+      estimatedInputTokens(buildBudgetedAiMessages({ ...data, papers: batch }, true)) <=
+        getLocalAiModel(LOCAL_AI_MODEL).inputTokens,
+    );
   assert.deepEqual(local.flat(), data.papers);
   assert.equal(aiEvidenceBatches(data, false).length, 1);
   assert.equal(data.papers[0].abstract.length, 900);
@@ -669,13 +675,15 @@ test("cloud batching also budgets long Chinese inputs instead of relying only on
     new Date("2026-10-14T04:00:00Z"),
   );
   const batches = aiEvidenceBatches(data, false);
-  assert.ok(batches.length > 1);
-  assert.ok(batches.every((batch) => batch.length < 40 && batch.length > 0));
+  assert.ok(batches.length <= 5);
+  assert.ok(batches.every((batch) => batch.length <= 40 && batch.length > 0));
+  for (const batch of batches)
+    assert.ok(estimatedInputTokens(buildBudgetedAiMessages({ ...data, papers: batch }, false)) <= 28000);
   assert.deepEqual(batches.flat(), data.papers);
   const oversized = {
     ...data,
     spec: { ...data.spec, locale: "en" as const },
-    papers: [{ ...data.papers[0], id: "oversized-id-" + "x".repeat(60000) }],
+    papers: [{ ...data.papers[0], id: "oversized-id-" + "x".repeat(120000) }],
   };
   assert.throws(() => aiEvidenceBatches(oversized, false), /exceeds the cloud input budget/);
 });
@@ -685,12 +693,13 @@ test("an oversized independent question rejects local batching but remains usabl
     [paper("question")],
     {
       ...spec,
-      mode: "interest",
-      question: "研究问题".repeat(450),
+      mode: "landscape",
+      question: "",
     },
     48,
     new Date("2026-10-14T04:00:00Z"),
   );
+  data.spec = { ...data.spec, mode: "interest", question: "研究问题".repeat(2000) };
   assert.throws(() => aiEvidenceBatches(data, true), /exceeds the local model context/);
   assert.deepEqual(aiEvidenceBatches(data, false).flat(), data.papers);
 });
@@ -700,12 +709,13 @@ test("context validation precedes local model initialization or download", async
     [paper("question")],
     {
       ...spec,
-      mode: "interest",
-      question: "研究问题".repeat(450),
+      mode: "landscape",
+      question: "",
     },
     48,
     new Date("2026-10-14T04:00:00Z"),
   );
+  data.spec = { ...data.spec, mode: "interest", question: "研究问题".repeat(2000) };
   const progress: string[] = [];
   await assert.rejects(
     runAiAnalysis(
@@ -799,8 +809,8 @@ test("long Chinese observation pairs compress for local synthesis without changi
   assert.deepEqual(new Set(includedIds), new Set(expectedIds));
   for (const item of user.reports)
     for (const finding of item.findings) {
-      assert.ok(finding.observation.length <= 80);
-      assert.ok(finding.title.length <= 40);
+      assert.ok(finding.observation.length <= 120);
+      assert.ok(finding.title.length <= 70);
       assert.equal(finding.forecast, undefined);
     }
   assert.match(synthesis.messages[0].content, /details and findings may be omitted/);
@@ -808,13 +818,14 @@ test("long Chinese observation pairs compress for local synthesis without changi
 });
 
 test("synthesis never silently truncates an oversized independent question", () => {
-  const question = "研究问题".repeat(450);
+  const question = "研究问题".repeat(2000);
   const data = prepareAiEvidence(
     [paper("source")],
-    { ...spec, mode: "interest", question },
+    { ...spec, mode: "landscape", question: "" },
     48,
     new Date("2026-10-14T04:00:00Z"),
   );
+  data.spec = { ...data.spec, mode: "interest", question };
   const reports = [report(["source"]), report(["source"])];
   assert.throws(() => buildAiSynthesis(data, reports, true), /question is too long for local synthesis/);
   const cloud = buildAiSynthesis(data, reports, false);
