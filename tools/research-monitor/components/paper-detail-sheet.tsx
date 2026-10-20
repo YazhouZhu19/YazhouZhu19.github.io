@@ -6,7 +6,7 @@ import { ArrowUpRight, Check, RefreshCw } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState } from "./state-views";
 import { TRACKS, TASKS } from "@/lib/classify";
 import { fmtDate, fmtTime } from "@/lib/workspace-format";
 import { PaperPicker } from "./paper-picker";
@@ -109,7 +109,7 @@ export function PaperDetailSheet({
                 </a>
               </p>
             )}
-            <Suspense fallback={<Skeleton className="my-6 h-28 w-full rounded-xl" />}>
+            <Suspense fallback={<LoadingState compact />}>
               <PaperPreliminaryAnalysis paper={selected} />
             </Suspense>
             <h3>{tr("原始摘要")}</h3>

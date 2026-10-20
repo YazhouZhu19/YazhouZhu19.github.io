@@ -1,4 +1,6 @@
 "use client";
+import { EmptyState } from "./state-views";
+
 import "@/styles/foresight.css";
 
 import { useMemo, useState } from "react";
@@ -45,38 +47,46 @@ export function ForesightCards({ result, onPaper, onDrill }: EvidenceActions & {
         </p>
       )}
       {!result.cards.length ? (
-        <div className="foresight-empty" role="status">
-          <h3>
-            {result.papers.length
-              ? t("证据还不足以形成判断", "The evidence is not yet sufficient for an assessment")
-              : t("当前范围暂无可用论文", "No available papers in this scope")}
-          </h3>
-          <p>
-            {result.papers.length
-              ? t(
-                  "保留这些论文作为观察起点。调整关键词或影像模态，或等待相关证据积累后再评估。",
-                  "Keep these papers as a starting point. Broaden the keywords or imaging modality, or revisit when more relevant evidence is available.",
-                )
-              : t(
-                  "试试其他方向、移除关键词或放宽影像模态。空结果不能说明这个问题没有研究。",
-                  "Try another direction, remove keywords, or broaden the imaging modality. An empty result does not establish that the topic is unstudied.",
-                )}
-          </p>
-          {!!result.papers.length && (
-            <button
-              type="button"
-              className="foresight-button"
-              onClick={() =>
-                onDrill({
-                  label: t("当前观察范围的论文", "Papers in the current scope"),
-                  ids: result.papers.map((paper) => paper.id),
-                })
-              }
-            >
-              {t(`查看 ${result.papers.length} 篇论文`, `View ${result.papers.length} papers`)}
-            </button>
-          )}
-        </div>
+        <EmptyState
+          title={
+            <>
+              {result.papers.length
+                ? t("证据还不足以形成判断", "The evidence is not yet sufficient for an assessment")
+                : t("当前范围暂无可用论文", "No available papers in this scope")}
+            </>
+          }
+          description={
+            <>
+              {result.papers.length
+                ? t(
+                    "保留这些论文作为观察起点。调整关键词或影像模态，或等待相关证据积累后再评估。",
+                    "Keep these papers as a starting point. Broaden the keywords or imaging modality, or revisit when more relevant evidence is available.",
+                  )
+                : t(
+                    "试试其他方向、移除关键词或放宽影像模态。空结果不能说明这个问题没有研究。",
+                    "Try another direction, remove keywords, or broaden the imaging modality. An empty result does not establish that the topic is unstudied.",
+                  )}
+            </>
+          }
+          action={
+            <>
+              {!!result.papers.length && (
+                <button
+                  type="button"
+                  className="foresight-button"
+                  onClick={() =>
+                    onDrill({
+                      label: t("当前观察范围的论文", "Papers in the current scope"),
+                      ids: result.papers.map((paper) => paper.id),
+                    })
+                  }
+                >
+                  {t(`查看 ${result.papers.length} 篇论文`, `View ${result.papers.length} papers`)}
+                </button>
+              )}
+            </>
+          }
+        />
       ) : (
         <>
           <div className="assessment-cards">

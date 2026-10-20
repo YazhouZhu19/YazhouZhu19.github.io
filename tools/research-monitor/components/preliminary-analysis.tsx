@@ -1,4 +1,6 @@
 "use client";
+import { EmptyState } from "./state-views";
+
 import "@/styles/analysis.css";
 
 import { memo, useMemo } from "react";
@@ -448,14 +450,17 @@ export const PreliminaryAnalysis = memo(function PreliminaryAnalysis({
           </section>
         </>
       ) : (
-        <section className="analysis-empty">
-          <Search size={30} />
-          <h2>{tr("当前范围暂无可分析记录")}</h2>
-          <p>{tr("试着扩大日期范围或清除方向与来源筛选；空结果不表示该领域没有研究。")}</p>
-          <Button variant="outline" onClick={clear}>
-            {tr("清除筛选，查看全部日期")}
-          </Button>
-        </section>
+        <EmptyState
+          title={<>{tr("当前范围暂无可分析记录")}</>}
+          description={<>{tr("试着扩大日期范围或清除方向与来源筛选；空结果不表示该领域没有研究。")}</>}
+          action={
+            <>
+              <Button variant="outline" onClick={clear}>
+                {tr("清除筛选，查看全部日期")}
+              </Button>
+            </>
+          }
+        />
       )}
     </div>
   );

@@ -1,4 +1,6 @@
 "use client";
+import { EmptyState } from "./state-views";
+
 import { DashboardShell, DashboardMetric, type DashboardSlots } from "./dashboard-shell";
 import "@/styles/dashboard-common.css";
 
@@ -244,13 +246,15 @@ export function GitHubDashboard({
               monthly={monthly}
             />
           ) : (
-            <div className="dash-chart-empty">
-              <Radio size={28} />
-              <strong>{t("当前范围暂无可展示的日期记录", "No date records to display in this range")}</strong>
-              <span>
-                {t("调整统计时间，或检查快照日期。", "Adjust the time window or check the snapshot date.")}
-              </span>
-            </div>
+            <EmptyState
+              compact
+              title={<>{t("当前范围暂无可展示的日期记录", "No date records to display in this range")}</>}
+              description={
+                <>
+                  {t("调整统计时间，或检查快照日期。", "Adjust the time window or check the snapshot date.")}
+                </>
+              }
+            />
           )}
           <p className="dash-note">
             {creation

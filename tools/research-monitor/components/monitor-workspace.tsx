@@ -2,7 +2,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { Toaster } from "sonner";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState } from "./state-views";
 import { useSignals } from "@/hooks/use-signals";
 import { usePaperSnapshot } from "@/hooks/use-paper-snapshot";
 import { usePersonalData } from "@/hooks/use-personal-data";
@@ -207,19 +207,7 @@ export default function MonitorWorkspace() {
   const signalsView = view === "github" || view === "news";
   const sourceRecords = signals?.records ?? EMPTY_SIGNALS;
   const sourceRecordCount = signalsView ? (signalsManifest?.counts[view as "github" | "news"] ?? 0) : 0;
-  const viewFallback = (
-    <div
-      className="loading-papers"
-      role="status"
-      aria-label={ui("正在加载内容", "Loading content")}
-      aria-busy="true"
-    >
-      {[1, 2, 3].map((n) => (
-        <Skeleton key={n} className="h-28 w-full rounded-xl" />
-      ))}
-    </div>
-  );
-
+  const viewFallback = <LoadingState title={ui("正在加载内容", "Loading content")} />;
   return (
     <SignalsContext.Provider value={signalsAccess}>
       <SidebarProvider

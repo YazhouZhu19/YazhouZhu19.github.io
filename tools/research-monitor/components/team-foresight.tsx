@@ -1,4 +1,6 @@
 "use client";
+import { EmptyState } from "./state-views";
+
 import "@/styles/foresight.css";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -268,7 +270,7 @@ export function TeamForesight({
         >
           <button
             id="team-directory-tab"
-            aria-controls="team-directory-panel"
+            aria-controls={listSource === "directory" ? "team-directory-panel" : undefined}
             aria-pressed={listSource === "directory"}
             onClick={() => {
               if (listSource !== "directory") changeListScope({ listSource: "directory" });
@@ -278,7 +280,7 @@ export function TeamForesight({
           </button>
           <button
             id="team-saved-tab"
-            aria-controls="team-saved-panel"
+            aria-controls={listSource === "saved" ? "team-saved-panel" : undefined}
             aria-pressed={listSource === "saved"}
             onClick={() => {
               if (listSource !== "saved") changeListScope({ listSource: "saved" });
@@ -407,17 +409,22 @@ export function TeamForesight({
               ))}
             </ul>
             {!visibleAuthors.length && (
-              <p className="team-selector-empty">
-                {query
-                  ? t(
-                      "该方向下未找到匹配作者。可调整搜索，或手动新建名单。",
-                      "No matching author was found in this direction. Adjust the search or create a watchlist manually.",
-                    )
-                  : t(
-                      "该方向尚无符合默认条件的作者。可搜索姓名，查看单篇或缩写姓名线索。",
-                      "No author meets the default criteria in this direction. Search to include single-record or abbreviated-name candidates.",
-                    )}
-              </p>
+              <EmptyState
+                compact
+                description={
+                  <>
+                    {query
+                      ? t(
+                          "该方向下未找到匹配作者。可调整搜索，或手动新建名单。",
+                          "No matching author was found in this direction. Adjust the search or create a watchlist manually.",
+                        )
+                      : t(
+                          "该方向尚无符合默认条件的作者。可搜索姓名，查看单篇或缩写姓名线索。",
+                          "No author meets the default criteria in this direction. Search to include single-record or abbreviated-name candidates.",
+                        )}
+                  </>
+                }
+              />
             )}
             {filteredAuthors.length > effectiveLimit && (
               <div className="team-directory-more">
@@ -494,17 +501,22 @@ export function TeamForesight({
               ))}
             </ul>
             {!visibleTeams.length && (
-              <p className="team-selector-empty">
-                {teams.length
-                  ? t(
-                      "这一用途下还没有名单。可新建名单，或从作者目录加入。",
-                      "There are no watchlists for this purpose. Create one or add an author from the directory.",
-                    )
-                  : t(
-                      "尚未保存个人名单。先从“按研究方向选作者”选择对象，或新建一份名单。",
-                      "No personal watchlists are saved yet. Choose a subject under Authors by research direction, or create a watchlist.",
-                    )}
-              </p>
+              <EmptyState
+                compact
+                description={
+                  <>
+                    {teams.length
+                      ? t(
+                          "这一用途下还没有名单。可新建名单，或从作者目录加入。",
+                          "There are no watchlists for this purpose. Create one or add an author from the directory.",
+                        )
+                      : t(
+                          "尚未保存个人名单。先从“按研究方向选作者”选择对象，或新建一份名单。",
+                          "No personal watchlists are saved yet. Choose a subject under Authors by research direction, or create a watchlist.",
+                        )}
+                  </>
+                }
+              />
             )}
           </div>
         )}

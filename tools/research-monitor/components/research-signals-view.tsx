@@ -1,4 +1,5 @@
 "use client";
+import { LoadingState, ErrorState, EmptyState } from "./state-views";
 
 import {
   lazy,
@@ -152,11 +153,7 @@ export function ResearchSignalsView({
 }: Props) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
-  const viewLoading = (
-    <div className="signals-empty" role="status" aria-busy="true">
-      {t("正在读取公开数据…", "Loading public data…")}
-    </div>
-  );
+  const viewLoading = <LoadingState title={<>{t("正在读取公开数据…", "Loading public data…")}</>} />;
   const [query, setQuery] = useState(() => browseSessions.get(kind)?.query ?? "");
   const deferredQuery = useDeferredValue(query);
   const [category, setCategory] = useState(() => browseSessions.get(kind)?.category ?? "all");
@@ -1013,22 +1010,28 @@ export function ResearchSignalsView({
 
       {controlsOutsideShell && summaryControls}
       {error && (
-        <div className="signals-notice" role="alert">
-          <p>
-            {snapshot
-              ? t(
-                  "最新快照暂时无法读取，以下保留上次载入的结果。",
-                  "The latest snapshot could not be loaded. Previously loaded results are retained below.",
-                )
-              : t(
-                  "此数据源暂时无法读取；论文库仍可独立使用。",
-                  "This source could not be loaded. The paper library remains available independently.",
-                )}
-          </p>
-          <button type="button" className="foresight-button" onClick={retrySources} disabled={loading}>
-            {t("重新读取", "Retry")}
-          </button>
-        </div>
+        <ErrorState
+          description={
+            <>
+              {snapshot
+                ? t(
+                    "最新快照暂时无法读取，以下保留上次载入的结果。",
+                    "The latest snapshot could not be loaded. Previously loaded results are retained below.",
+                  )
+                : t(
+                    "此数据源暂时无法读取；论文库仍可独立使用。",
+                    "This source could not be loaded. The paper library remains available independently.",
+                  )}
+            </>
+          }
+          action={
+            <>
+              <button type="button" className="foresight-button" onClick={retrySources} disabled={loading}>
+                {t("重新读取", "Retry")}
+              </button>
+            </>
+          }
+        />
       )}
 
       {controlsOutsideShell && filterControls}
@@ -1045,9 +1048,9 @@ export function ResearchSignalsView({
         <Suspense fallback={viewLoading}>
           {view === "overview" ? (
             !snapshot || (!defaultScope && !recordsLoaded) ? (
-              <div className="signals-empty" role="status" aria-busy="true">
-                {t("正在读取公开数据…", "Loading public data…")}
-              </div>
+              error ? null : (
+                <LoadingState title={<>{t("正在读取公开数据…", "Loading public data…")}</>} />
+              )
             ) : kind === "github" && githubModel ? (
               <GitHubDashboard
                 summary={summaryControls}
@@ -1227,26 +1230,25 @@ export function ResearchSignalsView({
                 </section>
               )}
 
-              {!recordsLoaded && !error ? (
-                <div className="signals-empty" role="status" aria-busy="true">
-                  {t("正在读取公开数据…", "Loading public data…")}
-                </div>
+              {!recordsLoaded && error ? null : !recordsLoaded ? (
+                <LoadingState title={<>{t("正在读取公开数据…", "Loading public data…")}</>} />
               ) : filtered.length === 0 ? (
-                <div className="signals-empty">
-                  <Search size={23} />
-                  <h3>{t("没有符合条件的记录", "No matching records")}</h3>
-                  <p>
-                    {records.length
-                      ? t(
-                          "尝试缩小关键词、移除日期筛选，或切换到全部线索。",
-                          "Try fewer keywords, remove date filters, or switch to all leads.",
-                        )
-                      : t(
-                          "尚未载入此来源的数据，请查看采集状态或稍后重试。",
-                          "No records from this source are loaded. Check its collection status or retry later.",
-                        )}
-                  </p>
-                </div>
+                <EmptyState
+                  title={<>{t("没有符合条件的记录", "No matching records")}</>}
+                  description={
+                    <>
+                      {records.length
+                        ? t(
+                            "尝试缩小关键词、移除日期筛选，或切换到全部线索。",
+                            "Try fewer keywords, remove date filters, or switch to all leads.",
+                          )
+                        : t(
+                            "尚未载入此来源的数据，请查看采集状态或稍后重试。",
+                            "No records from this source are loaded. Check its collection status or retry later.",
+                          )}
+                    </>
+                  }
+                />
               ) : (
                 <div className="signals-list">
                   {filtered.slice(0, limit).map((record) => {

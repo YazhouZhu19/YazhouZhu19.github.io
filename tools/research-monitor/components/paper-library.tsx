@@ -1,8 +1,9 @@
+import { LoadingState, ErrorState, EmptyState } from "./state-views";
 import "@/styles/paper-library.css";
 import "@/styles/render-containment.css";
 import { useI18n } from "./locale-provider";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Search, Download, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
+import { Download, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TRACKS, TASKS, HUMAN_LABELS } from "@/lib/classify";
 import { fmtDate } from "@/lib/workspace-format";
@@ -75,30 +76,36 @@ export function PaperLibrary({ view, library, personal, storageAvailable, onExpo
         </div>
       </div>
       {!searchReady ? (
-        <div className="empty-state" role="status">
-          <RefreshCw className="animate-spin" />
-          <p>{ui("正在检索论文…", "Searching papers…")}</p>
-        </div>
+        <LoadingState title={<>{ui("正在检索论文…", "Searching papers…")}</>} />
       ) : searchFailed ? (
-        <div className="empty-state" role="alert">
-          <p>{ui("搜索暂时不可用，请重试。", "Search is unavailable. Please try again.")}</p>
-          <Button variant="outline" onClick={() => setSearchAttempt((value) => value + 1)}>
-            {ui("重试", "Retry")}
-          </Button>
-        </div>
+        <ErrorState
+          description={<>{ui("搜索暂时不可用，请重试。", "Search is unavailable. Please try again.")}</>}
+          action={
+            <>
+              <Button variant="outline" onClick={() => setSearchAttempt((value) => value + 1)}>
+                {ui("重试", "Retry")}
+              </Button>
+            </>
+          }
+        />
       ) : filtered.length === 0 ? (
-        <div className="empty-state">
-          <Search />
-          <p>{view === "saved" ? tr("还没有符合条件的收藏") : tr("没有符合条件的记录")}</p>
-          <span>
-            {view === "saved"
-              ? tr("在论文详情里收藏论文、添加阅读笔记。")
-              : tr("尝试移除部分筛选，或同步最新论文。")}
-          </span>
-          <Button className="mt-4" variant="outline" onClick={reset}>
-            {tr("清除筛选")}
-          </Button>
-        </div>
+        <EmptyState
+          title={<>{view === "saved" ? tr("还没有符合条件的收藏") : tr("没有符合条件的记录")}</>}
+          description={
+            <>
+              {view === "saved"
+                ? tr("在论文详情里收藏论文、添加阅读笔记。")
+                : tr("尝试移除部分筛选，或同步最新论文。")}
+            </>
+          }
+          action={
+            <>
+              <Button className="mt-4" variant="outline" onClick={reset}>
+                {tr("清除筛选")}
+              </Button>
+            </>
+          }
+        />
       ) : (
         filtered.slice(0, limit).map((p) => (
           <article key={p.id} className="paper-row">

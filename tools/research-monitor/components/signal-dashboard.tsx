@@ -1,4 +1,6 @@
 "use client";
+import { EmptyState } from "./state-views";
+
 import "@/styles/dashboard-common.css";
 
 import { useMemo } from "react";
@@ -168,16 +170,17 @@ export function SignalDashboard({ records, kind, asOf, onDrill, onBrowse }: Prop
       </div>
 
       {!records.length ? (
-        <div className="signals-empty">
-          <Database size={24} />
-          <h3>{t("当前范围暂无记录", "No records in this scope")}</h3>
-          <p>
-            {t(
-              "调整关键词、方向、相关性或日期范围，即可查看统计。",
-              "Adjust the keywords, area, relevance, or dates to see statistics.",
-            )}
-          </p>
-        </div>
+        <EmptyState
+          title={<>{t("当前范围暂无记录", "No records in this scope")}</>}
+          description={
+            <>
+              {t(
+                "调整关键词、方向、相关性或日期范围，即可查看统计。",
+                "Adjust the keywords, area, relevance, or dates to see statistics.",
+              )}
+            </>
+          }
+        />
       ) : (
         <>
           <Panel

@@ -1,4 +1,6 @@
 "use client";
+import { EmptyState } from "./state-views";
+
 import "@/styles/paper-library.css";
 import "@/styles/monitor-views.css";
 
@@ -312,7 +314,7 @@ export function TeamsView({
             </div>
           ))}
         </div>
-        {!candidates.length && <div className="empty-state">{tr("当前没有足够的重复作者记录。")}</div>}
+        {!candidates.length && <EmptyState title={<>{tr("当前没有足够的重复作者记录。")}</>} />}
       </section>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>

@@ -1,4 +1,6 @@
 "use client";
+import { EmptyState } from "./state-views";
+
 import "@/styles/dashboard-common.css";
 import { useI18n } from "./locale-provider";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -367,13 +369,13 @@ export const ResearchDashboard = memo(function ResearchDashboard({
           {m.rows.length ? (
             <TimelineChart rows={m.trend} onOpen={openTimeline} />
           ) : (
-            <div className="dash-chart-empty">
-              <Radio size={28} />
-              <strong>
-                {filters.clock === "discovery" ? tr("尚无符合范围的后续发现") : tr("当前范围暂无记录")}
-              </strong>
-              <span>{tr("调整时间或来源，或同步最新论文。")}</span>
-            </div>
+            <EmptyState
+              compact
+              title={
+                <>{filters.clock === "discovery" ? tr("尚无符合范围的后续发现") : tr("当前范围暂无记录")}</>
+              }
+              description={<>{tr("调整时间或来源，或同步最新论文。")}</>}
+            />
           )}
           <details className="dash-series-detail">
             <summary>{tr("查看日期明细并定位论文")}</summary>
