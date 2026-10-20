@@ -144,8 +144,10 @@ jobs:
               echo "$signals_exit" > "$RUNNER_TEMP/research-signals-exit"
               node --import tsx scripts/check-signal-collection.ts "$RUNNER_TEMP/research-signals-before.json" data/research-signals.json "$signals_started_at" "$signals_exit"
               npm test
+              npm run format:check
               python3 -m unittest discover -s tests -p '*_test.py'
               npm run build
+              npm run measure
             )
             collection_failed=false
             if [ "$(cat "$RUNNER_TEMP/research-collect-exit")" -ne 0 ]; then
