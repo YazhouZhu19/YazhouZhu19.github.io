@@ -1,13 +1,21 @@
 import { randomUUID } from "node:crypto";
 import { copyFile, mkdir, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
-import { MAX_SHARD_BYTES, PUBLIC_SNAPSHOT_SCHEMA, SNAPSHOT_SCHEMA, parseSnapshotManifest, type SnapshotManifest } from "../lib/snapshot";
+import { MAX_SHARD_BYTES, PUBLIC_SNAPSHOT_SCHEMA, PUBLIC_SNAPSHOT_V3_SCHEMA, SNAPSHOT_SCHEMA, parseSnapshotManifest, type SnapshotManifest } from "../lib/snapshot";
 
 export async function readSnapshotManifest(file: string): Promise<SnapshotManifest | undefined> {
   let value: unknown;
   try { value = JSON.parse(await readFile(file, "utf8")); }
   catch (error: any) { if (error.code === "ENOENT") return; throw error; }
   if (value && typeof value === "object" && "schema" in value) return parseSnapshotManifest(value);
+}
+
+/** Re-add one preceding public generation after sibling writers finish pruning. */
+export async function copyPreviousSnapshotShards(file: string, targetDirectory: string) {
+  const manifest = await readSnapshotManifest(file);
+  if (!manifest || resolve(dirname(file)) === resolve(targetDirectory)) return;
+  await mkdir(join(targetDirectory, "papers"), { recursive: true });
+  for (const shard of manifest.shards) await copyFile(join(dirname(file), shard.path), join(targetDirectory, shard.path));
 }
 
 async function atomicWrite(file: string, content: string) {
@@ -39,7 +47,7 @@ export async function installSnapshot(
     let value: any;
     try { value = JSON.parse(await readFile(join(dirname(file), sibling.name), "utf8")); }
     catch (error) { if (error instanceof SyntaxError) continue; throw error; }
-    if ([SNAPSHOT_SCHEMA, PUBLIC_SNAPSHOT_SCHEMA].includes(value?.schema)) {
+    if ([SNAPSHOT_SCHEMA, PUBLIC_SNAPSHOT_SCHEMA, PUBLIC_SNAPSHOT_V3_SCHEMA].includes(value?.schema)) {
       for (const shard of parseSnapshotManifest(value).shards) keep.add(shard.path);
     }
   }

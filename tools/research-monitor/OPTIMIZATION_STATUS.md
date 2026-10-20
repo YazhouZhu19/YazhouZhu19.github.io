@@ -21,7 +21,7 @@ scores must not be presented as independently validated accuracy.
 | P1.3 | Complete | Verified Cache Storage reuse, bounded generation retention and safe storage fallback. |
 | P1.6 | Integrating | Conditional manifest reader and tested visibility/backoff scheduler ready; signals wiring follows P1.4. |
 | P1.4 | Pending | Separate GitHub/news transport, preaggregated overview and on-demand loading. |
-| P1.2 | Pending | Lossless v3 paper transport with v2/v1 fallback. |
+| P1.2 | Complete | Lossless v3 transport; raw shards reduced 30.001%; v1/v2 compatibility retained. |
 | P1.5 | Pending | Worker loading, validation and search with a fallback path. |
 | P1.7 | Pending | Shallow checkout, directory size guard and generation cleanup. |
 | P3.1 | Pending | Formatting-only commit. |
@@ -87,3 +87,10 @@ scores must not be presented as independently validated accuracy.
   Vite/data-copy/budget checks passed. Final signals scheduling is integrated with P1.4 because the
   old single-file signals endpoint has no separate manifest. The <5 KiB polling target depends on a
   server returning 304; a host that ignores ETag may send the full unchanged manifest.
+
+- **P1.2:** On all 8,326 saved records, raw shard bytes decrease from 66,577,673 to
+  46,603,678 (30.001%). Total with manifest is 50,501,670 raw / 10,649,085 gzip bytes;
+  including manifests, the raw reduction is 26.62% and gzip reduction is 4.41%. Node and
+  Python comparisons preserve every source field, unknown extras, missing values and nulls.
+  Nine v3 TypeScript and eleven snapshot Python checks passed, including strict malformed-input
+  rejection. The browser preference/fallback integration is committed with P1.5's shared loader.

@@ -23,7 +23,7 @@ export function snapshotBucket(publishedAt: unknown, asOf?: unknown): string {
 }
 
 /** Serialize independent month buckets without changing any record fields. */
-export function createSnapshotShards(data: SnapshotInput, maxBytes = MAX_SHARD_BYTES, asOf = data.collectedAt) {
+export function createSnapshotShards(data: SnapshotInput, maxBytes = MAX_SHARD_BYTES, asOf = data.collectedAt, encode: (record: SnapshotRecord) => unknown = record => record) {
   if (!Number.isSafeInteger(maxBytes) || maxBytes < 3 || maxBytes > MAX_SHARD_BYTES) throw new Error("Invalid paper shard size limit");
   const ids = new Set<string>(), buckets = new Map<string, SnapshotRecord[]>();
   for (const paper of data.papers) {
@@ -43,7 +43,7 @@ export function createSnapshotShards(data: SnapshotInput, maxBytes = MAX_SHARD_B
       records = []; bytes = 3;
     };
     for (const paper of papers) {
-      const text = JSON.stringify(paper), size = Buffer.byteLength(text);
+      const text = JSON.stringify(encode(paper)), size = Buffer.byteLength(text);
       if (size + 3 > maxBytes) throw new Error(`Paper ${paper.id} exceeds the shard size limit; snapshot unchanged`);
       if (records.length && bytes + size + 1 > maxBytes) flush();
       bytes += size + (records.length ? 1 : 0); records.push(text);
