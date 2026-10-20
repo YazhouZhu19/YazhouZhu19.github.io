@@ -108,3 +108,9 @@ Renaming the file alone does not make it gold. A gold filename, an explicit main
 Before `scopeOf` exists, the evaluator maps the current inclusive `relevant()` result to `core`/`out` to measure the existing display policy. It clearly names this operational baseline and does not pretend an earlier three-class classifier existed. Once exported, `scopeOf` and `SCOPE_CLASSIFIER_VERSION` are used automatically. Track predictions always run `classify()` on the complete frozen title/abstract, not on the 600-character CSV excerpt.
 
 Precision with no predicted positives, recall with no annotated positives, and F1 with no positive cases are shown as `—`. Unlabelled draft rows are counted and excluded, while incomplete gold is rejected. Scope confusion matrices use annotation rows and prediction columns.
+
+## Possible-work grouping audit
+
+[work-groups.md](work-groups.md) lists every detected multi-record group in the 2026-10-20 snapshot; [work-groups.json](work-groups.json) retains author and matching evidence. The new title/author rule adds 152 groups, yielding 8,170 possible works from 8,326 unchanged records. The [20-group AI review](work-groups-review.json) explicitly keeps `humanConfirmed: false`: eleven pairs have supporting abstracts on both records and nine have one missing abstract. No conflict was identified in this sample, but this is not human verification or a measured false-merge rate.
+
+`npx tsx scripts/report-work-groups.ts [INPUT] [OUTPUT_PREFIX]` reproduces the report and a separate `-review-candidates.json` file. It never overwrites completed review notes or source snapshots. Use a different output prefix when inspecting a newer snapshot; the saved report describes its stated collection time.

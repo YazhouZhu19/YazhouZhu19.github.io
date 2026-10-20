@@ -1,5 +1,5 @@
 import { buildPaperAnalysis, type EvidenceSignalId, type PaperAnalysis } from "./analysis";
-import { normalizeDoi, normalizedName, textOnly } from "./classify";
+import { normalizedName, textOnly } from "./classify";
 import { beijingDay, matchesTeam } from "./dashboard";
 import type { Paper } from "./types";
 import { publicationDateStatus, strictPublicationDay } from "./publication-date";
@@ -11,6 +11,9 @@ import type {
   ForesightOptions,
   ForesightResult,
 } from "./foresight-types";
+
+import { groupWorks } from "./paper-works";
+export { groupWorks } from "./paper-works";
 
 const DAY = 86400000;
 const MIN_WORKS = 3;
@@ -48,85 +51,6 @@ function offset(day: string, days: number): string {
 function compare(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }
-function doi(value: unknown): string | null {
-  const normalized = normalizeDoi(value);
-  return normalized && /^10\.\d{4,9}\/\S+$/i.test(normalized) ? normalized : null;
-}
-function arxiv(value: unknown): string | null {
-  const id = String(value ?? "")
-    .trim()
-    .replace(/^https?:\/\/(?:www\.)?arxiv\.org\/(?:abs|pdf)\//i, "")
-    .replace(/^arxiv:/i, "")
-    .replace(/\.pdf$/i, "")
-    .replace(/v\d+$/i, "")
-    .toLowerCase();
-  return /^(?:\d{4}\.\d{4,5}|[a-z.-]+\/\d{7})$/.test(id) ? id : null;
-}
-function identityKeys(paper: Paper): string[] {
-  const keys = paper.id ? [`id:${paper.id}`] : [];
-  for (const value of [paper.doi, paper.relatedDoi]) {
-    const id = doi(value);
-    if (id) keys.push(`doi:${id}`);
-  }
-  if (/^\d+$/.test(paper.pmid ?? "")) keys.push(`pmid:${paper.pmid}`);
-  const arxivId = arxiv(paper.arxivId);
-  if (arxivId) keys.push(`arxiv:${arxivId}`);
-  const nativeId = paper.id.match(/^(?:pubmed:|pmid:|(?:europepmc|epmc):(?:med:)?)\s*(\d+)$/i);
-  if (nativeId) keys.push(`pmid:${nativeId[1]}`);
-  if (/^arxiv:/i.test(paper.id)) {
-    const id = arxiv(paper.id);
-    if (id) keys.push(`arxiv:${id}`);
-  }
-  for (const entry of paper.provenance ?? []) {
-    const id = entry.sourceRecordId?.trim();
-    if (!id) continue;
-    if (/^(?:Europe PMC|PubMed)$/i.test(paper.source) && /^(?:MED:)?\d+$/i.test(id))
-      keys.push(`pmid:${id.replace(/^MED:/i, "")}`);
-    else if (/^arxiv$/i.test(paper.source)) {
-      const native = arxiv(id);
-      if (native) keys.push(`arxiv:${native}`);
-    } else keys.push(`native:${paper.source.toLowerCase()}:${id.toLowerCase()}`);
-  }
-  return keys;
-}
-
-// Union-find handles preprint -> article -> correction/version chains without quadratic pair matching.
-export function groupWorks(papers: Paper[]): Paper[][] {
-  const parent = papers.map((_, index) => index),
-    sizes = papers.map(() => 1),
-    keys = new Map<string, number>();
-  const root = (index: number): number => {
-    while (parent[index] !== index) {
-      parent[index] = parent[parent[index]];
-      index = parent[index];
-    }
-    return index;
-  };
-  papers.forEach((paper, index) => {
-    for (const key of identityKeys(paper)) {
-      const previous = keys.get(key);
-      if (previous === undefined) {
-        keys.set(key, index);
-        continue;
-      }
-      let a = root(index),
-        b = root(previous);
-      if (a === b) continue;
-      if (sizes[a] < sizes[b]) [a, b] = [b, a];
-      parent[b] = a;
-      sizes[a] += sizes[b];
-    }
-  });
-  const groups = new Map<number, Paper[]>();
-  papers.forEach((paper, index) => {
-    const key = root(index),
-      group = groups.get(key) ?? [];
-    group.push(paper);
-    groups.set(key, group);
-  });
-  return [...groups.values()];
-}
-
 /** Stable content digest, not a security identifier. It deliberately ignores collection timestamps. */
 function digest(value: string): string {
   let a = 2166136261,

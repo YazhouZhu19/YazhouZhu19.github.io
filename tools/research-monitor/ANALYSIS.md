@@ -28,6 +28,10 @@ The unchanged 8,326-record snapshot collected on 2026-10-20 contains 43 future-d
 
 ## Shared scope and denominators
 
+`groupWorks` now adds exact normalized-title equality (case, punctuation and whitespace removed) with either a matching first-author surname or author-name Jaccard ≥ 0.5 to the existing DOI/PMID/arXiv/source-identifier relationships. Missing author lists never match by title alone. Conflicting same-title author groups cannot be joined by an overlap bridge. Single unstructured names and collective names are not guessed as surnames. Source records remain separate; `buildWorkIndex` exposes a work count and candidate-version links without rewriting IDs, source dates or metadata.
+
+The 2026-10-20 snapshot has 8,326 records and 8,170 possible works (8,322 under identifier-only grouping), with 156 multi-record groups, 152 newly connected by title/author evidence and 24 preprint/published groups. [The complete group report](eval/work-groups.md) and [20-group provisional AI review](eval/work-groups-review.json) retain the evidence. Eleven sampled groups have supporting abstracts on both records; nine rely on metadata because one abstract is missing. No conflict was identified in that AI sample, but human review has not been completed, and “no false merges” has not been established.
+
 `buildPreliminaryAnalysis` applies the selected source, research interest, and publication-date window together. Publication dates remain the clock even if a caller passes a discovery-clock filter. Paper IDs are deduplicated; malformed dates, impossible calendar dates, and future publication dates are excluded. All charts, drill-down IDs, reading candidates, author counts, and watchlist matches use those same records.
 
 - **Directions and topics:** count distinct records per interest, organ, or modality. Percentage denominator is the complete filtered scope. Tags overlap, so percentages do not sum to 100%.

@@ -126,7 +126,7 @@ test("transitive related DOI grouping retains earliest publication and does not 
   assert.equal(buildForesight([...rows].reverse(), { now }).fingerprint, result.fingerprint);
 });
 
-test("DOI, PMID, arXiv version and source-native identities deduplicate without author or title guesses", () => {
+test("DOI, PMID, arXiv version and source-native identities deduplicate while unrelated titles stay separate", () => {
   const rows = [
     paper("pmid-a", { pmid: "123456" }),
     paper("pubmed:123456", { source: "PubMed" }),
@@ -140,8 +140,14 @@ test("DOI, PMID, arXiv version and source-native identities deduplicate without 
       source: "Example",
       provenance: [{ sourceRecordId: "same-native-id", collectedAt: "2026-10-14" }],
     }),
-    paper("separate-a", { authors: [{ name: "Same Author", affiliations: ["Same Hospital"] }] }),
-    paper("separate-b", { authors: [{ name: "Same Author", affiliations: ["Same Hospital"] }] }),
+    paper("separate-a", {
+      title: "First imaging study",
+      authors: [{ name: "Same Author", affiliations: ["Same Hospital"] }],
+    }),
+    paper("separate-b", {
+      title: "Another imaging study",
+      authors: [{ name: "Same Author", affiliations: ["Same Hospital"] }],
+    }),
   ];
   const result = buildForesight(rows, { now });
   assert.equal(result.papers.length, 5);
@@ -297,7 +303,7 @@ test("stable, declining and watchlist outlooks follow observed shares without gu
         paper(`${period}-${index}`, {
           authors: [{ name: "Same Author", affiliations: [] }],
           publishedAt: day(start, index * 5),
-          title: index < (period ? previousMatches : 3) ? foundation.title : "Medical imaging study",
+          title: `${index < (period ? previousMatches : 3) ? foundation.title : "Medical imaging study"} ${period}-${index}`,
         }),
       ),
     );
