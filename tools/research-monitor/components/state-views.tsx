@@ -75,7 +75,7 @@ export function ErrorState({
       {(onRetry || action) && (
         <div className="view-state-actions">
           {onRetry && (
-            <Button variant="outline" onClick={onRetry} disabled={retryDisabled}>
+            <Button type="button" variant="outline" onClick={onRetry} disabled={retryDisabled}>
               {retryLabel ?? (locale === "en" ? "Retry" : "重试")}
             </Button>
           )}
