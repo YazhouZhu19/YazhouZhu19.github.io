@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { Collection, MonitorData, Team } from "@/lib/types";
 import { parseSnapshotManifest, resolveSnapshot, SnapshotFormatError, type SnapshotManifest } from "@/lib/snapshot";
 import { createShardCache } from "@/lib/shard-cache";
+import { createManifestLoader } from "@/lib/manifest-loader";
 
 // A single key keeps an import (collections and teams together) atomic.
 export const LOCAL_DATA_KEY = "medical-research-monitor:personal:v1";
@@ -188,6 +189,13 @@ type VerifiedPublicData = z.infer<typeof monitorDataSchema>;
 // validated snapshot, so periodic checks do not parse the same library again.
 let verifiedSnapshot: { manifestKey: string; data: VerifiedPublicData; ids: Set<string> } | undefined;
 const paperShardCache = createShardCache("papers");
+const paperManifestLoader = createManifestLoader((import.meta.env?.BASE_URL ?? "/research-monitor/") + "data/public-papers-v2.json", {
+  validate: raw => {
+    if (raw && typeof raw === "object" && "schema" in raw) return parseSnapshotManifest(raw);
+    if (!monitorDataSchema.safeParse(raw).success) throw new SnapshotFormatError("Invalid legacy paper snapshot");
+    return raw;
+  },
+});
 
 function withPersonalStorage(data: VerifiedPublicData): LocalMonitorData {
   const personal = getLocalStorageStatus();
@@ -200,10 +208,10 @@ function withPersonalStorage(data: VerifiedPublicData): LocalMonitorData {
 async function readPublicData(init?: RequestInit): Promise<LocalMonitorData> {
   let raw: unknown;
   try {
-    const response = await fetch(import.meta.env.BASE_URL + "data/public-papers-v2.json", { cache: "no-cache", credentials: "omit", signal: init?.signal });
-    if (!response.ok) throw new Error(LOCAL_ERRORS.network);
-    raw = await response.json();
+    raw = await paperManifestLoader.load(init?.signal ?? undefined);
   } catch (error) {
+    init?.signal?.throwIfAborted();
+    if (error instanceof SnapshotFormatError) throw new Error(LOCAL_ERRORS.publicData);
     if (error instanceof Error && error.name === "AbortError") throw error;
     throw new Error(LOCAL_ERRORS.network);
   }

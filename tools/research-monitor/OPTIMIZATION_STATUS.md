@@ -16,10 +16,10 @@ scores must not be presented as independently validated accuracy.
 | Task | Status | Evidence / next step |
 | --- | --- | --- |
 | P0.1 | Complete | Measured entry graph and data; explicit per-resource regression budgets fail the build. |
-| P0.2 | In progress | Export a reproducible 400-paper sample, provisional labels and evaluation tooling. |
+| P0.2 | Awaiting review | 400 provisional labels and frozen evidence prepared; user requested independent AI second review, in progress. |
 | P1.1 | Complete | Month/ID buckets, append-only URL dictionary and single atomic manifest replacement. |
 | P1.3 | Complete | Verified Cache Storage reuse, bounded generation retention and safe storage fallback. |
-| P1.6 | Pending | Conditional manifest requests and polling backoff. |
+| P1.6 | Integrating | Conditional manifest reader and tested visibility/backoff scheduler ready; signals wiring follows P1.4. |
 | P1.4 | Pending | Separate GitHub/news transport, preaggregated overview and on-demand loading. |
 | P1.2 | Pending | Lossless v3 paper transport with v2/v1 fallback. |
 | P1.5 | Pending | Worker loading, validation and search with a fallback path. |
@@ -80,3 +80,10 @@ scores must not be presented as independently validated accuracy.
   shard request. Metadata-only changes request no shards. The final P1.1 shared-tree validation above
   included this completed integration and its full build/budget checks. Real updates can touch more
   than three shards when historical records are actually revised; the cache does not suppress updates.
+- **P1.6 infrastructure:** ETag/If-None-Match, bodyless 304 reuse, unchanged-200 object reuse,
+  bounded stream reads and cancellation passed four tests. Three scheduler tests cover 5/10/20/40/60
+  minute delays, visibility changes, non-overlapping checks and cleanup. The public API now uses the
+  conditional reader; 375 TypeScript and 24 local API tests passed in the shared tree. Typecheck and
+  Vite/data-copy/budget checks passed. Final signals scheduling is integrated with P1.4 because the
+  old single-file signals endpoint has no separate manifest. The <5 KiB polling target depends on a
+  server returning 304; a host that ignores ETag may send the full unchanged manifest.
