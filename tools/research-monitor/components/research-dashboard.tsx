@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { SpatialChart, TimelineChart, StatusRing } from "./spatial-chart";
 import { Button } from "@/components/ui/button";
+import { DashboardShell, DashboardMetric as Metric } from "./dashboard-shell";
 import { DashboardChoice as Choice } from "./dashboard-choice";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getLoadedPaperSnapshot } from "@/lib/local-api";
@@ -48,34 +49,7 @@ const stamp = (s: string) =>
     minute: "2-digit",
     hour12: false,
   });
-function Metric({
-  label,
-  value,
-  hint,
-  icon: Icon,
-  accent,
-  onClick,
-}: {
-  label: string;
-  value: string;
-  hint: string;
-  icon: typeof Database;
-  accent?: boolean;
-  onClick: () => void;
-}) {
-  const { locale, tr } = useI18n();
-  return (
-    <button className={`dash-metric${accent ? " dash-metric-primary" : ""}`} onClick={onClick}>
-      <span className="dash-metric-label">
-        <Icon size={17} />
-        {label}
-        <ArrowUpRight size={15} />
-      </span>
-      <strong>{value}</strong>
-      <span className="dash-metric-hint">{hint}</span>
-    </button>
-  );
-}
+
 export const ResearchDashboard = memo(function ResearchDashboard({
   authenticated,
   data,
@@ -214,133 +188,157 @@ export const ResearchDashboard = memo(function ResearchDashboard({
     URL.revokeObjectURL(url);
   };
   return (
-    <div className="research-dashboard">
-      <div className="dash-global-strip">
-        <span>
-          <Database size={15} />
-          {tr("库内 ")}
-          <b>{count(data.totalStored ?? data.papers.length)}</b>
-          {tr(" 条记录")}
-        </span>
-        <button onClick={() => drill("今日新入库 · 不含初始快照", m.newToday)}>
-          <Radio size={15} />
-          {tr("今日新入库 ")}
-          <b>{count(m.newToday.length)}</b>
-          <ArrowUpRight size={13} />
-        </button>
-        <span>{tr("初始快照单独计入库总量")}</span>
-        <span className="dash-clock">
-          {stamp(now.toISOString())}
-          {tr(" 北京时间")}
-        </span>
-      </div>
+    <DashboardShell
+      title={locale === "en" ? "Research literature overview" : "论文研究概览"}
+      description={
+        locale === "en"
+          ? "Explore research directions, publication patterns and the evidence behind them."
+          : "观察研究方向、发表节奏与支撑判断的论文证据。"
+      }
+      asOf={data.collectedAt}
+      summary={
+        <div className="dash-global-strip">
+          <span>
+            <Database size={15} />
+            {tr("库内 ")}
+            <b>{count(data.totalStored ?? data.papers.length)}</b>
+            {tr(" 条记录")}
+          </span>
+          <button onClick={() => drill("今日新入库 · 不含初始快照", m.newToday)}>
+            <Radio size={15} />
+            {tr("今日新入库 ")}
+            <b>{count(m.newToday.length)}</b>
+            <ArrowUpRight size={13} />
+          </button>
+          <span>{tr("初始快照单独计入库总量")}</span>
+          <span className="dash-clock">
+            {stamp(now.toISOString())}
+            {tr(" 北京时间")}
+          </span>
+        </div>
+      }
+      filters={
+        <div className="dash-controls">
+          <div className="dash-control">
+            <label>{tr("统计时间")}</label>
+            <Choice
+              label={tr("仪表盘时间范围")}
+              value={filters.days}
+              onChange={(v) => change("days", v)}
+              options={[
+                ["7", "近 7 天"],
+                ["30", "近 30 天"],
+                ["90", "近 90 天"],
+                ["all", "全部日期"],
+              ]}
+            />
+          </div>
+          <div className="dash-control">
+            <label>{tr("日期口径")}</label>
+            <Choice
+              label={tr("仪表盘日期口径")}
+              value={filters.clock}
+              onChange={(v) => change("clock", v)}
+              options={[
+                ["publication", "来源发布日期"],
+                ["discovery", "平台发现时间"],
+              ]}
+            />
+          </div>
+          <div className="dash-control">
+            <label>{tr("感兴趣方向")}</label>
+            <Choice
+              label={tr("仪表盘感兴趣方向")}
+              value={filters.track}
+              onChange={(v) => change("track", v)}
+              options={[["all", "全部感兴趣方向"], ...Object.entries(TRACKS)]}
+            />
+          </div>
+          <div className="dash-control">
+            <label>{tr("来源")}</label>
+            <Choice
+              label={tr("仪表盘数据来源")}
+              value={filters.source}
+              onChange={(v) => change("source", v)}
+              options={sourceOptions}
+            />
+          </div>
+          <Button variant="outline" onClick={exportRows} disabled={!m.rows.length}>
+            <ArrowDownToLine size={16} />
+            {tr("导出分析记录")}
+          </Button>
+        </div>
+      }
+      scope={
+        <div className="dash-scope">
+          <span>
+            {m.start} — {m.end}
+            {tr(" \u00B7 按")}
+            {dateLabel}
+            {tr("筛选 \u00B7 下方指标与图表使用同一范围")}
+          </span>
+          <span>{tr("可点击数字查看论文")}</span>
+        </div>
+      }
+      beforeMetrics={
+        <>
+          {filters.clock === "discovery" && (
+            <div className="dash-explanation">
+              <CircleHelp size={16} />
+              {tr("当前方向及来源的初始快照 ")}
+              {m.initialCount}
+              {tr(" 条已排除。发现曲线从 ")}
+              {m.observedFrom}
+              {tr(" 开始，展示当前载入样本中的后续发现，不代表论文新发表。")}
+            </div>
+          )}
+        </>
+      }
+      metrics={
+        <>
+          <Metric
+            accent
+            label={tr("当前范围记录")}
+            value={count(m.rows.length)}
+            hint={tr("DOI / 来源标识去重")}
+            icon={BookOpen}
+            onClick={() => drill("当前仪表盘范围", m.rows)}
+          />
 
-      <div className="dash-controls">
-        <div className="dash-control">
-          <label>{tr("统计时间")}</label>
-          <Choice
-            label={tr("仪表盘时间范围")}
-            value={filters.days}
-            onChange={(v) => change("days", v)}
-            options={[
-              ["7", "近 7 天"],
-              ["30", "近 30 天"],
-              ["90", "近 90 天"],
-              ["all", "全部日期"],
-            ]}
+          <Metric
+            label={tr("正式发表")}
+            value={count(m.published.length)}
+            hint={tr("当前范围内的正式发表记录")}
+            icon={Layers3}
+            onClick={() => drill("正式发表", m.published)}
           />
-        </div>
-        <div className="dash-control">
-          <label>{tr("日期口径")}</label>
-          <Choice
-            label={tr("仪表盘日期口径")}
-            value={filters.clock}
-            onChange={(v) => change("clock", v)}
-            options={[
-              ["publication", "来源发布日期"],
-              ["discovery", "平台发现时间"],
-            ]}
+
+          <Metric
+            label={tr("其中预印本")}
+            value={count(m.preprints.length)}
+            hint={tr("当前范围内的预印本记录")}
+            icon={Workflow}
+            onClick={() => drill("预印本", m.preprints)}
           />
-        </div>
-        <div className="dash-control">
-          <label>{tr("感兴趣方向")}</label>
-          <Choice
-            label={tr("仪表盘感兴趣方向")}
-            value={filters.track}
-            onChange={(v) => change("track", v)}
-            options={[["all", "全部感兴趣方向"], ...Object.entries(TRACKS)]}
+
+          <Metric
+            label={tr("观察名单匹配")}
+            value={teams.length ? count(m.matched.length) : "—"}
+            hint={
+              teams.length
+                ? tr("{0} 份名单 \u00B7 跨名单去重", [teams.length])
+                : authenticated
+                  ? tr("添加 PI / 团队后开始追踪")
+                  : tr("登录后使用个人观察名单")
+            }
+            icon={Users}
+            onClick={() => (teams.length ? drill("观察名单匹配", m.matched) : onNavigate("teams"))}
           />
-        </div>
-        <div className="dash-control">
-          <label>{tr("来源")}</label>
-          <Choice
-            label={tr("仪表盘数据来源")}
-            value={filters.source}
-            onChange={(v) => change("source", v)}
-            options={sourceOptions}
-          />
-        </div>
-        <Button variant="outline" onClick={exportRows} disabled={!m.rows.length}>
-          <ArrowDownToLine size={16} />
-          {tr("导出分析记录")}
-        </Button>
-      </div>
-      <div className="dash-scope">
-        <span>
-          {m.start} — {m.end}
-          {tr(" \u00B7 按")}
-          {dateLabel}
-          {tr("筛选 \u00B7 下方指标与图表使用同一范围")}
-        </span>
-        <span>{tr("可点击数字查看论文")}</span>
-      </div>
-      {filters.clock === "discovery" && (
-        <div className="dash-explanation">
-          <CircleHelp size={16} />
-          {tr("当前方向及来源的初始快照 ")}
-          {m.initialCount}
-          {tr(" 条已排除。发现曲线从 ")}
-          {m.observedFrom}
-          {tr(" 开始，展示当前载入样本中的后续发现，不代表论文新发表。")}
-        </div>
-      )}
-      <div className="dash-metrics">
-        <Metric
-          accent
-          label={tr("当前范围记录")}
-          value={count(m.rows.length)}
-          hint={tr("DOI / 来源标识去重")}
-          icon={BookOpen}
-          onClick={() => drill("当前仪表盘范围", m.rows)}
-        />
-        <Metric
-          label={tr("正式发表")}
-          value={count(m.published.length)}
-          hint={tr("当前范围内的正式发表记录")}
-          icon={Layers3}
-          onClick={() => drill("正式发表", m.published)}
-        />
-        <Metric
-          label={tr("其中预印本")}
-          value={count(m.preprints.length)}
-          hint={tr("当前范围内的预印本记录")}
-          icon={Workflow}
-          onClick={() => drill("预印本", m.preprints)}
-        />
-        <Metric
-          label={tr("观察名单匹配")}
-          value={teams.length ? count(m.matched.length) : "—"}
-          hint={
-            teams.length
-              ? tr("{0} 份名单 \u00B7 跨名单去重", [teams.length])
-              : authenticated
-                ? tr("添加 PI / 团队后开始追踪")
-                : tr("登录后使用个人观察名单")
-          }
-          icon={Users}
-          onClick={() => (teams.length ? drill("观察名单匹配", m.matched) : onNavigate("teams"))}
-        />
-      </div>
+        </>
+      }
+      libraryLabel={locale === "en" ? "Browse paper library" : "查看论文库"}
+      onBrowse={() => onNavigate("feed")}
+    >
       <section className="dash-panel dash-interests">
         <div className="dash-panel-heading">
           <div>
@@ -617,6 +615,6 @@ export const ResearchDashboard = memo(function ResearchDashboard({
         {data.papers.length}
         {tr(" 条候选记录；日期分布与方法数量不代表全领域增长或研究质量。平台发现按北京时间统计。")}
       </p>
-    </div>
+    </DashboardShell>
   );
 });

@@ -1,4 +1,5 @@
 "use client";
+import { DashboardShell, DashboardMetric, type DashboardSlots } from "./dashboard-shell";
 import "@/styles/dashboard-common.css";
 
 import { ArrowUpRight, Box, Database, Layers3, Newspaper, Radio, Users, Wrench } from "lucide-react";
@@ -11,7 +12,7 @@ import { Button } from "./ui/button";
 import { useI18n } from "./locale-provider";
 import "@/styles/news-dashboard.css";
 
-type Props = {
+type Props = DashboardSlots & {
   model: NewsDashboardModel;
   onDrill: (drill: SignalDashboardDrill) => void;
   onBrowse: () => void;
@@ -133,7 +134,7 @@ export function NewsDashboardSummary({ model, onDrill, sourceCheckedAt, summaryO
   );
 }
 
-export function NewsDashboard({ model, onDrill, onBrowse, originalsCount }: Props) {
+export function NewsDashboard({ model, onDrill, onBrowse, originalsCount, summary, filters }: Props) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
   const count = (value: number) => value.toLocaleString(locale === "en" ? "en-US" : "zh-CN");
@@ -181,40 +182,43 @@ export function NewsDashboard({ model, onDrill, onBrowse, originalsCount }: Prop
   const originals = model.rows.filter((record) => safeSignalUrl(record.originalUrl));
 
   return (
-    <div className="research-dashboard news-research-dashboard">
-      <div className="dash-scope">
-        <span>
-          {model.start ?? "—"} — {model.end ?? "—"} ·{" "}
-          {discovery
-            ? t("平台首次入库", "First added to platform")
-            : t("消息发布日期", "News publication date")}{" "}
-          · {t("北京时间", "Beijing time")}
-        </span>
-        <span>{t("数字与图表均可点击查看消息", "Click counts and charts to inspect news")}</span>
-      </div>
-      <div className="dash-metrics">
-        {model.scoped.metrics.map((metric, index) => {
-          const Icon = icons[index];
-          return (
-            <button
-              type="button"
-              key={metric.id}
-              className={`dash-metric${index === 0 ? " dash-metric-primary" : ""}`}
-              disabled={!available || !metric.count}
-              onClick={() => open(metric)}
-            >
-              <span className="dash-metric-label">
-                <Icon size={17} />
-                {label(metric)}
-                <ArrowUpRight size={15} />
-              </span>
-              <strong>{available ? count(metric.count) : "—"}</strong>
-              <span className="dash-metric-hint">{metricHints[metric.id]}</span>
-            </button>
-          );
-        })}
-      </div>
-
+    <DashboardShell
+      className="news-research-dashboard"
+      title={t("公开进展概览", "Public progress overview")}
+      description={t(
+        "观察模型发布、技术进展与公开消息来源。",
+        "Explore model releases, technical progress and public sources.",
+      )}
+      asOf={model.asOf}
+      summary={summary}
+      filters={filters}
+      scope={
+        <div className="dash-scope">
+          <span>
+            {model.start ?? "—"} — {model.end ?? "—"} ·{" "}
+            {discovery
+              ? t("平台首次入库", "First added to platform")
+              : t("消息发布日期", "News publication date")}{" "}
+            · {t("北京时间", "Beijing time")}
+          </span>
+          <span>{t("数字与图表均可点击查看消息", "Click counts and charts to inspect news")}</span>
+        </div>
+      }
+      metrics={model.scoped.metrics.map((metric, index) => (
+        <DashboardMetric
+          key={metric.id}
+          accent={index === 0}
+          icon={icons[index]}
+          label={label(metric)}
+          value={available ? count(metric.count) : "—"}
+          hint={metricHints[metric.id]}
+          disabled={!available || !metric.count}
+          onClick={() => open(metric)}
+        />
+      ))}
+      libraryLabel={t("查看新闻库", "Browse news library")}
+      onBrowse={onBrowse}
+    >
       <div className="dash-main-grid news-main-grid">
         <section className="dash-panel news-trajectory">
           <div className="dash-panel-heading">
@@ -468,6 +472,6 @@ export function NewsDashboard({ model, onDrill, onBrowse, originalsCount }: Prop
           " Search snippets are not full articles, and announcements are not independent validation. News is collected through Google News searches and publisher feeds; cards retain original publishers. Collection timestamps are listed in the source status below.",
         )}
       </p>
-    </div>
+    </DashboardShell>
   );
 }

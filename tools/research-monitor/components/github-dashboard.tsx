@@ -1,4 +1,5 @@
 "use client";
+import { DashboardShell, DashboardMetric, type DashboardSlots } from "./dashboard-shell";
 import "@/styles/dashboard-common.css";
 
 import {
@@ -21,7 +22,7 @@ import { GitHubPopularity } from "./github-popularity";
 import "@/styles/spatial-charts.css";
 import "@/styles/github-dashboard.css";
 
-type DashboardProps = {
+type DashboardProps = DashboardSlots & {
   model: GitHubDashboardModel;
   onDrill: (drill: SignalDashboardDrill) => void;
   onBrowse: () => void;
@@ -120,7 +121,14 @@ export function GitHubDashboardSummary({ model, onDrill, summaryOnly = false }: 
   );
 }
 
-export function GitHubDashboard({ model, onDrill, onBrowse, onRankedBrowse }: DashboardProps) {
+export function GitHubDashboard({
+  model,
+  onDrill,
+  onBrowse,
+  onRankedBrowse,
+  summary,
+  filters,
+}: DashboardProps) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
   const count = (value: number) => value.toLocaleString(locale === "en" ? "en-US" : "zh-CN");
@@ -166,43 +174,46 @@ export function GitHubDashboard({ model, onDrill, onBrowse, onRankedBrowse }: Da
   );
 
   return (
-    <div className="research-dashboard github-research-dashboard">
-      <div className="dash-scope">
-        <span>
-          {model.start ?? "—"} — {model.end ?? "—"} ·{" "}
-          {creation
-            ? t("仓库最初发布时间", "Initial repository publication")
-            : t("仓库最近活动", "Latest repository activity")}{" "}
-          · {t("北京时间", "Beijing time")}
-        </span>
-        <span>{t("数字与图表均可点击查看项目", "Click counts and charts to inspect repositories")}</span>
-      </div>
-      <div className="dash-metrics">
-        {model.scoped.metrics.map((metric, index) => {
-          const Icon = icons[index];
-          const unavailable = !model.referenceDateValid && ["recent90", "released"].includes(metric.id);
-          return (
-            <button
-              type="button"
-              key={metric.id}
-              className={`dash-metric${index === 0 ? " dash-metric-primary" : ""}`}
-              disabled={unavailable || !metric.count}
-              onClick={() => open(metric)}
-            >
-              <span className="dash-metric-label">
-                <Icon size={17} />
-                {label(metric)}
-                <ArrowUpRight size={15} />
-              </span>
-              <strong>{unavailable ? "—" : count(metric.count)}</strong>
-              <span className="dash-metric-hint">
-                {unavailable ? t("快照日期不可用", "Snapshot date unavailable") : metricHints[metric.id]}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
+    <DashboardShell
+      className="github-research-dashboard"
+      title={t("开源项目概览", "Open-source overview")}
+      description={t(
+        "观察项目活跃度、开放资源与研究方向。",
+        "Explore repository activity, open resources and research directions.",
+      )}
+      asOf={model.asOf}
+      summary={summary}
+      filters={filters}
+      scope={
+        <div className="dash-scope">
+          <span>
+            {model.start ?? "—"} — {model.end ?? "—"} ·{" "}
+            {creation
+              ? t("仓库最初发布时间", "Initial repository publication")
+              : t("仓库最近活动", "Latest repository activity")}{" "}
+            · {t("北京时间", "Beijing time")}
+          </span>
+          <span>{t("数字与图表均可点击查看项目", "Click counts and charts to inspect repositories")}</span>
+        </div>
+      }
+      metrics={model.scoped.metrics.map((metric, index) => {
+        const unavailable = !model.referenceDateValid && ["recent90", "released"].includes(metric.id);
+        return (
+          <DashboardMetric
+            key={metric.id}
+            accent={index === 0}
+            icon={icons[index]}
+            label={label(metric)}
+            value={unavailable ? "—" : count(metric.count)}
+            hint={unavailable ? t("快照日期不可用", "Snapshot date unavailable") : metricHints[metric.id]}
+            disabled={unavailable || !metric.count}
+            onClick={() => open(metric)}
+          />
+        );
+      })}
+      libraryLabel={t("查看项目库", "Browse repository library")}
+      onBrowse={onBrowse}
+    >
       <GitHubPopularity model={model} onDrill={onDrill} onRankedBrowse={onRankedBrowse} />
 
       <div className="dash-main-grid github-main-grid">
@@ -418,6 +429,6 @@ export function GitHubDashboard({ model, onDrill, onBrowse, onRankedBrowse }: Da
           "Statistics cover collected public repositories, not the whole web. Stars, pushes, releases, and license fields do not establish research quality, reproducibility, or clinical validity.",
         )}
       </p>
-    </div>
+    </DashboardShell>
   );
 }

@@ -788,6 +788,200 @@ export function ResearchSignalsView({
     </details>
   );
 
+  const controlsOutsideShell = view === "library" || !snapshot || (!defaultScope && !recordsLoaded);
+  const summaryControls = (
+    <Suspense fallback={viewLoading}>
+      {kind === "github" && githubModel && snapshot && (
+        <GitHubDashboardSummary model={githubModel} summaryOnly={summaryOnly} onDrill={openGlobalRecords} />
+      )}
+      {kind === "news" && newsModel && snapshot && (
+        <NewsDashboardSummary
+          model={newsModel}
+          summaryOnly={summaryOnly}
+          onDrill={openGlobalRecords}
+          sourceCheckedAt={sourceCheckedAt}
+        />
+      )}
+    </Suspense>
+  );
+  const filterControls = (
+    <section
+      className="signals-filters"
+      aria-label={t("统计与列表共同筛选", "Shared dashboard and library filters")}
+    >
+      <div className="signals-filter-toolbar source-filter-toolbar">
+        <div className="dash-control">
+          <label htmlFor={`${fieldId}-range`}>{t("统计时间", "Time range")}</label>
+          <DashboardChoice
+            id={`${fieldId}-range`}
+            label={t("统计时间", "Time range")}
+            value={String(dateRange)}
+            onChange={(value) =>
+              changeScope(() => {
+                setDateRange(
+                  ["7", "30", "90"].includes(value)
+                    ? (Number(value) as 7 | 30 | 90)
+                    : (value as "all" | "custom"),
+                );
+                setFrom("");
+                setTo("");
+              })
+            }
+            options={[
+              ["7", t("近 7 天", "Last 7 days")],
+              ["30", t("近 30 天", "Last 30 days")],
+              ["90", t("近 90 天", "Last 90 days")],
+              ["all", t("全部日期", "All dates")],
+              ["custom", t("自定义日期", "Custom dates")],
+            ]}
+          />
+        </div>
+        <div className="dash-control">
+          <label htmlFor={`${fieldId}-clock`}>{t("日期口径", "Date basis")}</label>
+          {kind === "github" ? (
+            <DashboardChoice
+              id={`${fieldId}-clock`}
+              label={t("日期口径", "Date basis")}
+              value={githubClock}
+              onChange={(value) => changeScope(() => setGithubClock(value as "activity" | "creation"))}
+              options={[
+                ["activity", t("仓库最近活动", "Latest repository activity")],
+                ["creation", t("仓库最初发布时间", "Initial repository publication")],
+              ]}
+            />
+          ) : (
+            <DashboardChoice
+              id={`${fieldId}-clock`}
+              label={t("日期口径", "Date basis")}
+              value={newsClock}
+              onChange={(value) => changeScope(() => setNewsClock(value as NewsDashboardClock))}
+              options={[
+                ["publication", t("消息发布时间", "Announcement publication")],
+                ["discovery", t("平台入库时间", "Library discovery date")],
+              ]}
+            />
+          )}
+        </div>
+        <div className="dash-control">
+          <label htmlFor={`${fieldId}-category`}>{t("研究方向", "Research area")}</label>
+          {choiceControl(
+            `${fieldId}-category`,
+            t("研究方向", "Research area"),
+            category,
+            (value) => changeScope(() => setCategory(value)),
+            [
+              ["all", `${t("全部方向", "All directions")} (${recordCount})`],
+              ...categories.map((group): [string, string] => [
+                group.id,
+                `${t(group.labelZh, group.labelEn)} (${categoryIndex.counts.get(group.id) ?? 0})`,
+              ]),
+            ],
+            `${fieldId}-category-hint`,
+          )}
+        </div>
+        <div className="dash-control">
+          <label htmlFor={`${fieldId}-relevance`}>{t("相关性", "Relevance")}</label>
+          {choiceControl(
+            `${fieldId}-relevance`,
+            t("相关性", "Relevance"),
+            relevance,
+            (value) => changeScope(() => setRelevance(value as RelevanceFilter)),
+            [
+              ["direct", `${t("高相关", "Directly relevant")} (${directCount})`],
+              ["candidate", `${t("待复核", "Needs review")} (${candidateCount})`],
+              ["all", `${t("全部线索", "All leads")} (${recordCount})`],
+            ],
+            `${fieldId}-relevance-hint`,
+          )}
+        </div>
+        <button type="button" className="foresight-button" onClick={reset}>
+          {t("重置", "Reset")}
+        </button>
+      </div>
+      {dateRange === "custom" && (
+        <div className="signals-filter-row">
+          <div>
+            <label htmlFor={`${fieldId}-from`}>{t("起始日期", "From")}</label>
+            <input
+              id={`${fieldId}-from`}
+              type="date"
+              value={from}
+              max={to || undefined}
+              onChange={(event) => changeScope(() => setFrom(event.target.value))}
+            />
+          </div>
+          <div>
+            <label htmlFor={`${fieldId}-to`}>{t("截止日期", "To")}</label>
+            <input
+              id={`${fieldId}-to`}
+              type="date"
+              value={to}
+              min={from || undefined}
+              onChange={(event) => changeScope(() => setTo(event.target.value))}
+            />
+          </div>
+        </div>
+      )}
+      <details className="source-search-controls" open={query ? true : undefined}>
+        <summary>
+          {t("搜索与列表排序", "Search and library sorting")}
+          {query && ` · ${query}`}
+        </summary>
+        <div className="signals-filter-toolbar">
+          {searchControl}
+          {sortControl}
+        </div>
+      </details>
+      <details className="signals-scope-explanation">
+        <summary>{t("筛选口径与数据说明", "Filter definitions and data notes")}</summary>
+        <p className="signals-filter-hint" id={`${fieldId}-category-hint`}>
+          {t(
+            `将检索方向归并为 ${categories.length} 个大类，跨方向记录可属于多类；尚无明确方向的记录归入综合类。括号为全库数量，可叠加其他筛选。`,
+            `Discovery directions are grouped into ${categories.length} broad areas and can overlap. Records without a specific area are included in the general category. Counts cover the full library; combine them with other filters.`,
+          )}
+        </p>
+        <p className="signals-filter-hint" id={`${fieldId}-relevance-hint`}>
+          {t(
+            "总览默认包括全部线索；高相关与待复核可分别筛选。待复核记录不进入 AI 研判。",
+            "The overview includes all leads by default; filter direct and review candidates separately. Candidates do not enter AI assessments.",
+          )}
+          {t(
+            "相关性不代表科研质量或效果验证。",
+            " Relevance does not establish research quality or validated performance.",
+          )}
+        </p>
+        <p className="signals-filter-hint">
+          {kind === "github"
+            ? t(
+                "仓库最近活动取推送、Release 或创建时间中的最新值；仓库最初发布时间采用 GitHub 仓库创建时间，不等于首次 Release 或转为公开的时间。两者均按北京时间归日；顶部今日入库仍按平台首次发现时间统计。",
+                "Latest activity uses the latest push, release or creation date. Initial publication uses GitHub repository creation time, not the first release or the date a repository became public. Both use Beijing calendar days; Added today still uses the platform first-seen time.",
+              )
+            : t(
+                "消息发布时间采用检索来源提供的文章日期；平台入库时间采用首次发现时间，并单列最早采集批次。两者均按北京时间归日；入库不等于消息新发布，缺失日期不作推断。",
+                "Publication uses the article date supplied by the discovery source; discovery uses first-seen time with the earliest collection batch separated. Both use Beijing calendar days. Collection is not a new announcement, and missing dates are not inferred.",
+              )}
+        </p>
+        {kind === "news" && (
+          <p className="signals-filter-hint">
+            <SourceLink
+              url={`https://news.google.com/search?q=${encodeURIComponent(query.trim() || "medical imaging AI")}&hl=en-US&gl=US&ceid=US:en`}
+            >
+              {t("在 Google 新闻继续检索", "Continue searching on Google News")}
+            </SourceLink>
+            {t(
+              " · 在新窗口检索，结果不会自动入库。",
+              " · Opens a new search; results are not added automatically.",
+            )}
+          </p>
+        )}
+      </details>
+      {invalidDates && (
+        <p className="signals-source-error" role="alert">
+          {t("起始日期不能晚于截止日期。", "The start date must not follow the end date.")}
+        </p>
+      )}
+    </section>
+  );
   return (
     <div className={`research-signals source-signals ${kind}-signals`}>
       <nav
@@ -817,19 +1011,7 @@ export function ResearchSignalsView({
         </button>
       </nav>
 
-      <Suspense fallback={viewLoading}>
-        {kind === "github" && githubModel && snapshot && (
-          <GitHubDashboardSummary model={githubModel} summaryOnly={summaryOnly} onDrill={openGlobalRecords} />
-        )}
-        {kind === "news" && newsModel && snapshot && (
-          <NewsDashboardSummary
-            model={newsModel}
-            summaryOnly={summaryOnly}
-            onDrill={openGlobalRecords}
-            sourceCheckedAt={sourceCheckedAt}
-          />
-        )}
-      </Suspense>
+      {controlsOutsideShell && summaryControls}
       {error && (
         <div className="signals-notice" role="alert">
           <p>
@@ -849,182 +1031,7 @@ export function ResearchSignalsView({
         </div>
       )}
 
-      <section
-        className="signals-filters"
-        aria-label={t("统计与列表共同筛选", "Shared dashboard and library filters")}
-      >
-        <div className="signals-filter-toolbar source-filter-toolbar">
-          <div className="dash-control">
-            <label htmlFor={`${fieldId}-range`}>{t("统计时间", "Time range")}</label>
-            <DashboardChoice
-              id={`${fieldId}-range`}
-              label={t("统计时间", "Time range")}
-              value={String(dateRange)}
-              onChange={(value) =>
-                changeScope(() => {
-                  setDateRange(
-                    ["7", "30", "90"].includes(value)
-                      ? (Number(value) as 7 | 30 | 90)
-                      : (value as "all" | "custom"),
-                  );
-                  setFrom("");
-                  setTo("");
-                })
-              }
-              options={[
-                ["7", t("近 7 天", "Last 7 days")],
-                ["30", t("近 30 天", "Last 30 days")],
-                ["90", t("近 90 天", "Last 90 days")],
-                ["all", t("全部日期", "All dates")],
-                ["custom", t("自定义日期", "Custom dates")],
-              ]}
-            />
-          </div>
-          <div className="dash-control">
-            <label htmlFor={`${fieldId}-clock`}>{t("日期口径", "Date basis")}</label>
-            {kind === "github" ? (
-              <DashboardChoice
-                id={`${fieldId}-clock`}
-                label={t("日期口径", "Date basis")}
-                value={githubClock}
-                onChange={(value) => changeScope(() => setGithubClock(value as "activity" | "creation"))}
-                options={[
-                  ["activity", t("仓库最近活动", "Latest repository activity")],
-                  ["creation", t("仓库最初发布时间", "Initial repository publication")],
-                ]}
-              />
-            ) : (
-              <DashboardChoice
-                id={`${fieldId}-clock`}
-                label={t("日期口径", "Date basis")}
-                value={newsClock}
-                onChange={(value) => changeScope(() => setNewsClock(value as NewsDashboardClock))}
-                options={[
-                  ["publication", t("消息发布时间", "Announcement publication")],
-                  ["discovery", t("平台入库时间", "Library discovery date")],
-                ]}
-              />
-            )}
-          </div>
-          <div className="dash-control">
-            <label htmlFor={`${fieldId}-category`}>{t("研究方向", "Research area")}</label>
-            {choiceControl(
-              `${fieldId}-category`,
-              t("研究方向", "Research area"),
-              category,
-              (value) => changeScope(() => setCategory(value)),
-              [
-                ["all", `${t("全部方向", "All directions")} (${recordCount})`],
-                ...categories.map((group): [string, string] => [
-                  group.id,
-                  `${t(group.labelZh, group.labelEn)} (${categoryIndex.counts.get(group.id) ?? 0})`,
-                ]),
-              ],
-              `${fieldId}-category-hint`,
-            )}
-          </div>
-          <div className="dash-control">
-            <label htmlFor={`${fieldId}-relevance`}>{t("相关性", "Relevance")}</label>
-            {choiceControl(
-              `${fieldId}-relevance`,
-              t("相关性", "Relevance"),
-              relevance,
-              (value) => changeScope(() => setRelevance(value as RelevanceFilter)),
-              [
-                ["direct", `${t("高相关", "Directly relevant")} (${directCount})`],
-                ["candidate", `${t("待复核", "Needs review")} (${candidateCount})`],
-                ["all", `${t("全部线索", "All leads")} (${recordCount})`],
-              ],
-              `${fieldId}-relevance-hint`,
-            )}
-          </div>
-          <button type="button" className="foresight-button" onClick={reset}>
-            {t("重置", "Reset")}
-          </button>
-        </div>
-        {dateRange === "custom" && (
-          <div className="signals-filter-row">
-            <div>
-              <label htmlFor={`${fieldId}-from`}>{t("起始日期", "From")}</label>
-              <input
-                id={`${fieldId}-from`}
-                type="date"
-                value={from}
-                max={to || undefined}
-                onChange={(event) => changeScope(() => setFrom(event.target.value))}
-              />
-            </div>
-            <div>
-              <label htmlFor={`${fieldId}-to`}>{t("截止日期", "To")}</label>
-              <input
-                id={`${fieldId}-to`}
-                type="date"
-                value={to}
-                min={from || undefined}
-                onChange={(event) => changeScope(() => setTo(event.target.value))}
-              />
-            </div>
-          </div>
-        )}
-        <details className="source-search-controls" open={query ? true : undefined}>
-          <summary>
-            {t("搜索与列表排序", "Search and library sorting")}
-            {query && ` · ${query}`}
-          </summary>
-          <div className="signals-filter-toolbar">
-            {searchControl}
-            {sortControl}
-          </div>
-        </details>
-        <details className="signals-scope-explanation">
-          <summary>{t("筛选口径与数据说明", "Filter definitions and data notes")}</summary>
-          <p className="signals-filter-hint" id={`${fieldId}-category-hint`}>
-            {t(
-              `将检索方向归并为 ${categories.length} 个大类，跨方向记录可属于多类；尚无明确方向的记录归入综合类。括号为全库数量，可叠加其他筛选。`,
-              `Discovery directions are grouped into ${categories.length} broad areas and can overlap. Records without a specific area are included in the general category. Counts cover the full library; combine them with other filters.`,
-            )}
-          </p>
-          <p className="signals-filter-hint" id={`${fieldId}-relevance-hint`}>
-            {t(
-              "总览默认包括全部线索；高相关与待复核可分别筛选。待复核记录不进入 AI 研判。",
-              "The overview includes all leads by default; filter direct and review candidates separately. Candidates do not enter AI assessments.",
-            )}
-            {t(
-              "相关性不代表科研质量或效果验证。",
-              " Relevance does not establish research quality or validated performance.",
-            )}
-          </p>
-          <p className="signals-filter-hint">
-            {kind === "github"
-              ? t(
-                  "仓库最近活动取推送、Release 或创建时间中的最新值；仓库最初发布时间采用 GitHub 仓库创建时间，不等于首次 Release 或转为公开的时间。两者均按北京时间归日；顶部今日入库仍按平台首次发现时间统计。",
-                  "Latest activity uses the latest push, release or creation date. Initial publication uses GitHub repository creation time, not the first release or the date a repository became public. Both use Beijing calendar days; Added today still uses the platform first-seen time.",
-                )
-              : t(
-                  "消息发布时间采用检索来源提供的文章日期；平台入库时间采用首次发现时间，并单列最早采集批次。两者均按北京时间归日；入库不等于消息新发布，缺失日期不作推断。",
-                  "Publication uses the article date supplied by the discovery source; discovery uses first-seen time with the earliest collection batch separated. Both use Beijing calendar days. Collection is not a new announcement, and missing dates are not inferred.",
-                )}
-          </p>
-          {kind === "news" && (
-            <p className="signals-filter-hint">
-              <SourceLink
-                url={`https://news.google.com/search?q=${encodeURIComponent(query.trim() || "medical imaging AI")}&hl=en-US&gl=US&ceid=US:en`}
-              >
-                {t("在 Google 新闻继续检索", "Continue searching on Google News")}
-              </SourceLink>
-              {t(
-                " · 在新窗口检索，结果不会自动入库。",
-                " · Opens a new search; results are not added automatically.",
-              )}
-            </p>
-          )}
-        </details>
-        {invalidDates && (
-          <p className="signals-source-error" role="alert">
-            {t("起始日期不能晚于截止日期。", "The start date must not follow the end date.")}
-          </p>
-        )}
-      </section>
+      {controlsOutsideShell && filterControls}
 
       <div ref={contentRef} className="signals-view-content" tabIndex={-1}>
         {summaryOnly && (
@@ -1043,6 +1050,8 @@ export function ResearchSignalsView({
               </div>
             ) : kind === "github" && githubModel ? (
               <GitHubDashboard
+                summary={summaryControls}
+                filters={filterControls}
                 model={githubModel}
                 onDrill={openDashboardRecords}
                 onBrowse={() => switchView("library")}
@@ -1050,6 +1059,8 @@ export function ResearchSignalsView({
               />
             ) : newsModel ? (
               <NewsDashboard
+                summary={summaryControls}
+                filters={filterControls}
                 model={newsModel}
                 originalsCount={summaryOnly ? manifest?.overview.news.originalsCount : undefined}
                 onDrill={openDashboardRecords}
