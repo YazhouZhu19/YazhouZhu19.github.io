@@ -4,6 +4,7 @@ import { writePublicSnapshot, writePublicSnapshotV3 } from "./public-snapshot";
 import { copyPreviousSnapshotShards } from "./snapshot-install";
 import { parseResearchSignalsData, SIGNALS_MAX_BYTES } from "../lib/research-signals";
 import { writeSignalsSnapshot } from "./signals-snapshot";
+import { checkPublicationSize, prunePublishedShards } from "./publication-retention";
 
 // Verify the complete source snapshot before publishing any data.
 const data = await readSnapshotFile("data/papers.json");
@@ -32,5 +33,8 @@ console.log(`Verified public signal snapshot: ${signals.records.length} GitHub a
 const signalManifest = await writeSignalsSnapshot("dist/data/signals-v2/manifest.json", signals,
   "../../research-monitor/data/signals-v2/manifest.json");
 console.log(`Verified sharded signals: ${signalManifest.shards.length} shards; overview metadata loads independently of records`);
+const retention = await prunePublishedShards("dist/data", "../../research-monitor/data");
+const publication = await checkPublicationSize("dist");
+console.log(`Publication budget: ${publication.bytes} / 800000000 bytes; kept ${retention.retained} referenced shards and removed ${retention.removed.length} orphans (${retention.removedBytes} bytes)`);
 import assert from "node:assert/strict";
 import { copyFile, readFile, readdir } from "node:fs/promises";

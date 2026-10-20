@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Set up Node
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
@@ -56,6 +56,8 @@ jobs:
 
       - name: Collect, build, and commit only monitor data and output
         id: refresh
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
@@ -64,7 +66,7 @@ jobs:
           # All resets apply only to this disposable Actions checkout. A rejected
           # push is rebuilt from the new main; no force-push or stale JSON rebase.
           for attempt in 1 2 3; do
-            git fetch origin main
+            git fetch --depth=1 origin main
             git reset --hard origin/main
             export MONITOR_SOURCE_REVISION
             MONITOR_SOURCE_REVISION="$(git rev-parse HEAD)"
@@ -163,17 +165,20 @@ jobs:
 
           sys.path.insert(0, 'tools/research-monitor/scripts')
           from snapshot_checks import verify_snapshot
+          from signals_checks import verify_signals_snapshot
 
           dist = Path('tools/research-monitor/dist')
           if dist.is_symlink():
               raise SystemExit('Build output must not be a symbolic link')
-          for name in ('index.html', 'en/index.html', 'data/papers.json', 'data/public-papers-v2.json', 'data/research-signals.json'):
+          for name in ('index.html', 'en/index.html', 'data/papers.json', 'data/public-papers-v2.json', 'data/public-papers-v3.json', 'data/research-signals.json', 'data/signals-v2/manifest.json'):
               if not (dist / name).is_file():
                   raise SystemExit(f'Missing build output: {name}')
           source_data = Path('tools/research-monitor/data/papers.json').read_bytes()
           legacy_data = (dist / 'data/papers.json').read_bytes()
           public_data = (dist / 'data/public-papers-v2.json').read_bytes()
+          compact_data = (dist / 'data/public-papers-v3.json').read_bytes()
           signal_data = (dist / 'data/research-signals.json').read_bytes()
+          signal_manifest_data = (dist / 'data/signals-v2/manifest.json').read_bytes()
           if signal_data != Path('tools/research-monitor/data/research-signals.json').read_bytes() or len(signal_data) > 64 * 1024 * 1024:
               raise SystemExit('Public signal snapshot differs from the archive or exceeds the limit')
           if source_data != legacy_data:
@@ -181,9 +186,15 @@ jobs:
           json.loads(public_data)
           source_snapshot = verify_snapshot(source_data, lambda path: (Path('tools/research-monitor/data') / path).read_bytes(), return_data=True)
           public_snapshot = verify_snapshot(public_data, lambda path: (dist / 'data' / path).read_bytes(), return_data=True)
+          compact_snapshot = verify_snapshot(compact_data, lambda path: (dist / 'data' / path).read_bytes(), return_data=True)
           legacy_snapshot = verify_snapshot(legacy_data, lambda path: (dist / 'data' / path).read_bytes(), return_data=True)
-          if source_snapshot != public_snapshot or source_snapshot != legacy_snapshot:
+          if source_snapshot != public_snapshot or source_snapshot != legacy_snapshot or source_snapshot != compact_snapshot:
               raise SystemExit('Decoded public data differs from collected records or metadata')
+          flat_signals = json.loads(signal_data)
+          flat_signals['records'].sort(key=lambda record: record['id'])
+          split_signals = verify_signals_snapshot(signal_manifest_data, lambda path: (dist / 'data/signals-v2' / path).read_bytes(), return_data=True)
+          if split_signals != flat_signals:
+              raise SystemExit('Decoded split GitHub/news data differs from collected records or metadata')
           forbidden = {'node_modules', '.git', '.github', '.env', '.env.local'}
           for path in dist.rglob('*'):
               if path.is_symlink() or forbidden.intersection(path.parts):
@@ -196,16 +207,29 @@ jobs:
               'runAttempt': os.environ['GITHUB_RUN_ATTEMPT'],
               'sourceRevision': os.environ['MONITOR_SOURCE_REVISION'],
               'papersSha256': hashlib.sha256(public_data).hexdigest(),
+              'compactPapersSha256': hashlib.sha256(compact_data).hexdigest(),
               'legacyPapersSha256': hashlib.sha256(legacy_data).hexdigest(),
               'signalsSha256': hashlib.sha256(signal_data).hexdigest(),
+              'signalsManifestSha256': hashlib.sha256(signal_manifest_data).hexdigest(),
           }
           (dist / 'deployment.json').write_text(json.dumps(manifest, indent=2) + '\n')
           PY
 
+            staged_site_bytes="$(du -sb tools/research-monitor/dist | cut -f1)"
+            if [ "$staged_site_bytes" -gt 800000000 ]; then
+              echo "::error::Generated site is $staged_site_bytes bytes, exceeding the 800 MB publication budget. Remove unreferenced generated shards before publishing."
+              exit 1
+            fi
             test ! -L research-monitor
             mkdir -p research-monitor
             # Delete obsolete assets only within this generated subtree.
             rsync -a --delete tools/research-monitor/dist/ research-monitor/
+            published_site_bytes="$(du -sb research-monitor | cut -f1)"
+            if [ "$published_site_bytes" -gt 800000000 ]; then
+              echo "::error::Publication is $published_site_bytes bytes, exceeding the 800 MB budget; no commit or push will run."
+              exit 1
+            fi
+            echo "Publication apparent size: $published_site_bytes bytes (limit 800000000)." >> "$GITHUB_STEP_SUMMARY"
             git add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ tools/research-monitor/data/research-signals.json research-monitor/
 
             python3 - <<'PY'
@@ -231,8 +255,18 @@ jobs:
 
             # If the server accepted the push but the response was lost, do not
             # throw away the accepted commit or misreport a failed publication.
-            git fetch origin main
-            if git merge-base --is-ancestor "$expected_commit" origin/main; then
+            git fetch --depth=1 origin main
+            remote_commit="$(git rev-parse origin/main)"
+            # A depth-1 checkout cannot reliably answer merge-base queries.
+            # GitHub's compare endpoint checks ancestry on the server. A local
+            # rejected commit can legitimately be absent remotely (404); an
+            # unverified comparison is never success and keeps the rebuild path.
+            ancestry_status=""
+            if ! ancestry_status="$(gh api "repos/$GITHUB_REPOSITORY/compare/$expected_commit...$remote_commit" --jq '.status' 2>/dev/null)"; then
+              ancestry_status="unverified"
+              echo 'Could not verify remote ancestry; publication is not confirmed and will be rebuilt.'
+            fi
+            if [ "$ancestry_status" = "ahead" ] || [ "$ancestry_status" = "identical" ]; then
               echo "commit=$expected_commit" >> "$GITHUB_OUTPUT"
               echo "collection_failed=$collection_failed" >> "$GITHUB_OUTPUT"
               echo "signals_failed=$signals_failed" >> "$GITHUB_OUTPUT"
@@ -265,6 +299,7 @@ jobs:
 
           sys.path.insert(0, 'tools/research-monitor/scripts')
           from snapshot_checks import verify_snapshot, MAX_BYTES
+          from signals_checks import verify_signals_snapshot
 
           expected_commit = os.environ['EXPECTED_COMMIT']
           expected_manifest = json.loads(Path('research-monitor/deployment.json').read_text())
@@ -331,8 +366,10 @@ jobs:
                       last_status = (status, commit)
                   relevant = commit == expected_commit
                   if commit and not relevant:
-                      subprocess.run(['git', 'fetch', 'origin', 'main'], check=True, capture_output=True)
-                      relevant = subprocess.run(['git', 'merge-base', '--is-ancestor', expected_commit, commit], capture_output=True).returncode == 0
+                      comparison = api(f"repos/{os.environ['GITHUB_REPOSITORY']}/compare/{expected_commit}...{commit}")
+                      if not isinstance(comparison, dict) or comparison.get('status') not in ('ahead', 'identical', 'behind', 'diverged'):
+                          raise RuntimeError('Pages commit ancestry could not be verified')
+                      relevant = comparison['status'] in ('ahead', 'identical')
                   if relevant and status == 'built':
                       build_ready = True
                   if not build_requested:
@@ -358,6 +395,11 @@ jobs:
                       json.loads(live_data)
                       if hashlib.sha256(live_data).hexdigest() == expected_manifest['papersSha256']:
                           total = verify_snapshot(live_data, lambda path: read_public('data/' + path, MAX_BYTES))
+                          compact_data = read_public('data/public-papers-v3.json', MAX_BYTES)
+                          if hashlib.sha256(compact_data).hexdigest() != expected_manifest['compactPapersSha256']:
+                              raise RuntimeError('Compact public manifest does not match this deployment')
+                          if verify_snapshot(compact_data, lambda path: read_public('data/' + path, MAX_BYTES)) != total:
+                              raise RuntimeError('Compact and v2 public paper counts differ')
                           legacy_data = read_public('data/papers.json', MAX_BYTES)
                           if hashlib.sha256(legacy_data).hexdigest() != expected_manifest['legacyPapersSha256']:
                               raise RuntimeError('Legacy public manifest does not match this deployment')
@@ -366,10 +408,17 @@ jobs:
                           signal_data = read_public('data/research-signals.json', 64 * 1024 * 1024)
                           if hashlib.sha256(signal_data).hexdigest() != expected_manifest['signalsSha256']:
                               raise RuntimeError('Public GitHub/news data does not match this deployment')
+                          split_data = read_public('data/signals-v2/manifest.json', MAX_BYTES)
+                          if hashlib.sha256(split_data).hexdigest() != expected_manifest['signalsManifestSha256']:
+                              raise RuntimeError('Split GitHub/news manifest does not match this deployment')
+                          split_counts = verify_signals_snapshot(split_data, lambda path: read_public('data/signals-v2/' + path, MAX_BYTES))
+                          flat_records = json.loads(signal_data)['records']
+                          if split_counts != {kind: sum(record['kind'] == kind for record in flat_records) for kind in ('github', 'news')}:
+                              raise RuntimeError('Split and legacy GitHub/news counts differ')
                           for route in ('', 'en/'):
                               if b'<html' not in read_public(route, 2 * 1024 * 1024).lower():
                                   raise RuntimeError('Published route did not return HTML')
-                          print(f'Published routes, build marker, paper snapshots ({total} papers), and GitHub/news snapshot verified.', flush=True)
+                          print(f'Published routes, build marker, v1/v2/v3 paper snapshots ({total} papers), and legacy/split GitHub/news snapshots verified.', flush=True)
                           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
                               summary.write(f'Published and verified: {monitor_url}\n\nCommit: `{expected_commit}`\n\nPublic data SHA-256: `{expected_manifest["papersSha256"]}`\n')
                           break

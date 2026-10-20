@@ -23,7 +23,7 @@ scores must not be presented as independently validated accuracy.
 | P1.4 | Complete | Kind/month shards, compact exact overview and on-demand records; retry and stale-drill guards verified. |
 | P1.2 | Complete | Lossless v3 transport; raw shards reduced 30.001%; v1/v2 compatibility retained. |
 | P1.5 | Complete | Worker fetch/decode/validate/index/search, cancellation and validated fallback; initial local longest task 97 ms. |
-| P1.7 | Pending | Shallow checkout, directory size guard and generation cleanup. |
+| P1.7 | Implemented; live timing pending | Shallow checkout, fail-closed verification, 800 MB guard and exact generation cleanup tested. |
 | P3.1 | Pending | Formatting-only commit. |
 | P3.2 | Pending | Split workspace responsibilities into hooks and components. |
 | P2.1 | Pending | Remove verified-unused UI modules and dependencies. |
@@ -120,3 +120,14 @@ scores must not be presented as independently validated accuracy.
 - **P1 shared integration validation:** 417 TypeScript + 25 local API tests passed.
   Full `npm run build` (typecheck, Vite, data round-trip/copy, retention and budget) passed.
   The sandbox blocks tsx CLI IPC, so that build ran with approved local execution.
+
+- **P1.7:** A real mixed-generation build was reduced from 593,700,553 to 435,051,781
+  bytes by removing 38 unreferenced shards (158,648,772 bytes), retaining 406 required
+  current/previous/compatibility shards. Three governance tests, thirteen Python tests,
+  complete paper/signals equality, YAML and embedded shell/Python syntax checks passed.
+  CI checkout now uses depth 1; server comparison verifies lost push responses without
+  pretending an API failure proves ancestry. Unverified results rebuild/retry within the
+  existing limit, then fail if publishing remains unconfirmed. Both pre-publication and
+  assembled output enforce 800,000,000 bytes. Actual CI checkout time and hourly commit
+  delta require a deployed run and are not claimed here. Long-term branch/history options
+  are documented only; history and synchronization frequency remain unchanged.
