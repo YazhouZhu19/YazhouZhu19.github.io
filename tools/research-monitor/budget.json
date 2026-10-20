@@ -23,8 +23,8 @@
   "limits": {
     "assets": {
       "assets/ai-research-panel.js": {
-        "rawBytes": 98304,
-        "gzipBytes": 38912
+        "rawBytes": 46080,
+        "gzipBytes": 18432
       },
       "assets/ai-worker.js": {
         "rawBytes": 6247424,
@@ -43,12 +43,12 @@
         "gzipBytes": 2155520
       },
       "assets/main.css": {
-        "rawBytes": 269312,
-        "gzipBytes": 45056
+        "rawBytes": 167936,
+        "gzipBytes": 31744
       },
       "assets/main.js": {
-        "rawBytes": 582656,
-        "gzipBytes": 181248
+        "rawBytes": 163840,
+        "gzipBytes": 110000
       },
       "assets/monitor-views.js": {
         "rawBytes": 15360,
@@ -63,8 +63,8 @@
         "gzipBytes": 6144
       },
       "assets/research-signals-view.js": {
-        "rawBytes": 117760,
-        "gzipBytes": 35840
+        "rawBytes": 61440,
+        "gzipBytes": 21504
       },
       "assets/research-signals-view.css": {
         "rawBytes": 32768,
@@ -75,7 +75,7 @@
         "gzipBytes": 9216
       },
       "assets/team-foresight.css": {
-        "rawBytes": 12288,
+        "rawBytes": 14336,
         "gzipBytes": 3072
       },
       "assets/research-signals.js": {
@@ -87,8 +87,8 @@
         "gzipBytes": 4096
       },
       "assets/data-worker.js": {
-        "rawBytes": 73728,
-        "gzipBytes": 19456
+        "rawBytes": 86016,
+        "gzipBytes": 24576
       },
       "assets/paper-index.js": {
         "rawBytes": 2048,
@@ -101,24 +101,140 @@
       "assets/shard-cache.js": {
         "rawBytes": 9216,
         "gzipBytes": 4096
+      },
+      "assets/arrow-up-right.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/badge.js": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/classify.js": {
+        "rawBytes": 14336,
+        "gzipBytes": 7168
+      },
+      "assets/createLucideIcon.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/foresight.css": {
+        "rawBytes": 16384,
+        "gzipBytes": 4096
+      },
+      "assets/foresight.js": {
+        "rawBytes": 56320,
+        "gzipBytes": 23552
+      },
+      "assets/github-dashboard.js": {
+        "rawBytes": 20480,
+        "gzipBytes": 8192
+      },
+      "assets/github-dashboard.css": {
+        "rawBytes": 8192,
+        "gzipBytes": 2048
+      },
+      "assets/locale-provider.js": {
+        "rawBytes": 51200,
+        "gzipBytes": 20480
+      },
+      "assets/news-dashboard.js": {
+        "rawBytes": 16384,
+        "gzipBytes": 6144
+      },
+      "assets/news-dashboard.css": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/paper-analysis.css": {
+        "rawBytes": 4096,
+        "gzipBytes": 1024
+      },
+      "assets/paper-detail-sheet.js": {
+        "rawBytes": 7168,
+        "gzipBytes": 3072
+      },
+      "assets/paper-filters.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/paper-library.js": {
+        "rawBytes": 6144,
+        "gzipBytes": 3072
+      },
+      "assets/paper-picker.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/preliminary-analysis.css": {
+        "rawBytes": 22528,
+        "gzipBytes": 4096
+      },
+      "assets/rolldown-runtime.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/search.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/select.js": {
+        "rawBytes": 33792,
+        "gzipBytes": 11264
+      },
+      "assets/signal-dashboard.js": {
+        "rawBytes": 9216,
+        "gzipBytes": 4096
+      },
+      "assets/source-dashboard-charts.js": {
+        "rawBytes": 12288,
+        "gzipBytes": 5120
+      },
+      "assets/source-dashboard-charts.css": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/textarea.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/types.js": {
+        "rawBytes": 58368,
+        "gzipBytes": 14336
+      },
+      "assets/vendor-react.js": {
+        "rawBytes": 194560,
+        "gzipBytes": 61440
+      },
+      "assets/vendor-ui.js": {
+        "rawBytes": 101376,
+        "gzipBytes": 33792
+      },
+      "assets/x.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/ai-research-panel.css": {
+        "rawBytes": 10240,
+        "gzipBytes": 3072
       }
     },
     "totals": {
       "initialJs": {
-        "rawBytes": 656384,
-        "gzipBytes": 200704
+        "rawBytes": 671744,
+        "gzipBytes": 210944
       },
       "initialCss": {
-        "rawBytes": 269312,
-        "gzipBytes": 45056
+        "rawBytes": 167936,
+        "gzipBytes": 31744
       },
       "optionalJs": {
         "rawBytes": 12558336,
         "gzipBytes": 4457472
       },
       "optionalCss": {
-        "rawBytes": 45056,
-        "gzipBytes": 9216
+        "rawBytes": 103424,
+        "gzipBytes": 20480
       },
       "initialData": {
         "rawBytes": 53026816,
@@ -150,6 +266,9 @@
   "optimizationNotes": [
     "P1.4 removes signals from startup; GitHub/news overview is a separately loaded 36,437-byte gzip manifest.",
     "P1.5 explicitly includes the 71,944-byte raw / 18,289-byte gzip startup data Worker; fallback modules are optional. Worker isolation duplicates validation code, increasing initial JS by about 18 KB gzip until P2 splitting.",
-    "P1.2 switches startup measurement to v3: 50,501,670 raw / 10,649,085 gzip bytes for all 8,326 papers. Fewer, denser shards have larger per-shard gzip size; the unchanged 4 MiB raw cap still applies."
+    "P1.2 switches startup measurement to v3: 50,501,670 raw / 10,649,085 gzip bytes for all 8,326 papers. Fewer, denser shards have larger per-shard gzip size; the unchanged 4 MiB raw cap still applies.",
+    "P2.1/P2.2: explicit React/Radix groups, lazy paper views, separate source dashboards and AI settings. Measured main is 131483 raw / 41129 gzip; a 110000-byte gzip cap enforces the plan target. Main-file reduction is not a claim that all startup JS fell by the same amount.",
+    "P2.2 integration includes P4 draft classification code in both Worker and validated fallback. Total startup JS is 655719 raw / 205184 gzip (all shared vendors and Worker counted), versus P1 643341 / 195386. New explicit chunk budgets plus a 210944-byte startup gzip ceiling expose this cost; no automatic rebasing occurs.",
+    "P2.1 removes unused vendor CSS (pre-token main 164624 raw / 30803 gzip). P3 moves view CSS into optional resources; optional CSS allowance reflects that relocation and does not waive the main CSS target still under work."
   ]
 }

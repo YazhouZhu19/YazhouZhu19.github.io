@@ -13,9 +13,15 @@ import { useI18n } from "./locale-provider";
 import { AppSidebar } from "./app-sidebar";
 import { WorkspaceTopbar, WorkspaceHeader } from "./workspace-header";
 import { WorkspaceNavigation } from "./workspace-navigation";
-import { PaperFilters } from "./paper-filters";
-import { PaperLibrary } from "./paper-library";
-import { PaperDetailSheet } from "./paper-detail-sheet";
+const PaperFilters = lazy(() =>
+  import("./paper-filters").then((module) => ({ default: module.PaperFilters })),
+);
+const PaperLibrary = lazy(() =>
+  import("./paper-library").then((module) => ({ default: module.PaperLibrary })),
+);
+const PaperDetailSheet = lazy(() =>
+  import("./paper-detail-sheet").then((module) => ({ default: module.PaperDetailSheet })),
+);
 import { ResearchDashboard } from "./research-dashboard";
 import { exportPaperCsv } from "@/lib/paper-export";
 import { defaultDashboardFilters, type DashboardFilters, type DashboardDrill } from "@/lib/dashboard";
@@ -166,7 +172,11 @@ export default function MonitorWorkspace() {
               drillOrigin={drillOrigin}
               reset={reset}
             />
-            {library.needsFilteredPapers && <PaperFilters library={library} />}
+            {library.needsFilteredPapers && (
+              <Suspense fallback={viewFallback}>
+                <PaperFilters library={library} />
+              </Suspense>
+            )}
             <Suspense fallback={viewFallback}>
               {signalsView ? (
                 <ResearchSignalsView
@@ -241,12 +251,16 @@ export default function MonitorWorkspace() {
             </Suspense>
           </div>
         </SidebarInset>
-        <PaperDetailSheet
-          {...personal}
-          authenticated={authenticated}
-          accountControl={accountControl}
-          storageAvailable={!!data?.personalStorageAvailable}
-        />
+        {personal.selected && (
+          <Suspense fallback={viewFallback}>
+            <PaperDetailSheet
+              {...personal}
+              authenticated={authenticated}
+              accountControl={accountControl}
+              storageAvailable={!!data?.personalStorageAvailable}
+            />
+          </Suspense>
+        )}
       </SidebarProvider>
     </SignalsContext.Provider>
   );

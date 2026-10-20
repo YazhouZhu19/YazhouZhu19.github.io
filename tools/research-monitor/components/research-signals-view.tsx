@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useEffect, useId, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useDeferredValue, useEffect, useId, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Check, GitFork, Search, Star, X } from "lucide-react";
 import {
   type GitHubSignal,
@@ -29,16 +29,31 @@ import { RELEVANCE_REASON_LABELS } from "@/lib/signal-relevance";
 import { explicitEvidenceKeys, findRelatedSignals } from "@/lib/signal-evidence";
 import type { Paper } from "@/lib/types";
 import type { DashboardDrill } from "@/lib/dashboard";
-import { AiModelSettings, AiResearchPanel } from "./ai-research-panel";
+
 import type { SignalDashboardDrill } from "./signal-dashboard";
-import { GitHubDashboard, GitHubDashboardSummary } from "./github-dashboard";
-import { NewsDashboard, NewsDashboardSummary } from "./news-dashboard";
+
 import { DashboardChoice } from "./dashboard-choice";
 import { useI18n } from "./locale-provider";
 import "@/styles/research-signals.css";
 import "@/styles/signal-dashboard.css";
-import "@/styles/ai-research.css";
 import "@/styles/foresight.css";
+
+const GitHubDashboard = lazy(() =>
+  import("./github-dashboard").then((m) => ({ default: m.GitHubDashboard })),
+);
+const GitHubDashboardSummary = lazy(() =>
+  import("./github-dashboard").then((m) => ({ default: m.GitHubDashboardSummary })),
+);
+const NewsDashboard = lazy(() => import("./news-dashboard").then((m) => ({ default: m.NewsDashboard })));
+const NewsDashboardSummary = lazy(() =>
+  import("./news-dashboard").then((m) => ({ default: m.NewsDashboardSummary })),
+);
+const AiModelSettings = lazy(() =>
+  import("./ai-research-panel").then((m) => ({ default: m.AiModelSettings })),
+);
+const AiResearchPanel = lazy(() =>
+  import("./ai-research-panel").then((m) => ({ default: m.AiResearchPanel })),
+);
 
 type Props = {
   kind: "github" | "news";
@@ -127,6 +142,11 @@ export function ResearchSignalsView({
 }: Props) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
+  const viewLoading = (
+    <div className="signals-empty" role="status" aria-busy="true">
+      {t("正在读取公开数据…", "Loading public data…")}
+    </div>
+  );
   const [query, setQuery] = useState(() => browseSessions.get(kind)?.query ?? "");
   const deferredQuery = useDeferredValue(query);
   const [category, setCategory] = useState(() => browseSessions.get(kind)?.category ?? "all");
@@ -781,17 +801,19 @@ export function ResearchSignalsView({
         </button>
       </nav>
 
-      {kind === "github" && githubModel && snapshot && (
-        <GitHubDashboardSummary model={githubModel} summaryOnly={summaryOnly} onDrill={openGlobalRecords} />
-      )}
-      {kind === "news" && newsModel && snapshot && (
-        <NewsDashboardSummary
-          model={newsModel}
-          summaryOnly={summaryOnly}
-          onDrill={openGlobalRecords}
-          sourceCheckedAt={sourceCheckedAt}
-        />
-      )}
+      <Suspense fallback={viewLoading}>
+        {kind === "github" && githubModel && snapshot && (
+          <GitHubDashboardSummary model={githubModel} summaryOnly={summaryOnly} onDrill={openGlobalRecords} />
+        )}
+        {kind === "news" && newsModel && snapshot && (
+          <NewsDashboardSummary
+            model={newsModel}
+            summaryOnly={summaryOnly}
+            onDrill={openGlobalRecords}
+            sourceCheckedAt={sourceCheckedAt}
+          />
+        )}
+      </Suspense>
       {error && (
         <div className="signals-notice" role="alert">
           <p>
@@ -997,468 +1019,479 @@ export function ResearchSignalsView({
             )}
           </p>
         )}
-        {view === "overview" ? (
-          !snapshot || (!defaultScope && !recordsLoaded) ? (
-            <div className="signals-empty" role="status" aria-busy="true">
-              {t("正在读取公开数据…", "Loading public data…")}
-            </div>
-          ) : kind === "github" && githubModel ? (
-            <GitHubDashboard
-              model={githubModel}
-              onDrill={openDashboardRecords}
-              onBrowse={() => switchView("library")}
-              onRankedBrowse={openRankedRepositories}
-            />
-          ) : newsModel ? (
-            <NewsDashboard
-              model={newsModel}
-              originalsCount={summaryOnly ? manifest?.overview.news.originalsCount : undefined}
-              onDrill={openDashboardRecords}
-              onBrowse={() => switchView("library")}
-            />
-          ) : null
-        ) : (
-          <>
-            {drill && (
-              <div className="signals-dashboard-drill">
-                <span>
-                  {t("来自统计图表：", "From dashboard: ")}
-                  <strong>{drill.label}</strong> · {filtered.length.toLocaleString()} {t("条记录", "records")}
-                </span>
-                <div>
-                  <button type="button" className="foresight-button" onClick={() => changeScope(() => {})}>
-                    {t("显示筛选范围全部记录", "Show all filtered records")}
-                  </button>
-                  <button type="button" className="foresight-button" onClick={() => switchView("overview")}>
-                    {t("返回统计总览", "Back to overview")}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <p className="signals-filter-hint">
-              {drill?.global
-                ? t(
-                    "全局记录入口，独立于日期及相关性筛选。调整筛选后恢复当前范围。",
-                    "Global records, independent of date and relevance filters. Changing a filter returns to the selected scope.",
-                  )
-                : t(
-                    "当前列表与仪表盘采用相同范围；点击上方“库内记录”可查看完整库。",
-                    "This list shares the dashboard scope. Click Records in library above to inspect the complete collection.",
-                  )}
-            </p>
-            <div className="signals-results-heading">
-              <h2>
-                {filtered.length}
-                <span>
-                  {" "}
-                  / {records.length}{" "}
-                  {kind === "github" ? t("个项目", "repositories") : t("条发布", "announcements")}
-                </span>
-              </h2>
-              <button
-                type="button"
-                className="foresight-button foresight-button-primary"
-                disabled={!analysisRecords.length || loading}
-                onClick={showAnalysis}
-              >
-                {t("分析当前结果", "Analyze these results")}
-                <ArrowUpRight size={14} />
-              </button>
-            </div>
-            {filtered.length > analysisRecords.length && (
-              <p className="signals-analysis-exclusion">
-                {t(
-                  `当前结果含 ${filtered.length - analysisRecords.length} 条待复核线索。分析仅使用其中 ${analysisRecords.length} 条高相关记录。`,
-                  `These results include ${filtered.length - analysisRecords.length} leads needing review. Analysis uses only the ${analysisRecords.length} directly relevant records.`,
-                )}
-              </p>
-            )}
-            {kind === "github" && compared.length > 0 && (
-              <section className="signals-compare" aria-label={t("项目对照", "Repository comparison")}>
-                <div className="signals-compare-heading">
-                  <div>
-                    <h3>
-                      {t("项目对照", "Repository comparison")} <span>{compared.length} / 3</span>
-                    </h3>
-                    <p>
-                      {t(
-                        "帮助选择复现候选；可用性与模型效果仍需在原仓库核实。",
-                        "Compare candidates for reproduction; verify usability and model performance in the original repository.",
-                      )}
-                    </p>
-                  </div>
-                  <button type="button" className="foresight-button" onClick={() => setCompareIds([])}>
-                    {t("清空对照", "Clear")}
-                  </button>
-                </div>
-                <div className="signals-table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>{t("检查项", "Check")}</th>
-                        {compared.map((record) => (
-                          <th key={record.id}>
-                            <SourceLink url={record.url}>{record.fullName}</SourceLink>
-                            <button
-                              type="button"
-                              aria-label={t(`移除 ${record.fullName}`, `Remove ${record.fullName}`)}
-                              onClick={() => setCompareIds((ids) => ids.filter((id) => id !== record.id))}
-                            >
-                              <X size={13} />
-                            </button>
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th>{t("代码许可", "Code license")}</th>
-                        {compared.map((record) => (
-                          <td key={record.id}>
-                            {record.license || t("未识别 · 查看仓库", "Not identified · check repository")}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr>
-                        <th>{t("最近推送", "Latest push")}</th>
-                        {compared.map((record) => (
-                          <td key={record.id}>{dateLabel(record.pushedAt, noDate)}</td>
-                        ))}
-                      </tr>
-                      <tr>
-                        <th>{t("最近 Release", "Latest release")}</th>
-                        {compared.map((record) => (
-                          <td key={record.id}>
-                            {record.releaseUrl ? (
-                              <SourceLink url={record.releaseUrl}>
-                                {dateLabel(record.releasedAt, noDate)}
-                              </SourceLink>
-                            ) : (
-                              t("未采集到", "Not collected")
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr>
-                        <th>{t("维护状态", "Repository state")}</th>
-                        {compared.map((record) => (
-                          <td key={record.id}>
-                            {record.archived ? t("已归档", "Archived") : t("未归档", "Not archived")}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr>
-                        <th>{t("Stars 快照", "Stars snapshot")}</th>
-                        {compared.map((record) => (
-                          <td key={record.id}>
-                            {record.stars.toLocaleString(locale === "en" ? "en-US" : "zh-CN")}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr>
-                        <th>{t("Forks 快照", "Forks snapshot")}</th>
-                        {compared.map((record) => (
-                          <td key={record.id}>
-                            {record.forks.toLocaleString(locale === "en" ? "en-US" : "zh-CN")}
-                          </td>
-                        ))}
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p className="signals-filter-hint">
-                  {t(
-                    "代码许可证不自动涵盖模型权重、训练数据或临床使用授权；请查阅项目具体条款。",
-                    "A code license does not automatically cover model weights, training data, or clinical-use permissions; check the project terms.",
-                  )}
-                </p>
-              </section>
-            )}
-
-            {!recordsLoaded && !error ? (
+        <Suspense fallback={viewLoading}>
+          {view === "overview" ? (
+            !snapshot || (!defaultScope && !recordsLoaded) ? (
               <div className="signals-empty" role="status" aria-busy="true">
                 {t("正在读取公开数据…", "Loading public data…")}
               </div>
-            ) : filtered.length === 0 ? (
-              <div className="signals-empty">
-                <Search size={23} />
-                <h3>{t("没有符合条件的记录", "No matching records")}</h3>
-                <p>
-                  {records.length
-                    ? t(
-                        "尝试缩小关键词、移除日期筛选，或切换到全部线索。",
-                        "Try fewer keywords, remove date filters, or switch to all leads.",
-                      )
-                    : t(
-                        "尚未载入此来源的数据，请查看采集状态或稍后重试。",
-                        "No records from this source are loaded. Check its collection status or retry later.",
-                      )}
-                </p>
+            ) : kind === "github" && githubModel ? (
+              <GitHubDashboard
+                model={githubModel}
+                onDrill={openDashboardRecords}
+                onBrowse={() => switchView("library")}
+                onRankedBrowse={openRankedRepositories}
+              />
+            ) : newsModel ? (
+              <NewsDashboard
+                model={newsModel}
+                originalsCount={summaryOnly ? manifest?.overview.news.originalsCount : undefined}
+                onDrill={openDashboardRecords}
+                onBrowse={() => switchView("library")}
+              />
+            ) : null
+          ) : (
+            <>
+              {drill && (
+                <div className="signals-dashboard-drill">
+                  <span>
+                    {t("来自统计图表：", "From dashboard: ")}
+                    <strong>{drill.label}</strong> · {filtered.length.toLocaleString()}{" "}
+                    {t("条记录", "records")}
+                  </span>
+                  <div>
+                    <button type="button" className="foresight-button" onClick={() => changeScope(() => {})}>
+                      {t("显示筛选范围全部记录", "Show all filtered records")}
+                    </button>
+                    <button type="button" className="foresight-button" onClick={() => switchView("overview")}>
+                      {t("返回统计总览", "Back to overview")}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <p className="signals-filter-hint">
+                {drill?.global
+                  ? t(
+                      "全局记录入口，独立于日期及相关性筛选。调整筛选后恢复当前范围。",
+                      "Global records, independent of date and relevance filters. Changing a filter returns to the selected scope.",
+                    )
+                  : t(
+                      "当前列表与仪表盘采用相同范围；点击上方“库内记录”可查看完整库。",
+                      "This list shares the dashboard scope. Click Records in library above to inspect the complete collection.",
+                    )}
+              </p>
+              <div className="signals-results-heading">
+                <h2>
+                  {filtered.length}
+                  <span>
+                    {" "}
+                    / {records.length}{" "}
+                    {kind === "github" ? t("个项目", "repositories") : t("条发布", "announcements")}
+                  </span>
+                </h2>
+                <button
+                  type="button"
+                  className="foresight-button foresight-button-primary"
+                  disabled={!analysisRecords.length || loading}
+                  onClick={showAnalysis}
+                >
+                  {t("分析当前结果", "Analyze these results")}
+                  <ArrowUpRight size={14} />
+                </button>
               </div>
-            ) : (
-              <div className="signals-list">
-                {filtered.slice(0, limit).map((record) => {
-                  const related = relatedRecords(record, recordLinkIndex);
-                  const paperLinks = (relatedPapers.get(record.id) ?? [])
-                    .map((id) => paperById.get(id))
-                    .filter((paper): paper is Paper => !!paper);
-                  const comparing = compareIds.includes(record.id);
-                  const matchedCategories = categories.filter((group) =>
-                    categoryIndex.byRecord.get(record.id)?.includes(group.id),
-                  );
-                  return (
-                    <article className="signal-card" key={record.id}>
-                      <div className="signal-card-meta">
-                        <span className={`signal-kind signal-kind-${record.kind}`}>
-                          {record.kind === "github"
-                            ? "GitHub"
-                            : record.sourceId.startsWith("rss-news-")
-                              ? t("发布者订阅源", "Publisher feed")
-                              : record.discoveryUrl &&
-                                  new URL(record.discoveryUrl).hostname === "news.google.com"
-                                ? t("Google 新闻检索", "Google News discovery")
-                                : t("公开发布", "Public announcement")}
-                        </span>
-                        <span>
-                          {record.kind === "github" ? t("所有者：", "Owner: ") : t("发布者：", "Publisher: ")}
-                          {record.publisher}
-                        </span>
-                        <span>
-                          {record.kind === "github"
-                            ? `${t("最近活动 ", "Latest activity ")}${beijingDay(datesById.get(record.id) ?? "") || noDate}`
-                            : `${t("发布时间 ", "Published ")}${beijingDay(newsDashboardDate(record, "publication") ?? "") || noDate}`}
-                        </span>
-                        {record.kind === "github" && (
-                          <span>
-                            {t("最初发布 ", "Initially published ")}
-                            {beijingDay(githubDashboardDate(record, "creation") ?? "") || noDate}
-                          </span>
-                        )}
-                        <span>
-                          {t("首次入库 ", "First collected ")}
-                          {beijingDay(record.firstSeenAt) || noDate}
-                        </span>
-                        {record.kind === "github" && record.archived && (
-                          <span className="signal-archived">{t("已归档", "Archived")}</span>
-                        )}
-                      </div>
+              {filtered.length > analysisRecords.length && (
+                <p className="signals-analysis-exclusion">
+                  {t(
+                    `当前结果含 ${filtered.length - analysisRecords.length} 条待复核线索。分析仅使用其中 ${analysisRecords.length} 条高相关记录。`,
+                    `These results include ${filtered.length - analysisRecords.length} leads needing review. Analysis uses only the ${analysisRecords.length} directly relevant records.`,
+                  )}
+                </p>
+              )}
+              {kind === "github" && compared.length > 0 && (
+                <section className="signals-compare" aria-label={t("项目对照", "Repository comparison")}>
+                  <div className="signals-compare-heading">
+                    <div>
                       <h3>
-                        <SourceLink
-                          url={record.kind === "news" ? record.originalUrl || record.url : record.url}
-                        >
-                          {record.title}
-                        </SourceLink>
+                        {t("项目对照", "Repository comparison")} <span>{compared.length} / 3</span>
                       </h3>
-                      <p className="signal-summary">
-                        {record.summary || t("来源未提供摘要。", "No summary was supplied by the source.")}
-                      </p>
-                      <details
-                        className={`signal-relevance-details signal-relevance-${record.relevance?.level ?? "candidate"}`}
-                      >
-                        <summary>
-                          <span>
-                            {record.relevance?.level === "direct"
-                              ? t("高相关", "Directly relevant")
-                              : t("待复核", "Needs review")}
-                          </span>
-                          {t("查看匹配依据", "Inspect relevance clues")}
-                        </summary>
-                        {record.relevance ? (
-                          <ul>
-                            {record.relevance.reasons.map((reason) => (
-                              <li key={reason}>
-                                {RELEVANCE_REASON_LABELS[reason]
-                                  ? t(RELEVANCE_REASON_LABELS[reason].zh, RELEVANCE_REASON_LABELS[reason].en)
-                                  : reason}
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p>
-                            {t(
-                              "此旧记录尚未重新评估相关性。",
-                              "This older record has not been reassessed for relevance.",
-                            )}
-                          </p>
+                      <p>
+                        {t(
+                          "帮助选择复现候选；可用性与模型效果仍需在原仓库核实。",
+                          "Compare candidates for reproduction; verify usability and model performance in the original repository.",
                         )}
-                        <p>
-                          {t(
-                            "依据公开元数据进行规则匹配；请核对原始内容。",
-                            "Rule-based matches in public metadata; check the original content.",
-                          )}
-                        </p>
-                      </details>
-                      {record.kind === "news" && (
-                        <p className="signal-provenance">
-                          {record.summaryKind === "search-snippet"
-                            ? t("检索摘要 · 原始正文未核验", "Search snippet · original article not verified")
-                            : t(
-                                "发布方内容摘录 · 不构成独立效果验证",
-                                "Publisher excerpt · not independent performance validation",
-                              )}
-                          {!record.originalUrl
-                            ? t(
-                                " · 原文链接尚未解析，标题打开检索结果。",
-                                " · Original URL unresolved; the title opens the discovery result.",
-                              )
-                            : ""}
-                        </p>
-                      )}
-                      {record.kind === "github" && (
-                        <div className="signal-repo-facts">
-                          <span>
-                            <Star size={13} />
-                            {record.stars.toLocaleString()}
-                            <small>{t("关注快照", "snapshot")}</small>
-                          </span>
-                          <span>
-                            <GitFork size={13} />
-                            {record.forks.toLocaleString()}
-                          </span>
-                          {record.language && <span>{record.language}</span>}
-                          <span>{record.license || t("许可未识别", "License not identified")}</span>
-                          <span>
-                            {t("推送", "Pushed")} {dateLabel(record.pushedAt, noDate)}
-                          </span>
-                        </div>
-                      )}
-                      {matchedCategories.length > 0 && (
-                        <div className="signal-discovery-tags">
-                          <span className="signal-discovery-label">{t("方向", "Areas")}</span>
-                          {matchedCategories.slice(0, 3).map((group) => (
-                            <span key={group.id}>{t(group.labelZh, group.labelEn)}</span>
+                      </p>
+                    </div>
+                    <button type="button" className="foresight-button" onClick={() => setCompareIds([])}>
+                      {t("清空对照", "Clear")}
+                    </button>
+                  </div>
+                  <div className="signals-table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>{t("检查项", "Check")}</th>
+                          {compared.map((record) => (
+                            <th key={record.id}>
+                              <SourceLink url={record.url}>{record.fullName}</SourceLink>
+                              <button
+                                type="button"
+                                aria-label={t(`移除 ${record.fullName}`, `Remove ${record.fullName}`)}
+                                onClick={() => setCompareIds((ids) => ids.filter((id) => id !== record.id))}
+                              >
+                                <X size={13} />
+                              </button>
+                            </th>
                           ))}
-                          {matchedCategories.length > 3 && (
-                            <span
-                              title={matchedCategories
-                                .slice(3)
-                                .map((group) => t(group.labelZh, group.labelEn))
-                                .join(" · ")}
-                            >
-                              +{matchedCategories.length - 3}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th>{t("代码许可", "Code license")}</th>
+                          {compared.map((record) => (
+                            <td key={record.id}>
+                              {record.license || t("未识别 · 查看仓库", "Not identified · check repository")}
+                            </td>
+                          ))}
+                        </tr>
+                        <tr>
+                          <th>{t("最近推送", "Latest push")}</th>
+                          {compared.map((record) => (
+                            <td key={record.id}>{dateLabel(record.pushedAt, noDate)}</td>
+                          ))}
+                        </tr>
+                        <tr>
+                          <th>{t("最近 Release", "Latest release")}</th>
+                          {compared.map((record) => (
+                            <td key={record.id}>
+                              {record.releaseUrl ? (
+                                <SourceLink url={record.releaseUrl}>
+                                  {dateLabel(record.releasedAt, noDate)}
+                                </SourceLink>
+                              ) : (
+                                t("未采集到", "Not collected")
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                        <tr>
+                          <th>{t("维护状态", "Repository state")}</th>
+                          {compared.map((record) => (
+                            <td key={record.id}>
+                              {record.archived ? t("已归档", "Archived") : t("未归档", "Not archived")}
+                            </td>
+                          ))}
+                        </tr>
+                        <tr>
+                          <th>{t("Stars 快照", "Stars snapshot")}</th>
+                          {compared.map((record) => (
+                            <td key={record.id}>
+                              {record.stars.toLocaleString(locale === "en" ? "en-US" : "zh-CN")}
+                            </td>
+                          ))}
+                        </tr>
+                        <tr>
+                          <th>{t("Forks 快照", "Forks snapshot")}</th>
+                          {compared.map((record) => (
+                            <td key={record.id}>
+                              {record.forks.toLocaleString(locale === "en" ? "en-US" : "zh-CN")}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="signals-filter-hint">
+                    {t(
+                      "代码许可证不自动涵盖模型权重、训练数据或临床使用授权；请查阅项目具体条款。",
+                      "A code license does not automatically cover model weights, training data, or clinical-use permissions; check the project terms.",
+                    )}
+                  </p>
+                </section>
+              )}
+
+              {!recordsLoaded && !error ? (
+                <div className="signals-empty" role="status" aria-busy="true">
+                  {t("正在读取公开数据…", "Loading public data…")}
+                </div>
+              ) : filtered.length === 0 ? (
+                <div className="signals-empty">
+                  <Search size={23} />
+                  <h3>{t("没有符合条件的记录", "No matching records")}</h3>
+                  <p>
+                    {records.length
+                      ? t(
+                          "尝试缩小关键词、移除日期筛选，或切换到全部线索。",
+                          "Try fewer keywords, remove date filters, or switch to all leads.",
+                        )
+                      : t(
+                          "尚未载入此来源的数据，请查看采集状态或稍后重试。",
+                          "No records from this source are loaded. Check its collection status or retry later.",
+                        )}
+                  </p>
+                </div>
+              ) : (
+                <div className="signals-list">
+                  {filtered.slice(0, limit).map((record) => {
+                    const related = relatedRecords(record, recordLinkIndex);
+                    const paperLinks = (relatedPapers.get(record.id) ?? [])
+                      .map((id) => paperById.get(id))
+                      .filter((paper): paper is Paper => !!paper);
+                    const comparing = compareIds.includes(record.id);
+                    const matchedCategories = categories.filter((group) =>
+                      categoryIndex.byRecord.get(record.id)?.includes(group.id),
+                    );
+                    return (
+                      <article className="signal-card" key={record.id}>
+                        <div className="signal-card-meta">
+                          <span className={`signal-kind signal-kind-${record.kind}`}>
+                            {record.kind === "github"
+                              ? "GitHub"
+                              : record.sourceId.startsWith("rss-news-")
+                                ? t("发布者订阅源", "Publisher feed")
+                                : record.discoveryUrl &&
+                                    new URL(record.discoveryUrl).hostname === "news.google.com"
+                                  ? t("Google 新闻检索", "Google News discovery")
+                                  : t("公开发布", "Public announcement")}
+                          </span>
+                          <span>
+                            {record.kind === "github"
+                              ? t("所有者：", "Owner: ")
+                              : t("发布者：", "Publisher: ")}
+                            {record.publisher}
+                          </span>
+                          <span>
+                            {record.kind === "github"
+                              ? `${t("最近活动 ", "Latest activity ")}${beijingDay(datesById.get(record.id) ?? "") || noDate}`
+                              : `${t("发布时间 ", "Published ")}${beijingDay(newsDashboardDate(record, "publication") ?? "") || noDate}`}
+                          </span>
+                          {record.kind === "github" && (
+                            <span>
+                              {t("最初发布 ", "Initially published ")}
+                              {beijingDay(githubDashboardDate(record, "creation") ?? "") || noDate}
                             </span>
                           )}
-                        </div>
-                      )}
-                      {record.topics.length > 0 && (
-                        <div className="signal-topics">
-                          {record.topics.slice(0, 6).map((topic) => (
-                            <span key={topic}>{topic}</span>
-                          ))}
-                        </div>
-                      )}
-                      {record.kind === "github" && record.readmeExcerpt && (
-                        <details className="signal-readme">
-                          <summary>{t("README 片段", "README excerpt")}</summary>
-                          <p>{record.readmeExcerpt}</p>
-                        </details>
-                      )}
-                      {related.length > 0 && (
-                        <div className="signal-related">
-                          <span>{t("显式链接关联", "Explicitly linked sources")}</span>
-                          {related.map((other) => (
-                            <SourceLink key={other.id} url={other.url}>
-                              {other.title}
-                            </SourceLink>
-                          ))}
-                        </div>
-                      )}
-                      {paperLinks.length > 0 && (
-                        <details className="signal-paper-links">
-                          <summary>
-                            {t(
-                              `查看 ${paperLinks.length} 篇显式关联论文`,
-                              `Inspect ${paperLinks.length} explicitly linked papers`,
-                            )}
-                          </summary>
-                          <p>
-                            {t(
-                              "按公开 URL、DOI 或 arXiv 标识关联，不表示论文作者拥有或发布此项目／新闻。",
-                              "Matched by public URL, DOI, or arXiv ID; a link does not establish that the paper's authors own or published the project or news.",
-                            )}
-                          </p>
-                          {paperLinks.slice(0, 4).map((paper) => (
-                            <button key={paper.id} type="button" onClick={() => onPaper(paper)}>
-                              {paper.title}
-                              <ArrowUpRight size={12} />
-                            </button>
-                          ))}
-                          {paperLinks.length > 4 && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                onDrill({ label: record.title, ids: paperLinks.map((paper) => paper.id) })
-                              }
-                            >
-                              {t("查看全部关联论文", "View all linked papers")} ↗
-                            </button>
+                          <span>
+                            {t("首次入库 ", "First collected ")}
+                            {beijingDay(record.firstSeenAt) || noDate}
+                          </span>
+                          {record.kind === "github" && record.archived && (
+                            <span className="signal-archived">{t("已归档", "Archived")}</span>
                           )}
-                        </details>
-                      )}
-                      <div className="signal-card-footer">
-                        <div>
+                        </div>
+                        <h3>
                           <SourceLink
                             url={record.kind === "news" ? record.originalUrl || record.url : record.url}
                           >
-                            {record.kind === "github"
-                              ? t("查看仓库", "View repository")
-                              : record.originalUrl
-                                ? t("查看原文", "Read original")
-                                : t("查看检索结果", "View discovery result")}
+                            {record.title}
                           </SourceLink>
-                          {record.kind === "github" && record.releaseUrl && (
-                            <SourceLink url={record.releaseUrl}>{t("Release 记录", "Release")}</SourceLink>
+                        </h3>
+                        <p className="signal-summary">
+                          {record.summary || t("来源未提供摘要。", "No summary was supplied by the source.")}
+                        </p>
+                        <details
+                          className={`signal-relevance-details signal-relevance-${record.relevance?.level ?? "candidate"}`}
+                        >
+                          <summary>
+                            <span>
+                              {record.relevance?.level === "direct"
+                                ? t("高相关", "Directly relevant")
+                                : t("待复核", "Needs review")}
+                            </span>
+                            {t("查看匹配依据", "Inspect relevance clues")}
+                          </summary>
+                          {record.relevance ? (
+                            <ul>
+                              {record.relevance.reasons.map((reason) => (
+                                <li key={reason}>
+                                  {RELEVANCE_REASON_LABELS[reason]
+                                    ? t(
+                                        RELEVANCE_REASON_LABELS[reason].zh,
+                                        RELEVANCE_REASON_LABELS[reason].en,
+                                      )
+                                    : reason}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p>
+                              {t(
+                                "此旧记录尚未重新评估相关性。",
+                                "This older record has not been reassessed for relevance.",
+                              )}
+                            </p>
                           )}
-                          {record.kind === "news" && record.originalUrl && record.discoveryUrl && (
-                            <SourceLink url={record.discoveryUrl}>
-                              {new URL(record.discoveryUrl).hostname === "news.google.com"
-                                ? t("Google 检索来源", "Google discovery source")
-                                : t("订阅来源", "Feed source")}
-                            </SourceLink>
-                          )}
-                          <span>
-                            {t("采集", "Observed")} {dateLabel(record.observedAt, noDate)}
-                          </span>
-                        </div>
-                        {record.kind === "github" && (
-                          <button
-                            type="button"
-                            className={`foresight-button ${comparing ? "signals-selected" : ""}`}
-                            aria-pressed={comparing}
-                            disabled={!comparing && compareIds.length >= 3}
-                            onClick={() =>
-                              setCompareIds((ids) =>
-                                comparing ? ids.filter((id) => id !== record.id) : [...ids, record.id],
-                              )
-                            }
-                          >
-                            {comparing && <Check size={13} />}{" "}
-                            {comparing ? t("已加入对照", "In comparison") : t("加入对照", "Compare")}
-                          </button>
+                          <p>
+                            {t(
+                              "依据公开元数据进行规则匹配；请核对原始内容。",
+                              "Rule-based matches in public metadata; check the original content.",
+                            )}
+                          </p>
+                        </details>
+                        {record.kind === "news" && (
+                          <p className="signal-provenance">
+                            {record.summaryKind === "search-snippet"
+                              ? t(
+                                  "检索摘要 · 原始正文未核验",
+                                  "Search snippet · original article not verified",
+                                )
+                              : t(
+                                  "发布方内容摘录 · 不构成独立效果验证",
+                                  "Publisher excerpt · not independent performance validation",
+                                )}
+                            {!record.originalUrl
+                              ? t(
+                                  " · 原文链接尚未解析，标题打开检索结果。",
+                                  " · Original URL unresolved; the title opens the discovery result.",
+                                )
+                              : ""}
+                          </p>
                         )}
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            )}
-            {filtered.length > limit && (
-              <div className="signals-load-more">
-                <button
-                  type="button"
-                  className="foresight-button"
-                  onClick={() => setLimit((value) => value + 24)}
-                >
-                  {t(
-                    `再显示 ${Math.min(24, filtered.length - limit)} 条`,
-                    `Show ${Math.min(24, filtered.length - limit)} more`,
-                  )}
-                </button>
-              </div>
-            )}
-          </>
-        )}
+                        {record.kind === "github" && (
+                          <div className="signal-repo-facts">
+                            <span>
+                              <Star size={13} />
+                              {record.stars.toLocaleString()}
+                              <small>{t("关注快照", "snapshot")}</small>
+                            </span>
+                            <span>
+                              <GitFork size={13} />
+                              {record.forks.toLocaleString()}
+                            </span>
+                            {record.language && <span>{record.language}</span>}
+                            <span>{record.license || t("许可未识别", "License not identified")}</span>
+                            <span>
+                              {t("推送", "Pushed")} {dateLabel(record.pushedAt, noDate)}
+                            </span>
+                          </div>
+                        )}
+                        {matchedCategories.length > 0 && (
+                          <div className="signal-discovery-tags">
+                            <span className="signal-discovery-label">{t("方向", "Areas")}</span>
+                            {matchedCategories.slice(0, 3).map((group) => (
+                              <span key={group.id}>{t(group.labelZh, group.labelEn)}</span>
+                            ))}
+                            {matchedCategories.length > 3 && (
+                              <span
+                                title={matchedCategories
+                                  .slice(3)
+                                  .map((group) => t(group.labelZh, group.labelEn))
+                                  .join(" · ")}
+                              >
+                                +{matchedCategories.length - 3}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {record.topics.length > 0 && (
+                          <div className="signal-topics">
+                            {record.topics.slice(0, 6).map((topic) => (
+                              <span key={topic}>{topic}</span>
+                            ))}
+                          </div>
+                        )}
+                        {record.kind === "github" && record.readmeExcerpt && (
+                          <details className="signal-readme">
+                            <summary>{t("README 片段", "README excerpt")}</summary>
+                            <p>{record.readmeExcerpt}</p>
+                          </details>
+                        )}
+                        {related.length > 0 && (
+                          <div className="signal-related">
+                            <span>{t("显式链接关联", "Explicitly linked sources")}</span>
+                            {related.map((other) => (
+                              <SourceLink key={other.id} url={other.url}>
+                                {other.title}
+                              </SourceLink>
+                            ))}
+                          </div>
+                        )}
+                        {paperLinks.length > 0 && (
+                          <details className="signal-paper-links">
+                            <summary>
+                              {t(
+                                `查看 ${paperLinks.length} 篇显式关联论文`,
+                                `Inspect ${paperLinks.length} explicitly linked papers`,
+                              )}
+                            </summary>
+                            <p>
+                              {t(
+                                "按公开 URL、DOI 或 arXiv 标识关联，不表示论文作者拥有或发布此项目／新闻。",
+                                "Matched by public URL, DOI, or arXiv ID; a link does not establish that the paper's authors own or published the project or news.",
+                              )}
+                            </p>
+                            {paperLinks.slice(0, 4).map((paper) => (
+                              <button key={paper.id} type="button" onClick={() => onPaper(paper)}>
+                                {paper.title}
+                                <ArrowUpRight size={12} />
+                              </button>
+                            ))}
+                            {paperLinks.length > 4 && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  onDrill({ label: record.title, ids: paperLinks.map((paper) => paper.id) })
+                                }
+                              >
+                                {t("查看全部关联论文", "View all linked papers")} ↗
+                              </button>
+                            )}
+                          </details>
+                        )}
+                        <div className="signal-card-footer">
+                          <div>
+                            <SourceLink
+                              url={record.kind === "news" ? record.originalUrl || record.url : record.url}
+                            >
+                              {record.kind === "github"
+                                ? t("查看仓库", "View repository")
+                                : record.originalUrl
+                                  ? t("查看原文", "Read original")
+                                  : t("查看检索结果", "View discovery result")}
+                            </SourceLink>
+                            {record.kind === "github" && record.releaseUrl && (
+                              <SourceLink url={record.releaseUrl}>{t("Release 记录", "Release")}</SourceLink>
+                            )}
+                            {record.kind === "news" && record.originalUrl && record.discoveryUrl && (
+                              <SourceLink url={record.discoveryUrl}>
+                                {new URL(record.discoveryUrl).hostname === "news.google.com"
+                                  ? t("Google 检索来源", "Google discovery source")
+                                  : t("订阅来源", "Feed source")}
+                              </SourceLink>
+                            )}
+                            <span>
+                              {t("采集", "Observed")} {dateLabel(record.observedAt, noDate)}
+                            </span>
+                          </div>
+                          {record.kind === "github" && (
+                            <button
+                              type="button"
+                              className={`foresight-button ${comparing ? "signals-selected" : ""}`}
+                              aria-pressed={comparing}
+                              disabled={!comparing && compareIds.length >= 3}
+                              onClick={() =>
+                                setCompareIds((ids) =>
+                                  comparing ? ids.filter((id) => id !== record.id) : [...ids, record.id],
+                                )
+                              }
+                            >
+                              {comparing && <Check size={13} />}{" "}
+                              {comparing ? t("已加入对照", "In comparison") : t("加入对照", "Compare")}
+                            </button>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+              {filtered.length > limit && (
+                <div className="signals-load-more">
+                  <button
+                    type="button"
+                    className="foresight-button"
+                    onClick={() => setLimit((value) => value + 24)}
+                  >
+                    {t(
+                      `再显示 ${Math.min(24, filtered.length - limit)} 条`,
+                      `Show ${Math.min(24, filtered.length - limit)} more`,
+                    )}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </Suspense>
       </div>
 
       {sourceHealth}
@@ -1477,25 +1510,27 @@ export function ResearchSignalsView({
                 "Only directly relevant filtered records enter this assessment; review candidates are excluded. Choose a date range below. Include papers to connect with the paper library, or use all three sources on the Research outlook page.",
               )}
             </p>
-            <AiModelSettings />
-            <AiResearchPanel
-              papers={papers}
-              signals={analysisRecords}
-              initialSources={[kind]}
-              mode="interest"
-              subjectId={`${kind}-library`}
-              title={
-                kind === "github"
-                  ? t("GitHub 项目分析", "GitHub repository assessment")
-                  : t("模型与进展分析", "Model and progress assessment")
-              }
-              description={t(
-                "输入需要判断的问题，比较技术路线、复现条件、证据缺口与下一步值得验证的机会。",
-                "Ask a question about methods, reproducibility, evidence gaps, and opportunities worth testing.",
-              )}
-              onPaper={onPaper}
-              onDrill={onDrill}
-            />
+            <Suspense fallback={viewLoading}>
+              <AiModelSettings />
+              <AiResearchPanel
+                papers={papers}
+                signals={analysisRecords}
+                initialSources={[kind]}
+                mode="interest"
+                subjectId={`${kind}-library`}
+                title={
+                  kind === "github"
+                    ? t("GitHub 项目分析", "GitHub repository assessment")
+                    : t("模型与进展分析", "Model and progress assessment")
+                }
+                description={t(
+                  "输入需要判断的问题，比较技术路线、复现条件、证据缺口与下一步值得验证的机会。",
+                  "Ask a question about methods, reproducibility, evidence gaps, and opportunities worth testing.",
+                )}
+                onPaper={onPaper}
+                onDrill={onDrill}
+              />
+            </Suspense>
           </>
         )}
       </div>

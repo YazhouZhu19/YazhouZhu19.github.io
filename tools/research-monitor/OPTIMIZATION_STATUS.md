@@ -27,7 +27,7 @@ scores must not be presented as independently validated accuracy.
 | P3.1 | Complete | Prettier 3.6.2, width 110; formatting-only pass preserves 417 + 25 passing tests and build. |
 | P3.2 | Complete | Workspace reduced from 1,389 to 253 lines; 14 extracted files ≤253 lines, bilingual SSR unchanged. |
 | P2.1 | Complete | Removed 48 unreachable UI modules, an orphan chart view and 13 unused dependencies. |
-| P2.2 | Pending | Measure and reduce the initial JavaScript bundle. |
+| P2.2 | Implemented | Main JS 41,129 B gzip; source/paper UI lazy; startup total still explicitly counts vendors and Worker. |
 | P2.3 | Pending | List containment, stable chart inputs and shared derived indexes. |
 | P2.4 | Pending | Shareable hash state and browser navigation. |
 | P3.3 | Pending | Design tokens, CSS consolidation, responsive and dark-mode checks. |
@@ -151,3 +151,5 @@ scores must not be presented as independently validated accuracy.
 - **P3.2:** Extracted snapshot/personal/library hooks and sidebar, header, filters, library and detail components. All 14 files are at most 253 formatted lines; the 87-module import graph is acyclic. Chinese and English initial server-rendered HTML matches the original apart from generated React IDs. 420 TypeScript and 25 local API tests, typecheck, Vite and data-copy checks passed; final resource budgets are rechecked with P2.2 splitting.
 
 - **P2.1:** Import-graph and CSS audits identify 48 unreachable UI modules and the orphan Recharts view. Removed 13 direct packages; runtime dependencies fall from 24 to 11 and lockfile entries from 292 to 234, with no surviving package version changes. Kept sonner, animation CSS and 13 reachable UI modules. Typecheck and 420 + 25 tests pass. Resource measurements are finalized with P2.2; no data records changed.
+
+- **P2.2:** Added Rolldown module reports (`stats.html` plus JSON), stable React/Radix vendor groups and lazy paper/source/AI interfaces. Main JS measures 131,483 raw / 41,129 gzip bytes, within the 110,000-byte gzip target. Total initial JS including shared vendors and the P4 classifier draft Worker is 205,184 gzip bytes, higher than P1's 195,386; this overhead is explicitly budgeted and documented. 434 shared-tree TypeScript tests, typecheck, Vite, all snapshot round trips and budget checks passed; local API checks include complete classified-record equality. Local browser confirms 8,326 records with no console errors. New lazy CSS resource budgets reflect P3 relocation; its final main CSS target is tracked separately.
