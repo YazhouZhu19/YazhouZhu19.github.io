@@ -12,7 +12,7 @@ export function PaperScopeControl({
   counts: ReturnType<typeof paperScopeCounts>;
   onChange: (scope: string) => void;
 }) {
-  const { tr } = useI18n();
+  const { tr, locale } = useI18n();
   const selection = value ?? "core";
   return (
     <section className="paper-scope-control" aria-label={tr("论文研究范围")}>
@@ -43,13 +43,16 @@ export function PaperScopeControl({
             {tr("显示全部记录")}
           </button>
         )}
-        <small>{tr("范围由标题与摘要自动判断，仍有误判；切换全部记录可复核。")}</small>
       </p>
-      <small className="scope-version-note">
-        {tr("诊断标签自 {0} 起要求检测、分类或准确性证据；跨口径数量不直接比较。", [
-          TASK_CLASSIFIER_VERSION.slice(0, 10),
-        ])}
-      </small>
+      <details className="scope-version-note">
+        <summary>{locale === "en" ? "Scope and label definitions" : "研究范围与标签口径"}</summary>
+        <small>{tr("范围由标题与摘要自动判断，仍有误判；切换全部记录可复核。")}</small>
+        <small>
+          {tr("诊断标签自 {0} 起要求检测、分类或准确性证据；跨口径数量不直接比较。", [
+            TASK_CLASSIFIER_VERSION.slice(0, 10),
+          ])}
+        </small>
+      </details>
     </section>
   );
 }
