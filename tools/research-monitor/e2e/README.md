@@ -18,6 +18,12 @@ fail and full JSON findings are attached to the Playwright report. Mobile tests
 exercise the sidebar, advanced filters and details at 375px, including 40px
 minimum hit targets for their primary controls.
 
+Two additional language-specific checks inject a 404 for an unloaded view
+chunk, verify the visible recovery action, then restore the resource and reload
+the same URL. Only that explicitly injected import failure is allowed; other
+page errors and external requests still fail. Mobile checks also exercise the
+shared native dashboard date, source and direction controls.
+
 The small fixture verifies behavior and accessibility; it is not a performance
 dataset. For an existing production build, start `npm run preview -- --port 4173`
 and run:
@@ -30,15 +36,27 @@ The separate runner rejects a small snapshot, slows Chromium CPU by 4x, and
 records Event Timing for dashboard/library direction changes and
 library/search/detail/drill interactions in both languages. Each direction
 change also reports the worst event duration within that control interaction.
+Native controls try trusted Space/ArrowDown/ArrowUp/Enter keyboard input; custom controls
+use pointer input. Synthetic `selectOption` changes are only used in functional
+checks, never to establish interaction latency.
 `labInpCandidateMs` is the worst observed interaction in this short
 lab session, not field INP. Inspect `under200ms`, long tasks and sample count in
 `docs/screenshots/full-data-audit.json`; zero samples is not evidence of passing
 performance. This runner reports performance and does not make the small-fixture
 CI suite a full-data performance gate.
 
+Native controls use trusted keyboard actions for the timing probe; fixture
+behavior checks may use `selectOption`. These serve different purposes:
+programmatically dispatched change events cannot establish Event Timing latency.
+If the headless environment cannot commit a native keyboard selection, the
+runner uses a labeled synthetic fallback only to finish the functional flows
+and screenshots. That change's latency and the top-level `under200ms` are
+`null`, with `coverageIncomplete: true`; it cannot establish a performance pass.
+
 The runner also saves clean 375/768/1280/1920px screenshots in Chinese/English and
 light/dark modes. Default screenshots cover home. Use
 `--views home,library,github,news,outlook,teams` for the full page matrix, or
 `--output /absolute/directory` to keep local review artifacts outside the repo.
+Use `--skip-screenshots` when repeating only the performance measurements.
 Screenshots require human visual inspection; their existence does not establish
 that responsive layout passes.

@@ -56,6 +56,15 @@ async function visibleTargets(page: Page) {
   expect(small, "Visible mobile controls must have a 40px hit target").toEqual([]);
 }
 
+async function changeNativeControl(control: Locator, value: string) {
+  await minimumTarget(control);
+  const original = await control.inputValue();
+  await control.selectOption(value);
+  await expect(control).toHaveValue(value);
+  await control.selectOption(original);
+  await expect(control).toHaveValue(original);
+}
+
 test("375px sidebar, filter panel and detail drawer open and close with 40px targets", async ({
   page,
 }, testInfo) => {
@@ -63,6 +72,19 @@ test("375px sidebar, filter panel and detail drawer open and close with 40px tar
   await page.setViewportSize({ width: 375, height: 812 });
   await openHome(page);
   await visibleTargets(page);
+  const direction = page.getByRole("combobox", {
+    name: en ? "Dashboard research interests" : "仪表盘感兴趣方向",
+    exact: true,
+  });
+  await changeNativeControl(direction, "segmentation");
+  await changeNativeControl(
+    page.getByRole("combobox", { name: en ? "Dashboard time range" : "仪表盘时间范围", exact: true }),
+    "7",
+  );
+  await changeNativeControl(
+    page.getByRole("combobox", { name: en ? "Dashboard data source" : "仪表盘数据来源", exact: true }),
+    "Europe PMC",
+  );
   const trigger = page.getByRole("button", { name: "Toggle Sidebar", exact: true });
   await minimumTarget(trigger);
   await trigger.click();
@@ -91,4 +113,16 @@ test("375px sidebar, filter panel and detail drawer open and close with 40px tar
   await minimumTarget(close);
   await close.click();
   await expect(detail).not.toBeVisible();
+  for (const index of [1, 2]) {
+    await mainView(page, en, index);
+    await changeNativeControl(
+      page.getByRole("combobox", { name: en ? "Time range" : "统计时间", exact: true }),
+      "7",
+    );
+    const category = page.getByRole("combobox", { name: en ? "Research area" : "研究方向", exact: true });
+    const nextValue = await category.locator("option").nth(1).getAttribute("value");
+    expect(nextValue).toBeTruthy();
+    await changeNativeControl(category, nextValue!);
+    await visibleTargets(page);
+  }
 });

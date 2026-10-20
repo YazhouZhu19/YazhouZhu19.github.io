@@ -85,7 +85,14 @@ try {
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
     await page.goto(url.href);
     await page.locator(".dash-metric-primary strong").waitFor();
-    const directionChanges: { view: string; selection: string; start: number; end: number }[] = [];
+    const directionChanges: {
+      view: string;
+      selection: string;
+      input: string;
+      measurementNote?: string;
+      start: number;
+      end: number;
+    }[] = [];
     const selectDirection = async (view: "dashboard" | "library", all: boolean) => {
       const control = page.getByRole("combobox", {
         name:
@@ -105,17 +112,37 @@ try {
         : locale === "en"
           ? "Organ & Lesion Segmentation"
           : "器官与病灶分割";
+      const native = await control.evaluate((element) => element.tagName === "SELECT");
+      if (native) await control.focus();
       const start = await page.evaluate(() => performance.now());
-      await control.click();
-      await page.getByRole("option", { name: selection, exact: true }).click();
-      await expect(control).toContainText(selection);
+      let input = native ? "keyboard" : "pointer";
+      let measurementNote: string | undefined;
+      if (native) {
+        // All and segmentation are adjacent options. Trusted keyboard input produces Event Timing;
+        // selectOption dispatches synthetic input and cannot establish an interaction latency.
+        await expect(control).toHaveValue(all ? "segmentation" : "all");
+        await control.press("Space");
+        await page.keyboard.press(all ? "ArrowUp" : "ArrowDown");
+        await page.keyboard.press("Enter");
+        if ((await control.inputValue()) !== (all ? "all" : "segmentation")) {
+          input = "synthetic-fallback";
+          measurementNote =
+            "This headless environment did not commit native keyboard selection. Synthetic selection continues functional checks; its interaction latency is unverified.";
+          await control.selectOption(all ? "all" : "segmentation");
+        }
+        await expect(control).toHaveValue(all ? "all" : "segmentation");
+      } else {
+        await control.click();
+        await page.getByRole("option", { name: selection, exact: true }).click();
+        await expect(control).toContainText(selection);
+      }
       const end = await page.evaluate(
         () =>
           new Promise<number>((done) =>
             requestAnimationFrame(() => requestAnimationFrame(() => done(performance.now()))),
           ),
       );
-      directionChanges.push({ view, selection, start, end });
+      directionChanges.push({ view, selection, input, measurementNote, start, end });
     };
     await selectDirection("dashboard", false);
     await selectDirection("dashboard", true);
@@ -157,27 +184,39 @@ try {
         Math.max(interactions.get(event.interactionId) ?? 0, event.duration),
       );
     const candidate = interactions.size ? Math.max(...interactions.values()) : null;
+    const entryScripts = await page
+      .locator("script[src]")
+      .evaluateAll((scripts) => scripts.map((script) => (script as HTMLScriptElement).src));
+    const directionMeasurements = directionChanges.map((change) => {
+      const events = measurements.events.filter(
+        (event) => event.startTime >= change.start && event.startTime <= change.end,
+      );
+      const measured = change.input !== "synthetic-fallback" && events.length > 0;
+      return {
+        ...change,
+        maxEventDurationMs: measured ? Math.max(...events.map((event) => event.duration)) : null,
+      };
+    });
+    const coverageIncomplete = directionMeasurements.some((change) => change.maxEventDurationMs === null);
     results.push({
       locale,
+      entryScripts,
       dataset: "full local published snapshot",
       totalStored: manifest.totalStored,
       cpuSlowdown: 4,
       sampledInteractions: interactions.size,
       labInpCandidateMs: candidate,
-      under200ms: candidate === null ? null : candidate < 200,
-      directionChanges: directionChanges.map((change) => {
-        const events = measurements.events.filter(
-          (event) => event.startTime >= change.start && event.startTime <= change.end,
-        );
-        return {
-          ...change,
-          maxEventDurationMs: events.length ? Math.max(...events.map((event) => event.duration)) : null,
-        };
-      }),
+      coverageIncomplete,
+      under200ms: candidate === null || coverageIncomplete ? null : candidate < 200,
+      directionChanges: directionMeasurements,
       note: "Event Timing worst sampled interaction (<50 interactions); a lab INP candidate, not field INP. Events below 16ms may not be reported.",
       ...measurements,
     });
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: 1 });
+    if (process.argv.includes("--skip-screenshots")) {
+      await context.close();
+      continue;
+    }
     for (const theme of ["light", "dark"] as const) {
       await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
       for (const width of [375, 768, 1280, 1920]) {
@@ -219,7 +258,20 @@ try {
   }
   await writeFile(
     resolve(output, "full-data-audit.json"),
-    JSON.stringify({ results, screenshots, blocked, errors }, null, 2) + "\n",
+    JSON.stringify(
+      {
+        recordedAt: new Date().toISOString(),
+        browserVersion: browser.version(),
+        origin: base.origin,
+        baseURL: base.href,
+        results,
+        screenshots,
+        blocked,
+        errors,
+      },
+      null,
+      2,
+    ) + "\n",
   );
   if (blocked.length || errors.length)
     throw new Error("Full-data audit found external requests or application errors.");
