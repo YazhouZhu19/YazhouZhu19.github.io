@@ -1,4 +1,5 @@
 export type Author = { name: string; displayName?: string; orcid?: string | null; affiliations: string[] };
+export type PaperScope = "core" | "adjacent" | "out";
 export type Paper = {
   id: string;
   title: string;
@@ -29,6 +30,9 @@ export type Paper = {
   humanSignals: string[];
   evidence: { label: string; excerpt: string }[];
   tracks: string[];
+  scope?: PaperScope;
+  scopeReasons?: string[];
+  scopeClassifierVersion?: string;
   reviewStatus: string;
   provenance: { queryUrl?: string; queryTrack?: string; collectedAt: string; sourceRecordId?: string }[];
 };

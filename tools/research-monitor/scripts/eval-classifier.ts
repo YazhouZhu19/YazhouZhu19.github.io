@@ -213,7 +213,7 @@ async function main() {
     "",
   ].join("\n");
   await mkdir(dirname(output), { recursive: true });
-  await writeFile(output, report);
+  await writeFile(output, report.trimEnd() + "\n");
   console.log(
     `${status.toUpperCase()}: ${result.evaluated}/${rows.length} labelled; report written to ${output}.`,
   );

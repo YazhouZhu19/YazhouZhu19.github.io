@@ -326,7 +326,7 @@ test("public snapshot is schema-validated, including safe outbound URL protocols
   await assert.rejects(api("/api/papers"), { message: LOCAL_ERRORS.network });
 });
 
-test("shards load the complete ordered library with bounded requests and unchanged metadata", async () => {
+test("shards load the complete ordered library with bounded requests, current labels and unchanged metadata", async () => {
   const records = Array.from({ length: 6 }, (_, index) => ({
     ...paper,
     id: `sharded:${index}`,
@@ -347,7 +347,8 @@ test("shards load the complete ordered library with bounded requests and unchang
     return new Response(fixture.files.get(url));
   };
   const result = await api("/api/papers", { signal: controller.signal });
-  assert.deepEqual(result.papers, records);
+  const { withPaperScope } = await import("../.test-build/classify.mjs");
+  assert.deepEqual(result.papers, records.map(withPaperScope));
   assert.equal(result.totalStored, records.length);
   assert.deepEqual(result.runs, publicSnapshot.runs);
   assert.deepEqual(result.queryRuns, publicSnapshot.queryRuns);

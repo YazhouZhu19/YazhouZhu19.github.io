@@ -521,5 +521,13 @@
   "部分失败": "Partially Failed",
   "尚无成功同步记录": "No successful sync recorded",
   "主接口不可用，已通过官方 api.medrxiv.org 补充；在全部分类结果中本地筛选 radiology and imaging，最多扫描60页并保留240条匹配版本记录。": "The primary endpoint was unavailable, so the official api.medrxiv.org endpoint was used. Results across all categories are filtered locally for radiology and imaging, scanning up to 60 pages and retaining up to 240 matching version records.",
-  "同步失败保留旧记录。部分请求失败时标为“部分失败”；因数量上限或来源返回数量差异而未取全时标为“有限覆盖”。": "Existing records are retained if a sync fails. Failed requests within a source are marked “Partially Failed”; retrieval limits or differences between reported and returned counts are marked “Limited Coverage”."
+  "同步失败保留旧记录。部分请求失败时标为“部分失败”；因数量上限或来源返回数量差异而未取全时标为“有限覆盖”。": "Existing records are retained if a sync fails. Failed requests within a source are marked “Partially Failed”; retrieval limits or differences between reported and returned counts are marked “Limited Coverage”.",
+  "论文研究范围": "Paper research scope",
+  "仅方法研究": "Methods research only",
+  "含影像临床研究": "Include clinical imaging research",
+  "全部记录": "All records",
+  "当前显示方法研究 {0} 篇，另有影像临床研究 {1} 篇、其他 {2} 篇未计入。": "Showing {0} methods papers; {1} clinical imaging and {2} other records are outside this scope.",
+  "方法研究 {0} 篇 · 影像临床研究 {1} 篇 · 其他 {2} 篇": "{0} methods papers · {1} clinical imaging papers · {2} other records",
+  "显示全部记录": "Show all records",
+  "范围由标题与摘要自动判断，仍有误判；切换全部记录可复核。": "Scope is inferred from titles and abstracts and can be wrong. Switch to all records to review."
 }

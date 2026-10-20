@@ -1,5 +1,6 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { getLoadedPaperSnapshot, searchPublicPapers } from "@/lib/local-api";
+import { matchesPaperScope } from "@/lib/paper-scope";
 import type { Paper } from "@/lib/types";
 import type { WorkspaceUrlState } from "@/lib/url-state";
 const EMPTY_PAPERS: Paper[] = [];
@@ -36,7 +37,7 @@ export function usePaperLibrary({
   const [advanced, setAdvanced] = useState(false);
   useEffect(
     () => setLimit(30),
-    [view, search, track, task, modality, organ, method, source, status, period, human],
+    [view, search, track, task, modality, organ, method, source, status, period, human, scope],
   );
   const needsFilteredPapers = view === "feed" || view === "saved";
   const query = deferredSearch.trim().toLowerCase();
@@ -70,6 +71,7 @@ export function usePaperLibrary({
     return papers
       .filter(
         (p) =>
+          (view === "saved" || matchesPaperScope(p, scope)) &&
           (view !== "feed" || !drillIds || drillIds.has(p.id)) &&
           (view !== "saved" || savedIds.has(p.id)) &&
           (track === "all" || p.tracks.includes(track)) &&
@@ -92,6 +94,7 @@ export function usePaperLibrary({
       );
   }, [
     papers,
+    scope,
     query,
     searchResult,
     searchReady,

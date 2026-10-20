@@ -32,6 +32,16 @@ npx tsx scripts/eval-classifier.ts --labels eval/relevance-ai-reviewed.csv --out
 
 The new report still includes unresolved and title-only records and is diagnostic only. It cannot satisfy `--require-gold`; the existing human confirmation gate is unchanged.
 
+## P4.1 scope diagnostics
+
+[Scope report](report-p4-scope.md), [structured scope diagnostics](p4-scope-diagnostics.json) and [pre-change baseline](p4-classifier-baseline.json) use the same frozen AI-reconciled sample. With `2026-10-21-scope-v1`, core precision/recall move from **78.1%/98.1%** to **92.5%/86.9%**. However, **17 of 54 annotated out records are still classified core (31.5%)**, above the plan's ≤3% target. These are provisional diagnostics, not achieved acceptance criteria.
+
+The unmodified 8,326-record snapshot is classified in memory as 3,960 core, 2,829 adjacent and 1,537 out. No records are removed. The ten track predictions remain unchanged in this step. Known limitations include computational terms appearing only in background, broad multimodal terminology and the clinical-only case/cohort rule differing from the draft's imaging-centrality convention.
+
+```sh
+npx tsx scripts/eval-classifier.ts --labels eval/relevance-ai-reviewed.csv --output eval/report-p4-scope.md
+```
+
 ## Scope definitions
 
 - **core**: proposes, evaluates or applies a computational method, model, software or quantitative image-analysis pipeline to medical images.

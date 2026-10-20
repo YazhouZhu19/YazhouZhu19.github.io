@@ -141,4 +141,3 @@ The CSV contains only the first 600 Unicode characters of each abstract. The pai
 - `arxiv:2606.29599`: annotation **out**, prediction **core**.
 - `doi:10.36721/pjps.2026.39.12.346.1`: annotation **out**, prediction **core**.
 - `doi:10.1007/s13193-026-02534-6`: annotation **adjacent**, prediction **core**.
-

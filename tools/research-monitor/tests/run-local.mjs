@@ -3,8 +3,9 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../", import.meta.url));
 await build({
-  entryPoints: [root + "lib/local-api.ts"],
-  outfile: root + ".test-build/local-api.mjs",
+  entryPoints: { "local-api": root + "lib/local-api.ts", classify: root + "lib/classify.ts" },
+  outdir: root + ".test-build",
+  outExtension: { ".js": ".mjs" },
   bundle: true,
   platform: "node",
   format: "esm",

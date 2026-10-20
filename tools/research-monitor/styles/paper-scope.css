@@ -1,0 +1,28 @@
+.paper-scope-control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16, 16px);
+  margin-block: var(--space-16, 16px);
+}
+.paper-scope-control p {
+  margin: 0;
+  font-size: var(--text-13, 13px);
+  color: var(--muted-foreground);
+}
+.paper-scope-control small {
+  display: block;
+  margin-top: var(--space-4, 4px);
+}
+.paper-scope-control button:not([role="combobox"]) {
+  color: var(--primary);
+  text-decoration: underline;
+  margin-inline-start: var(--space-8, 8px);
+  min-height: 40px;
+}
+@media (max-width: 768px) {
+  .paper-scope-control {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-8, 8px);
+  }
+}

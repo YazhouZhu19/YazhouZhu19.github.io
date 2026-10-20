@@ -35,7 +35,7 @@ scores must not be presented as independently validated accuracy.
 | P3.5 | Pending | Severity-based notices with all limitation text retained. |
 | P3.6 | Pending | Shared loading, empty and error states. |
 | P3.7 | Pending | Accessibility and mobile interaction checks. |
-| P4.1 | Pending | Scope classifier and default research scope; reviewed labels required for acceptance. |
+| P4.1 | Implemented; accuracy gate unmet | Default methods scope with all-record switch; diagnostic P/R 92.5%/86.9%, out→core 31.5% (target ≤3%). |
 | P4.2 | Pending | More precise diagnosis tagging; reviewed labels required for acceptance. |
 | P4.3 | Pending | Publication-date provenance and future-date handling. |
 | P4.4 | Pending | Conservative work grouping without merging source records. |
@@ -159,3 +159,5 @@ scores must not be presented as independently validated accuracy.
 - **P2.3:** Paper rows retain incremental loading and add content visibility/intrinsic sizing (disabled for print). Timeline, ring and source charts are memoized; paper chart callbacks and matrix columns remain stable across unrelated renders. Source facets reuse the Worker index, including the library change shipped with P2.4. Timer/listener cleanup was inspected in snapshot, personal, signal, URL and viewport hooks. The shared 446-test suite, typecheck and Vite build pass. The 4× CPU <200 ms acceptance is not yet verified; initial QA timings varied under concurrent builds and are not presented as field INP.
 
 - **P3.3:** Consolidated colors/spacing/type/radius/shadow into tokens, merged legacy layers and moved reading/AI/library CSS to lazy views. Audit retains all 5,404 existing selector/property pairs. Outside token definitions and breakpoints, color literals fall 662→0, spacing 1,517→0, font sizes 556→0 and radii 165→0. Main CSS measures 117,360 raw bytes versus baseline 263,903, meeting the 120,000-byte target before later features. Core text contrasts are at least 4.62 light/8.03 dark. Typecheck, 446 shared tests and build pass. Responsive visual checks are ongoing; in-app viewport screenshots show a scaling artifact despite correct DOM widths, so clean browser screenshots are required before final visual acceptance.
+
+- **P4.1:** Independent scope rules and version metadata are calculated for old records in the Worker and for the complete archive by the collector. The UI applies methods-only by default to overview, reading clues, team directory and AI inputs, with clinical/all switches and explicit excluded counts; saved personal papers remain available. Offline migration preserves all 8,326 records and original non-derived fields. Current archive counts are 3,960 core / 2,829 adjacent / 1,537 out. On the provisional AI-reviewed 400, core precision/recall are 92.5%/86.9%, but 17/54 annotated-out records become core (31.5%), missing the ≤3% target. This is an unresolved accuracy gate, not gold-standard validation.

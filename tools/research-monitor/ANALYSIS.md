@@ -2,6 +2,16 @@
 
 This view supports topic selection and reading. It computes from the public metadata snapshot in the browser, without an AI model, generated summary, translation, citation-quality score, or claim of exhaustive field coverage.
 
+## Research-scope classification / 研究范围
+
+`scopeOf(title, abstract)` assigns `core` (computational medical-image method clues), `adjacent` (imaging or diagnostic-accuracy context without such clues), or `out` (no medical-image context, or clinical-only trial/case/cohort clues). Rules require affirmative local context: a negated AI/software mention does not promote a record to `core`. Every result carries inspectable `scopeReasons` and the separate `SCOPE_CLASSIFIER_VERSION`; the ten direction IDs and `INTEREST_TAXONOMY_VERSION` stay unchanged.
+
+These are text-screening rules, not a full-text determination. Background method mentions, generic multimodal terms, and clinical studies using quantitative image processing can cross the wrong boundary. The plan's clinical case/cohort exclusion is stricter than the provisional annotation convention when imaging is the study's central evidence. Missing abstracts remain uncertain and are marked in reasons where title evidence determines scope. No scope result deletes a record.
+
+Public snapshot validation computes the current scope in the data Worker (or the verified main-thread fallback) even for older snapshots. Collection normalization recomputes every retained paper. A network-free explicit migration is available with `tsx scripts/collect.ts --input INPUT --output OUTPUT --reclassify-only`; it preserves record IDs, order, custom metadata and collection timestamps without merging duplicates or declaring a successful source sync. The raw snapshots are not changed by a browser load.
+
+The fixed 400-paper AI-reconciled evaluation remains **provisional**, with unresolved boundaries and missing abstracts. Its metrics diagnose the rules; they are not human-gold acceptance measurements.
+
 ## Shared scope and denominators
 
 `buildPreliminaryAnalysis` applies the selected source, research interest, and publication-date window together. Publication dates remain the clock even if a caller passes a discovery-clock filter. Paper IDs are deduplicated; malformed dates, impossible calendar dates, and future publication dates are excluded. All charts, drill-down IDs, reading candidates, author counts, and watchlist matches use those same records.

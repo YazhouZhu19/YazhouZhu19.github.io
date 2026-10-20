@@ -1,0 +1,621 @@
+{
+  "status": "provisional",
+  "evidenceSha256": "12f32a22fa27f29f582a6f8c2b6f7556c7490cec030e80d0431c2037bee7e124",
+  "metrics": {
+    "evaluated": 400,
+    "unlabelled": 0,
+    "confusion": [
+      [
+        306,
+        0,
+        6
+      ],
+      [
+        34,
+        0,
+        0
+      ],
+      [
+        52,
+        0,
+        2
+      ]
+    ],
+    "scope": {
+      "core": {
+        "tp": 306,
+        "fp": 86,
+        "fn": 6,
+        "support": 312,
+        "precision": 0.7806122448979592,
+        "recall": 0.9807692307692307,
+        "f1": 0.8693181818181818
+      },
+      "adjacent": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 34,
+        "support": 34,
+        "precision": null,
+        "recall": 0,
+        "f1": 0
+      },
+      "out": {
+        "tp": 2,
+        "fp": 6,
+        "fn": 52,
+        "support": 54,
+        "precision": 0.25,
+        "recall": 0.037037037037037035,
+        "f1": 0.06451612903225806
+      }
+    },
+    "tracks": {
+      "segmentation": {
+        "tp": 94,
+        "fp": 34,
+        "fn": 5,
+        "support": 99,
+        "precision": 0.734375,
+        "recall": 0.9494949494949495,
+        "f1": 0.8281938325991189
+      },
+      "human_loop": {
+        "tp": 11,
+        "fp": 37,
+        "fn": 5,
+        "support": 16,
+        "precision": 0.22916666666666666,
+        "recall": 0.6875,
+        "f1": 0.34375
+      },
+      "diagnosis": {
+        "tp": 69,
+        "fp": 72,
+        "fn": 35,
+        "support": 104,
+        "precision": 0.48936170212765956,
+        "recall": 0.6634615384615384,
+        "f1": 0.563265306122449
+      },
+      "reconstruction": {
+        "tp": 46,
+        "fp": 10,
+        "fn": 30,
+        "support": 76,
+        "precision": 0.8214285714285714,
+        "recall": 0.6052631578947368,
+        "f1": 0.696969696969697
+      },
+      "registration": {
+        "tp": 28,
+        "fp": 5,
+        "fn": 15,
+        "support": 43,
+        "precision": 0.8484848484848485,
+        "recall": 0.6511627906976745,
+        "f1": 0.7368421052631579
+      },
+      "quantification": {
+        "tp": 38,
+        "fp": 31,
+        "fn": 48,
+        "support": 86,
+        "precision": 0.5507246376811594,
+        "recall": 0.4418604651162791,
+        "f1": 0.49032258064516127
+      },
+      "prognosis": {
+        "tp": 28,
+        "fp": 24,
+        "fn": 10,
+        "support": 38,
+        "precision": 0.5384615384615384,
+        "recall": 0.7368421052631579,
+        "f1": 0.6222222222222222
+      },
+      "language": {
+        "tp": 45,
+        "fp": 7,
+        "fn": 7,
+        "support": 52,
+        "precision": 0.8653846153846154,
+        "recall": 0.8653846153846154,
+        "f1": 0.8653846153846154
+      },
+      "intervention": {
+        "tp": 14,
+        "fp": 49,
+        "fn": 7,
+        "support": 21,
+        "precision": 0.2222222222222222,
+        "recall": 0.6666666666666666,
+        "f1": 0.3333333333333333
+      },
+      "foundation": {
+        "tp": 33,
+        "fp": 15,
+        "fn": 13,
+        "support": 46,
+        "precision": 0.6875,
+        "recall": 0.717391304347826,
+        "f1": 0.7021276595744681
+      }
+    },
+    "disagreements": [
+      {
+        "id": "doi:10.3171/2026.4.jns26111",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2602.00990",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.5937/jomb0-61610",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC1341814",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2609.36991",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC12493938",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.2214/ajr.26.35721",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.ijmedinf.2026.106685",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.5005/jp-journals-10078-1520",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC1488488",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC1546679",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC12493913",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.cjco.2026.05.008",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.3960/jslrt.26029",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1093/nop/npag034",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2202.04785",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.64898/2026.06.25.26356599",
+        "expected": "core",
+        "predicted": "out"
+      },
+      {
+        "id": "doi:10.1136/jcp.27.2.172-a",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC1260334",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1097/bot.0000000000003215",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2507.22791",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC1650382",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.18502/jthc.v20i2.19711",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC12493369",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1515/iss-2025-0010",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.64898/2026.09.25.26362274",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC491715",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1002/ase.70357",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1055/a-2811-1781",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.5005/jp-journals-10024-3984",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.18502/jthc.v20i2.19708",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.53045/jprs.2025-0100",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.3332/ecancer.2026.2151",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.3238/arztebl.m2026.0172",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.2147/imcrj.s583050",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1177/014107688407701132",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2606.05628",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2507.09562",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC1214808",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2501.00277",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.64898/2026.10.05.26364781",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.ctarc.2025.101062",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1177/20551169261462693",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "epmc:PMC:PMC496574",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.prnil.2026.01.004",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.4103/jmau.jmau_3_23",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1177/10732748261494374",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1007/s00259-026-08190-w",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.jhep.2026.03.004",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1177/003591577707000334",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.amjcard.2026.09.014",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2410.03086",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1148/rg.250166",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.12968/bjon.2026.0117",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.media.2026.104327",
+        "expected": "core",
+        "predicted": "out"
+      },
+      {
+        "id": "doi:10.1109/tuson.2026.3659798",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1002/jfa2.70226",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.7759/cureus.114517",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1109/tmi.2026.3739833",
+        "expected": "core",
+        "predicted": "out"
+      },
+      {
+        "id": "doi:10.1002/jfa2.70222",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.12688/f1000research.166604.2",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1002/gin2.70067",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.hroo.2026.06.011",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1109/tmi.2026.3741804",
+        "expected": "core",
+        "predicted": "out"
+      },
+      {
+        "id": "doi:10.1097/ms9.0000000000005474",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2406.11868",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2609.07188",
+        "expected": "core",
+        "predicted": "out"
+      },
+      {
+        "id": "epmc:PMC:PMC1416436",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2602.16991",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1136/jcp.44.4.352-c",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.64898/2026.09.10.26362809",
+        "expected": "core",
+        "predicted": "out"
+      },
+      {
+        "id": "doi:10.1097/rlu.0000000000006648",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.hroo.2026.06.001",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1136/bmj.307.6909.940-b",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.5603/fm.112832",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1007/s13193-025-02482-7",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1080/20905998.2026.2623583",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1227/neuprac.0000000000000216",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2605.09697",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1016/j.ard.2026.06.024",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1097/ms9.0000000000005589",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1021/cbmi.6c00066",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1109/tuson.2026.3666270",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.24963/ijcai.2024/610",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.64898/2026.08.10.26359935",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1136/bmj.300.6718.194",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.3389/fonc.2026.1751817",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.21203/rs.3.rs-10975699/v1",
+        "expected": "adjacent",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2606.30651",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "arxiv:2606.29599",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.36721/pjps.2026.39.12.346.1",
+        "expected": "out",
+        "predicted": "core"
+      },
+      {
+        "id": "doi:10.1007/s13193-026-02534-6",
+        "expected": "adjacent",
+        "predicted": "core"
+      }
+    ]
+  },
+  "population": 8326,
+  "trackCounts": {
+    "segmentation": 2039,
+    "human_loop": 307,
+    "diagnosis": 4257,
+    "reconstruction": 522,
+    "registration": 184,
+    "quantification": 1575,
+    "prognosis": 1712,
+    "language": 378,
+    "intervention": 1890,
+    "foundation": 424
+  }
+}

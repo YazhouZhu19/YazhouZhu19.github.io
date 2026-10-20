@@ -10,10 +10,11 @@ import { createDataWorkerRuntime } from "../lib/data-worker";
 import { buildPaperIndex, buildPaperIndexAsync, paperSearchText, searchPaperIndex } from "../lib/paper-index";
 import { PublicDataLoadError, type PublicPaperSnapshot } from "../lib/public-paper-loader";
 import type { VerifiedPublicData } from "../lib/public-data-schema";
+import { withPaperScope } from "../lib/classify";
 
 const baseUrl = "https://example.org/research-monitor/";
 function paper(id: string): VerifiedPublicData["papers"][number] {
-  return {
+  return withPaperScope({
     id,
     title: `Medical ${id}`,
     abstract: "MRI segmentation 医学影像",
@@ -37,7 +38,7 @@ function paper(id: string): VerifiedPublicData["papers"][number] {
     tracks: ["segmentation"],
     reviewStatus: "unreviewed",
     provenance: [],
-  };
+  });
 }
 function snapshot(generation = "g1", count = 5): PublicPaperSnapshot {
   return {

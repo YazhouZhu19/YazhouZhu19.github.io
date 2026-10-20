@@ -1,4 +1,6 @@
 import type { Paper } from "./types";
+import { affirmativeMatches, inferScope, SCOPE_CLASSIFIER_VERSION } from "./scope";
+export { SCOPE_CLASSIFIER_VERSION } from "./scope";
 export const TASKS: Record<string, string> = {
   segmentation: "分割与结构解析",
   diagnosis: "检测与辅助诊断",
@@ -158,10 +160,52 @@ export function classify(title: string, abstract: string) {
   // Task keywords alone (e.g. a text-only diagnostic chatbot) are not medical imaging evidence.
   out.tracks = relevant(title, abstract) ? Object.keys(TRACKS).filter((track) => matches.has(track)) : [];
   out.evidence = evidence;
+  const scope = scopeOf(title, abstract);
+  out.scope = scope.scope;
+  out.scopeReasons = scope.reasons;
+  out.scopeClassifierVersion = SCOPE_CLASSIFIER_VERSION;
   return out as Pick<
     Paper,
-    "tasks" | "modalities" | "organs" | "methods" | "humanSignals" | "evidence" | "tracks"
+    | "tasks"
+    | "modalities"
+    | "organs"
+    | "methods"
+    | "humanSignals"
+    | "evidence"
+    | "tracks"
+    | "scope"
+    | "scopeReasons"
+    | "scopeClassifierVersion"
   >;
+}
+export function scopeOf(title: string, abstract: string) {
+  const text = `${title}. ${abstract}`;
+  const methodEvidence = Object.entries(patterns.methods)
+    .filter(([, pattern]) => affirmativeMatches(text, pattern).length)
+    .map(([label]) => label);
+  return inferScope(title, abstract, relevant(title, abstract), methodEvidence);
+}
+
+/** Recompute stale/missing scope without mutating records or changing their stored task tags. */
+export function withPaperScope<
+  T extends Pick<Paper, "title" | "abstract" | "scope" | "scopeReasons" | "scopeClassifierVersion">,
+>(paper: T): T & Required<Pick<Paper, "scope" | "scopeReasons" | "scopeClassifierVersion">> {
+  const result = scopeOf(paper.title, paper.abstract);
+  return {
+    ...paper,
+    scope: result.scope,
+    scopeReasons: result.reasons,
+    scopeClassifierVersion: SCOPE_CLASSIFIER_VERSION,
+  };
+}
+
+/** Explicit migration: preserve record identity, order and metadata, including duplicate IDs. */
+export function reclassifyPapers<T extends Pick<Paper, "title" | "abstract">>(papers: T[]) {
+  return papers.map((paper) => {
+    if (typeof paper.title !== "string" || typeof paper.abstract !== "string")
+      throw new Error("论文标题或摘要类型无效，停止重分类以保护原数据");
+    return { ...paper, ...classify(paper.title, paper.abstract) };
+  });
 }
 /** Require imaging evidence, not just a disease or generic AI/clinical keyword. */
 export function relevant(title: string, abstract: string) {

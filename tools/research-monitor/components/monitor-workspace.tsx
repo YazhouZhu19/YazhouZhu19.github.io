@@ -24,6 +24,8 @@ const PaperLibrary = lazy(() =>
 const PaperDetailSheet = lazy(() =>
   import("./paper-detail-sheet").then((module) => ({ default: module.PaperDetailSheet })),
 );
+import { PaperScopeControl } from "./paper-scope-control";
+import { matchesPaperScope, paperScopeCounts } from "@/lib/paper-scope";
 import { ResearchDashboard } from "./research-dashboard";
 import { exportPaperCsv } from "@/lib/paper-export";
 import { defaultDashboardFilters, type DashboardFilters, type DashboardDrill } from "@/lib/dashboard";
@@ -135,6 +137,12 @@ export default function MonitorWorkspace() {
         ? initialUrlState
         : { scope: initialUrlState.scope },
   });
+  const scopeCounts = useMemo(() => paperScopeCounts(papers), [papers]);
+  const scopedPapers = useMemo(
+    () => papers.filter((paper) => matchesPaperScope(paper, library.scope)),
+    [papers, library.scope],
+  );
+  const scopedData = useMemo(() => (data ? { ...data, papers: scopedPapers } : null), [data, scopedPapers]);
   const activeFilters =
     view === "dashboard" ? dashboardFilters : view === "analysis" ? analysisFilters : null;
   const urlHash = useWorkspaceUrlState(
@@ -248,6 +256,16 @@ export default function MonitorWorkspace() {
               drillOrigin={drillOrigin}
               reset={reset}
             />
+            {data && ["dashboard", "analysis", "feed", "teams", "foresight"].includes(view) && (
+              <PaperScopeControl
+                value={library.scope}
+                counts={scopeCounts}
+                onChange={(scope) => {
+                  clearDrill();
+                  library.setScope(scope);
+                }}
+              />
+            )}
             {library.needsFilteredPapers && (
               <Suspense fallback={viewFallback}>
                 <PaperFilters library={library} />
@@ -265,16 +283,16 @@ export default function MonitorWorkspace() {
                   loading={signalsLoading}
                   error={signalsError}
                   onRefresh={() => void loadSignals()}
-                  papers={papers}
+                  papers={scopedPapers}
                   onPaper={openPaper}
                   onDrill={(d) => openDrill(d, view)}
                 />
               ) : loading ? (
                 viewFallback
-              ) : view === "dashboard" && data ? (
+              ) : view === "dashboard" && scopedData ? (
                 <ResearchDashboard
                   authenticated={authenticated}
-                  data={data}
+                  data={scopedData}
                   teams={teams}
                   collections={collections}
                   filters={dashboardFilters}
@@ -283,25 +301,25 @@ export default function MonitorWorkspace() {
                   onNavigate={setView}
                   onPaper={openPaper}
                 />
-              ) : view === "analysis" && data ? (
+              ) : view === "analysis" && scopedData ? (
                 <PreliminaryAnalysisView
-                  data={data}
+                  data={scopedData}
                   teams={teams}
                   filters={analysisFilters}
                   onFilters={setAnalysisFilters}
                   onDrill={(d) => openDrill(d, "analysis")}
                   onPaper={openPaper}
                 />
-              ) : view === "foresight" && data ? (
+              ) : view === "foresight" && scopedData ? (
                 <ForesightView
-                  data={data}
+                  data={scopedData}
                   signals={sourceRecords}
                   preferences={directionPreferences}
                   onPreferencesChange={setDirectionPreferences}
                   onPaper={openPaper}
                   onDrill={(d) => openDrill(d, "foresight")}
                 />
-              ) : view === "teams" && data ? (
+              ) : view === "teams" && scopedData ? (
                 <TeamForesight
                   data={data}
                   signals={sourceRecords}
