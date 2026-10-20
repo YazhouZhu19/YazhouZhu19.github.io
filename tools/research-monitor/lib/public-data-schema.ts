@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { withPaperScope } from "./classify";
+import { withPaperClassification } from "./classify";
 
 // Public snapshots are validated independently from personal browser data.
 const shortText = z.string().max(2000);
@@ -66,6 +66,7 @@ const paperSchema = z
     scope: z.enum(["core", "adjacent", "out"]).optional(),
     scopeReasons: labels.optional(),
     scopeClassifierVersion: shortText.optional(),
+    taskClassifierVersion: shortText.optional(),
     reviewStatus: shortText,
     provenance: z
       .array(
@@ -78,7 +79,7 @@ const paperSchema = z
       )
       .max(10000),
   })
-  .transform(withPaperScope);
+  .transform(withPaperClassification);
 const runSchema = z.object({
   id: shortText,
   source: shortText,

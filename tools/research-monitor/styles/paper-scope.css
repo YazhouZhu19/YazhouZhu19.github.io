@@ -26,3 +26,9 @@
     gap: var(--space-8, 8px);
   }
 }
+
+.scope-version-note {
+  color: var(--muted-foreground);
+  font-size: var(--text-12, 12px);
+  max-width: 26em;
+}

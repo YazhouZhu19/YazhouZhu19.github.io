@@ -7,6 +7,7 @@ import {
   scopeOf,
   SCOPE_CLASSIFIER_VERSION,
   withPaperScope,
+  TASK_CLASSIFIER_VERSION,
 } from "../lib/classify";
 import { normalizeRecord, parseMonitorData } from "../lib/record";
 import { monitorDataSchema } from "../lib/public-data-schema";
@@ -126,9 +127,38 @@ test("historical public validation and collection normalization both compute mis
   const current = monitorDataSchema.parse(snapshot);
   assert.equal(current.papers[0].scope, "core");
   assert.equal(current.papers[0].scopeClassifierVersion, SCOPE_CLASSIFIER_VERSION);
+  assert.equal(current.papers[0].taskClassifierVersion, TASK_CLASSIFIER_VERSION);
   assert.equal(parseMonitorData(snapshot).papers[0].scope, "core");
   assert.equal(old.scope, "out");
   assert.throws(() =>
     monitorDataSchema.parse({ ...snapshot, papers: [{ ...old, url: "javascript:alert(1)" }] }),
   );
+});
+
+test("public validation refreshes legacy diagnosis tags before the UI receives the record", () => {
+  const old = normalizeRecord(
+    {
+      id: "paper:legacy",
+      title: "Clinical MRI findings",
+      abstract: "Patients diagnosed with disease were enrolled.",
+      source: "fixture",
+      url: "https://example.org/paper",
+      publishedAt: "2026-10-20",
+    },
+    "2026-10-21T00:00:00Z",
+  );
+  old.tasks = ["diagnosis"];
+  old.tracks = ["diagnosis"];
+  old.taskClassifierVersion = "legacy";
+  const parsed = monitorDataSchema.parse({
+    papers: [old],
+    runs: [],
+    queryRuns: [],
+    collectedAt: "2026-10-21T00:00:00Z",
+    lastSuccessfulSync: null,
+    coverage: "fixture",
+  });
+  assert.deepEqual(parsed.papers[0].tasks, ["general"]);
+  assert.deepEqual(parsed.papers[0].tracks, []);
+  assert.deepEqual(old.tracks, ["diagnosis"]);
 });

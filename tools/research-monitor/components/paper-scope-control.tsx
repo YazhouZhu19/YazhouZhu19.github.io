@@ -1,3 +1,4 @@
+import { TASK_CLASSIFIER_VERSION } from "@/lib/classify";
 import { DashboardChoice } from "./dashboard-choice";
 import { useI18n } from "./locale-provider";
 import type { paperScopeCounts } from "@/lib/paper-scope";
@@ -44,6 +45,11 @@ export function PaperScopeControl({
         )}
         <small>{tr("范围由标题与摘要自动判断，仍有误判；切换全部记录可复核。")}</small>
       </p>
+      <small className="scope-version-note">
+        {tr("诊断标签自 {0} 起要求检测、分类或准确性证据；跨口径数量不直接比较。", [
+          TASK_CLASSIFIER_VERSION.slice(0, 10),
+        ])}
+      </small>
     </section>
   );
 }

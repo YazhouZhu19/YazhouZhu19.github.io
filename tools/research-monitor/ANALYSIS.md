@@ -12,6 +12,12 @@ Public snapshot validation computes the current scope in the data Worker (or the
 
 The fixed 400-paper AI-reconciled evaluation remains **provisional**, with unresolved boundaries and missing abstracts. Its metrics diagnose the rules; they are not human-gold acceptance measurements.
 
+## Detection and classification tags / 检测分类口径
+
+Since `2026-10-21-diagnosis-v2`, `diagnosis` requires an explicit detection/classification task, studied diagnostic accuracy, or affirmative downstream classification experiments. Standalone “diagnosis”, “diagnosed with” and “differential diagnosis” do not trigger the tag. Background benefits alone, negated tasks, anatomical/device/image-quality detection and screening-uptake studies are excluded where local wording identifies them. Title evidence and reported method/evaluation context remain imperfect proxies; report generation, methodological reviews and molecular/phenotype classification still have unresolved boundaries.
+
+`TASK_CLASSIFIER_VERSION` identifies this change independently from scope and the stable interest taxonomy. Public validation recalculates the derived tags in the Worker before indexes and charts consume them; collection and `--reclassify-only` use the same classifier. The other nine direction rules and IDs are unchanged. Historical counts can change because classification changed, not because new publications appeared; consumers should show the rule-version date when comparing counts.
+
 ## Shared scope and denominators
 
 `buildPreliminaryAnalysis` applies the selected source, research interest, and publication-date window together. Publication dates remain the clock even if a caller passes a discovery-clock filter. Paper IDs are deduplicated; malformed dates, impossible calendar dates, and future publication dates are excluded. All charts, drill-down IDs, reading candidates, author counts, and watchlist matches use those same records.

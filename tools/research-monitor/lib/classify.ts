@@ -14,6 +14,8 @@ export const TASKS: Record<string, string> = {
 };
 /** Stable identifiers are shared by saved filters, the UI and source query provenance. */
 export const INTEREST_TAXONOMY_VERSION = "2026-09-18-ten-interests-v1";
+/** Task-rule changes do not trigger a source-query taxonomy backfill. */
+export const TASK_CLASSIFIER_VERSION = "2026-10-21-diagnosis-v2";
 export const TRACKS: Record<string, string> = {
   segmentation: "器官与病灶分割",
   human_loop: "人在回路临床诊断",
@@ -50,7 +52,7 @@ const patterns: Record<string, Record<string, RegExp>> = {
   tasks: {
     segmentation: /\bsegment(?:ation|ing|ed)?\b|delineat|contouring/i,
     diagnosis:
-      /\bdiagnos|(?:lesion|nodule|polyp|tumou?r|disease|cancer) (?:detect|classif)|(?:detect|classif)(?:ion|ication|ying)? of (?:lesion|nodule|polyp|tumou?r|disease|cancer)|screening|computer.aided detect/i,
+      /(?:lesion|nodule|polyp|tumou?r|disease|cancer|malignancy|abnormalit(?:y|ies)|anomal(?:y|ies)|pathology|cell|nuclei|tissue)[- ](?:detect|classif)|(?:detect(?:ion|ing)?|classif(?:ication|ying)?) of (?:lesion|nodule|polyp|tumou?r|disease|cancer)|computer.aided (?:detect|diagnos)|automat(?:ed|ic|ically)[- ](?:detect(?:ion|ing|ed)?\b|diagnos|classif)|\b(?:AI|deep learning|machine learning|models?|neural networks?)\b[^.!?;]{0,40}(?:diagnos(?:is|es|tic accuracy|tic performance)|detect(?:ion|ing|ed)?\b|classif|screen)|diagnostic accuracy|screening (?:program|performance)/i,
     reconstruction:
       /(?:image|imaging|tomographic|mri|ct|pet|ultrasound) reconstruct|reconstruct(?:ion|ing) (?:of )?(?:medical |mr |ct |pet )?imag|super.resolution|denois|(?:image|imaging|mri|ct) synthes|synthe(?:tic|sis of).{0,20}(?:image|mri|ct)|cross.modal.{0,30}(?:generat|translat)|artifact (?:reduc|correct)/i,
     registration:
@@ -111,6 +113,42 @@ const patterns: Record<string, Record<string, RegExp>> = {
     annotation: /expert annotat|radiologist annotat|manual annotat|expert ground.truth/i,
   },
 };
+
+/**
+ * The diagnosis direction describes a studied detection/classification task.
+ * Generic benefits in an introduction/conclusion and anatomical/device detection
+ * are insufficient. Explicit downstream classification experiments still count.
+ */
+function hasDiagnosisEvidence(title: string, abstract: string): boolean {
+  const nonDiagnosticTarget =
+    /(?:quality|view|phase|landmark|electrode|contact|artifact|photon|signal|risk|site|domain|voxel|pixel|out.of.distribution)[- ](?:detect|classif)|detect(?:ion|ing)? (?:of )?(?:electrode|contact|photon|landmark|cardiac phase)|classif(?:ication|ying)? (?:of )?(?:voxels|pixels|sites|domains|image quality)/i;
+  const screeningUtilization =
+    /\b(?:recruitment|attendance|uptake|participation|access|use|utilization|utilisation)\b.{0,45}screening|screening.{0,30}\b(?:uptake|attendance|participation|utilization|utilisation)\b/i;
+  if (screeningUtilization.test(title)) return false;
+  const actionInTitle = /\b(?:detection|detecting|classification|classifying|subtyping|screening)\b/i;
+  if (
+    (affirmativeMatches(title, patterns.tasks.diagnosis).length ||
+      affirmativeMatches(title, actionInTitle).length) &&
+    !nonDiagnosticTarget.test(title)
+  )
+    return true;
+  return abstract.split(/(?<=[.!?;])\s+/).some((sentence) => {
+    if (nonDiagnosticTarget.test(sentence)) return false;
+    const explicit = affirmativeMatches(sentence, patterns.tasks.diagnosis).length > 0;
+    const classification =
+      affirmativeMatches(sentence, /\bclassif(?:ication|ying|ied|iers?)\b|\bsubtyping\b/i).length > 0;
+    if (!explicit && !classification) return false;
+    const performed =
+      /\b(?:we|our|this study|this work)\b|evaluat|experiment|achiev|outperform|demonstrat|results?\b|assess|compar|validat|trained|training|test(?:ed|ing)?\b|perform|downstream/i.test(
+        sentence,
+      );
+    const contextual =
+      /\bbackground\b|(?:important|essential|crucial) (?:for|to)|\bpotential\b|\bcan (?:enhance|support|facilitate)|\bmay (?:enhance|support|facilitate)|towards? (?:develop|clinical)|\bfor example\b/i.test(
+        sentence,
+      );
+    return performed && !contextual;
+  });
+}
 export function textOnly(value: unknown): string {
   return String(value ?? "")
     .replace(/<\/?[a-z][^>]*>/gi, " ")
@@ -134,6 +172,10 @@ export function classify(title: string, abstract: string) {
   for (const [group, rules] of Object.entries(patterns)) {
     out[group] = [];
     for (const [label, re] of Object.entries(rules)) {
+      if (group === "tasks" && label === "diagnosis") {
+        if (hasDiagnosisEvidence(title, abstract)) out[group].push(label);
+        continue;
+      }
       const matches = [...text.matchAll(new RegExp(re.source, "gi"))];
       const match = matches.find((m) => {
         if (group !== "humanSignals" || label === "simulated") return true;
@@ -164,6 +206,7 @@ export function classify(title: string, abstract: string) {
   out.scope = scope.scope;
   out.scopeReasons = scope.reasons;
   out.scopeClassifierVersion = SCOPE_CLASSIFIER_VERSION;
+  out.taskClassifierVersion = TASK_CLASSIFIER_VERSION;
   return out as Pick<
     Paper,
     | "tasks"
@@ -176,6 +219,7 @@ export function classify(title: string, abstract: string) {
     | "scope"
     | "scopeReasons"
     | "scopeClassifierVersion"
+    | "taskClassifierVersion"
   >;
 }
 export function scopeOf(title: string, abstract: string) {
@@ -206,6 +250,11 @@ export function reclassifyPapers<T extends Pick<Paper, "title" | "abstract">>(pa
       throw new Error("论文标题或摘要类型无效，停止重分类以保护原数据");
     return { ...paper, ...classify(paper.title, paper.abstract) };
   });
+}
+
+/** Recompute derived tags for legacy public snapshots before indexing/searching them. */
+export function withPaperClassification<T extends Pick<Paper, "title" | "abstract">>(paper: T) {
+  return { ...paper, ...classify(paper.title, paper.abstract) };
 }
 /** Require imaging evidence, not just a disease or generic AI/clinical keyword. */
 export function relevant(title: string, abstract: string) {

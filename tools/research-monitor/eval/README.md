@@ -42,6 +42,14 @@ The unmodified 8,326-record snapshot is classified in memory as 3,960 core, 2,82
 npx tsx scripts/eval-classifier.ts --labels eval/relevance-ai-reviewed.csv --output eval/report-p4-scope.md
 ```
 
+## P4.2 diagnosis diagnostics
+
+[Before/after comparison](p4-classifier-comparison.md), [structured comparison](p4-classifier-comparison.json) and [detailed new report](report-p4-diagnosis.md) record `2026-10-21-diagnosis-v2`. On the same provisional sample, diagnosis precision changes from **48.9% to 79.8%** and recall from **66.3% to 64.4%** (−1.9 percentage points). Precision still falls short of the 85% target. Neither the improvement nor the recall difference is a human-gold acceptance result.
+
+The full retained snapshot's diagnosis count changes from **4,257 to 1,666** due to the rule change. The other nine directions' sample metrics and full-library counts are unchanged. Snapshot records and the frozen original/AI labels remain intact. The rules distinguish studied detection/classification from ordinary diagnostic wording, negation, introductory benefits, anatomical/device/image-quality detection and screening uptake. Report-generation and molecular/phenotype classification boundaries remain imperfect.
+
+The sample was inspected during rule development; it is not a held-out evaluation. No IDs or paper-specific titles appear in the classifier.
+
 ## Scope definitions
 
 - **core**: proposes, evaluates or applies a computational method, model, software or quantitative image-analysis pipeline to medical images.

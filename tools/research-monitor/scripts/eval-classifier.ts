@@ -180,6 +180,7 @@ async function main() {
     `- Frozen evidence SHA-256: \`${evidence.evidenceSha256}\`.`,
     `- Scope classifier: \`${scopeVersion}\`.`,
     `- Track classifier taxonomy: \`${classifier.INTEREST_TAXONOMY_VERSION}\`.`,
+    `- Task-rule classifier: \`${classifier.TASK_CLASSIFIER_VERSION}\`.`,
     "- Sampling is balanced across source × assigned track × month, not prevalence-proportional. These unweighted metrics describe the audit sample, not population-wide accuracy.",
     "- Before scopeOf exists, relevant=true is mapped to core and relevant=false to out to measure the existing inclusive display policy. This is not an existing three-class algorithm; adjacent can never be predicted by this baseline.",
     "- Labels may select no tracks. A single word such as diagnosis or radiotherapy is insufficient evidence of a corresponding computational imaging task. Undefined precision/recall is shown as —, not a perfect score.",

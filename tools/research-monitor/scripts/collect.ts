@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { collectAll } from "../lib/collect";
 import { parseMonitorData } from "../lib/record";
-import { reclassifyPapers, SCOPE_CLASSIFIER_VERSION } from "../lib/classify";
+import { reclassifyPapers, SCOPE_CLASSIFIER_VERSION, TASK_CLASSIFIER_VERSION } from "../lib/classify";
 import { readSnapshotFile, writeSnapshotFile } from "./snapshot-files";
 
 function argumentsFor(argv: string[]) {
@@ -39,14 +39,21 @@ async function main() {
       ...snapshot,
       papers,
       scopeClassifierVersion: SCOPE_CLASSIFIER_VERSION,
+      taskClassifierVersion: TASK_CLASSIFIER_VERSION,
     };
     await writeSnapshotFile(output, reclassified);
-    console.log(`Reclassified ${papers.length} retained papers; scope=${SCOPE_CLASSIFIER_VERSION}`);
+    console.log(
+      `Reclassified ${papers.length} retained papers; scope=${SCOPE_CLASSIFIER_VERSION}; tasks=${TASK_CLASSIFIER_VERSION}`,
+    );
     return;
   }
   const previous = parseMonitorData(snapshot);
   const { data, allFailed, outcomes } = await collectAll(previous);
-  const classifiedData = { ...data, scopeClassifierVersion: SCOPE_CLASSIFIER_VERSION };
+  const classifiedData = {
+    ...data,
+    scopeClassifierVersion: SCOPE_CLASSIFIER_VERSION,
+    taskClassifierVersion: TASK_CLASSIFIER_VERSION,
+  };
   await writeSnapshotFile(output, classifiedData);
   for (const { run } of outcomes) {
     const stored = data.runs.find((candidate) => candidate.id === run.id)!;

@@ -33,6 +33,7 @@ export type Paper = {
   scope?: PaperScope;
   scopeReasons?: string[];
   scopeClassifierVersion?: string;
+  taskClassifierVersion?: string;
   reviewStatus: string;
   provenance: { queryUrl?: string; queryTrack?: string; collectedAt: string; sourceRecordId?: string }[];
 };

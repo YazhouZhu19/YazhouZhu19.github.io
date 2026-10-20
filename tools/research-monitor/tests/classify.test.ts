@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { classify, relevant, TRACKS, TRACK_DESCRIPTIONS } from "../lib/classify";
+import { classify, relevant, TRACKS, TRACK_DESCRIPTIONS, TASK_CLASSIFIER_VERSION } from "../lib/classify";
 
 const fixtures: Record<string, [string, string]> = {
   segmentation: [
@@ -181,5 +181,50 @@ test("explicit prompting and generative model terminology retains its method tag
       ),
       phrase,
     );
+  }
+});
+
+test("diagnosis requires a studied image detection, classification or diagnostic accuracy task", () => {
+  const positive = [
+    ["Computer-aided diagnosis of lung cancer on CT", "We evaluated diagnostic accuracy."],
+    ["Medical image representation learning", "We evaluated downstream classification on chest radiographs."],
+    ["Thyroid ultrasound diagnostic accuracy", "Sensitivity and specificity were measured."],
+    [
+      "Joint segmentation and classification of breast ultrasound",
+      "We evaluate benign and malignant findings.",
+    ],
+    ["MRI classification", "We trained a network to classify brain tumors."],
+  ];
+  for (const [title, abstract] of positive) {
+    const result = classify(title, abstract);
+    assert.ok(result.tasks.includes("diagnosis"), title);
+    assert.ok(result.tracks.includes("diagnosis"), title);
+    assert.equal(result.taskClassifierVersion, TASK_CLASSIFIER_VERSION);
+  }
+});
+
+test("routine diagnosis wording, background benefits and non-diagnostic detection do not add diagnosis", () => {
+  const negative = [
+    ["MRI in clinical practice", "Patients diagnosed with disease underwent routine MRI."],
+    ["Differential diagnosis on brain MRI", "Clinical findings are described."],
+    [
+      "Medical image segmentation",
+      "Accurate cancer detection is essential for diagnosis. We evaluated only segmentation Dice.",
+    ],
+    ["MRI reconstruction", "This may support diagnostic accuracy in future clinical use."],
+    ["MRI algorithm", "We performed no lesion detection or classification."],
+    [
+      "Automated electrode contact detection on CT",
+      "We evaluated automatic detection of electrode contacts.",
+    ],
+    ["Cardiac phase detection in ultrasound", "We assessed cardiac phase detection accuracy."],
+    ["Quality classification of MRI scans", "We assessed classification of image quality."],
+    ["Recruitment to mammography screening", "We evaluated participation and attendance."],
+    ["Photon detectors for medical imaging", "We evaluated detectors with improved energy resolution."],
+  ];
+  for (const [title, abstract] of negative) {
+    const result = classify(title, abstract);
+    assert.ok(!result.tasks.includes("diagnosis"), title);
+    assert.ok(!result.tracks.includes("diagnosis"), title);
   }
 });

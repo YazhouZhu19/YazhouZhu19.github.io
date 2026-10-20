@@ -6,7 +6,7 @@ import { createShardCache } from "../lib/shard-cache";
 import { encodeV3Paper } from "../lib/snapshot-v3";
 import { PUBLIC_SNAPSHOT_V3_SCHEMA, PUBLIC_SNAPSHOT_SCHEMA, SNAPSHOT_SCHEMA } from "../lib/snapshot";
 import type { Paper } from "../lib/types";
-import { withPaperScope } from "../lib/classify";
+import { withPaperClassification } from "../lib/classify";
 
 const base = "https://example.org/research-monitor/";
 const now = "2026-10-21T00:00:00.000Z";
@@ -116,7 +116,7 @@ test("public reader decodes v3 and reuses validated data when the manifest retur
   });
   const first = await reader.load(),
     second = await reader.load();
-  assert.deepEqual(first.data.papers, input.map(withPaperScope));
+  assert.deepEqual(first.data.papers, input.map(withPaperClassification));
   assert.equal(second, first);
   assert.equal(manifests, 2);
   assert.equal(shards, 1);
@@ -144,7 +144,7 @@ for (const failure of ["missing", "manifest", "checksum", "record"] as const) {
         return response(failure === "checksum" ? "invalid bytes" : invalid.text);
       }) as typeof fetch,
     });
-    assert.deepEqual((await reader.load()).data.papers, [withPaperScope(original)]);
+    assert.deepEqual((await reader.load()).data.papers, [withPaperClassification(original)]);
     assert.ok(calls.some((path) => path.endsWith("public-papers-v2.json")));
     assert.ok(calls.every((path) => !path.endsWith("/data/papers.json")));
   });

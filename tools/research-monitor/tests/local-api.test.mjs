@@ -347,8 +347,8 @@ test("shards load the complete ordered library with bounded requests, current la
     return new Response(fixture.files.get(url));
   };
   const result = await api("/api/papers", { signal: controller.signal });
-  const { withPaperScope } = await import("../.test-build/classify.mjs");
-  assert.deepEqual(result.papers, records.map(withPaperScope));
+  const { withPaperClassification } = await import("../.test-build/classify.mjs");
+  assert.deepEqual(result.papers, records.map(withPaperClassification));
   assert.equal(result.totalStored, records.length);
   assert.deepEqual(result.runs, publicSnapshot.runs);
   assert.deepEqual(result.queryRuns, publicSnapshot.queryRuns);
