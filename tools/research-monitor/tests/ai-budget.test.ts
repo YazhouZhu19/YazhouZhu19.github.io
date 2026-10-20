@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { abstractExcerpt, prepareAiEvidence } from "../lib/ai-evidence";
+import { abstractExcerpt, prepareAiEvidence, buildAiMessages } from "../lib/ai-evidence";
 import { buildBudgetedAiMessages, aiEvidenceBatches, buildAiSynthesis } from "../lib/ai-client";
 import { aiSampleLimit, estimatedInputTokens, LOCAL_AI_MODELS } from "../lib/ai-models";
 import type { Paper } from "../lib/types";
@@ -90,4 +90,88 @@ test("every local model budgets actual prompts and preserves all selected IDs wi
     );
     assert.ok(estimatedInputTokens(synthesis.messages) <= model.inputTokens);
   }
+});
+
+test("tight budgets retain whole sentences, complete markers, and negative conclusions", () => {
+  const source =
+    "BACKGROUND: " +
+    "An imaging challenge. ".repeat(60) +
+    " METHODS: We developed a thyroid ultrasound model using a prospective cohort." +
+    " RESULTS: We achieved a sensitivity of 80 percent." +
+    " FINDINGS: The external test performed poorly." +
+    " CONCLUSION: Clinical benefit remains untested; performance was not superior.";
+  const record = paper("tight", source);
+  for (const budget of [300, 180, 80]) {
+    const excerpt = abstractExcerpt(record, budget);
+    assert.ok(excerpt.length <= budget);
+    assert.match(excerpt, /CONCLUSION: Clinical benefit remains untested; performance was not superior\./);
+    const passages = excerpt.split("\n[... excerpt omitted ...]\n");
+    for (const passage of passages) assert.ok(source.includes(passage));
+    assert.ok(!excerpt.startsWith("[..."));
+    assert.ok(!excerpt.endsWith("excerp"));
+  }
+  assert.equal(record.abstract, source);
+  assert.match(
+    abstractExcerpt(
+      paper("chinese", "背景说明。".repeat(100) + "方法：构建分割模型。结果：多中心测试仍有局限。"),
+      80,
+    ),
+    /局限。/,
+  );
+});
+
+test("an oversized source sentence is explicitly omitted rather than clipped", () => {
+  const original = "METHODS: " + "observational ".repeat(100) + "not superior.";
+  const record = { ...paper("long-sentence", "Display translation"), originalAbstract: original };
+  const data = prepareAiEvidence(
+    [record],
+    { mode: "landscape", question: "", locale: "en", from: "2026-01-01", to: "2026-10-20", horizonMonths: 6 },
+    4,
+    new Date("2026-10-21"),
+  );
+  for (const budget of [180, 80]) {
+    assert.equal(abstractExcerpt(record, budget), "");
+    const messages = buildAiMessages(data, budget);
+    const projected = JSON.parse(messages[1].content).papers[0];
+    assert.equal(projected.id, record.id);
+    assert.equal(projected.abstract, "");
+    assert.equal(projected.abstractExcerptStatus, "omitted-budget");
+    assert.match(messages[0].content, /not missing source data/);
+  }
+  assert.equal(record.originalAbstract, original);
+  assert.equal(record.abstract, "Display translation");
+});
+
+test("the actual smallest-model request preserves a complete caveat under a long Chinese question", () => {
+  const original =
+    "BACKGROUND: " +
+    "An imaging challenge. ".repeat(60) +
+    " METHODS: We developed a thyroid ultrasound model using a prospective cohort. RESULTS: We achieved a sensitivity of 80 percent. FINDINGS: The external test performed poorly. CONCLUSION: Clinical benefit remains untested; performance was not superior.";
+  const question = "甲状腺超声分割的局限".repeat(200);
+  const records = Array.from({ length: 4 }, (_, index) => ({
+    ...paper(String(index), original),
+    title: "甲状腺超声".repeat(100),
+  }));
+  const data = prepareAiEvidence(
+    records,
+    { mode: "interest", question, locale: "zh", from: "2026-01-01", to: "2026-10-20", horizonMonths: 6 },
+    4,
+    new Date("2026-10-21"),
+  );
+  const model = LOCAL_AI_MODELS[0];
+  const batches = aiEvidenceBatches(data, true, model.id);
+  assert.equal(batches.length, 1);
+  const messages = buildBudgetedAiMessages(data, true, model.id);
+  const body = JSON.parse(messages[1].content);
+  assert.ok(estimatedInputTokens(messages) <= model.inputTokens);
+  assert.equal(body.request.question, question);
+  assert.deepEqual(
+    body.papers.map((p: { id: string }) => p.id),
+    data.papers.map((p) => p.id),
+  );
+  for (const projected of body.papers) {
+    assert.match(projected.abstract, /not superior\./);
+    assert.equal(projected.abstractExcerptStatus, "excerpted");
+  }
+  for (const record of records) assert.equal(record.abstract, original);
 });
