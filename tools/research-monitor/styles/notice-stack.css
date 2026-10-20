@@ -1,0 +1,62 @@
+@layer theme, base, components, utilities, app-base, app-surface, app-type, app-view;
+@layer app-view {
+  .notice-stack {
+    margin-bottom: var(--space-16);
+  }
+  .notice-stack .notice-stack-error {
+    display: block;
+    margin-bottom: var(--space-8);
+  }
+  .notice-stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8) var(--space-16);
+  }
+  .notice-stack-row + .notice-stack-row {
+    margin-top: var(--space-12);
+  }
+  .notice-stack-action {
+    flex-shrink: 0;
+  }
+  .notice-stack-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-8) var(--space-16);
+    font: var(--text-12) / 1.7 var(--font-ui);
+    color: var(--muted-foreground);
+  }
+  .notice-stack-status details[open] {
+    flex-basis: 100%;
+  }
+  .notice-stack-status summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    width: fit-content;
+    min-height: 40px;
+    cursor: pointer;
+  }
+  .notice-stack-status summary::after {
+    content: "+";
+  }
+  .notice-stack-status details[open] > summary::after {
+    content: "−";
+  }
+  .notice-stack-warning summary {
+    color: var(--status-warning);
+  }
+  .notice-stack-warning summary > span {
+    padding: 0 var(--space-6);
+    border-radius: var(--radius-6);
+    background: var(--status-warning-surface);
+  }
+  .notice-stack-details {
+    padding: var(--space-12) var(--space-16);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-10);
+    background: var(--card);
+  }
+}

@@ -1,3 +1,4 @@
+import { NoticeStack, type WorkspaceNotice } from "./notice-stack";
 import { useI18n } from "./locale-provider";
 import { Button } from "@/components/ui/button";
 import { useMemo, type ReactNode } from "react";
@@ -83,6 +84,68 @@ export function WorkspaceHeader({
   const signalsView = view === "github" || view === "news";
   const paperDashboardView = view === "dashboard" || view === "feed" || view === "analysis";
   const sourceNotice = useMemo(() => collectionNotice(data), [data]);
+  const notices: WorkspaceNotice[] = [];
+  if (error && !signalsView) {
+    notices.push({
+      id: "paper-load",
+      severity: "error",
+      content: tr(error),
+      action: (
+        <Button variant="ghost" onClick={() => void load(true)} disabled={refreshing}>
+          {tr("重新读取")}
+        </Button>
+      ),
+    });
+  }
+  if (data?.personalStorageError) {
+    notices.push({
+      id: "personal-storage",
+      severity: "error",
+      content: tr(data.personalStorageError),
+    });
+  }
+  if (!signalsView && sourceNotice) {
+    notices.push({
+      id: "source-update",
+      severity: sourceNotice.severity,
+      content:
+        sourceNotice.severity === "error"
+          ? ui(
+              "本次数据更新未能完成，正在展示已保存的论文。详情请查看同步日志。",
+              "This update could not be completed. Saved papers remain available. See the sync log for details.",
+            )
+          : sourceNotice.sources.length
+            ? ui(
+                `部分来源更新不完整（${sourceNotice.sources.join("、")}），成功采集及历史论文仍可正常浏览。`,
+                `Some source updates are incomplete (${sourceNotice.sources.join(", ")}). Successfully collected and saved papers remain available.`,
+              )
+            : ui(
+                "部分数据更新未完成，已保存的论文仍可正常浏览。详情请查看同步日志。",
+                "Some updates are incomplete. Saved papers remain available. See the sync log for details.",
+              ),
+      action: (
+        <Button variant="ghost" onClick={() => setView("sources")}>
+          {tr("查看同步日志")}
+          <ArrowUpRight size={14} />
+        </Button>
+      ),
+    });
+  }
+  if (!signalsView && data?.totalStored && data.totalStored > data.papers.length) {
+    notices.push({
+      id: "loaded-sample",
+      severity: "info",
+      content: (
+        <>
+          {tr("库内共 ")}
+          {data.totalStored}
+          {tr(" 条记录，当前展示最新 ")}
+          {data.papers.length}
+          {tr(" 条；筛选与图表基于当前展示范围。")}
+        </>
+      ),
+    });
+  }
   return (
     <>
       <div className="page-heading compact-page-heading">
@@ -197,55 +260,7 @@ export function WorkspaceHeader({
                 )}
         </div>
       </div>
-      {error && !signalsView && (
-        <div className="notice error" role="alert">
-          {tr(error)}
-          <Button variant="ghost" onClick={() => void load(true)} disabled={refreshing}>
-            {tr("重新读取")}
-          </Button>
-        </div>
-      )}
-      {data?.personalStorageError && (
-        <div className="notice error" role="alert">
-          {tr(data.personalStorageError)}
-        </div>
-      )}
-      {!signalsView && sourceNotice && (
-        <div
-          className={`notice ${sourceNotice.severity}`}
-          role={sourceNotice.severity === "error" ? "alert" : "status"}
-        >
-          <span>
-            {sourceNotice.severity === "error"
-              ? ui(
-                  "本次数据更新未能完成，正在展示已保存的论文。详情请查看同步日志。",
-                  "This update could not be completed. Saved papers remain available. See the sync log for details.",
-                )
-              : sourceNotice.sources.length
-                ? ui(
-                    `部分来源更新不完整（${sourceNotice.sources.join("、")}），成功采集及历史论文仍可正常浏览。`,
-                    `Some source updates are incomplete (${sourceNotice.sources.join(", ")}). Successfully collected and saved papers remain available.`,
-                  )
-                : ui(
-                    "部分数据更新未完成，已保存的论文仍可正常浏览。详情请查看同步日志。",
-                    "Some updates are incomplete. Saved papers remain available. See the sync log for details.",
-                  )}
-          </span>
-          <Button variant="ghost" onClick={() => setView("sources")}>
-            {tr("查看同步日志")}
-            <ArrowUpRight size={14} />
-          </Button>
-        </div>
-      )}
-      {!signalsView && data?.totalStored && data.totalStored > data.papers.length ? (
-        <div className="notice">
-          {tr("库内共 ")}
-          {data.totalStored}
-          {tr(" 条记录，当前展示最新 ")}
-          {data.papers.length}
-          {tr(" 条；筛选与图表基于当前展示范围。")}
-        </div>
-      ) : null}
+      <NoticeStack notices={notices} />
     </>
   );
 }

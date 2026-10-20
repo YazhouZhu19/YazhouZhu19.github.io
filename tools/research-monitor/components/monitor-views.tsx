@@ -1,10 +1,12 @@
 "use client";
 import "@/styles/paper-library.css";
 import "@/styles/monitor-views.css";
+
 import { api as request } from "@/lib/local-api";
+import { NoticeStack } from "./notice-stack";
 import { useI18n } from "./locale-provider";
 import { useMemo, useState } from "react";
-import { ArrowUpRight, Database, Info, Plus, RefreshCw, Trash2, Users } from "lucide-react";
+import { ArrowUpRight, Database, Plus, RefreshCw, Trash2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -166,14 +168,21 @@ export function TeamsView({
           {tr("添加团队 / 作者")}
         </Button>
       </div>
-      <div className="notice">
-        <Info size={17} />
-        <span>
-          {tr(
-            "按成员姓名或 ORCID 匹配。姓名可能重名，机构可能缺失；名单由你确认，不把机构或末位作者自动当作课题组。",
-          )}
-        </span>
-      </div>
+      <NoticeStack
+        notices={[
+          {
+            id: "method-0",
+            severity: "info",
+            content: (
+              <span>
+                {tr(
+                  "按成员姓名或 ORCID 匹配。姓名可能重名，机构可能缺失；名单由你确认，不把机构或末位作者自动当作课题组。",
+                )}
+              </span>
+            ),
+          },
+        ]}
+      />
       {!teams.length ? (
         <div className="team-intro">
           <Users size={30} />
@@ -457,20 +466,34 @@ export function SourcesView({ data }: { data: MonitorData | null }) {
           </p>
         </div>
       </section>
-      <div className="notice">
-        <Info size={17} />
-        <span>
-          {tr(
-            "首次快照采用最近记录抽样，不是完整历史库；medRxiv 的日期是版本发布日期。来源有时标注未来卷期日期，此类记录保留标识，且不计入日期分布图。机构、关键词标签和关联 DOI 都保留来源含义。数据源记录可能交叉计数。",
-          )}
-        </span>
-      </div>
-      <div className="notice">
-        <Info size={17} />
-        <span>
-          {tr("新增方向从扩展采集后逐步积累；历史记录已重新分类，当前数量不代表完整历史或研究热度。")}
-        </span>
-      </div>
+      <NoticeStack
+        notices={[
+          {
+            id: "method-1",
+            severity: "info",
+            content: (
+              <span>
+                {tr(
+                  "首次快照采用最近记录抽样，不是完整历史库；medRxiv 的日期是版本发布日期。来源有时标注未来卷期日期，此类记录保留标识，且不计入日期分布图。机构、关键词标签和关联 DOI 都保留来源含义。数据源记录可能交叉计数。",
+                )}
+              </span>
+            ),
+          },
+        ]}
+      />
+      <NoticeStack
+        notices={[
+          {
+            id: "method-2",
+            severity: "info",
+            content: (
+              <span>
+                {tr("新增方向从扩展采集后逐步积累；历史记录已重新分类，当前数量不代表完整历史或研究热度。")}
+              </span>
+            ),
+          },
+        ]}
+      />
       <section className="paper-section">
         <div className="section-heading">
           <h2>{tr("同步记录")}</h2>
