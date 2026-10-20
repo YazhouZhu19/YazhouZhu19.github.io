@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { emptyResearchSignalsData, GitHubDiscoveryStateSchema, NewsDiscoveryStateSchema, NewsSignalSchema,
-  parseResearchSignalsData, SignalRelevanceSchema, SignalSourceStateSchema, SIGNALS_MAX_BYTES, SIGNALS_MAX_RECORDS, SIGNALS_MAX_SOURCES } from "../lib/research-signals";
+  parseResearchSignalsData, ResearchSignalsDataSchema, SignalRelevanceSchema, SignalSourceStateSchema, SIGNALS_MAX_BYTES, SIGNALS_MAX_RECORDS, SIGNALS_MAX_SOURCES } from "../lib/research-signals";
 import { fetchResearchSignals, ResearchSignalsLoadError } from "../lib/signals-loader";
 
 const github = { catalogVersion: "test", cursor: 0, queue: [{ groupId: "segmentation", query: "medical imaging", sort: "best-match", page: 1, from: "2026-01-01", to: "2026-01-01" }], completedQueries: 0, repositoryCursor: 0, cycles: 0 };
@@ -13,8 +13,49 @@ test("discovery checkpoints retain independent providers and accept old snapshot
   const parsed = parseResearchSignalsData({ ...snapshot, discoveryState: { github, news } });
   assert.deepEqual(parsed.discoveryState, { github, news });
   assert.throws(() => parseResearchSignalsData({ ...snapshot, discoveryState: { thirdParty: {} } }));
-  assert.equal(SIGNALS_MAX_RECORDS, 50000);
+  assert.equal(SIGNALS_MAX_RECORDS, 100000);
   assert.equal(SIGNALS_MAX_BYTES, 64 * 1024 * 1024);
+});
+
+function repositorySnapshot(size: number) {
+  const timestamp = "2026-10-20T00:00:00Z";
+  return {
+    ...emptyResearchSignalsData(timestamp),
+    sources: [{
+      id: "github-public", name: "GitHub public repositories", kind: "github", url: "https://api.github.com",
+      status: "ok", checkedAt: timestamp, lastSuccessAt: timestamp, received: size, retained: size,
+      error: null, coverage: "Repository metadata",
+    }],
+    records: Array.from({ length: size }, (_, index) => ({
+      id: `github:lab/repository-${index}`, kind: "github", title: `lab/repository-${index}`,
+      fullName: `lab/repository-${index}`, url: `https://github.com/lab/repository-${index}`,
+      summary: "", summaryKind: "repository-description", publisher: "lab", publishedAt: timestamp,
+      firstSeenAt: timestamp, observedAt: timestamp, updatedAt: timestamp, topics: [], sourceId: "github-public",
+      relatedUrls: [], stars: index, forks: 0, openIssues: 0, license: null, language: null, archived: false,
+      pushedAt: timestamp, releasedAt: null, releaseUrl: null, readmeExcerpt: "",
+    })),
+  };
+}
+
+test("growing archives preserve valid unique repositories beyond the former 50000-record limit", () => {
+  const parsed = parseResearchSignalsData(repositorySnapshot(50001));
+  assert.equal(parsed.records.length, 50001);
+  assert.equal(parsed.records[0].id, "github:lab/repository-0");
+  assert.equal(parsed.records.at(-1)?.id, "github:lab/repository-50000");
+});
+
+test("archives exceeding the new record limit are rejected without truncating records", () => {
+  const result = ResearchSignalsDataSchema.safeParse(repositorySnapshot(SIGNALS_MAX_RECORDS + 1));
+  assert.equal(result.success, false);
+  if (result.success) assert.fail("An oversized record array must be rejected");
+  assert.equal(result.error.issues.length, 1);
+  const issue = result.error.issues[0];
+  assert.equal(issue.code, "too_big");
+  assert.deepEqual(issue.path, ["records"]);
+  if (issue.code === "too_big") {
+    assert.equal(issue.maximum, SIGNALS_MAX_RECORDS);
+    assert.equal(issue.type, "array");
+  }
 });
 
 test("checkpoint schemas bound queues, pages and real calendar dates", () => {

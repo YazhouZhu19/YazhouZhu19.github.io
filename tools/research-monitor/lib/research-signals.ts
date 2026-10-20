@@ -3,7 +3,7 @@ import { z } from "zod";
 // A complete snapshot is loaded atomically. Reject oversized updates rather than
 // silently dropping older discoveries to make a publication fit.
 export const SIGNALS_MAX_BYTES = 64 * 1024 * 1024;
-export const SIGNALS_MAX_RECORDS = 50000;
+export const SIGNALS_MAX_RECORDS = 100000;
 export const SIGNALS_MAX_SOURCES = 160;
 
 /** Public metadata only. This module is safe to import in the browser. */
