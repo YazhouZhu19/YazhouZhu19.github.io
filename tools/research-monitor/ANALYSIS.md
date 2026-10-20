@@ -69,9 +69,15 @@ limitations are in `docs/question-retrieval.md` and `eval/retrieval-examples.jso
 
 Model inputs are estimated at English characters /4 and Han characters /1.5 plus framing, with separate
 4,200/5,200/5,600 input caps for local Qwen3-0.6B/1.7B/4B. These are approximate counts. Methods,
-results and limitations are prioritized with marked omissions before batches split; original records,
-questions and citation IDs are retained. Lightweight quick preview uses four items. Full prompts and
-synthesis are checked before model calls; no paid fallback is introduced. See `docs/local-model-budgets.md`.
+results and limitations use complete source sentences before batches split. Nonconsecutive passages
+have complete omission markers; sentences and negative qualifiers are not clipped into fragments.
+`abstractExcerptStatus=excerpted` identifies selected passages; `omitted-budget` identifies an empty
+excerpt when no complete sentence fits, distinct from a missing source abstract. The prompt explains
+both states. Original records, questions and citation IDs are retained. Lightweight quick preview uses
+four items. Full prompts and synthesis are checked before model calls; no paid fallback is introduced.
+The excerpt follow-up passes 69 related tests, including 300/180/80-character boundaries and an actual
+smallest-model budget request; normal batch counts do not increase. These are local deterministic and
+mocked checks, not live model validation. See `docs/local-model-budgets.md`.
 
 ## GitHub maturity and pending relevance review (P4.8)
 
