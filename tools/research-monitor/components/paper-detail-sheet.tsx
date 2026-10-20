@@ -36,7 +36,7 @@ export function PaperDetailSheet({
   authenticated,
   accountControl,
 }: Props) {
-  const { tr } = useI18n();
+  const { tr, locale } = useI18n();
   return (
     <Sheet
       open={!!selected}
@@ -63,6 +63,11 @@ export function PaperDetailSheet({
                     : tr("状态未确认")}
               </Badge>
               <span>{selected.sources.join(" · ")}</span>
+              {selected.dateAnomaly === "future" && (
+                <Badge variant="outline">
+                  {locale === "en" ? "Date pending verification" : "日期待核实"}
+                </Badge>
+              )}
             </div>
             <h2>{selected.title}</h2>
             <p className="detail-authors">{selected.authors.map((a) => a.name).join(" · ")}</p>

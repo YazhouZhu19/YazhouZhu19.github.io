@@ -126,6 +126,9 @@ export function PaperLibrary({ view, library, personal, storageAvailable, onExpo
                   {tr(fmtDate(p.publishedAt))}
                   {p.source === "medRxiv" ? tr(" \u00B7 版本日期") : ""}
                 </span>
+                {p.dateAnomaly === "future" && (
+                  <Badge variant="outline">{ui("日期待核实", "Date pending verification")}</Badge>
+                )}
                 {p.version && <span>v{p.version}</span>}
                 {p.publishedAt > new Date().toISOString().slice(0, 10) && (
                   <span>{tr("来源标注未来日期")}</span>
