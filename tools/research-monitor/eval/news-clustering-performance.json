@@ -1,0 +1,40 @@
+{
+  "snapshot": "2026-10-20T14:35:32.144Z",
+  "inputSha256": "6ed8ae3da71b0ccfed2ed15b7fc615e4810664679bbb76b36ddac93ec45e54cc",
+  "inputCount": 2380,
+  "eventCount": 2318,
+  "measurement": "Separate Node process per version; one cold call then five warm calls; same machine, no CI/browser latency claim",
+  "before": {
+    "phase": "before",
+    "records": 2380,
+    "events": 2318,
+    "coldMs": 291.75033299999996,
+    "warmMs": [
+      200.44483300000002,
+      186.81270799999993,
+      185.96074999999996,
+      197.2607919999998,
+      384.74312499999996
+    ],
+    "warmMedianMs": 197.2607919999998,
+    "sha256": "4ca3804014a392497d528d7c022dd74c082f45449a1b02cd2d6e28ea329c6d83"
+  },
+  "after": {
+    "phase": "after",
+    "records": 2380,
+    "events": 2318,
+    "coldMs": 134.457583,
+    "warmMs": [
+      104.41495900000007,
+      108.54229199999997,
+      102.45079200000009,
+      104.91224999999997,
+      96.92291699999998
+    ],
+    "warmMedianMs": 104.41495900000007,
+    "sha256": "4ca3804014a392497d528d7c022dd74c082f45449a1b02cd2d6e28ea329c6d83",
+    "byteIdentical": true
+  },
+  "warmMedianReductionPct": 47.067555624535785,
+  "verification": "JSON.stringify(all events, representative records, all full member records and publisher arrays) is byte-for-byte identical"
+}

@@ -87,11 +87,23 @@ export function clusterNews(records: readonly NewsSignal[]): NewsEvent[] {
     let target = -1;
     if (item.eligible && item.time !== null) {
       const overlaps = new Map<number, number>();
-      for (const gram of item.grams)
-        for (const index of inverted.get(gram) ?? []) {
-          const first = groups[index][0];
-          if (item.time - first.time! <= WINDOW) overlaps.set(index, (overlaps.get(index) ?? 0) + 1);
+      for (const gram of item.grams) {
+        const indices = inverted.get(gram) ?? [];
+        // Representatives enter the index in chronological order. Binary search
+        // skips expired groups without altering which candidates can match.
+        const earliest = item.time - WINDOW;
+        let low = 0,
+          high = indices.length;
+        while (low < high) {
+          const middle = (low + high) >>> 1;
+          if (groups[indices[middle]][0].time! < earliest) low = middle + 1;
+          else high = middle;
         }
+        for (let cursor = low; cursor < indices.length; cursor++) {
+          const index = indices[cursor];
+          overlaps.set(index, (overlaps.get(index) ?? 0) + 1);
+        }
+      }
       for (const [index, overlap] of [...overlaps].sort((a, b) => a[0] - b[0])) {
         const group = groups[index];
         if (overlap / (item.grams.size + group[0].grams.size - overlap) < NEWS_CLUSTER_SIMILARITY) continue;
