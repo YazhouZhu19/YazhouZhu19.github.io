@@ -334,7 +334,13 @@ export const SpatialChart = memo(function SpatialChart({
 });
 
 type TrendRow = { date: string; all: number; published: number; preprint: number; ids: string[] };
-export function TimelineChart({ rows, onOpen }: { rows: TrendRow[]; onOpen: (row: TrendRow) => void }) {
+export const TimelineChart = memo(function TimelineChart({
+  rows,
+  onOpen,
+}: {
+  rows: TrendRow[];
+  onOpen: (row: TrendRow) => void;
+}) {
   const { locale, tr } = useI18n();
   const [active, setActive] = useState(-1);
   const max = Math.max(1, ...rows.map((r) => r.all));
@@ -449,9 +455,9 @@ export function TimelineChart({ rows, onOpen }: { rows: TrendRow[]; onOpen: (row
       )}
     </div>
   );
-}
+});
 
-export function StatusRing({
+export const StatusRing = memo(function StatusRing({
   preprints,
   known,
   onOpen,
@@ -499,4 +505,4 @@ export function StatusRing({
       )}
     </svg>
   );
-}
+});

@@ -1,3 +1,4 @@
+import "@/styles/render-containment.css";
 import { useI18n } from "./locale-provider";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Search, Download, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";

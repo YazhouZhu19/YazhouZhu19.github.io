@@ -28,7 +28,7 @@ scores must not be presented as independently validated accuracy.
 | P3.2 | Complete | Workspace reduced from 1,389 to 253 lines; 14 extracted files ≤253 lines, bilingual SSR unchanged. |
 | P2.1 | Complete | Removed 48 unreachable UI modules, an orphan chart view and 13 unused dependencies. |
 | P2.2 | Implemented | Main JS 41,129 B gzip; source/paper UI lazy; startup total still explicitly counts vendors and Worker. |
-| P2.3 | Pending | List containment, stable chart inputs and shared derived indexes. |
+| P2.3 | Implemented; throttled measurement pending | List containment, memoized charts/stable callbacks and Worker facets; 4× CPU acceptance awaits P5 runner. |
 | P2.4 | Implemented | Shared hash state, push/replace navigation, locale preservation and generation-bound drill recovery; 11 URL tests pass. |
 | P3.3 | Pending | Design tokens, CSS consolidation, responsive and dark-mode checks. |
 | P3.4 | Pending | Shared dashboard shell while preserving metrics. |
@@ -155,3 +155,5 @@ scores must not be presented as independently validated accuracy.
 - **P2.2:** Added Rolldown module reports (`stats.html` plus JSON), stable React/Radix vendor groups and lazy paper/source/AI interfaces. Main JS measures 131,483 raw / 41,129 gzip bytes, within the 110,000-byte gzip target. Total initial JS including shared vendors and the P4 classifier draft Worker is 205,184 gzip bytes, higher than P1's 195,386; this overhead is explicitly budgeted and documented. 434 shared-tree TypeScript tests, typecheck, Vite, all snapshot round trips and budget checks passed; local API checks include complete classified-record equality. Local browser confirms 8,326 records with no console errors. New lazy CSS resource budgets reflect P3 relocation; its final main CSS target is tracked separately.
 
 - **P2.4:** Shareable hash state covers the main view, paper/overview/date/source/search and advanced filters. History pushes view changes and replaces filter edits; both browser events restore state. Drill IDs never enter URLs and cannot cross document or snapshot generations. Eleven focused history/normalization tests and the 446-test shared TypeScript suite pass; typecheck and production build passed. Bilingual end-to-end validation is tracked in P5.2.
+
+- **P2.3:** Paper rows retain incremental loading and add content visibility/intrinsic sizing (disabled for print). Timeline, ring and source charts are memoized; paper chart callbacks and matrix columns remain stable across unrelated renders. Source facets reuse the Worker index, including the library change shipped with P2.4. Timer/listener cleanup was inspected in snapshot, personal, signal, URL and viewport hooks. The shared 446-test suite, typecheck and Vite build pass. The 4× CPU <200 ms acceptance is not yet verified; initial QA timings varied under concurrent builds and are not presented as field INP.

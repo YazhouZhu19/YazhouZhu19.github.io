@@ -1,6 +1,16 @@
 "use client";
 
-import { lazy, Suspense, useDeferredValue, useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ArrowUpRight, Check, GitFork, Search, Star, X } from "lucide-react";
 import {
   type GitHubSignal,
@@ -504,39 +514,45 @@ export function ResearchSignalsView({
       contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   };
-  const resolveSelection = async (selection: SignalDashboardDrill) => {
-    if (recordsLoaded) return selection;
-    recordsRequested.current = true;
-    const complete = await onLoadRecords(kind);
-    if (
-      !complete ||
-      !preview ||
-      !manifest ||
-      currentManifest.current !== manifest ||
-      complete.generatedAt !== manifest.generatedAt
-    )
-      return null;
-    const model =
-      kind === "github"
-        ? buildGitHubDashboard(complete.records, {}, manifest.generatedAt, manifest.generatedAt)
-        : buildNewsDashboard(complete.records, {}, manifest.generatedAt, newsDashboardAsOf(complete) ?? "");
-    return { ...selection, ids: preview.resolveIds(selection.ids, model) };
-  };
-  const openDashboardRecords = async (input: SignalDashboardDrill) => {
-    await selectionAction.run(
-      () => resolveSelection(input),
-      (selection) => {
-        if (!selection) return;
-        setDrill({ ...selection, exactIds: true });
-        setView("library");
-        setLimit(24);
-        requestAnimationFrame(() => {
-          contentRef.current?.focus({ preventScroll: true });
-          contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-      },
-    );
-  };
+  const resolveSelection = useCallback(
+    async (selection: SignalDashboardDrill) => {
+      if (recordsLoaded) return selection;
+      recordsRequested.current = true;
+      const complete = await onLoadRecords(kind);
+      if (
+        !complete ||
+        !preview ||
+        !manifest ||
+        currentManifest.current !== manifest ||
+        complete.generatedAt !== manifest.generatedAt
+      )
+        return null;
+      const model =
+        kind === "github"
+          ? buildGitHubDashboard(complete.records, {}, manifest.generatedAt, manifest.generatedAt)
+          : buildNewsDashboard(complete.records, {}, manifest.generatedAt, newsDashboardAsOf(complete) ?? "");
+      return { ...selection, ids: preview.resolveIds(selection.ids, model) };
+    },
+    [recordsLoaded, onLoadRecords, kind, preview, manifest],
+  );
+  const openDashboardRecords = useCallback(
+    async (input: SignalDashboardDrill) => {
+      await selectionAction.run(
+        () => resolveSelection(input),
+        (selection) => {
+          if (!selection) return;
+          setDrill({ ...selection, exactIds: true });
+          setView("library");
+          setLimit(24);
+          requestAnimationFrame(() => {
+            contentRef.current?.focus({ preventScroll: true });
+            contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        },
+      );
+    },
+    [selectionAction, resolveSelection],
+  );
   const openGlobalRecords = async (input: SignalDashboardDrill) => {
     await selectionAction.run(
       () => resolveSelection(input),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { memo, useId, useState } from "react";
 import { ArrowUpRight, ChartBar, Code2, Users } from "lucide-react";
 import type { SignalDashboardBucket } from "@/lib/signal-dashboard";
 import type { SignalDashboardDrill } from "./signal-dashboard";
@@ -41,7 +41,7 @@ const SERIES = [
   },
 ] as const;
 
-export function SourceDashboardRing({
+export const SourceDashboardRing = memo(function SourceDashboardRing({
   buckets,
   title,
   totalLabel,
@@ -124,9 +124,9 @@ export function SourceDashboardRing({
       </div>
     </>
   );
-}
+});
 
-export function SourceDashboardTimeline({
+export const SourceDashboardTimeline = memo(function SourceDashboardTimeline({
   rows,
   title,
   onDrill,
@@ -383,9 +383,9 @@ export function SourceDashboardTimeline({
       </details>
     </>
   );
-}
+});
 
-export function SourceDashboardBars({
+export const SourceDashboardBars = memo(function SourceDashboardBars({
   buckets,
   title,
   onDrill,
@@ -497,4 +497,4 @@ export function SourceDashboardBars({
       )}
     </div>
   );
-}
+});

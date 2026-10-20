@@ -1,6 +1,6 @@
 "use client";
 import { useI18n } from "./locale-provider";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowDownToLine,
   ArrowUpRight,
@@ -16,6 +16,7 @@ import { SpatialChart, TimelineChart, StatusRing } from "./spatial-chart";
 import { Button } from "@/components/ui/button";
 import { DashboardChoice as Choice } from "./dashboard-choice";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getLoadedPaperSnapshot } from "@/lib/local-api";
 import { TRACKS } from "@/lib/classify";
 import {
   beijingDay,
@@ -101,15 +102,17 @@ export const ResearchDashboard = memo(function ResearchDashboard({
   const sourceOptions = useMemo<[string, string][]>(
     () => [
       ["all", "全部来源"],
-      ...[...new Set(data.papers.flatMap((p) => p.sources))]
+      ...(getLoadedPaperSnapshot()?.index.sources ?? [...new Set(data.papers.flatMap((p) => p.sources))])
         .sort()
         .map((source): [string, string] => [source, source]),
     ],
     [data.papers],
   );
   const change = (key: keyof DashboardFilters, value: string) => onFilters({ ...filters, [key]: value });
-  const drill = (label: string, papers: Paper[]) =>
-    onDrill({ label: tr(label), ids: papers.map((p) => p.id) });
+  const drill = useCallback(
+    (label: string, papers: Paper[]) => onDrill({ label: tr(label), ids: papers.map((p) => p.id) }),
+    [onDrill, tr],
+  );
   const dateLabel = tr(filters.clock === "discovery" ? "平台发现时间" : "来源发布日期");
   const latest = useMemo(
     () =>
@@ -146,6 +149,40 @@ export const ResearchDashboard = memo(function ResearchDashboard({
   const methods = useMemo(
     () => m.methods.map((r) => ({ id: r.name, label: tr(r.name), count: r.papers.length })),
     [m.methods, tr],
+  );
+  const matrixColumns = useMemo(() => m.modalities.map((v) => tr(v)), [m.modalities, tr]);
+  const openDirection = useCallback(
+    (id: string) => {
+      const item = m.directions.find((item) => item.id === id);
+      if (item) drill(item.label, item.papers);
+    },
+    [m.directions, drill],
+  );
+  const openTimeline = useCallback(
+    (row: (typeof m.trend)[number]) => onDrill({ label: `${row.date} · ${dateLabel}`, ids: row.ids }),
+    [onDrill, dateLabel],
+  );
+  const openStatus = useCallback(
+    (key: string) =>
+      drill(
+        key === "preprint" ? "预印本" : "正式发表",
+        m.rows.filter((p) => p.status === key),
+      ),
+    [drill, m.rows],
+  );
+  const openCell = useCallback(
+    (id: string) => {
+      const cell = cells.find((item) => item.id === id);
+      if (cell) drill(cell.label, cell.papers);
+    },
+    [cells, drill],
+  );
+  const openMethod = useCallback(
+    (id: string) => {
+      const method = m.methods.find((item) => item.name === id);
+      if (method) drill(tr("方法：{0}", [tr(method.name)]), method.papers);
+    },
+    [m.methods, drill, tr],
   );
   const statusColor = (key: string) =>
     key === "published" ? "var(--chart-1)" : key === "preprint" ? "var(--chart-2)" : "var(--chart-4)";
@@ -311,15 +348,7 @@ export const ResearchDashboard = memo(function ResearchDashboard({
           </div>
           <span className="dash-unit">{tr("点击查看论文")}</span>
         </div>
-        <SpatialChart
-          variant="bars"
-          title={tr("感兴趣方向分布")}
-          data={directions}
-          onOpen={(id) => {
-            const d = m.directions.find((d) => d.id === id);
-            if (d) drill(d.label, d.papers);
-          }}
-        />
+        <SpatialChart variant="bars" title={tr("感兴趣方向分布")} data={directions} onOpen={openDirection} />
         <p className="dash-note">
           {tr("新增方向从扩展采集后逐步积累；历史记录已重新分类，当前数量不代表完整历史或研究热度。")}
         </p>
@@ -337,10 +366,7 @@ export const ResearchDashboard = memo(function ResearchDashboard({
             <span className="dash-unit">{tr("单位：条")}</span>
           </div>
           {m.rows.length ? (
-            <TimelineChart
-              rows={m.trend}
-              onOpen={(r) => onDrill({ label: `${r.date} · ${dateLabel}`, ids: r.ids })}
-            />
+            <TimelineChart rows={m.trend} onOpen={openTimeline} />
           ) : (
             <div className="dash-chart-empty">
               <Radio size={28} />
@@ -401,16 +427,7 @@ export const ResearchDashboard = memo(function ResearchDashboard({
             </div>
           </div>
           <div className="dash-donut-wrap">
-            <StatusRing
-              preprints={m.preprints.length}
-              known={m.known}
-              onOpen={(key) =>
-                drill(
-                  key === "preprint" ? "预印本" : "正式发表",
-                  m.rows.filter((p) => p.status === key),
-                )
-              }
-            />
+            <StatusRing preprints={m.preprints.length} known={m.known} onOpen={openStatus} />
             <div className="dash-donut-center">
               <strong>{m.preprintRate === null ? "—" : `${Math.round(m.preprintRate)}%`}</strong>
               <span>{tr("预印本占比")}</span>
@@ -458,11 +475,8 @@ export const ResearchDashboard = memo(function ResearchDashboard({
           <SpatialChart
             title={tr("任务 × 影像模态")}
             data={cells}
-            columns={m.modalities.map((v) => tr(v))}
-            onOpen={(id) => {
-              const c = cells.find((c) => c.id === id);
-              if (c) drill(c.label, c.papers);
-            }}
+            columns={matrixColumns}
+            onOpen={openCell}
           />
         </section>
         <section className="dash-panel">
@@ -472,15 +486,7 @@ export const ResearchDashboard = memo(function ResearchDashboard({
               <p>{tr("来自标题与摘要的关键词")}</p>
             </div>
           </div>
-          <SpatialChart
-            compact
-            title={tr("方法分布")}
-            data={methods}
-            onOpen={(id) => {
-              const method = m.methods.find((r) => r.name === id);
-              if (method) drill(tr("方法：{0}", [tr(method.name)]), method.papers);
-            }}
-          />
+          <SpatialChart compact title={tr("方法分布")} data={methods} onOpen={openMethod} />
           {!m.methods.length && <p className="dash-note">{tr("当前范围未检出预设方法关键词。")}</p>}
         </section>
       </div>
