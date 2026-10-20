@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { Collection, MonitorData, Team } from "@/lib/types";
-import { resolveSnapshot, SnapshotFormatError } from "@/lib/snapshot";
+import { parseSnapshotManifest, resolveSnapshot, SnapshotFormatError, type SnapshotManifest } from "@/lib/snapshot";
+import { createShardCache } from "@/lib/shard-cache";
 
 // A single key keeps an import (collections and teams together) atomic.
 export const LOCAL_DATA_KEY = "medical-research-monitor:personal:v1";
@@ -186,6 +187,7 @@ type VerifiedPublicData = z.infer<typeof monitorDataSchema>;
 // A manifest names immutable, checksum-verified shards. Keep only the last
 // validated snapshot, so periodic checks do not parse the same library again.
 let verifiedSnapshot: { manifestKey: string; data: VerifiedPublicData; ids: Set<string> } | undefined;
+const paperShardCache = createShardCache("papers");
 
 function withPersonalStorage(data: VerifiedPublicData): LocalMonitorData {
   const personal = getLocalStorageStatus();
@@ -213,16 +215,24 @@ async function readPublicData(init?: RequestInit): Promise<LocalMonitorData> {
     knownPaperIds = verifiedSnapshot.ids;
     return withPersonalStorage(verifiedSnapshot.data);
   }
+  let manifest: SnapshotManifest | undefined;
   try {
+    if (manifestKey) manifest = parseSnapshotManifest(raw);
+    const shards = new Map(manifest?.shards.map(shard => [shard.path, shard]));
     raw = await resolveSnapshot(raw, async path => {
-      try {
-        const response = await fetch(import.meta.env.BASE_URL + "data/" + path, { cache: "force-cache", credentials: "omit", signal: init?.signal });
-        if (!response.ok) throw new Error(LOCAL_ERRORS.network);
-        return await response.text();
-      } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") throw error;
-        throw new Error(LOCAL_ERRORS.network);
-      }
+      const shard = shards.get(path);
+      if (!shard) throw new SnapshotFormatError("Unlisted paper shard");
+      return paperShardCache.read(shard, async () => {
+        try {
+          const response = await fetch(import.meta.env.BASE_URL + "data/" + path, { cache: "force-cache", credentials: "omit", signal: init?.signal });
+          if (!response.ok) throw new Error(LOCAL_ERRORS.network);
+          return await response.text();
+        } catch (error) {
+          init?.signal?.throwIfAborted();
+          if (error instanceof Error && error.name === "AbortError") throw error;
+          throw new Error(LOCAL_ERRORS.network);
+        }
+      }, init?.signal ?? undefined);
     });
   } catch (error) {
     if (error instanceof SnapshotFormatError) throw new Error(LOCAL_ERRORS.publicData);
@@ -231,6 +241,8 @@ async function readPublicData(init?: RequestInit): Promise<LocalMonitorData> {
   init?.signal?.throwIfAborted();
   const result = monitorDataSchema.safeParse(raw);
   if (!result.success) throw new Error(LOCAL_ERRORS.publicData);
+  if (manifest) await paperShardCache.commitGeneration(manifest.shards, init?.signal ?? undefined);
+  init?.signal?.throwIfAborted();
   knownPaperIds = new Set(result.data.papers.map(paper => paper.id));
   if (manifestKey) verifiedSnapshot = { manifestKey, data: result.data, ids: knownPaperIds };
   return withPersonalStorage(result.data);

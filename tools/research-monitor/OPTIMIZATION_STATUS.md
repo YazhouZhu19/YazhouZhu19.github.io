@@ -18,7 +18,7 @@ scores must not be presented as independently validated accuracy.
 | P0.1 | Complete | Measured entry graph and data; explicit per-resource regression budgets fail the build. |
 | P0.2 | In progress | Export a reproducible 400-paper sample, provisional labels and evaluation tooling. |
 | P1.1 | Complete | Month/ID buckets, append-only URL dictionary and single atomic manifest replacement. |
-| P1.3 | Pending | Cache only verified shards; retain current and previous generations. |
+| P1.3 | Complete | Verified Cache Storage reuse, bounded generation retention and safe storage fallback. |
 | P1.6 | Pending | Conditional manifest requests and polling backoff. |
 | P1.4 | Pending | Separate GitHub/news transport, preaggregated overview and on-demand loading. |
 | P1.2 | Pending | Lossless v3 paper transport with v2/v1 fallback. |
@@ -74,3 +74,9 @@ scores must not be presented as independently validated accuracy.
   snapshot CLI integrity check and Python full-field v1/v2 comparison passed. Final shared-tree
   validation: 353 TypeScript + 24 local API + 9 Python tests, typecheck and complete build/budget
   passed. Changes to historical records or their provenance legitimately change their own buckets.
+- **P1.3:** Six cache behavior tests plus a local API integration test cover reloads, changed hashes,
+  poisoned cache entries, invalid network bytes, cancellation, blocked storage and quota failures.
+  A fresh loader requests zero unchanged shards; changing one of two fixture shards makes exactly one
+  shard request. Metadata-only changes request no shards. The final P1.1 shared-tree validation above
+  included this completed integration and its full build/budget checks. Real updates can touch more
+  than three shards when historical records are actually revised; the cache does not suppress updates.

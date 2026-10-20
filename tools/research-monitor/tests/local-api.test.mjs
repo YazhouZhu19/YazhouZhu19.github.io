@@ -351,6 +351,45 @@ test("manifest metadata and shard changes invalidate cache even at the same time
   assert.equal(fetchCalls.length, 2);
 });
 
+test("persistent verified shards survive a page reload and download only changed content", async () => {
+  const entries = new Map();
+  const cache = {
+    async match(key) { return entries.get(typeof key === "string" ? key : key.url)?.clone(); },
+    async put(key, response) { entries.set(typeof key === "string" ? key : key.url, response.clone()); },
+    async delete(key) { return entries.delete(typeof key === "string" ? key : key.url); },
+    async keys() { return [...entries.keys()].map(url => new Request(url)); },
+  };
+  Object.defineProperty(globalThis, "caches", { configurable: true, value: { async open() { return cache; } } });
+  try {
+    const stable = { ...paper, id: "persistent:stable" };
+    let fixture = shardedSnapshot([[stable], [{ ...paper, id: "persistent:changed", title: "Before" }]]);
+    let downloads = 0;
+    globalThis.fetch = async url => {
+      if (url.endsWith("/public-papers-v2.json")) return new Response(JSON.stringify(fixture.manifest));
+      downloads += 1;
+      assert.ok(fixture.files.has(url));
+      return new Response(fixture.files.get(url));
+    };
+    const firstPage = await import("../.test-build/local-api.mjs?persistent-first");
+    await firstPage.api("/api/papers");
+    assert.equal(downloads, 2);
+    downloads = 0;
+    const secondPage = await import("../.test-build/local-api.mjs?persistent-second");
+    assert.equal((await secondPage.api("/api/papers")).papers.length, 2);
+    assert.equal(downloads, 0);
+    fixture = shardedSnapshot([[stable], [{ ...paper, id: "persistent:changed", title: "After" }]]);
+    const updated = await secondPage.api("/api/papers");
+    assert.equal(downloads, 1);
+    assert.equal(updated.papers[1].title, "After");
+    fixture.manifest.metadata.coverage = "Metadata-only update";
+    downloads = 0;
+    assert.equal((await secondPage.api("/api/papers")).coverage, "Metadata-only update");
+    assert.equal(downloads, 0);
+  } finally {
+    delete globalThis.caches;
+  }
+});
+
 test("cached data never turns a corrupt new manifest or failed check into success", async () => {
   const fixture = shardedSnapshot([[{ ...paper, id: "cache:strict" }]]);
   globalThis.fetch = async url => new Response(url.endsWith("/public-papers-v2.json") ? JSON.stringify(fixture.manifest) : fixture.files.get(url));

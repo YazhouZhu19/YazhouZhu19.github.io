@@ -91,6 +91,13 @@ Public query-URL dictionaries preserve previous indices and append new URLs, pre
 
 The browser fetches the versioned public manifest fresh, reuses the last validated library when the manifest is identical, and otherwise loads at most four immutable shards concurrently, verifying byte lengths, SHA-256 hashes, counts and unique paper IDs before showing a complete snapshot. It retains the existing displayed data if any shard fails. One previous generation of shards is retained for clients spanning a deployment. The dashboard still loads the complete library for its existing searches and aggregate statistics. Statistics reuse a Beijing date formatter and cached abstract analysis; auxiliary views and Recharts load on demand. The overview uses lightweight horizontal bars for interest-direction counts, a task/modality dot matrix, and linear method dot plots, with exact native controls and paper drill-through. Direction bars share a zero-based linear scale and keep exact values visible; the preliminary direction/method combinations retain their area-scaled bubbles. Overlapping labels never imply mutually exclusive shares. Reduced-motion preferences disable chart entrance animations and bar transitions.
 
+Verified paper shards are also retained in the optional `rm-shards-v1` Cache Storage cache, independently
+of personal data. Every cache hit is checked against its declared byte length and SHA-256 before use.
+A new page can reuse unchanged shards without downloading them; changed manifests request only missing
+hashes. Cache denial, quota exhaustion and private mode fall back to network loading. Successful complete
+loads retain the current and preceding cache generations; failed or cancelled loads never publish a
+partial library or prune the last successful generation.
+
 Use `npx tsx scripts/snapshot-cli.ts check data/papers.json` to verify a snapshot, `migrate data/papers.json` to convert a legacy file without fetching sources, or `export data/papers.json /tmp/papers.json` to reconstruct a single temporary JSON for inspection. Never commit the exported monolith. The workflow checks all staged files against GitHub's 100 MiB limit before committing.
 
 Tests cover source parsing, DOI/native identifier merging, version history, outages, preservation of stored papers, local CRUD, import/export, quota and malformed-data protection, and compatibility of the actual public snapshot. AI tests cover date bounds, distinct-work sampling, scoped inputs, prompt data projection, output/citation validation, batching, cancellation, API request policy and failure handling using controlled responses; these do not establish live cloud-provider availability or real-model research accuracy. `COLLECTOR.md` documents search bounds and provenance.
