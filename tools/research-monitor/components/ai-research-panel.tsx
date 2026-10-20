@@ -1,7 +1,7 @@
 "use client";
 import "@/styles/ai-research.css";
 
-import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useDeferredValue, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   aiModelLabel,
   getAiSettings,
@@ -347,6 +347,8 @@ function AiResearchScope({
   const fieldId = useId();
   const today = beijingDay(new Date());
   const localModel = getLocalAiModel(settings.localModel);
+  const deferredQuestion = useDeferredValue(state.question);
+  const queryPending = mode !== "landscape" && deferredQuestion !== state.question;
   const sampleLimit = aiSampleLimit(state.profile, settings.provider, settings.localModel);
   const title =
     customTitle ??
@@ -394,7 +396,7 @@ function AiResearchScope({
             from: state.from,
             to: state.to,
             horizonMonths: state.horizonMonths,
-            question: mode === "landscape" ? "" : state.question,
+            question: mode === "landscape" ? "" : deferredQuestion,
             locale,
             subjectId,
           },
@@ -420,7 +422,7 @@ function AiResearchScope({
     state.from,
     state.to,
     state.horizonMonths,
-    state.question,
+    deferredQuestion,
     locale,
     subjectId,
     sampleLimit,
@@ -482,7 +484,16 @@ function AiResearchScope({
     setProgress(t("本次分析已取消。", "Analysis canceled."));
   };
   const analyze = async () => {
-    if (!evidence || !evidence.papers.length || pending || needsKey || needsModel || missingSignals) return;
+    if (
+      !evidence ||
+      !evidence.papers.length ||
+      pending ||
+      queryPending ||
+      needsKey ||
+      needsModel ||
+      missingSignals
+    )
+      return;
     request.current.controller?.abort();
     const controller = new AbortController();
     const id = request.current.id + 1;
@@ -805,7 +816,9 @@ function AiResearchScope({
           <button
             type="submit"
             className="foresight-button foresight-button-primary"
-            disabled={pending || missingSignals || !evidence?.papers.length || needsKey || needsModel}
+            disabled={
+              pending || queryPending || missingSignals || !evidence?.papers.length || needsKey || needsModel
+            }
           >
             {pending
               ? t("AI 分析中…", "Analyzing…")

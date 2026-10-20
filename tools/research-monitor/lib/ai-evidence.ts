@@ -139,6 +139,7 @@ function retrievalDocument(work: EvidenceWork) {
   const signal = work.paper.signal;
   return {
     id: work.paper.id,
+    cacheIdentity: signal ?? work.paper,
     title: textOnly(work.paper.title),
     abstract: signal
       ? `${signal.summary} ${signal.kind === "github" ? signal.readmeExcerpt : ""}`

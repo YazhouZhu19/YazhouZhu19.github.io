@@ -1,7 +1,13 @@
 import dictionary from "./query-expansion.json";
 
 export const RETRIEVAL_VERSION = "2026-10-21-bm25-v1";
-export type RetrievalDocument = { id: string; title: string; abstract: string; tags: string[] };
+export type RetrievalDocument = {
+  id: string;
+  title: string;
+  abstract: string;
+  tags: string[];
+  cacheIdentity?: object;
+};
 export type RetrievalMetadata = { method: "bm25"; candidates: number; expandedTerms: string[] };
 const stopWords = new Set(
   "a an the of in on at to for with and or is are was were be been by as from this that these those we our it its can could may using use used study studies research latest recent new method methods how what which evaluate validation".split(
@@ -9,6 +15,15 @@ const stopWords = new Set(
   ),
 );
 const normalize = (text: string) => text.normalize("NFKC").toLowerCase().replace(/[-_/]/g, " ");
+const vectors = new WeakMap<
+  object,
+  {
+    title: string;
+    abstract: string;
+    length: number;
+    frequencies: Map<string, number>;
+  }
+>();
 export function retrievalTokens(text: string): string[] {
   return (normalize(text).match(/[a-z][a-z0-9]*|[\p{Script=Han}]+/gu) ?? []).flatMap((word) => {
     if (/\p{Script=Han}/u.test(word)) {
@@ -45,6 +60,10 @@ export function expandedQuery(question: string) {
 export function retrieve<T extends RetrievalDocument>(documents: T[], question: string, limit: number) {
   const query = expandedQuery(question);
   const rows = documents.map((document) => {
+    const identity = document.cacheIdentity ?? document;
+    const previous = vectors.get(identity);
+    if (previous?.title === document.title && previous.abstract === document.abstract)
+      return { document, length: previous.length, frequencies: previous.frequencies };
     const tokens = [
       ...retrievalTokens(document.title),
       ...retrievalTokens(document.title),
@@ -52,6 +71,12 @@ export function retrieve<T extends RetrievalDocument>(documents: T[], question: 
     ];
     const frequencies = new Map<string, number>();
     for (const token of tokens) frequencies.set(token, (frequencies.get(token) ?? 0) + 1);
+    vectors.set(identity, {
+      title: document.title,
+      abstract: document.abstract,
+      length: tokens.length,
+      frequencies,
+    });
     return { document, length: tokens.length, frequencies };
   });
   const averageLength = rows.reduce((sum, row) => sum + row.length, 0) / Math.max(1, rows.length) || 1;
