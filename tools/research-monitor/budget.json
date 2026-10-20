@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "baseline": {
+    "measuredAt": "2026-10-20T16:26:16.388Z",
+    "sourceRevision": "1a2c0da37dd8a2d7a7a7e6abe8bd505c05a242f5",
+    "notes": [
+      "Task P0.1, measured 2026-10-21 Asia/Shanghai; gzip level 9, each resource independently.",
+      "Papers collected 2026-10-20T14:35:21.416Z: 8326 records, v2 manifest plus 16 shards, 68812492 raw / 11215528 gzip bytes.",
+      "Signals generated 2026-10-20T14:35:32.144Z: 50790 records, 48640306 raw / 7847487 gzip bytes.",
+      "Initial JS 571063 raw / 176919 gzip; initial CSS 263903 raw / 43892 gzip bytes.",
+      "Limits allow 2% for code assets and 5% for naturally growing data, rounded up to 1 KiB; paper files retain the existing 4 MiB cap.",
+      "These are temporary regression ceilings, not performance targets. Tighten after each optimization; never auto-update limits during builds.",
+      "assets/lib.js is the optional WebLLM runtime; assets/ai-worker.js is the optional AI worker. Neither is loaded by the default page."
+    ]
+  },
+  "initialData": [
+    { "id": "papers", "kind": "paper-snapshot", "path": "data/public-papers-v2.json" },
+    { "id": "signals", "kind": "file", "path": "data/research-signals.json" }
+  ],
+  "limits": {
+    "assets": {
+      "assets/ai-research-panel.js": { "rawBytes": 98304, "gzipBytes": 38912 },
+      "assets/ai-worker.js": { "rawBytes": 6247424, "gzipBytes": 2203648 },
+      "assets/analysis.js": { "rawBytes": 10240, "gzipBytes": 5120 },
+      "assets/foresight-view.js": { "rawBytes": 2048, "gzipBytes": 1024 },
+      "assets/lib.js": { "rawBytes": 6030336, "gzipBytes": 2155520 },
+      "assets/main.css": { "rawBytes": 269312, "gzipBytes": 45056 },
+      "assets/main.js": { "rawBytes": 582656, "gzipBytes": 181248 },
+      "assets/monitor-views.js": { "rawBytes": 15360, "gzipBytes": 6144 },
+      "assets/paper-analysis.js": { "rawBytes": 3072, "gzipBytes": 2048 },
+      "assets/preliminary-analysis.js": { "rawBytes": 14336, "gzipBytes": 6144 },
+      "assets/research-signals-view.js": { "rawBytes": 117760, "gzipBytes": 34816 },
+      "assets/research-signals-view.css": { "rawBytes": 32768, "gzipBytes": 6144 },
+      "assets/team-foresight.js": { "rawBytes": 25600, "gzipBytes": 9216 },
+      "assets/team-foresight.css": { "rawBytes": 12288, "gzipBytes": 3072 }
+    },
+    "totals": {
+      "initialJs": { "rawBytes": 582656, "gzipBytes": 181248 },
+      "initialCss": { "rawBytes": 269312, "gzipBytes": 45056 },
+      "optionalJs": { "rawBytes": 12558336, "gzipBytes": 4457472 },
+      "optionalCss": { "rawBytes": 45056, "gzipBytes": 9216 },
+      "initialData": { "rawBytes": 123325440, "gzipBytes": 20017152 },
+      "initialMeasuredResources": { "rawBytes": 124203008, "gzipBytes": 20248576 }
+    },
+    "datasets": {
+      "papers": {
+        "rawBytes": 72253440,
+        "gzipBytes": 11777024,
+        "fileRawBytes": 4194304,
+        "fileGzipBytes": 774144
+      },
+      "signals": {
+        "rawBytes": 51073024,
+        "gzipBytes": 8240128,
+        "fileRawBytes": 51073024,
+        "fileGzipBytes": 8240128
+      }
+    }
+  }
+}

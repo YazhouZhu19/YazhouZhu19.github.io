@@ -7,5 +7,5 @@ export default defineConfig({
   plugins: [react()],
   resolve: { alias: { "@": fileURLToPath(new URL(".", import.meta.url)) } },
   server: { fs: { strict: true } },
-  build: { rollupOptions: { input: { zh: "index.html", en: "en/index.html" } } },
+  build: { manifest: true, rollupOptions: { input: { zh: "index.html", en: "en/index.html" } } },
 });

@@ -60,8 +60,28 @@ npm test
 npm run collect
 npm run collect:signals
 npm run build
+npm run measure
 npm run preview
 ```
+
+### Resource budgets (Task P0.1)
+
+Every build ends with `scripts/measure-budget.ts`. It writes `dist/budget-report.json` and prints raw/gzip byte sizes for every JS/CSS resource, startup datasets and aggregate startup costs. A resource without an explicit budget, or any raw/gzip limit exceeded, fails the build. `npm run measure` repeats the check against an existing build. For an intentional budget review, `npx tsx scripts/measure-budget.ts --report-only` writes the same report without failing on budget violations; it does not change any limit. Missing files, invalid manifests and inconsistent declared shard sizes still fail.
+
+Initial code is traced from the actual built Chinese and English HTML through Vite's static import graph, with shared files counted once. `budget.json.initialDynamicEntries` can declare modules rendered immediately by a future lazy default view. Other views, WebLLM and its AI worker are reported separately as optional resources; externally fetched model weights are outside the build. `budget.json.initialData` must stay synchronized with loader changes. Currently startup loads the v2 paper manifest and every shard it references, plus the complete signals file. Previous generations and v1 compatibility files are retained on disk but do not count toward startup transfer.
+
+The measured baseline on **2026-10-21 (Asia/Shanghai)** uses source revision `1a2c0da` and the October 20 22:35 local snapshots (8,326 papers and 50,790 GitHub/news records):
+
+| Measured scope | Raw bytes | Gzip bytes |
+|---|---:|---:|
+| Initial JavaScript | 571,063 | 176,919 |
+| Initial CSS | 263,903 | 43,892 |
+| Paper manifest + 16 current shards | 68,812,492 | 11,215,528 |
+| Signals | 48,640,306 | 7,847,487 |
+| All startup data | 117,452,798 | 19,063,015 |
+| Initial JS + CSS + data | 118,287,764 | 19,283,826 |
+
+Gzip uses level 9 independently for each resource, so it differs slightly from Vite's default compression estimate. These are transfer-size estimates, not browser timings; HTML, images, request headers and external requests are excluded. Initial limits allow 2% for code and 5% for growing data, rounded up to 1 KiB; individual paper files keep the existing 4 MiB cap. They guard against regressions rather than asserting the current payload is acceptable. Tighten the reviewed limits after optimization; builds never rewrite them automatically.
 
 `data/papers.json` is the persistent snapshot manifest. Its metadata and content-addressed `data/papers/<sha256>.json` shards preserve the complete paper library, with each file limited to 4 MiB. The collector reads legacy single-file snapshots too, and writes the sharded format atomically without dropping history. Do not replace the snapshot with an empty seed. The build produces `dist/data/public-papers-v2.json` with a shared query-URL dictionary, reducing repeated provenance strings without removing any records or fields. If the dictionary exceeds the manifest budget, this endpoint falls back to the supported v1 representation. The original `dist/data/papers.json` and its shards remain available for cached v1 clients. Node and Python build checks verify complete decoded equality against the source archive; the workflow publishes `dist/` into `/research-monitor/` and validates both endpoints. Both locale entry HTML files are built explicitly. Do not commit `node_modules`, private backups, credentials, or `.test-build`.
 
