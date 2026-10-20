@@ -160,7 +160,6 @@ export const SpatialChart = memo(function SpatialChart({
             <button
               key={item.id}
               className={selected?.id === item.id ? "is-selected" : ""}
-              aria-label={accessibleLabel(item)}
               onFocus={() => inspect(item.id)}
               onPointerEnter={() => inspect(item.id)}
               onClick={() => open(item)}
@@ -201,7 +200,6 @@ export const SpatialChart = memo(function SpatialChart({
             <button
               key={item.id}
               className={`direction-bar-row${selected?.id === item.id ? " is-selected" : ""}`}
-              aria-label={accessibleLabel(item)}
               onFocus={() => inspect(item.id)}
               onPointerEnter={() => inspect(item.id)}
               onClick={() => open(item)}
@@ -230,13 +228,14 @@ export const SpatialChart = memo(function SpatialChart({
               <button
                 key={item.id}
                 className={`bubble-item${selected?.id === item.id ? " is-selected" : ""}`}
-                aria-label={accessibleLabel(item)}
                 onFocus={() => inspect(item.id)}
                 onPointerEnter={() => inspect(item.id)}
                 onClick={() => open(item)}
                 title={`${item.label} · ${item.count.toLocaleString(locale)}${item.detail ? ` · ${item.detail}` : ""}`}
               >
-                <span className="bubble-index">{String(i + 1).padStart(2, "0")}</span>
+                <span className="bubble-index" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 <svg viewBox="0 0 140 124" aria-hidden="true">
                   <defs>
                     <radialGradient id={fillId} cx="32%" cy="25%" r="80%">
@@ -304,8 +303,8 @@ export const SpatialChart = memo(function SpatialChart({
             onClick={() => onOpen(selected.id)}
             aria-label={
               en
-                ? `Open papers for ${selected.label}: ${selected.count} records`
-                : `打开${selected.label}的论文：${selected.count}条记录`
+                ? `Papers: ${selected.label}, ${selected.count} records`
+                : `查看论文：${selected.label}，${selected.count}条记录`
             }
           >
             {en ? "Papers" : "查看论文"}

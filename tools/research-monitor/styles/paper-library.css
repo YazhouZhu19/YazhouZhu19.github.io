@@ -154,6 +154,7 @@
   .paper-title {
     text-align: left;
     width: 100%;
+    min-height: var(--space-40);
     background: none;
     border: 0;
     padding: 0;
@@ -445,7 +446,7 @@
   .human-tag {
     background: color-mix(in srgb, var(--foreground) 4%, transparent);
     border-color: color-mix(in srgb, var(--foreground) 13%, transparent);
-    color: var(--muted-foreground);
+    color: var(--foreground);
   }
   .saved-tag {
     background: color-mix(in srgb, var(--foreground) 4.5%, transparent);
@@ -454,11 +455,11 @@
   }
   .status-preprint {
     background: color-mix(in srgb, var(--foreground) 6.5%, transparent);
-    color: var(--chart-2);
+    color: var(--foreground);
   }
   .status-published {
     background: color-mix(in srgb, var(--foreground) 6%, transparent);
-    color: var(--chart-2);
+    color: var(--foreground);
   }
   .saved-icon {
     color: var(--living-ink);

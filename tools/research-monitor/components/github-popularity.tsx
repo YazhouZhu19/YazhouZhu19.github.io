@@ -58,7 +58,6 @@ export function GitHubPopularity({ model, onDrill, onRankedBrowse }: Props) {
               key={key}
               disabled={!metric.count}
               onClick={() => onRankedBrowse(key)}
-              aria-label={`${label} ${metric.count ? count(metric.total) : "—"} · ${t("查看全部排名", "View full ranking")}`}
             >
               <span className="dash-metric-label">
                 <Icon size={17} />
@@ -157,7 +156,6 @@ export function GitHubPopularity({ model, onDrill, onRankedBrowse }: Props) {
                         onClick={() =>
                           onDrill({ label: `${name} #${rank} · ${record.fullName}`, ids: [record.id] })
                         }
-                        aria-label={`${name} ${t("第", "rank ")} ${rank}${t("名", "")} · ${record.fullName} · ${count(value)} ${name} · ${t("查看项目", "View repository")}`}
                       >
                         <span className="github-ranking-position" aria-hidden="true">
                           {String(rank).padStart(2, "0")}

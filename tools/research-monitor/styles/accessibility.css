@@ -1,0 +1,11 @@
+@layer app-view {
+  @media (max-width: 640px) {
+    button,
+    [role="button"],
+    [role="combobox"],
+    select {
+      min-height: var(--space-40);
+      min-width: var(--space-40);
+    }
+  }
+}

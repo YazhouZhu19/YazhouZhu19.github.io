@@ -108,7 +108,6 @@ export function DashboardMetric({
           <button
             type="button"
             className={`dash-metric dashboard-shell-metric${accent ? " dash-metric-primary" : ""}`}
-            aria-label={`${label}: ${value}. ${hint}`}
             aria-disabled={disabled || undefined}
             onClick={disabled ? undefined : onClick}
           >

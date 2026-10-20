@@ -452,7 +452,6 @@ export const SourceDashboardBars = memo(function SourceDashboardBars({
             onFocus={() => setSelectedId(bucket.id)}
             onPointerEnter={() => setSelectedId(bucket.id)}
             onClick={() => open(bucket)}
-            aria-label={`${label(bucket)} · ${count(bucket.count)} ${kind === "github" ? t("个项目，点击查看", "repositories, click to view") : t("条消息，点击查看", "news records, click to view")}`}
           >
             <span className="direction-bar-label">{label(bucket)}</span>
             <span className="direction-bar-track" aria-hidden="true">
