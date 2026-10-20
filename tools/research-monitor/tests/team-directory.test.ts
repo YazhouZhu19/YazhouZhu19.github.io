@@ -13,7 +13,7 @@ const author = (name = "Alice Smith", patch: Partial<Author> = {}): Author => ({
 function paper(id: string, patch: Partial<Paper> = {}): Paper {
   return {
     id,
-    title: "Medical imaging research",
+    title: `Medical imaging research ${id}`,
     abstract: "",
     authors: [author()],
     affiliations: [],
@@ -33,6 +33,7 @@ function paper(id: string, patch: Partial<Paper> = {}): Paper {
     humanSignals: [],
     evidence: [],
     tracks: ["segmentation"],
+    scope: "core",
     reviewStatus: "unreviewed",
     provenance: [],
     ...patch,
@@ -223,5 +224,141 @@ test("paper count is the primary rank before known identity and full-name tie br
   assert.deepEqual(
     buildTeamDirectory(rows, asOf).map((entry) => entry.name),
     ["Alice Smith", "A. Jones", "Zelda Long", "Li Y"],
+  );
+});
+
+test("position counts use distinct works across versions while preserving all source records", () => {
+  const authors = [author("Alice Smith"), author("Bob Jones")];
+  const rows = [
+    paper("preprint", { title: "Unique MRI segmentation study", status: "preprint", authors }),
+    paper("article", { title: "Unique MRI segmentation study.", authors }),
+    paper("other", { authors: [...authors].reverse() }),
+  ];
+  const original = structuredClone(rows);
+  const entries = buildTeamDirectory(rows, asOf);
+  for (const entry of entries) {
+    assert.equal(entry.papers.length, 3);
+    assert.equal(entry.works, 2);
+    assert.equal(entry.firstAuthorCount, 1);
+    assert.equal(entry.lastAuthorCount, 1);
+    assert.equal(entry.seniorShare, 0.5);
+  }
+  assert.deepEqual(rows, original);
+  const versionsOnly = buildTeamDirectory(rows.slice(0, 2), asOf);
+  assert.equal(filterTeamDirectory(versionsOnly, { track: "all", query: "" }).length, 0);
+  assert.equal(filterTeamDirectory(versionsOnly, { track: "all", query: "alice" })[0].works, 1);
+});
+
+test("senior sorting prioritizes last-author works and can switch to total works", () => {
+  const rows = [
+    ...[1, 2, 3].map((id) => paper(`first-${id}`, { authors: [author(), author("Frequent Senior")] })),
+    ...[1, 2].map((id) =>
+      paper(`senior-${id}`, { authors: [author("Junior Person"), author("Senior Person")] }),
+    ),
+  ];
+  const entries = buildTeamDirectory(rows, asOf);
+  assert.ok(
+    entries.findIndex((entry) => entry.name === "Senior Person") <
+      entries.findIndex((entry) => entry.name === "Alice Smith"),
+  );
+  const byWorks = filterTeamDirectory(entries, { track: "all", query: "", sort: "works" });
+  assert.ok(
+    byWorks.findIndex((entry) => entry.name === "Alice Smith") <
+      byWorks.findIndex((entry) => entry.name === "Senior Person"),
+  );
+});
+
+test("full names are preferred over source initials and shared affiliation hints stay bidirectional and unmerged", () => {
+  const orcid = "0000-0001-2345-678X";
+  const rows = [
+    paper("known", { authors: [author("Alice Smith", { displayName: "Smith A", orcid })] }),
+    paper("unknown", { authors: [author("Alice Smith", { displayName: "Smith A" })] }),
+  ];
+  const entries = buildTeamDirectory(rows, asOf);
+  assert.equal(entries.length, 2);
+  for (const entry of entries) {
+    assert.equal(entry.name, "Alice Smith");
+    assert.equal(entry.papers.length, 1);
+    assert.equal(entry.works, 1);
+    assert.equal(entry.possibleIdentities.length, 1);
+    assert.notEqual(entry.possibleIdentities[0].id, entry.id);
+    assert.deepEqual(entry.possibleIdentities[0].sharedAffiliations, ["Example University"]);
+  }
+  assert.equal(new Set(entries.map((entry) => entry.id)).size, 2);
+});
+
+test("same full names require an affiliation or at least two distinct coauthors", () => {
+  const orcid = "0000-0001-2345-678X";
+  const candidate = (id: string, known: boolean, coauthors: string[]) =>
+    paper(id, {
+      authors: [
+        author("Alice Smith", { affiliations: [], orcid: known ? orcid : null }),
+        ...coauthors.map((name) => author(name, { affiliations: [] })),
+      ],
+    });
+  const getAlice = (rows: Paper[]) =>
+    buildTeamDirectory(rows, asOf).filter((entry) => entry.name === "Alice Smith");
+  assert.ok(
+    getAlice([candidate("a", true, ["Bob Jones"]), candidate("b", false, ["Bob Jones"])]).every(
+      (entry) => entry.possibleIdentities.length === 0,
+    ),
+  );
+  assert.ok(
+    getAlice([
+      candidate("a", true, ["Bob Jones", "Carol Brown"]),
+      candidate("b", false, ["Bob Jones", "Carol Brown"]),
+    ]).every((entry) => entry.possibleIdentities.length === 1),
+  );
+  assert.ok(
+    getAlice([
+      candidate("a", true, ["Bob Jones", "Bob Jones"]),
+      candidate("b", false, ["Bob Jones", "Bob Jones"]),
+    ]).every((entry) => entry.possibleIdentities.length === 0),
+  );
+});
+
+test("different ORCIDs and ambiguous initials never receive same-person hints", () => {
+  const rows = [
+    paper("one", { authors: [author("Alice Smith", { orcid: "0000-0001-2345-678X" })] }),
+    paper("two", { authors: [author("Alice Smith", { orcid: "0000-0002-2345-6789" })] }),
+    paper("three", { authors: [author("A. Smith")] }),
+    paper("four", { authors: [author("A. Smith", { orcid: "0000-0003-2345-6789" })] }),
+  ];
+  assert.ok(buildTeamDirectory(rows, asOf).every((entry) => !entry.possibleIdentities.length));
+});
+
+test("direction filtering recomputes positions and identity evidence within that scope", () => {
+  const known = author("Alice Smith", { orcid: "0000-0001-2345-678X" });
+  const rows = [
+    paper("known-seg", { authors: [known, author("Bob Jones")] }),
+    paper("unknown-foundation", { tracks: ["foundation"], authors: [author()] }),
+    paper("known-foundation", { tracks: ["foundation"], authors: [author("Bob Jones"), known] }),
+  ];
+  const entries = buildTeamDirectory(rows, asOf);
+  const filtered = filterTeamDirectory(entries, { track: "segmentation", query: "Alice" });
+  assert.equal(filtered.length, 1);
+  assert.equal(filtered[0].lastAuthorCount, 0);
+  assert.equal(filtered[0].firstAuthorCount, 1);
+  assert.equal(filtered[0].works, 1);
+  assert.equal(filtered[0].possibleIdentities.length, 0);
+  assert.equal(entries.filter((entry) => entry.name === "Alice Smith")[0].possibleIdentities.length, 1);
+});
+
+test("core scope is the library default, all is explicit, and flagged dates stay excluded", () => {
+  const rows = [
+    paper("core"),
+    paper("adjacent", { scope: "adjacent" }),
+    paper("out", { scope: "out" }),
+    paper("flagged", { dateAnomaly: "future" }),
+  ];
+  assert.deepEqual(
+    buildTeamDirectory(rows, asOf)[0].papers.map((p) => p.id),
+    ["core"],
+  );
+  assert.deepEqual(
+    buildTeamDirectory(rows, asOf, { scope: "all" })[0]
+      .papers.map((p) => p.id)
+      .sort(),
+    ["adjacent", "core", "out"],
   );
 });

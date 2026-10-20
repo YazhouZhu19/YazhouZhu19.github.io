@@ -48,6 +48,12 @@ At most six reading candidates are selected from the same scope. Records with ab
 
 ## Authors and watchlists
 
+The PI/author directory now ranks by distinct last-author works, then total distinct works; users can switch to total works. First-author and last-author positions count once per grouped work even when several source versions exist. All source records remain available. A solo author counts in both positions. `seniorShare` is last-author works divided by all works, not a probability of being a PI. Alphabetical authorship, consortia, shared first/senior authorship and field-specific ordering conventions limit this proxy; no PI role, lab membership or leadership is confirmed.
+
+Directory construction defaults to `core`; the workspace passes its already selected core/all scope explicitly. Invalid or future-flagged publication dates are excluded. Direction filtering recomputes work counts, author positions, affiliations and hints together. The default listing requires at least two works rather than two version records.
+
+The directory prefers an available full name over a source's initials. A name-only identity and an ORCID identity may receive a bidirectional “possibly the same person” hint only when normalized full names match and they share an affiliation string or at least two distinct named coauthors. Abbreviated names cannot establish the hint; distinct ORCIDs are never linked by this rule. Hints preserve independent identities, counts and source records and link to the other entry for review.
+
 Author grouping prefers a supplied ORCID, otherwise a normalized name. Name-only identities are explicitly uncertain; ORCID values are source metadata and are not independently verified. Repeat authors within a paper count once per identity. Coauthor pairs represent shared authorship only. Papers with more than forty distinct author identities are excluded from pair enumeration and counted in `coauthorExcludedLargePapers`; they remain in paper and author totals. Watchlists use the existing exact member/ORCID and optional affiliation matching. These features do not infer lab membership, competitive strength, or willingness to collaborate.
 
 中文说明：所有分析使用同一来源、感兴趣方向及来源发表日期筛选范围，并按记录 ID 去重。方向与器官/模态比例以范围内记录数为分母，方向×方法比例以该方向内记录数为分母，研究线索比例以有摘要记录数为分母。标签允许重叠，未识别并不表示没有。摘要内容为原文句子摘录，不调用模型生成总结。阅读候选依据组合覆盖、摘要线索和发表日期选取，不是论文质量排名；作者与共同署名分析也不用于判断团队实力。基础模型方向与同名方法的组合因定义重复而省略。

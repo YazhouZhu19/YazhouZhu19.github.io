@@ -10,7 +10,12 @@ import { api } from "@/lib/local-api";
 import { buildForesight } from "@/lib/foresight";
 import { beijingDay, matchesTeam, type DashboardDrill } from "@/lib/dashboard";
 import { TRACKS } from "@/lib/classify";
-import { buildTeamDirectory, filterTeamDirectory, type TeamDirectoryEntry } from "@/lib/team-directory";
+import {
+  buildTeamDirectory,
+  filterTeamDirectory,
+  type TeamDirectoryEntry,
+  type TeamDirectorySort,
+} from "@/lib/team-directory";
 import type { ForesightCard, ForesightResult } from "@/lib/foresight-types";
 import type { MonitorData, Paper, Team } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -83,6 +88,7 @@ export function TeamForesight({
     onPreferencesChange?.(next);
   };
   const [visibleLimit, setVisibleLimit] = useState(6);
+  const [directorySort, setDirectorySort] = useState<TeamDirectorySort>("senior");
   const [trajectoryDimension, setTrajectoryDimension] = useState<TrajectoryDimension>("tracks");
   const [relationshipsOpen, setRelationshipsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -94,10 +100,11 @@ export function TeamForesight({
   const assessmentHeading = useRef<HTMLDivElement>(null);
   const shouldScrollToAssessment = useRef(false);
   const day = beijingDay(new Date());
-  const directory = useMemo(() => buildTeamDirectory(data.papers, day), [data.papers, day]);
+  // The workspace already applies its core/all scope switch to data.
+  const directory = useMemo(() => buildTeamDirectory(data.papers, day, { scope: "all" }), [data.papers, day]);
   const filteredAuthors = useMemo(
-    () => filterTeamDirectory(directory, { track: directoryTrack, query }),
-    [directory, directoryTrack, query],
+    () => filterTeamDirectory(directory, { track: directoryTrack, query, sort: directorySort }),
+    [directory, directoryTrack, query, directorySort],
   );
   // Keep a chosen card visible when returning from its paper evidence after remount.
   const selectedAuthorIndex =
@@ -307,6 +314,19 @@ export function TeamForesight({
                   ))}
                 </select>
               </label>
+              <label className="foresight-field">
+                <span>{t("排序方式", "Sort authors")}</span>
+                <select
+                  value={directorySort}
+                  onChange={(event) => {
+                    setDirectorySort(event.target.value as TeamDirectorySort);
+                    setVisibleLimit(6);
+                  }}
+                >
+                  <option value="senior">{t("按资深作者排序", "Last-author works")}</option>
+                  <option value="works">{t("按作品数排序", "Total works")}</option>
+                </select>
+              </label>
               <label className="foresight-field team-author-search">
                 <span>{t("查找姓名、ORCID 或署名机构", "Find a name, ORCID or affiliation")}</span>
                 <div>
@@ -321,16 +341,20 @@ export function TeamForesight({
             </div>
             <p className="foresight-note team-directory-note">
               {t(
-                "列表来自当前库中已分类、日期有效的论文；默认展示至少有 2 条记录的完整姓名或 ORCID。可直接查看研判，再决定是否保存。署名机构仅为论文发表时的信息，作者身份与 PI 职务仍需核验。",
-                "This directory uses classified, validly dated library papers. Defaults require at least two records and an unabbreviated name or ORCID. View an assessment before deciding to save. Affiliations reflect paper metadata, while identity and PI roles still need verification.",
+                "列表跟随当前研究范围，默认展示至少有 2 项作品的完整姓名或 ORCID。最后作者仅作为资深作者线索，作者排序惯例因领域而异，不能据此确认 PI 身份。相似身份提示不合并计数。",
+                "The directory follows the selected research scope and defaults to at least two works with a full name or ORCID. Last-author position is a seniority clue; conventions vary and do not confirm PI status. Possible-identity hints never combine counts.",
               )}
             </p>
             <div className="team-directory-count">
               {t(`${filteredAuthors.length} 位作者候选`, `${filteredAuthors.length} author candidates`)}
               <span>
                 {t(
-                  "按当前方向的库内记录数排列，数量不代表研究质量",
-                  "Ordered by records in this direction; counts do not measure research quality",
+                  directorySort === "senior"
+                    ? "按最后作者作品数、总作品数排列；数量不代表研究质量"
+                    : "按总作品数排列；数量不代表研究质量",
+                  directorySort === "senior"
+                    ? "Ordered by last-author works, then total works; counts do not measure quality"
+                    : "Ordered by total works; counts do not measure quality",
                 )}
               </span>
             </div>
@@ -362,6 +386,37 @@ export function TeamForesight({
                           )
                         : ""}
                     </p>
+                    {author.possibleIdentities.map((peer) => (
+                      <button
+                        key={peer.id}
+                        className="foresight-button team-identity-hint"
+                        title={
+                          peer.sharedAffiliations.length
+                            ? t(
+                                "相同全名与署名机构；尚未合并身份",
+                                "Same full name and affiliation; identities remain separate",
+                              )
+                            : t(
+                                "相同全名与至少两位共同作者；尚未合并身份",
+                                "Same full name and at least two coauthors; identities remain separate",
+                              )
+                        }
+                        onClick={() => {
+                          setVisibleLimit(6);
+                          shouldScrollToAssessment.current = true;
+                          changePreferences({
+                            ...viewPreferences,
+                            listSource: "directory",
+                            teamId: peer.id,
+                            query: peer.orcid ?? peer.name,
+                          });
+                        }}
+                      >
+                        {t("可能是同一人：", "Possibly the same person: ")}
+                        {peer.name} · {peer.orcid ? `ORCID ${peer.orcid}` : t("姓名条目", "name-only entry")}
+                        <ArrowUpRight size={14} aria-hidden="true" />
+                      </button>
+                    ))}
                   </div>
                   <div className="team-author-actions">
                     <Button
@@ -384,6 +439,18 @@ export function TeamForesight({
                     </button>
                   </div>
                   <div className="team-author-scope">
+                    <span className="team-author-work-count">
+                      {t(
+                        `最后作者 ${author.lastAuthorCount} 篇 · 共 ${author.works} 项作品`,
+                        `${author.lastAuthorCount} last-author · ${author.works} total works`,
+                      )}
+                      <span>
+                        {t(
+                          `第一作者 ${author.firstAuthorCount} 篇`,
+                          `${author.firstAuthorCount} first-author works`,
+                        )}
+                      </span>
+                    </span>
                     <button
                       className="foresight-button"
                       onClick={() => openPeriod(author.name, author.papers)}

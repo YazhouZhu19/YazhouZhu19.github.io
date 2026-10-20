@@ -407,7 +407,7 @@
   }
   .team-directory-controls {
     display: grid;
-    grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.5fr);
+    grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr) minmax(200px, 1.5fr);
     gap: var(--space-16);
     align-items: end;
   }
@@ -436,6 +436,21 @@
   .team-directory-note {
     margin: var(--space-14) 0;
     font-size: var(--text-12);
+  }
+  .team-identity-hint {
+    display: flex;
+    flex-wrap: wrap;
+    text-align: left;
+    margin-top: var(--space-8);
+  }
+  .team-author-work-count {
+    font-size: var(--text-12);
+    font-variant-numeric: tabular-nums;
+  }
+  .team-author-work-count > span {
+    display: block;
+    color: var(--muted-foreground);
+    margin-top: var(--space-4);
   }
   .team-directory-count {
     display: flex;
