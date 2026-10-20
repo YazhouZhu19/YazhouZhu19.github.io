@@ -13,6 +13,8 @@ import { SourceDashboardBars, SourceDashboardRing, SourceDashboardTimeline } fro
 import { Button } from "./ui/button";
 import { useI18n } from "./locale-provider";
 import "@/styles/news-dashboard.css";
+import { WindowComparisonReadout } from "./trend-annotations";
+import type { CollectionChangeMarker, WindowComparison } from "@/lib/trend-statistics";
 
 type Props = DashboardSlots & {
   model: NewsDashboardModel;
@@ -20,6 +22,9 @@ type Props = DashboardSlots & {
   onBrowse: () => void;
   originalsCount?: number;
   eventCount?: number;
+  changeMarkers?: CollectionChangeMarker[];
+  windowComparison?: WindowComparison | null;
+  directionDenominator?: number;
 };
 type SummaryProps = Pick<Props, "model" | "onDrill"> & {
   sourceCheckedAt?: string | null;
@@ -143,6 +148,9 @@ export function NewsDashboard({
   onBrowse,
   originalsCount,
   eventCount,
+  changeMarkers,
+  windowComparison,
+  directionDenominator,
   summary,
   filters,
 }: Props) {
@@ -261,6 +269,7 @@ export function NewsDashboard({
               title={timelineTitle}
               onDrill={onDrill}
               monthly={monthly}
+              markers={changeMarkers}
             />
           ) : (
             <EmptyState
@@ -367,6 +376,14 @@ export function NewsDashboard({
           buckets={model.scoped.categories}
           title={t("研究方向", "Research area")}
           onDrill={onDrill}
+          denominator={directionDenominator ?? model.scoped.total}
+        />
+        <WindowComparisonReadout
+          comparison={windowComparison}
+          label={(id) => {
+            const category = model.scoped.categories.find((row) => row.id === id);
+            return category ? label(category) : id;
+          }}
         />
         <p className="dash-note">
           {t(

@@ -2,6 +2,8 @@ import { memo, useId, useMemo, useState, type CSSProperties } from "react";
 import { ArrowUpRight, ChartBar, CircleDot } from "lucide-react";
 import { useI18n } from "./locale-provider";
 import "@/styles/spatial-charts.css";
+import { CollectionMarkerLines, CollectionMarkerLegend } from "./trend-annotations";
+import type { CollectionChangeMarker } from "@/lib/trend-statistics";
 
 export type SpatialDatum = { id: string; label: string; count: number; detail?: string; group?: string };
 type Props = {
@@ -11,6 +13,7 @@ type Props = {
   onOpen: (id: string) => void;
   compact?: boolean;
   variant?: "bubbles" | "bars";
+  denominator?: number;
 };
 
 /** Bars and method dots use linear scales; circle area encodes count in bubble views. */
@@ -21,12 +24,16 @@ export const SpatialChart = memo(function SpatialChart({
   onOpen,
   compact,
   variant = "bubbles",
+  denominator,
 }: Props) {
   const { locale } = useI18n();
   const en = locale === "en";
   const uid = useId().replace(/:/g, "");
   const [selectedId, setSelectedId] = useState("");
   const [group, setGroup] = useState("*");
+  const [showShare, setShowShare] = useState(false);
+  const shares = showShare && denominator !== undefined;
+  const share = (value: number) => (denominator ? (value / denominator) * 100 : 0);
   const groups = useMemo(() => [...new Set(data.flatMap((d) => (d.group ? [d.group] : [])))], [data]);
   const activeGroup = groups.includes(group) ? group : "*";
   const visible = useMemo(
@@ -37,7 +44,7 @@ export const SpatialChart = memo(function SpatialChart({
   // Keep the full-scope scale when inspecting a single task.
   const maximum = Math.max(1, ...data.map((d) => d.count));
   const barStep = 10 ** Math.floor(Math.log10(maximum));
-  const barMaximum = Math.ceil(maximum / barStep) * barStep;
+  const barMaximum = shares ? 100 : Math.ceil(maximum / barStep) * barStep;
   const bars = variant === "bars" && !columns && !compact;
   const inspect = (id: string) => setSelectedId(id);
   const open = (item: SpatialDatum) => {
@@ -70,6 +77,22 @@ export const SpatialChart = memo(function SpatialChart({
           {bars ? <ChartBar size={14} /> : <CircleDot size={14} />}
           {mode}
         </span>
+        {bars && denominator !== undefined && (
+          <button
+            type="button"
+            className="foresight-button"
+            aria-pressed={shares}
+            onClick={() => setShowShare((value) => !value)}
+          >
+            {shares
+              ? en
+                ? "Share of same time/source scope"
+                : "占同期同来源总量"
+              : en
+                ? "Absolute count · switch to share"
+                : "绝对数量 · 切换占比"}
+          </button>
+        )}
         {!!groups.length && (
           <select
             aria-label={en ? `${title}: task filter` : `${title}：任务筛选`}
@@ -193,7 +216,7 @@ export const SpatialChart = memo(function SpatialChart({
                 <span>0</span>
                 <span>{barMaximum.toLocaleString(locale)}</span>
               </span>
-              <span>{en ? "records" : "条"}</span>
+              <span>{shares ? "%" : en ? "records" : "条"}</span>
             </div>
           )}
           {visible.map((item) => (
@@ -208,10 +231,16 @@ export const SpatialChart = memo(function SpatialChart({
               <span className="direction-bar-track" aria-hidden="true">
                 <span
                   className="direction-bar-fill"
-                  style={{ width: `${(item.count / barMaximum) * 100}%` }}
+                  style={{ width: `${((shares ? share(item.count) : item.count) / barMaximum) * 100}%` }}
                 />
               </span>
-              <strong className="direction-bar-value">{item.count.toLocaleString(locale)}</strong>
+              <strong className="direction-bar-value">
+                {shares
+                  ? denominator
+                    ? `${share(item.count).toFixed(1)}%`
+                    : "—"
+                  : item.count.toLocaleString(locale)}
+              </strong>
             </button>
           ))}
         </div>
@@ -264,21 +293,25 @@ export const SpatialChart = memo(function SpatialChart({
         </div>
       )}
       <div className="spatial-caption">
-        {compact
+        {bars && shares
           ? en
-            ? "Dot position corresponds to record count"
-            : "圆点位置线性对应记录数"
-          : columns
+            ? `Bar length is percentage of ${denominator} records in the same time/source scope; labels overlap.`
+            : `细条表示同期同来源 ${denominator} 条记录中的占比；方向标签允许重叠。`
+          : compact
             ? en
-              ? "Circle area = records · hollow dot = zero"
-              : "圆面积对应记录数 · 空心点表示 0"
-            : bars
+              ? "Dot position corresponds to record count"
+              : "圆点位置线性对应记录数"
+            : columns
               ? en
-                ? "Bar length corresponds to record count"
-                : "细条长度线性对应记录数"
-              : en
-                ? "Circle area = records · position is for layout only"
-                : "圆面积对应记录数 · 位置仅用于排布"}
+                ? "Circle area = records · hollow dot = zero"
+                : "圆面积对应记录数 · 空心点表示 0"
+              : bars
+                ? en
+                  ? "Bar length corresponds to record count"
+                  : "细条长度线性对应记录数"
+                : en
+                  ? "Circle area = records · position is for layout only"
+                  : "圆面积对应记录数 · 位置仅用于排布"}
       </div>
       {selected ? (
         <div className="spatial-readout">
@@ -336,9 +369,11 @@ type TrendRow = { date: string; all: number; published: number; preprint: number
 export const TimelineChart = memo(function TimelineChart({
   rows,
   onOpen,
+  markers,
 }: {
   rows: TrendRow[];
   onOpen: (row: TrendRow) => void;
+  markers?: CollectionChangeMarker[];
 }) {
   const { locale, tr } = useI18n();
   const [active, setActive] = useState(-1);
@@ -390,6 +425,13 @@ export const TimelineChart = memo(function TimelineChart({
             {rows.length === 1 && <circle cx={x(0)} cy={y(rows[0][s.key])} r="4" fill={s.color} />}
           </g>
         ))}
+        <CollectionMarkerLines
+          markers={markers}
+          dates={rows.map((row) => row.date)}
+          x={x}
+          top={20}
+          bottom={178}
+        />
         {current && (
           <g>
             <path
@@ -421,6 +463,7 @@ export const TimelineChart = memo(function TimelineChart({
             </text>
           ))}
       </svg>
+      <CollectionMarkerLegend markers={markers} dates={rows.map((row) => row.date)} />
       {current && (
         <div className="timeline-readout">
           <label>

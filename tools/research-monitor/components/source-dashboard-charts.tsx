@@ -8,6 +8,8 @@ import { DashboardChoice } from "./dashboard-choice";
 import { useI18n } from "./locale-provider";
 import "@/styles/spatial-charts.css";
 import "@/styles/source-dashboard-charts.css";
+import { CollectionMarkerLines, CollectionMarkerLegend } from "./trend-annotations";
+import type { CollectionChangeMarker } from "@/lib/trend-statistics";
 
 export type SourceDashboardSeriesRow = {
   date: string;
@@ -132,12 +134,14 @@ export const SourceDashboardTimeline = memo(function SourceDashboardTimeline({
   onDrill,
   monthly,
   kind,
+  markers,
 }: {
   rows: SourceDashboardSeriesRow[];
   title: string;
   onDrill: DrillHandler;
   monthly: boolean;
   kind: "github" | "news";
+  markers?: CollectionChangeMarker[];
 }) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
@@ -252,6 +256,13 @@ export const SourceDashboardTimeline = memo(function SourceDashboardTimeline({
                 )}
             </g>
           ))}
+          <CollectionMarkerLines
+            markers={markers}
+            dates={rows.map((row) => row.date)}
+            x={x}
+            top={24}
+            bottom={184}
+          />
           {current && (
             <g>
               <path className="spatial-floor" d={`M${x(selectedIndex)},24V184`} />
@@ -292,6 +303,7 @@ export const SourceDashboardTimeline = memo(function SourceDashboardTimeline({
               </text>
             ))}
         </svg>
+        <CollectionMarkerLegend markers={markers} dates={rows.map((row) => row.date)} />
         {current && (
           <div className="source-timeline-readout">
             <div className="dash-control source-timeline-choice">
@@ -391,16 +403,21 @@ export const SourceDashboardBars = memo(function SourceDashboardBars({
   onDrill,
   kind,
   profile = "directions",
+  denominator,
 }: {
   buckets: SignalDashboardBucket[];
   title: string;
   onDrill: DrillHandler;
   kind: "github" | "news";
   profile?: "directions" | "language" | "publisher";
+  denominator?: number;
 }) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
   const [selectedId, setSelectedId] = useState("");
+  const [showShare, setShowShare] = useState(false);
+  const shares = showShare && denominator !== undefined;
+  const share = (value: number) => (denominator ? (value / denominator) * 100 : 0);
   const uid = useId();
   const selected =
     buckets.find((bucket) => bucket.id === selectedId) ??
@@ -410,7 +427,7 @@ export const SourceDashboardBars = memo(function SourceDashboardBars({
   const count = (value: number) => value.toLocaleString(locale === "en" ? "en-US" : "zh-CN");
   const maximum = Math.max(1, ...buckets.map((bucket) => bucket.count));
   const step = 10 ** Math.floor(Math.log10(maximum));
-  const ceiling = Math.ceil(maximum / step) * step;
+  const ceiling = shares ? 100 : Math.ceil(maximum / step) * step;
   const open = (bucket: SignalDashboardBucket) => {
     setSelectedId(bucket.id);
     if (bucket.count) onDrill({ label: `${title} · ${label(bucket)}`, ids: bucket.recordIds });
@@ -432,8 +449,22 @@ export const SourceDashboardBars = memo(function SourceDashboardBars({
             ? t("主要语言", "PRIMARY LANGUAGE")
             : profile === "publisher"
               ? t("发布者", "PUBLISHERS")
-              : t("方向数量", "DIRECTION COUNTS")}
+              : shares
+                ? t("方向占比", "DIRECTION SHARES")
+                : t("方向数量", "DIRECTION COUNTS")}
         </span>
+        {profile === "directions" && denominator !== undefined && (
+          <button
+            type="button"
+            className="foresight-button"
+            aria-pressed={shares}
+            onClick={() => setShowShare((value) => !value)}
+          >
+            {shares
+              ? t("占同期同来源总量", "Share of same time/source scope")
+              : t("绝对数量 · 切换占比", "Absolute count · switch to share")}
+          </button>
+        )}
       </div>
       <div className="direction-bars">
         <div className="direction-bar-scale" aria-hidden="true">
@@ -442,7 +473,7 @@ export const SourceDashboardBars = memo(function SourceDashboardBars({
             <span>0</span>
             <span>{count(ceiling)}</span>
           </span>
-          <span>{kind === "github" ? t("个项目", "repos") : t("条消息", "news")}</span>
+          <span>{shares ? "%" : kind === "github" ? t("个项目", "repos") : t("条消息", "news")}</span>
         </div>
         {buckets.map((bucket) => (
           <button
@@ -455,22 +486,32 @@ export const SourceDashboardBars = memo(function SourceDashboardBars({
           >
             <span className="direction-bar-label">{label(bucket)}</span>
             <span className="direction-bar-track" aria-hidden="true">
-              <span className="direction-bar-fill" style={{ width: `${(bucket.count / ceiling) * 100}%` }} />
+              <span
+                className="direction-bar-fill"
+                style={{ width: `${((shares ? share(bucket.count) : bucket.count) / ceiling) * 100}%` }}
+              />
             </span>
-            <strong className="direction-bar-value">{count(bucket.count)}</strong>
+            <strong className="direction-bar-value">
+              {shares ? (denominator ? `${share(bucket.count).toFixed(1)}%` : "—") : count(bucket.count)}
+            </strong>
           </button>
         ))}
       </div>
       <div className="spatial-caption">
-        {kind === "github"
+        {shares
           ? t(
-              "细条长度线性对应当前范围的项目数",
-              "Bar length corresponds to repositories in the current scope",
+              `细条表示同期同来源 ${denominator} 条记录中的占比；方向标签允许重叠。`,
+              `Bar length is percentage of ${denominator} records in the same time/source scope; labels overlap.`,
             )
-          : t(
-              "细条长度线性对应当前范围的消息数",
-              "Bar length corresponds to news records in the current scope",
-            )}
+          : kind === "github"
+            ? t(
+                "细条长度线性对应当前范围的项目数",
+                "Bar length corresponds to repositories in the current scope",
+              )
+            : t(
+                "细条长度线性对应当前范围的消息数",
+                "Bar length corresponds to news records in the current scope",
+              )}
       </div>
       {selected && (
         <div className="spatial-readout">

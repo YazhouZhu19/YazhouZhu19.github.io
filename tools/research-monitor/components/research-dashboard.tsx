@@ -22,7 +22,9 @@ import { DashboardShell, DashboardMetric as Metric } from "./dashboard-shell";
 import { DashboardChoice as Choice } from "./dashboard-choice";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getLoadedPaperSnapshot } from "@/lib/local-api";
-import { TRACKS } from "@/lib/classify";
+import { TRACKS, SCOPE_CLASSIFIER_VERSION } from "@/lib/classify";
+import { paperCollectionMarkers } from "@/lib/trend-statistics";
+import { WindowComparisonReadout } from "./trend-annotations";
 import {
   beijingDay,
   buildDashboard,
@@ -77,6 +79,14 @@ export const ResearchDashboard = memo(function ResearchDashboard({
     [data, teams, filters, day],
   );
   const sources = useMemo(() => buildSourceHealth(data, now), [data, now]);
+  const changeMarkers = useMemo(
+    () =>
+      paperCollectionMarkers({
+        ...data,
+        scopeClassifierVersion: SCOPE_CLASSIFIER_VERSION,
+      }),
+    [data],
+  );
   const sourceOptions = useMemo<[string, string][]>(
     () => [
       ["all", "全部来源"],
@@ -356,7 +366,14 @@ export const ResearchDashboard = memo(function ResearchDashboard({
           </div>
           <span className="dash-unit">{tr("点击查看论文")}</span>
         </div>
-        <SpatialChart variant="bars" title={tr("感兴趣方向分布")} data={directions} onOpen={openDirection} />
+        <SpatialChart
+          variant="bars"
+          title={tr("感兴趣方向分布")}
+          data={directions}
+          onOpen={openDirection}
+          denominator={m.directionDenominator}
+        />
+        <WindowComparisonReadout comparison={m.directionComparison} label={(id) => tr(TRACKS[id] ?? id)} />
         <p className="dash-note">
           {tr("新增方向从扩展采集后逐步积累；历史记录已重新分类，当前数量不代表完整历史或研究热度。")}
         </p>
@@ -374,7 +391,7 @@ export const ResearchDashboard = memo(function ResearchDashboard({
             <span className="dash-unit">{tr("单位：条")}</span>
           </div>
           {m.rows.length ? (
-            <TimelineChart rows={m.trend} onOpen={openTimeline} />
+            <TimelineChart rows={m.trend} onOpen={openTimeline} markers={changeMarkers} />
           ) : (
             <EmptyState
               compact

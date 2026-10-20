@@ -58,6 +58,21 @@ Author grouping prefers a supplied ORCID, otherwise a normalized name. Name-only
 
 中文说明：所有分析使用同一来源、感兴趣方向及来源发表日期筛选范围，并按记录 ID 去重。方向与器官/模态比例以范围内记录数为分母，方向×方法比例以该方向内记录数为分母，研究线索比例以有摘要记录数为分母。标签允许重叠，未识别并不表示没有。摘要内容为原文句子摘录，不调用模型生成总结。阅读候选依据组合覆盖、摘要线索和发表日期选取，不是论文质量排名；作者与共同署名分析也不用于判断团队实力。基础模型方向与同名方法的组合因定义重复而省略。
 
+## Question retrieval and local-model budgets (P4.5 / P4.6)
+
+Independent-interest and question-bearing team analyses use deterministic local BM25 with bilingual
+query expansion, title weight ×2 and a positive-score pool capped at max(4 × limit, 40). Sampling then
+balances time/source and evidence kind. No match yields no evidence; it is not evidence that a topic is
+unstudied. Landscape selection uses tag Jaccard diversity within the strata. These are lexical sampling
+rules, not population estimates or human relevance judgments. Three frozen-sample comparisons and
+limitations are in `docs/question-retrieval.md` and `eval/retrieval-examples.json`.
+
+Model inputs are estimated at English characters /4 and Han characters /1.5 plus framing, with separate
+4,200/5,200/5,600 input caps for local Qwen3-0.6B/1.7B/4B. These are approximate counts. Methods,
+results and limitations are prioritized with marked omissions before batches split; original records,
+questions and citation IDs are retained. Lightweight quick preview uses four items. Full prompts and
+synthesis are checked before model calls; no paid fallback is introduced. See `docs/local-model-budgets.md`.
+
 ## GitHub maturity and pending relevance review (P4.8)
 
 `GITHUB_QUALITY_VERSION = 2026-10-21-v1` adds a separate metadata maturity view;
@@ -74,6 +89,41 @@ positive, 8 negative and 21 uncertain annotations, awaiting human confirmation.
 Its balanced strata are not population weights. These counts are not an accepted
 accuracy result, and no claim that the direct-precision target has been achieved
 is made. No relevance rule has changed, so its before/after prediction is identical.
+
+## Comparable trend windows and collection-rule markers (P4.10)
+
+Direction bars retain absolute counts and add a percentage view. The denominator is
+the number of distinct records in the same period and source scope, before the
+direction selector is applied. The paper scope setting, GitHub maturity setting,
+relevance and text filters remain part of that scope. Selecting a direction changes
+the numerator and its co-occurring labels, not the denominator. News percentages
+count source records, not inferred event clusters; paper percentages count records,
+not candidate grouped works. All-date denominators include eligible records before
+the selected direction's first appearance. Multi-label shares must not be added together.
+
+A bounded date window is compared with the immediately preceding window of equal
+inclusive calendar length. Both windows use the selected date field and identical
+source and non-direction restrictions; invalid/future paper dates are excluded.
+Source comparisons stop at the last observable date while retaining the displayed
+start, and the resulting actual window length also defines the preceding window.
+All-time views do not invent a preceding window. Each proportion is accompanied by
+a Wilson 95% interval. The difference in percentage points uses the independent
+Newcombe interval derived from those two Wilson intervals. Either denominator
+below 30 suppresses directional conclusions and displays “样本不足 / Insufficient
+sample”. Zero denominators produce no estimate. These are descriptive archive
+comparisons: records are not randomly sampled, overlapping versions and correlated
+reports violate independence, and the intervals do not cover missed retrieval,
+changing classification rules or source coverage bias.
+
+Dotted timeline markers use explicit dates in manifest `interestTaxonomyVersion`,
+`sourceTaxonomyVersions`, the active `SCOPE_CLASSIFIER_VERSION`, or signal discovery
+`catalogVersion`. The legend exposes the full version strings. Dates identify rule
+releases, not the date every record was classified or a causal explanation for a
+change in publication counts. Current manifests retain only latest versions and
+short rolling run histories. A recent source check or first retained run is not
+proof of when a source was introduced; unavailable source-addition histories and
+older rule versions remain unmarked rather than being inferred. Markers outside
+the displayed daily/monthly buckets are hidden.
 
 ### P4.9：新闻去重事件口径
 

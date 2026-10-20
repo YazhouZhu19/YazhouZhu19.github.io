@@ -124,6 +124,12 @@ const querySchema = z.object({
 export const monitorDataSchema = z
   .object({
     totalStored: count.optional(),
+    interestTaxonomyVersion: shortText.optional(),
+    scopeClassifierVersion: shortText.optional(),
+    sourceTaxonomyVersions: z
+      .record(shortText, shortText)
+      .refine((value) => Object.keys(value).length <= 1000, "Too many source taxonomy versions")
+      .optional(),
     papers: z.array(paperSchema).max(100000),
     runs: z.array(runSchema).max(10000),
     queryRuns: z.array(querySchema).max(10000),

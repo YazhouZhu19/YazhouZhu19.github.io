@@ -122,6 +122,26 @@ test("public reader decodes v3 and reuses validated data when the manifest retur
   assert.equal(shards, 1);
 });
 
+test("public validation retains explicit collection-rule versions for chart annotations", async () => {
+  const fixture = wire([paper("versioned")]);
+  const metadata = {
+    interestTaxonomyVersion: "2026-09-18-ten-interests-v1",
+    scopeClassifierVersion: "2026-10-21-scope-v1",
+    sourceTaxonomyVersions: { "Europe PMC": "2026-09-18-ten-interests-v1" },
+  };
+  Object.assign(fixture.manifest.metadata, metadata);
+  const reader = createPublicPaperLoader(base, {
+    shardCache: memoryCache(),
+    fetcher: (async (url) =>
+      response(
+        String(url).endsWith("public-papers-v3.json") ? fixture.manifest : fixture.text,
+      )) as typeof fetch,
+  });
+  const result = (await reader.load()).data;
+  for (const key of Object.keys(metadata) as (keyof typeof metadata)[])
+    assert.deepEqual(result[key], metadata[key]);
+});
+
 for (const failure of ["missing", "manifest", "checksum", "record"] as const) {
   test(`public reader falls back from ${failure} v3 failure only after full validation`, async () => {
     const original = paper("one"),

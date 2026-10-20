@@ -23,12 +23,17 @@ import { useI18n } from "./locale-provider";
 import { GitHubPopularity } from "./github-popularity";
 import "@/styles/spatial-charts.css";
 import "@/styles/github-dashboard.css";
+import type { CollectionChangeMarker, WindowComparison } from "@/lib/trend-statistics";
+import { WindowComparisonReadout } from "./trend-annotations";
 
 type DashboardProps = DashboardSlots & {
   model: GitHubDashboardModel;
   onDrill: (drill: SignalDashboardDrill) => void;
   onBrowse: () => void;
   onRankedBrowse: (metric: "stars" | "forks") => void;
+  changeMarkers?: CollectionChangeMarker[];
+  windowComparison?: WindowComparison | null;
+  directionDenominator?: number;
 };
 type SummaryProps = Pick<DashboardProps, "model" | "onDrill"> & { summaryOnly?: boolean };
 const STATE_COLORS = ["var(--chart-4)", "var(--chart-1)", "var(--chart-2)", "var(--living-line)"];
@@ -130,6 +135,9 @@ export function GitHubDashboard({
   onRankedBrowse,
   summary,
   filters,
+  changeMarkers,
+  windowComparison,
+  directionDenominator,
 }: DashboardProps) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
@@ -244,6 +252,7 @@ export function GitHubDashboard({
               title={timelineTitle}
               onDrill={onDrill}
               monthly={monthly}
+              markers={changeMarkers}
             />
           ) : (
             <EmptyState
@@ -314,6 +323,14 @@ export function GitHubDashboard({
           buckets={model.scoped.categories}
           title={t("研究方向", "Research area")}
           onDrill={onDrill}
+          denominator={directionDenominator ?? model.scoped.total}
+        />
+        <WindowComparisonReadout
+          comparison={windowComparison}
+          label={(id) => {
+            const category = model.scoped.categories.find((row) => row.id === id);
+            return category ? label(category) : id;
+          }}
         />
         <p className="dash-note">
           {t(

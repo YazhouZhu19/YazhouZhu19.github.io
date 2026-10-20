@@ -205,6 +205,39 @@ test("source and interest intersection remains consistent in every date bucket",
   );
 });
 
+test("direction shares keep the same source denominator before the direction filter in both windows", () => {
+  const data = dataset([
+    paper("now-foundation"),
+    paper("now-other", { tracks: ["diagnosis"] }),
+    paper("now-both", { tracks: ["foundation", "language"] }),
+    paper("prior-foundation", { publishedAt: "2026-09-07" }),
+    paper("prior-other", { publishedAt: "2026-09-10", tracks: ["diagnosis"] }),
+    paper("outside-source", {
+      source: "arXiv",
+      sources: ["arXiv"],
+      publishedAt: "2026-09-16",
+    }),
+    paper("future", { publishedAt: "2026-10-01" }),
+  ]);
+  const result = buildDashboard(
+    data,
+    [],
+    { ...defaultDashboardFilters, track: "foundation", source: "Europe PMC", days: "7" },
+    now,
+  );
+  assert.equal(result.rows.length, 2);
+  assert.equal(result.directionDenominator, 3);
+  const comparison = result.directionComparison!;
+  assert.equal(comparison.currentTotal, 3);
+  assert.equal(comparison.previousTotal, 2);
+  const foundation = comparison.categories.find((row) => row.id === "foundation")!;
+  assert.equal(foundation.current!.estimate, 2 / 3);
+  assert.equal(foundation.previous!.estimate, 1 / 2);
+  // Co-occurring labels count within the selected direction, with the denominator unchanged.
+  assert.equal(comparison.categories.find((row) => row.id === "language")!.current!.estimate, 1 / 3);
+  assert.equal(comparison.categories.find((row) => row.id === "diagnosis")!.current!.count, 0);
+});
+
 test("source health distinguishes request failures from retrieval limits and preserves the last real success", () => {
   const run = (source: string, completedAt: string, overrides: Partial<SyncRun> = {}): SyncRun => ({
     id: `${source}-${completedAt}`,

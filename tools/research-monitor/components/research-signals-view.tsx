@@ -43,6 +43,8 @@ import {
   type NewsDashboardClock,
 } from "@/lib/news-dashboard";
 import { beijingDay } from "@/lib/dashboard";
+import { signalTrendStatistics } from "@/lib/signal-trends";
+import { signalCollectionMarkers } from "@/lib/trend-statistics";
 import type { SignalKind, SignalsManifest } from "@/lib/signals-snapshot";
 import { adaptSignalOverview } from "@/lib/signal-overview";
 import { createLatestAsyncAction } from "@/lib/latest-async-action";
@@ -355,10 +357,9 @@ export function ResearchSignalsView({
     [records, summaryOnly, overview],
   );
   const invalidDates = dateRange === "custom" && !!from && !!to && from > to;
-  const baseRecords = useMemo(() => {
+  const denominatorRecords = useMemo(() => {
     const search = deferredQuery.trim().toLowerCase();
     return records.filter((record) => {
-      const matchesCategory = category === "all" || categoryIndex.byRecord.get(record.id)?.includes(category);
       const matchesRelevance =
         relevance === "all" ||
         (relevance === "direct"
@@ -371,9 +372,16 @@ export function ResearchSignalsView({
         view === "library" ||
         includeEarly ||
         qualityById.get(record.id)?.maturity !== "early";
-      return matchesMaturity && matchesCategory && matchesRelevance && (!search || text.includes(search));
+      return matchesMaturity && matchesRelevance && (!search || text.includes(search));
     });
-  }, [records, categoryIndex, deferredQuery, category, relevance, kind, view, includeEarly, qualityById]);
+  }, [records, deferredQuery, relevance, kind, view, includeEarly, qualityById]);
+  const baseRecords = useMemo(
+    () =>
+      category === "all"
+        ? denominatorRecords
+        : denominatorRecords.filter((record) => categoryIndex.byRecord.get(record.id)?.includes(category)),
+    [denominatorRecords, category, categoryIndex],
+  );
   const githubModel = useMemo(
     () =>
       kind !== "github"
@@ -416,6 +424,32 @@ export function ResearchSignalsView({
     [kind, summaryOnly, preview, records, baseRecords, dateRange, newsClock, from, to, now, newsAsOf],
   );
   const dashboardModel = githubModel ?? newsModel;
+  const trendStatistics = useMemo(
+    () =>
+      recordsLoaded && dashboardModel
+        ? signalTrendStatistics(
+            dashboardModel,
+            denominatorRecords,
+            selectedDatesById,
+            categoryIndex.byRecord,
+            categories.map((group) => group.id),
+            category,
+          )
+        : null,
+    [
+      recordsLoaded,
+      dashboardModel,
+      denominatorRecords,
+      selectedDatesById,
+      categoryIndex,
+      categories,
+      category,
+    ],
+  );
+  const changeMarkers = useMemo(
+    () => signalCollectionMarkers(snapshot ?? manifest, kind),
+    [snapshot, manifest, kind],
+  );
   const scopedRecords = useMemo(() => {
     if (invalidDates || !recordsLoaded) return [];
     const rows: ResearchSignal[] = dashboardModel?.rows ?? [];
@@ -973,6 +1007,21 @@ export function ResearchSignalsView({
             `${fieldId}-relevance-hint`,
           )}
         </div>
+        {view === "overview" && !recordsLoaded && dateRange !== "all" && (
+          <button
+            type="button"
+            className="foresight-button"
+            disabled={loading}
+            onClick={() => {
+              recordsRequested.current = true;
+              void onLoadRecords(kind);
+            }}
+          >
+            {loading
+              ? t("正在准备窗口比较…", "Preparing window comparison…")
+              : t("比较相邻时间窗", "Compare adjacent windows")}
+          </button>
+        )}
         <button type="button" className="foresight-button" onClick={reset}>
           {t("重置", "Reset")}
         </button>
@@ -1019,8 +1068,22 @@ export function ResearchSignalsView({
           {sortControl}
         </div>
       </details>
+      {recordsLoaded && dateRange !== "all" && dashboardModel?.rangeValid && !trendStatistics?.comparison && (
+        <p className="signals-filter-hint">
+          {t(
+            "所选时间窗没有可用的观测范围，暂不进行相邻窗口比较。",
+            "The selected window has no usable observation interval; adjacent-window comparison is unavailable.",
+          )}
+        </p>
+      )}
       <details className="signals-scope-explanation">
         <summary>{t("筛选口径与数据说明", "Filter definitions and data notes")}</summary>
+        <p className="signals-filter-hint">
+          {t(
+            "方向占比以同期同来源、相同相关性／检索／成熟度范围为分母，选择方向不会缩小分母。相邻窗口止于可观测日期并显示实际范围；全部日期不推定前窗。",
+            "Direction shares use the same source, time, relevance, search and maturity scope; choosing a direction does not shrink the denominator. Adjacent windows end at the observed date and show their actual ranges. All dates has no inferred preceding window.",
+          )}
+        </p>
         <p className="signals-filter-hint" id={`${fieldId}-category-hint`}>
           {t(
             `将检索方向归并为 ${categories.length} 个大类，跨方向记录可属于多类；尚无明确方向的记录归入综合类。括号为全库数量，可叠加其他筛选。`,
@@ -1387,6 +1450,9 @@ export function ResearchSignalsView({
                 summary={summaryControls}
                 filters={filterControls}
                 model={githubModel}
+                changeMarkers={changeMarkers}
+                windowComparison={trendStatistics?.comparison}
+                directionDenominator={trendStatistics?.denominator}
                 onDrill={openDashboardRecords}
                 onBrowse={() => switchView("library")}
                 onRankedBrowse={openRankedRepositories}
@@ -1396,6 +1462,9 @@ export function ResearchSignalsView({
                 summary={summaryControls}
                 filters={filterControls}
                 model={newsModel}
+                changeMarkers={changeMarkers}
+                windowComparison={trendStatistics?.comparison}
+                directionDenominator={trendStatistics?.denominator}
                 originalsCount={summaryOnly ? manifest?.overview.news.originalsCount : undefined}
                 eventCount={scopedNewsEventCount}
                 onDrill={openDashboardRecords}

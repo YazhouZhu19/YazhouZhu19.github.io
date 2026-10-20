@@ -1,6 +1,7 @@
 import { TASKS, TRACKS, normalizedName } from "./classify";
 import type { Author, MonitorData, Paper, Team } from "./types";
 import { publicationDateStatus } from "./publication-date";
+import { compareCategoryWindows } from "./trend-statistics";
 
 export type DashboardFilters = {
   days: string;
@@ -115,18 +116,29 @@ export function buildDashboard(
     }
     return date;
   };
-  const pool = data.papers.filter(
-    (p) =>
-      (filters.track === "all" || p.tracks.includes(filters.track)) &&
-      (filters.source === "all" || p.sources.includes(filters.source)),
+  const sourcePool = data.papers.filter(
+    (p) => filters.source === "all" || p.sources.includes(filters.source),
   );
-  const rows = pool.filter((p) => {
+  const pool = sourcePool.filter((p) => filters.track === "all" || p.tracks.includes(filters.track));
+  const datedSourcePool = sourcePool.filter((p) => {
     if (statusOf(p) !== "valid") return false;
     const date = dateOf(p);
-    return (
-      date && date <= today && (!start || date >= start) && (filters.clock !== "discovery" || !isInitial(p))
-    );
+    return date && date <= today && (filters.clock !== "discovery" || !isInitial(p));
   });
+  const denominatorRows = datedSourcePool.filter((p) => !start || dateOf(p) >= start);
+  const rows = denominatorRows.filter((p) => filters.track === "all" || p.tracks.includes(filters.track));
+  const directionComparison = start
+    ? compareCategoryWindows(
+        datedSourcePool.map((p) => ({
+          id: p.id,
+          day: dateOf(p),
+          categories: filters.track === "all" || p.tracks.includes(filters.track) ? p.tracks : [],
+        })),
+        start,
+        today,
+        Object.keys(TRACKS),
+      )
+    : null;
   const initialCount = pool.filter(isInitial).length;
   const newToday = data.papers.filter(
     (p) => statusOf(p) === "valid" && !isInitial(p) && beijingDay(p.firstSeenAt) === today,
@@ -211,6 +223,8 @@ export function buildDashboard(
   const sources = buildSourceHealth(data, now);
   return {
     rows,
+    directionDenominator: denominatorRows.length,
+    directionComparison,
     start: from,
     observedFrom,
     end: today,
