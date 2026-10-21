@@ -242,6 +242,11 @@ jobs:
                   raise SystemExit(f'Unexpected staged file: {path}')
           PY
 
+            # Pages serves main / (root), including the tracked source archives.
+            # Measure the final index after replacing/staging this publication;
+            # untracked dist, node_modules and .git must not inflate this gate.
+            python3 tools/research-monitor/scripts/check_pages_tree.py --max-bytes 950000000 \
+              | tee -a "$GITHUB_STEP_SUMMARY"
             node tools/research-monitor/scripts/check-file-sizes.mjs
 
             if ! git diff --cached --quiet; then

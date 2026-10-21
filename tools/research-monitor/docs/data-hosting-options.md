@@ -13,6 +13,21 @@ the generated output only; no collected records are deleted. Every retained
 reference is verified before cleanup. An 800,000,000-byte publication budget
 fails the workflow before an oversized site can be pushed.
 
+Pages serves the entire repository root, including the tracked archives in
+`tools/research-monitor/data`. The sync workflow therefore also checks the
+**complete staged Git tree** after `git add` and before committing or pushing,
+with a separate 950,000,000-byte limit. This leaves 50 MB below a conservative
+decimal 1 GB ceiling. The smaller publication-subtree check remains in place.
+The index-based check counts a blob at every published path, even when Git
+stores identical blobs only once. It does not traverse working-tree files or
+include untracked/ignored dependencies, build output or `.git`. Symlinks,
+submodules, merge conflicts, missing objects and unknown sizes fail the check.
+Tracked source data is always counted; nothing is hidden to reduce the total.
+
+This complete-tree gate runs in the final sync publication step. PR CI checks
+the generated `dist` subtree; it does not claim that the old checked-in
+publication plus an untracked new build is the final published tree.
+
 Checkout and retry fetches use depth 1. Server-side GitHub compare requests
 answer ancestry questions without relying on incomplete shallow history.
 Normal publication remains an ordinary non-forced push; concurrent changes
@@ -89,6 +104,18 @@ in v1/v2/v3 and all 50,790 GitHub/news records in the split format still matched
 the source archives field for field. This comparison isolates cleanup within
 the same build; the earlier published-directory measurement contains a
 different set of transport formats.
+
+The final resource measurement before screenshot additions reports a
+435,254,911-byte generated monitor. Combining that with 368,759,490 bytes of
+tracked source data and 8,022,116 bytes of other tracked files gives an estimated
+**812,036,517 bytes for the whole root**. Screenshot files and later committed
+changes add to that estimate; the final staged-tree check measures their actual
+bytes rather than reserving or excluding them. The 96 review PNGs measured
+15,132,523 bytes, bringing that estimate to 827,169,040 bytes before later code
+and report changes. This is a projection with the new generated monitor;
+the final gate checks the actual index after replacement. For example, a 700 MB monitor
+subtree would pass the old 800 MB check while pushing this root above 1 GB.
+The new 950 MB check prevents that publication.
 
 The stable-shard simulation with five new current-month papers changed one
 archive shard and one public shard, while preserving every older month's
