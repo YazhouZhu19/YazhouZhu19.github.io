@@ -1,0 +1,35 @@
+@layer theme, base, components, utilities, app-base, app-surface, app-type, app-view;
+@layer app-view {
+  .github-quality-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8) var(--space-16);
+    font: var(--text-12) / 1.7 var(--font-ui);
+    color: var(--muted-foreground);
+  }
+  .github-quality-control p {
+    margin: 0;
+  }
+  .github-quality-control label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-height: 40px;
+    color: var(--foreground);
+  }
+  .github-quality-control input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+  }
+  .github-quality-control summary {
+    cursor: pointer;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+  .github-quality-control details[open] {
+    flex-basis: 100%;
+  }
+}

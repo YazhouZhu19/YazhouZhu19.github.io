@@ -22,12 +22,22 @@ export interface GitHubPopularity {
   observedCount: number;
 }
 
-function compareText(a: string, b: string): number { return a < b ? -1 : a > b ? 1 : 0; }
+function compareText(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
 
 /** Shared by the dashboard ranking and project list; independent of UI locale. */
-export function compareGitHubPopularity(a: GitHubSignal, b: GitHubSignal, metric: GitHubPopularityMetric): number {
-  return b[metric] - a[metric] || compareText(a.fullName.toLowerCase(), b.fullName.toLowerCase()) ||
-    compareText(a.fullName, b.fullName) || compareText(a.id, b.id);
+export function compareGitHubPopularity(
+  a: GitHubSignal,
+  b: GitHubSignal,
+  metric: GitHubPopularityMetric,
+): number {
+  return (
+    b[metric] - a[metric] ||
+    compareText(a.fullName.toLowerCase(), b.fullName.toLowerCase()) ||
+    compareText(a.fullName, b.fullName) ||
+    compareText(a.id, b.id)
+  );
 }
 
 function summarize(rows: readonly GitHubSignal[], metric: GitHubPopularityMetric): GitHubPopularityStats {
@@ -37,12 +47,18 @@ function summarize(rows: readonly GitHubSignal[], metric: GitHubPopularityMetric
     if (index === 0 || record[metric] !== sorted[index - 1][metric]) rank = index + 1;
     return { record, rank, value: record[metric] };
   });
-  const count = rows.length, middle = Math.floor(count / 2);
+  const count = rows.length,
+    middle = Math.floor(count / 2);
   return {
     total: rows.reduce((total, record) => total + record[metric], 0),
-    median: count === 0 ? null : count % 2 ? sorted[middle][metric] : (sorted[middle - 1][metric] + sorted[middle][metric]) / 2,
+    median:
+      count === 0
+        ? null
+        : count % 2
+          ? sorted[middle][metric]
+          : (sorted[middle - 1][metric] + sorted[middle][metric]) / 2,
     count,
-    recordIds: rows.map(record => record.id),
+    recordIds: rows.map((record) => record.id),
     ranked,
     hasVariation: count > 1 && sorted[0][metric] !== sorted[count - 1][metric],
   };
@@ -54,7 +70,10 @@ function summarize(rows: readonly GitHubSignal[], metric: GitHubPopularityMetric
  * selected creation/activity period. Observation times can differ by record.
  */
 export function buildGitHubPopularity(rows: readonly GitHubSignal[]): GitHubPopularity {
-  const times = rows.map(record => Date.parse(record.observedAt)).filter(Number.isFinite).sort((a, b) => a - b);
+  const times = rows
+    .map((record) => Date.parse(record.observedAt))
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b);
   return {
     stars: summarize(rows, "stars"),
     forks: summarize(rows, "forks"),

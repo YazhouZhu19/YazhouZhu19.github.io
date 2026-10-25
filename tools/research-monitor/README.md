@@ -60,12 +60,47 @@ npm test
 npm run collect
 npm run collect:signals
 npm run build
+npm run measure
 npm run preview
 ```
 
+### Resource budgets (Task P0.1)
+
+Every build ends with `scripts/measure-budget.ts`. It writes `dist/budget-report.json` and prints raw/gzip byte sizes for every JS/CSS resource, startup datasets and aggregate startup costs. A resource without an explicit budget, or any raw/gzip limit exceeded, fails the build. `npm run measure` repeats the check against an existing build. For an intentional budget review, `npx tsx scripts/measure-budget.ts --report-only` writes the same report without failing on budget violations; it does not change any limit. Missing files, invalid manifests and inconsistent declared shard sizes still fail.
+
+Initial code is traced from the actual built Chinese and English HTML through Vite's static import graph, with shared files counted once. `budget.json.initialDynamicEntries` can declare modules rendered immediately by a future lazy default view. Other views, WebLLM and its AI worker are reported separately as optional resources; externally fetched model weights are outside the build. `budget.json.initialData` must stay synchronized with loader changes. Currently startup loads the v3 paper manifest and its referenced shards through a validation Worker (with verified v2/v1 fallback). GitHub/news data are requested only after opening those views or selecting their evidence; their default overviews need just the signals manifest. Previous generations and v1 compatibility files are retained on disk but do not count toward startup transfer.
+
+The measured baseline on **2026-10-21 (Asia/Shanghai)** uses source revision `1a2c0da` and the October 20 22:35 local snapshots (8,326 papers and 50,790 GitHub/news records):
+
+| Measured scope | Raw bytes | Gzip bytes |
+|---|---:|---:|
+| Initial JavaScript | 571,063 | 176,919 |
+| Initial CSS | 263,903 | 43,892 |
+| Paper manifest + 16 current shards | 68,812,492 | 11,215,528 |
+| Signals | 48,640,306 | 7,847,487 |
+| All startup data | 117,452,798 | 19,063,015 |
+| Initial JS + CSS + data | 118,287,764 | 19,283,826 |
+
+Gzip uses level 9 independently for each resource, so it differs slightly from Vite's default compression estimate. These are transfer-size estimates, not browser timings; HTML, images, request headers and external requests are excluded. Initial limits allow 2% for code and 5% for growing data, rounded up to 1 KiB; individual paper files keep the existing 4 MiB cap. They guard against regressions rather than asserting the current payload is acceptable. Tighten the reviewed limits after optimization; builds never rewrite them automatically.
+
 `data/papers.json` is the persistent snapshot manifest. Its metadata and content-addressed `data/papers/<sha256>.json` shards preserve the complete paper library, with each file limited to 4 MiB. The collector reads legacy single-file snapshots too, and writes the sharded format atomically without dropping history. Do not replace the snapshot with an empty seed. The build produces `dist/data/public-papers-v2.json` with a shared query-URL dictionary, reducing repeated provenance strings without removing any records or fields. If the dictionary exceeds the manifest budget, this endpoint falls back to the supported v1 representation. The original `dist/data/papers.json` and its shards remain available for cached v1 clients. Node and Python build checks verify complete decoded equality against the source archive; the workflow publishes `dist/` into `/research-monitor/` and validates both endpoints. Both locale entry HTML files are built explicitly. Do not commit `node_modules`, private backups, credentials, or `.test-build`.
 
-The browser fetches the versioned public manifest fresh, reuses the last validated library when the manifest is identical, and otherwise loads at most four immutable shards concurrently, verifying byte lengths, SHA-256 hashes, counts and unique paper IDs before showing a complete snapshot. It retains the existing displayed data if any shard fails. One previous generation of shards is retained for clients spanning a deployment. The dashboard still loads the complete library for its existing searches and aggregate statistics. Statistics reuse a Beijing date formatter and cached abstract analysis; auxiliary views and Recharts load on demand. The overview uses lightweight horizontal bars for interest-direction counts, a task/modality dot matrix, and linear method dot plots, with exact native controls and paper drill-through. Direction bars share a zero-based linear scale and keep exact values visible; the preliminary direction/method combinations retain their area-scaled bubbles. Overlapping labels never imply mutually exclusive shares. Reduced-motion preferences disable chart entrance animations and bar transitions.
+New archive and public snapshots group records by publication month, then sort IDs within each bucket before splitting at the 4 MiB limit. Manifest descriptors include `bucket` (`YYYY-MM`, or `YYYY-MM.part-N` for a split month). Missing, invalid and future dates use `undated`; future means later than the snapshot's `collectedAt`, so rebuilding the same snapshot never depends on the build clock. Writers also accept an explicit `asOf` for controlled migrations and tests. If no snapshot time is available, records remain in `undated`. After decoding, bucketed snapshots restore publication-date descending / ID order; legacy manifests without buckets retain their wire order.
+
+Public query-URL dictionaries preserve previous indices and append new URLs, preventing an unrelated new query from rewriting older month shards. Records and provenance are preserved field for field. An older month's hash can still change when its record contents change, including a new collection provenance entry; stable bucketing only prevents changes caused by other months' insertions. Writers validate the final manifest before atomically replacing it and retain the preceding generation plus sibling manifest references for clients crossing a deployment.
+
+`data/public-papers-v3.json` adds a lossless compact transport alongside the unchanged v1 and v2 endpoints. Each v3 wire record is `[flags, paper]`; flag `1` restores `originalAbstract` from `abstract` only when that field originally existed and was exactly equal. Absent, null and distinct originals remain distinguishable. Authors use `[name, orcid, affiliations, displayName?]` tuples, with optional presence bits and an extra-fields object preserving absent versus null ORCID and any other collected fields. Provenance uses `[queryUrlIndex, collectedAt, queryTrack, sourceRecordId]`, likewise extending with presence bits and extra fields so missing values are never silently replaced by null. Shared institutions are indexed in the manifest; strings with no net savings or no remaining manifest capacity stay literal. Paper-level affiliations reuse the same dictionary. Both dictionaries append entries without changing published indices; dictionary allocation reserves 256 KiB for metadata growth, and all manifests and shards retain the 4 MiB cap. If growing metadata cannot fit a v3 dictionary, that endpoint can carry the lossless v2 or v1 representation instead. Clients prefer v3, then fall back to v2 and v1 if the preferred endpoint is unavailable or invalid; decoded records are verified against the complete archive in Node and Python.
+
+On the saved 8,326-paper snapshot (`collectedAt: 2026-10-20T14:35:21.416Z`), v3 reduces raw shard bytes from 66,577,673 to 46,603,678 (30.00%). Including each format's manifest, raw bytes fall by 26.62%, while independently gzipped HTTP resources fall by 4.41% (11,140,619 to 10,649,085 bytes, gzip level 9). These are measured transport sizes, not a promise that future datasets achieve the same percentage. All 8,326 complete records compare equal in the Node and Python checks.
+
+The browser fetches the versioned public manifest fresh, reuses the last validated library when the manifest is identical, and otherwise loads at most four immutable shards concurrently, verifying byte lengths, SHA-256 hashes, counts and unique paper IDs before showing a complete snapshot. It retains the existing displayed data if any shard fails. One previous generation of shards is retained for clients spanning a deployment. The dashboard still loads the complete library for its existing searches and aggregate statistics. Statistics reuse a Beijing date formatter and cached abstract analysis; auxiliary views load on demand. The overview uses lightweight horizontal bars for interest-direction counts, a task/modality dot matrix, and linear method dot plots, with exact native controls and paper drill-through. Direction bars share a zero-based linear scale and keep exact values visible; the preliminary direction/method combinations retain their area-scaled bubbles. Overlapping labels never imply mutually exclusive shares. Reduced-motion preferences disable chart entrance animations and bar transitions.
+
+Verified paper shards are also retained in the optional `rm-shards-v1` Cache Storage cache, independently
+of personal data. Every cache hit is checked against its declared byte length and SHA-256 before use.
+A new page can reuse unchanged shards without downloading them; changed manifests request only missing
+hashes. Cache denial, quota exhaustion and private mode fall back to network loading. Successful complete
+loads retain the current and preceding cache generations; failed or cancelled loads never publish a
+partial library or prune the last successful generation.
 
 Use `npx tsx scripts/snapshot-cli.ts check data/papers.json` to verify a snapshot, `migrate data/papers.json` to convert a legacy file without fetching sources, or `export data/papers.json /tmp/papers.json` to reconstruct a single temporary JSON for inspection. Never commit the exported monolith. The workflow checks all staged files against GitHub's 100 MiB limit before committing.
 
@@ -84,3 +119,63 @@ Both locale entry pages include static Open Graph and Twitter `summary_large_ima
 Use **Actions → Research monitor sync → Run workflow** for an immediate refresh. Partial source outages publish the available result with source errors. When all sources fail, the workflow publishes validated failure metadata while retaining the library and marks the run failed. Pages output is checked against a deployment marker and public data SHA-256 before success is reported.
 
 The existing homepage publishes from `main` at the repository root. This workflow preserves that setting and unrelated homepage files. GitHub may delay schedules or disable scheduled workflows after prolonged repository inactivity; check the Actions page if updates stop.
+
+### On-demand source snapshots
+
+`data/signals-v2/manifest.json` provides exact build-time GitHub/news overview aggregates, with
+kind/month columnar record shards verified by byte size and hash. The paper landing page does
+not initialize this loader. Source overviews first load only this manifest; opening a library,
+changing its scope, drilling through a statistic, or selecting that source for AI evidence
+loads the relevant kind. Precomputed dates refer to the snapshot day, explicitly labeled in
+the UI. Existing `data/research-signals.json` remains published for compatibility.
+
+Both public loaders conditionally revalidate manifests. The 5-minute scheduler suspends while
+the page is hidden and backs off after failures to 10/20/40/60 minutes. Unchanged ETags avoid
+bodies; unchanged 200 responses preserve data objects but still incur their response bytes.
+
+### Worker and local performance checks
+
+The default paper loader runs in a module Worker: v3 → v2 → v1, SHA-256 verification,
+full decoding/schema validation, sorting, and a shared search/facet index. Searches return
+IDs; the page preserves the existing substring behavior and checks generation/cancellation.
+Unsupported or failed Worker startup uses the same validated loader on the main thread.
+
+For local performance evidence, build normally, then run
+`node --import tsx scripts/instrument-preview.ts` and open
+`http://127.0.0.1:4173/research-monitor/__performance.html` with the preview server running.
+The local-only visible panel records long tasks, event durations and main-thread resource
+requests without sending telemetry. It does not apply CPU throttling, and event samples
+are not field INP. The next build removes the instrumented page; it is never generated by
+the production build command. Initial JS budgets include the startup Worker separately.
+
+### Bundle inspection and view loading
+
+Every production build writes `dist/stats.html` and `dist/bundle-report.json` using the bundler’s own rendered-module metadata. Final chunk sizes and gzip transfer budgets are measured separately in `dist/budget-report.json`; rendered module contributions are not additive gzip measurements. React and Radix are separate stable vendor groups. Non-default source dashboards and their AI settings load on demand; the WebLLM runtime still loads only after an explicit analysis action. Recharts was used only by an unreachable legacy view and has been removed. See `docs/bundle-splitting.md` for the measured before/after and ten largest main modules.
+
+### Shareable view state (P2.4)
+
+Views and filters are encoded in the URL fragment, for example `#/papers/library?track=segmentation&days=90&q=thyroid`. Main view changes add a browser history entry; filter changes replace it. Back/forward restores that entry's filters, and language links preserve the same fragment. Unknown values are normalized safely. Drill links store only the label and origin in the URL; exact IDs stay in a document-local cache bound to the snapshot generation. Reloaded/shared drills return to their originating overview rather than inventing an equivalent subset. No personal notes or API credentials are encoded in the URL.
+
+### Research scope and diagnosis labels (2026-10-21)
+
+The default paper analysis scope now emphasizes computational imaging methods. Clinical imaging and all stored records remain selectable; personal saved papers are not hidden by scope. Scope is rule-based and imperfect. The independent diagnosis-task version removes standalone “diagnosis”, “diagnosed with” and differential-diagnosis mentions as sufficient signals; detection/classification actions or diagnostic-accuracy evidence are required. On the frozen 8,326-record archive, the diagnosis tag changes from 4,257 to 1,666 records, while the other nine direction counts are unchanged. These are classification changes, not a fall in research activity. On the provisional 400-paper AI audit, precision improves 48.9%→79.8%, recall 66.3%→64.4%; the precision target of 85% is still unmet. See `eval/p4-classifier-comparison.md`.
+
+### P4.9：新闻事件与原始报道
+
+新闻库默认按事件线索展示代表标题、发布者名称数、报道数与最早发布时间；展开后保留每篇报道的全文元数据、原文入口与显式论文关联，也可关闭“按事件整理”恢复逐篇浏览。总览保留原始报道计数，并在同一范围显示“去重后事件数”。初始总览使用 manifest 预计算值；旧 manifest 无事件字段时不虚构数量。
+
+事件采用 `NEWS_CLUSTER_VERSION=2026-10-21-v1`：标题 NFKC 规范化、小写、仅移除已识别发布者后缀、忽略标点与空格，计算 Unicode 字符 3-gram 集合的 Jaccard 相似度。阈值 ≥0.6 且原始发布时间跨度 ≤7×24 小时。同组每一对标题都必须达标，避免链式相似把不同事件串联；排序固定为发布时间与 ID，输入顺序不影响结果。缺失/非法日期或少于 10 个字母数字字符的短标题独立保留，不用采集时间填补发布时间。
+
+这是用于减少重复阅读的启发式线索，不是已验证的事件同一性；改写幅度较大的标题可能漏合并，类似标题也可能误合并。“来源数”按发布者名称忽略大小写和首尾空格计数，未合并机构别名，多家转载不代表多次独立效果验证。原始记录从不合并、修改或删除；方向图与时间序列继续按报道计数，事件数仅是并列参考。随筛选范围变化，事件在当前范围重新计算。测试覆盖 7 天边界、不同标题写法、链式误并、未知日期、全部原记录保留及旧 manifest 兼容。实测见 `eval/news-clustering-report.md`。
+
+
+### Shareable browsing context
+
+GitHub and news links restore their overview/library tab, category, relevance, date range,
+date basis, search and sort; maturity/event-grouping switches are preserved too. PI directory
+links restore public author selection, search, direction and sorting. Private watchlist IDs,
+API keys, AI settings and unsubmitted analysis inputs are not serialized. Language changes
+preserve the hash. Navigation creates history entries; filter edits replace the current entry.
+Exact chart-drill IDs remain document-local and bound to the corresponding source's shard
+version. A shared/reloaded drill link returns to its overview instead of silently displaying
+a broader library. Updating news does not invalidate unchanged GitHub drill records.

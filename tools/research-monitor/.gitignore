@@ -6,3 +6,6 @@ dist/
 
 .test-build/
 __pycache__/
+.e2e-dist/
+test-results/
+playwright-report/

@@ -21,7 +21,13 @@ export function createSnapshotLoader<T>(read: (signal: AbortSignal) => Promise<T
       });
       const timer = setTimeout(() => controller.abort(new SnapshotRequestError("timeout")), timeoutMs);
       const request = { controller, promise: null as unknown as Promise<T> };
-      request.promise = Promise.race([Promise.resolve().then(() => { if (controller.signal.aborted) throw controller.signal.reason; return read(controller.signal); }), cancelled]).finally(() => {
+      request.promise = Promise.race([
+        Promise.resolve().then(() => {
+          if (controller.signal.aborted) throw controller.signal.reason;
+          return read(controller.signal);
+        }),
+        cancelled,
+      ]).finally(() => {
         clearTimeout(timer);
         controller.signal.removeEventListener("abort", onAbort);
         if (pending === request) pending = null;
@@ -29,16 +35,23 @@ export function createSnapshotLoader<T>(read: (signal: AbortSignal) => Promise<T
       pending = request;
       return request.promise;
     },
-    cancel() { const request = pending; pending = null; request?.controller.abort(new SnapshotRequestError("cancelled")); },
+    cancel() {
+      const request = pending;
+      pending = null;
+      request?.controller.abort(new SnapshotRequestError("cancelled"));
+    },
   };
 }
 
 /** Collection timestamps identify metadata updates even when record count is unchanged. */
 export function compareSnapshots(previous: MonitorData | null, next: MonitorData) {
-  const ids = new Set(previous?.papers.map(p => p.id));
-  const added = previous ? next.papers.filter(p => !ids.has(p.id)).length : 0;
-  const changed = !previous || previous.collectedAt !== next.collectedAt
-    || previous.lastSuccessfulSync !== next.lastSuccessfulSync
-    || previous.papers.length !== next.papers.length || added > 0;
+  const ids = new Set(previous?.papers.map((p) => p.id));
+  const added = previous ? next.papers.filter((p) => !ids.has(p.id)).length : 0;
+  const changed =
+    !previous ||
+    previous.collectedAt !== next.collectedAt ||
+    previous.lastSuccessfulSync !== next.lastSuccessfulSync ||
+    previous.papers.length !== next.papers.length ||
+    added > 0;
   return { changed, added };
 }

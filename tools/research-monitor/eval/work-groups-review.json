@@ -1,0 +1,1522 @@
+{
+  "seed": "oevryn-work-groups-2026-10-21-v1",
+  "humanReviewed": false,
+  "status": "provisional-ai-reviewed",
+  "groups": [
+    {
+      "id": "c14ab62ff9400f28",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "arxiv:2602.05126",
+          "title": "CLEAR-HPV: Interpretable concept discovery for human-papillomavirus-associated morphology in whole-slide histology",
+          "authors": [
+            "Weiyi Qin",
+            "Yingci Liu-Swetz",
+            "Shiwei Tan",
+            "Hao Wang"
+          ],
+          "source": "arXiv",
+          "status": "preprint",
+          "publishedAt": "2026-02-04",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://arxiv.org/abs/2602.05126v3"
+        },
+        {
+          "id": "doi:10.1016/j.patter.2026.101588",
+          "title": "CLEAR-HPV: Interpretable concept discovery for human-papillomavirus-associated morphology in whole-slide histology.",
+          "authors": [
+            "Weiyi Qin",
+            "Yingci Liu-Swetz",
+            "Shiwei Tan",
+            "Hao Wang"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-06-16",
+          "doi": "10.1016/j.patter.2026.101588",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1016/j.patter.2026.101588"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "arxiv:2602.05126",
+            "doi:10.1016/j.patter.2026.101588"
+          ],
+          "title": "clearhpvinterpretableconceptdiscoveryforhumanpapillomavirusassociatedmorphologyinwholeslidehistology",
+          "firstAuthorSurname": "qin",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "Both records name CLEAR-HPV, the same four authors, attention-weighted MIL concept discovery, ten concepts, and TCGA/CPTAC cohorts; abstract wording changes are consistent with a publication revision.",
+      "evidence": [
+        {
+          "id": "arxiv:2602.05126",
+          "abstract": "Human papillomavirus (HPV) status is a critical determinant of prognosis and treatment response in head and neck and cervical cancers. Although attention-based multiple instance learning (MIL) achieves strong slide-level prediction for HPV-related whole-slide histopathology, it provides limited morphologic interpretability. To address this limitation, we introduce Concept-Level Explainable Attention-guided Representation for HPV (CLEAR-HPV), a framework that restructures the MIL latent space using attention to enable concept discovery without requiring concept labels during training. Operating in an attention-weighted latent space, CLEAR-HPV automatically discovers keratinizing, basaloid, and stromal morphologic concepts, generates spatial concept maps, and represents each slide using a compact concept-fraction vector. CLEAR-HPV's concept-fraction vectors preserve the predictive information of the original MIL embeddings while reducing the high-dimensional feature space (e.g., 1536 dimensions) to only 10 interpretable concepts. CLEAR-HPV generalizes consistently across TCGA-HNSCC, TCGA-CESC, and CPTAC-HNSCC, providing compact, concept-level interpretability through a general, backbone-agnostic framework for attention-based MIL models of whole-slide histopathology."
+        },
+        {
+          "id": "doi:10.1016/j.patter.2026.101588",
+          "abstract": "Human papillomavirus (HPV) status is a critical determinant of prognosis and treatment response in head and neck and cervical cancers. Although attention-based multiple instance learning (MIL) achieves strong slide-level prediction for HPV-related whole-slide histopathology, it provides limited morphologic interpretability. To address this limitation, we introduce concept-level explainable attention-guided representation for HPV (CLEAR-HPV), a framework that restructures the MIL latent space to enable concept discovery without requiring concept labels during training. Within an attention-weighted latent space, CLEAR-HPV automatically discovers keratinizing, basaloid, and stromal morphologic concepts; generates spatial concept maps; and represents each slide with a compact concept-fraction vector. Its concept-fraction vectors preserve the predictive information of the original MIL embeddings while reducing the high-dimensional feature space (e.g., 1,536 dimensions) to only 10 interpretable concepts. CLEAR-HPV demonstrates consistent concept structure across The Cancer Genome Atlas (TCGA)-HNSCC, TCGA-CESC, and Clinical Proteomic Tumor Analysis Consortium (CPTAC) -HNSCC, providing compact, concept-level interpretability through a general, backbone-agnostic framework for attention-based MIL models of whole-slide histopathology."
+        }
+      ]
+    },
+    {
+      "id": "083d1dc27d5beb32",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "doi:10.1136/bmjopen-2026-124868",
+          "title": "Diagnostic accuracy of a DenseNet-121 deep learning algorithm for chest radiograph triage in health assessment applicants: a prospective shadow-mode validation study in Nepal.",
+          "authors": [
+            "Lochan Shrestha",
+            "Dinesh Maharjan",
+            "Uttam Bista"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-01",
+          "doi": "10.1136/bmjopen-2026-124868",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1136/bmjopen-2026-124868"
+        },
+        {
+          "id": "doi:10.64898/2026.06.29.26356847",
+          "title": "Diagnostic accuracy of a DenseNet-121 deep learning algorithm for chest radiograph triage in health assessment applicants: a prospective shadow-mode validation study in Nepal",
+          "authors": [
+            "Shrestha, L.",
+            "Maharjan, D.",
+            "Bista, U."
+          ],
+          "source": "medRxiv",
+          "status": "preprint",
+          "publishedAt": "2026-07-01",
+          "doi": "10.64898/2026.06.29.26356847",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.64898/2026.06.29.26356847"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.1136/bmjopen-2026-124868",
+            "doi:10.64898/2026.06.29.26356847"
+          ],
+          "title": "diagnosticaccuracyofadensenet121deeplearningalgorithmforchestradiographtriageinhealthassessmentapplicantsaprospectiveshadowmodevalidationstudyinnepal",
+          "firstAuthorSurname": "shrestha",
+          "authorJaccard": 0
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "The abbreviated medRxiv names correspond to the same three named authors; both abstracts describe 826 Nepal applicants, TorchXRayVision DenseNet-121, threshold 0.6258 and the same diagnostic metrics. Surname support is corroborated despite name-set Jaccard 0.",
+      "evidence": [
+        {
+          "id": "doi:10.1136/bmjopen-2026-124868",
+          "abstract": "Objectives To evaluate the diagnostic accuracy of a publicly available DenseNet-121 convolutional neural network (TorchXRayVision) for triaging chest radiographs of health assessment applicants at a tertiary hospital in Nepal. Design Prospective, single-centre, shadow-mode diagnostic accuracy validation study. Reported in accordance with the Standards for Reporting of Diagnostic Accuracy Studies (STARD) 2015 checklist and STARD-Artificial Intelligence (AI)/Developmental and Exploratory Clinical Investigations of DEcision support systems driven by Artificial Intelligence (DECIDE-AI) guidelines. Setting Department of Radiology and Imaging, Patan Academy of Health Sciences/Patan Hospital, Lalitpur, Nepal. Participants 826 consecutive health assessment applicants (foreign employment predeparture medical examination and student migration) undergoing chest radiography from 5 June 2026 to 20 June 2026 inclusive (16 days). Two cases were excluded due to Digital Imaging and Communications in Medicine technical failure. Index test DenseNet-121 algorithm (TorchXRayVision library, densenet121-res224-all pretrained weights). A maximum aggregated pathology probability score was derived per radiograph and compared against a post hoc derived threshold of 0.6258 (selected as the highest threshold achieving the prespecified ≥95% sensitivity criterion). Reference standard Single-reader-per-case review by one of three radiologists-two board-certified radiodiagnosticians (LS: 276 cases; DM: 275 cases) and one radiology resident (UB: 275 cases)-each blinded to AI output, using a standardised data collection worksheet capturing binary classification (abnormal/normal) and free-text findings. Results Of 826 radiographs, 41 (4.97%) were classified as abnormal by the reference standard. At the post hoc derived threshold of 0.6258, the DenseNet-121 algorithm achieved: sensitivity 95.12% (95% CI 83.9% to 98.7%), specificity 77.2% (95% CI 74.1% to 80.0%), area under the receiver operating characteristic curve 0.9583 (95% bootstrap CI 0.9225 to 0.9843), negative predictive value (NPV) 99.67% (95% Wilson CI 98.8% to 99.9%), positive predictive value 17.89% (95% Wilson CI 13.4% to 23.5%) and Cohen's κ 0.237 (95% bootstrap CI 0.174 to 0.304). Brier score was 0.3621 (null Brier 0.0472) and expected calibration error was 0.564, confirming calibration failure due to score compression (range 0.52-0.72) despite preserved discrimination. The sensitivity estimate should be interpreted with caution given the relatively small number of reference-standard positives (n=41); the Wilson CI width of 14.8 percentage points (83.9-98.7%) reflects substantial uncertainty around this point estimate. Cross-validated results 10-fold cross-validation yielded bias-corrected sensitivity 95.12% (95% Wilson CI 83.9% to 98.7%; optimism 0.00 pp) and specificity 75.80% (95% Wilson CI 72.7% to 78.7%; optimism+1.40 pp), confirming by internal validation that primary metrics are not materially inflated by circular optimisation; independent external validation was not performed. Conclusions The DenseNet-121 algorithm demonstrated high point-estimate sensitivity and excellent discrimination for chest radiograph triage in a Nepali health-assessment population, supporting its potential as a radiographic abnormality rule-out triage tool (NPV 99.67%); this does not constitute microbiological exclusion of active pulmonary tuberculosis. Systematic score compression-preserved discrimination despite calibration shift-is a quantifiable marker of low- and middle-income country distributional shift. Prospective local calibration studies and independent external validation are warranted before operational deployment."
+        },
+        {
+          "id": "doi:10.64898/2026.06.29.26356847",
+          "abstract": "ObjectivesTo evaluate the diagnostic accuracy of a publicly available DenseNet-121 convolutional neural network (TorchXRayVision) for triaging chest radiographs of health assessment applicants at a tertiary hospital in Nepal. DesignProspective, single-centre, shadow-mode diagnostic accuracy validation study. Reported in accordance with the STARD 2015 checklist and STARD-AI/DECIDE-AI guidelines. SettingDepartment of Radiology and Imaging, Patan Academy of Health Sciences / Patan Hospital, Lalitpur, Nepal. Participants826 consecutive health assessment applicants (foreign employment Pre-Departure Medical Examination and student migration) undergoing chest radiography between 5 June and 20 June 2026. Two cases were excluded due to DICOM technical failure. Index testDenseNet-121 algorithm (TorchXRayVision library, densenet121-res224-all pretrained weights). A maximum aggregated pathology probability score was derived per radiograph and compared against a post-hoc derived threshold of 0.6258 (selected as the highest threshold achieving the pre-specified [≥]95% sensitivity criterion). Reference standardSingle-reader-per-case review by one of three radiologists -- two board-certified radiodiagnosticians (LS: 276 cases; DM: 275 cases) and one radiology resident (UB: 275 cases) -- each blinded to AI output, using a standardised data collection worksheet capturing binary classification (abnormal/normal) and free-text findings. ResultsOf 826 radiographs, 41 (4.97%) were classified as abnormal by the reference standard. At the post-hoc derived threshold of 0.6258, the DenseNet-121 algorithm achieved: sensitivity 95.12% (95% CI 83.9-98.7%), specificity 77.2% (95% CI 74.1-80.0%), area under the receiver operating characteristic curve (AUROC) 0.9583 (95% bootstrap CI 0.9225-0.9843), NPV 99.67% (95% Wilson CI 98.8-99.9%), PPV 17.89% (95% Wilson CI 13.4-23.5%), and Cohens {kappa} 0.237 (95% bootstrap CI 0.174-0.304). Brier score was 0.3621 (null Brier 0.0472) and ECE was 0.564, confirming calibration failure due to score compression (range 0.52-0.72) despite preserved discrimination. Cross-validated resultsTen-fold cross-validation yielded bias-corrected sensitivity 95.12% (95% Wilson CI 83.9-98.7%; optimism 0.00 pp) and specificity 75.80% (95% Wilson CI 72.7-78.7%; optimism +1.40 pp), confirming primary metrics are not materially inflated by circular optimisation. ConclusionsThe DenseNet-121 algorithm demonstrated high sensitivity and excellent discrimination for chest radiograph triage in a Nepali health-assessment population, supporting its potential as a rule-out tool (NPV 99.67%). Systematic score compression--preserved discrimination despite calibration shift--is a quantifiable marker of LMIC distributional shift. Prospective local calibration studies are warranted before operational deployment. Ethics approvalInstitutional Review Committee of Patan Academy of Health Sciences (Protocol No. drs2606052243; expedited review, 5 June 2026). Individual written informed consent was waived by the IRC. WHAT IS ALREADY KNOWN ON THIS TOPICO_LIDeep learning algorithms trained on large chest radiograph datasets achieve radiologist-level performance on well-defined pathology classification tasks in high-income country settings. C_LIO_LIMost prospective validation studies have been conducted in high-income countries using datasets demographically and technically similar to the training data; evidence from South Asian LMIC settings is scarce. C_LIO_LIDistributional shift--where model performance degrades on out-of-distribution populations--is a recognised but incompletely characterised challenge for AI deployment in low- and middle-income countries C_LI WHAT THIS STUDY ADDSO_LIA publicly available DenseNet-121 algorithm (TorchXRayVision) achieved sensitivity >95% and AUROC >0.95 for chest radiograph triage in a Nepali health-assessment population, supporting clinical utility as a rule-out tool with NPV 99.67%. C_LIO_LISystematic score compression (range 0.52-0.72; SD [~]0.026) is identified and quantified as a marker of LMIC distributional shift; critically, this compression did not compromise discrimination (AUROC 0.9583). C_LIO_LIShadow-mode prospective validation of an open-source AI triage tool is shown to be feasible in a resource-limited LMIC radiology department using fully offline, opensource Python infrastructure. C_LI"
+        }
+      ]
+    },
+    {
+      "id": "2b884a1773927824",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "arxiv:2410.14083",
+          "title": "SAMReg: SAM-enabled Image Registration with ROI-based Correspondence",
+          "authors": [
+            "Shiqi Huang",
+            "Tingfa Xu",
+            "Ziyi Shen",
+            "Shaheer Ullah Saeed",
+            "Wen Yan",
+            "Dean Barratt",
+            "Yipeng Hu"
+          ],
+          "source": "arXiv",
+          "status": "preprint",
+          "publishedAt": "2024-10-17",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://arxiv.org/abs/2410.14083v2"
+        },
+        {
+          "id": "doi:10.1109/tmi.2026.3734150",
+          "title": "SAMReg: SAM-enabled Image Registration with ROI-based Correspondence.",
+          "authors": [
+            "Shiqi Huang",
+            "Tingfa Xu",
+            "Ziyi Shen",
+            "Shaheer Ullah Saeed",
+            "Wen Yan",
+            "Dean Barratt",
+            "Yipeng Hu"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-16",
+          "doi": "10.1109/tmi.2026.3734150",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1109/tmi.2026.3734150"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "arxiv:2410.14083",
+            "doi:10.1109/tmi.2026.3734150"
+          ],
+          "title": "samregsamenabledimageregistrationwithroibasedcorrespondence",
+          "firstAuthorSurname": "huang",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "The same seven authors describe SAMReg, ROI correspondence, five registration applications and the same evaluation/implementation. Source and punctuation differ.",
+      "evidence": [
+        {
+          "id": "arxiv:2410.14083",
+          "abstract": "This paper describes a new spatial correspondence representation based on paired regions-of-interest (ROIs), for medical image registration. The distinct properties of the proposed ROI-based correspondence are discussed, in the context of potential benefits in clinical applications following image registration, compared with alternative correspondence-representing approaches, such as those based on sampled displacements and spatial transformation functions. These benefits include a clear connection between learning-based image registration and segmentation, which in turn motivates two cases of image registration approaches using (pre-)trained segmentation networks. Based on the segment anything model (SAM), a vision foundation model for segmentation, we develop a new registration algorithm SAMReg, which does not require any training (or training data), gradient-based fine-tuning or prompt engineering. The proposed SAMReg models are evaluated across five real-world applications, including intra-subject registration tasks with cardiac MR and lung CT, challenging inter-subject registration scenarios with prostate MR and retinal imaging, and an additional evaluation with a non-clinical example with aerial image registration. The proposed methods outperform both intensity-based iterative algorithms and DDF-predicting learning-based networks across tested metrics including Dice and target registration errors on anatomical structures, and further demonstrates competitive performance compared to weakly-supervised registration approaches that rely on fully-segmented training data. Open source code and examples are available at: https://github.com/sqhuang0103/SAMReg.git."
+        },
+        {
+          "id": "doi:10.1109/tmi.2026.3734150",
+          "abstract": "This paper describes a new spatial correspondence representation based on paired regions-of-interest (ROIs), for medical image registration. The distinct properties of the proposed ROI-based correspondence are discussed, in the context of potential benefits in clinical applications following image registration, compared with alternative correspondence-representing approaches, such as those based on sampled displacements and spatial transformation functions. These benefits include a clear connection between learning-based image registration and segmentation, which in turn motivates two cases of image registration approaches using (pre-)trained segmentation networks. Based on the segment anything model (SAM), a vision foundation model for segmentation, we develop a new registration algorithm SAMReg, which does not require any training (or training data), gradient-based fine-tuning or prompt engineering. The proposed SAMReg models are evaluated across five real-world applications, including intra-subject registration tasks with cardiac MR and lung CT, challenging inter-subject registration scenarios with prostate MR and retinal imaging, and an additional evaluation with a non-clinical example with aerial image registration. The proposed methods outperform both intensity-based iterative algorithms and DDF-predicting learning-based networks across tested metrics including Dice and target registration errors on anatomical structures, and further demonstrates competitive performance compared to weakly-supervised registration approaches that rely on fully-segmented training data. Open source code and examples are available at SAMReg."
+        }
+      ]
+    },
+    {
+      "id": "b5c7ed33effc8eec",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "arxiv:2508.16129",
+          "title": "Bridging the Gap in Ophthalmic AI: MM-Retinal-Reason Dataset and OphthaReason Model toward Dynamic Multimodal Reasoning",
+          "authors": [
+            "Ruiqi Wu",
+            "Yuang Yao",
+            "Na Su",
+            "Tengfei Ma",
+            "Chenran Zhang",
+            "Tao Zhou",
+            "Tianyu Mao",
+            "Ye Geng",
+            "Nianfeng Tang",
+            "Xiangyuan Duanmu",
+            "Qiqi Chen",
+            "Geng Chen",
+            "Wen Fan",
+            "Yi Zhou"
+          ],
+          "source": "arXiv",
+          "status": "preprint",
+          "publishedAt": "2025-08-22",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://arxiv.org/abs/2508.16129v5"
+        },
+        {
+          "id": "doi:10.1109/tmi.2026.3733595",
+          "title": "Bridging the Gap in Ophthalmic AI: MM-Retinal-Reason Dataset and OphthaReason Model toward Dynamic Multimodal Reasoning.",
+          "authors": [
+            "Ruiqi Wu",
+            "Yu'ang Yao",
+            "Na Su",
+            "Tengfei Ma",
+            "Chenran Zhang",
+            "Tao Zhou",
+            "Tianyu Mao",
+            "Ye Geng",
+            "Nianfeng Tang",
+            "Xiangyuan Duanmu",
+            "Qiqi Chen",
+            "Geng Chen",
+            "Wen Fan",
+            "Yi Zhou"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-15",
+          "doi": "10.1109/tmi.2026.3733595",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1109/tmi.2026.3733595"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "arxiv:2508.16129",
+            "doi:10.1109/tmi.2026.3733595"
+          ],
+          "title": "bridgingthegapinophthalmicaimmretinalreasondatasetandophthareasonmodeltowarddynamicmultimodalreasoning",
+          "firstAuthorSurname": "wu",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "Both versions describe MM-Retinal-Reason, OphthaReason and UADT with the same author roster and reported comparison; Yuang versus Yu'ang is a punctuation variation.",
+      "evidence": [
+        {
+          "id": "arxiv:2508.16129",
+          "abstract": "Multimodal large language models (MLLMs) have recently demonstrated remarkable reasoning abilities under reinforcement learning (RL) paradigm. However, most existing multimodal medical reasoning models focus on basic reasoning, which refers to shallow inference based on visual feature matching. In contrast, real-world clinical diagnosis extends beyond basic reasoning, demanding complex reasoning that integrates heterogeneous clinical information (such as chief complaints and medical history) with multimodal medical imaging data. To bridge this gap, we introduce MM-Retinal-Reason, an ophthalmic multimodal dataset covering the full spectrum of perception and reasoning. Specifically, it is the first dataset in ophthalmology to encompass both basic and complex reasoning tasks with Chain-of-Thought (CoT) trajectories, aiming to enhance visual-centric reasoning and emulate realistic clinical decision-making. Building upon MM-Retinal-Reason, we propose OphthaReason, the first RL-enhanced ophthalmic multimodal reasoning model with step-by-step reasoning traces. To enable flexible adaptation to both basic and complex reasoning tasks, we further introduce Uncertainty-Aware Dynamic Thinking (UADT), which estimates sample-level uncertainty via entropy and dynamically modulates exploration depth through a shaped advantage mechanism. Comprehensive experiments demonstrate the effectiveness of our model on both basic and complex reasoning tasks, outperforming general-purpose MLLMs, medical MLLMs, RL-based medical MLLMs, and ophthalmic MLLMs by at least 15.47\\%. Project Page: \\href{https://github.com/lxirich/OphthaReason}{link}."
+        },
+        {
+          "id": "doi:10.1109/tmi.2026.3733595",
+          "abstract": "Multimodal large language models (MLLMs) have recently demonstrated remarkable reasoning abilities under reinforcement learning (RL) paradigm. However, most existing multimodal medical reasoning models focus on basic reasoning, which refers to shallow inference based on visual feature matching. In contrast, real-world clinical diagnosis extends beyond basic reasoning, demanding complex reasoning that integrates heterogeneous clinical information (such as chief complaints and medical history) with multimodal medical imaging data. To bridge this gap, we introduce MM-Retinal-Reason, an ophthalmic multimodal dataset covering the full spectrum of perception and reasoning. Specifically, it is the first dataset in ophthalmology to encompass both basic and complex reasoning tasks with Chain-of-Thought (CoT) trajectories, aiming to enhance visual-centric reasoning and emulate realistic clinical decision-making. Building upon MM-Retinal-Reason, we propose OphthaReason, the first RL-enhanced ophthalmic multimodal reasoning model with step-by-step reasoning traces. To enable flexible adaptation to both basic and complex reasoning tasks, we further introduce Uncertainty-Aware Dynamic Thinking (UADT), which estimates sample-level uncertainty via entropy and dynamically modulates exploration depth through a shaped advantage mechanism. Comprehensive experiments demonstrate the effectiveness of our model on both basic and complex reasoning tasks, outperforming general-purpose MLLMs, medical MLLMs, RL-based medical MLLMs, and ophthalmic MLLMs by at least 15.47%. Project Page: link."
+        }
+      ]
+    },
+    {
+      "id": "a6770f71d53ddf68",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "arxiv:2604.15555",
+          "title": "CXR-LT 2026 Challenge: Multi-Center Long-Tailed and Zero Shot Chest X-ray Classification",
+          "authors": [
+            "Hexin Dong",
+            "Yi Lin",
+            "Pengyu Zhou",
+            "Fengnian Zhao",
+            "Alan Clint Legasto",
+            "Juno Cho",
+            "Dohui Kim",
+            "Justin Namuk Kim",
+            "Mingeon Kim",
+            "Sunwoo Kwak",
+            "Gabriel Moyà-Alcover",
+            "Ky Trung Nguyen",
+            "Thanh-Huy Nguyen",
+            "Ha-Hieu Pham",
+            "Huy-Hieu Pham",
+            "Huy Le Pham",
+            "Nikhileswara Rao Sulake",
+            "Aina Tur-Serrano",
+            "Ruichi Zhang",
+            "Ang Zu",
+            "Adam E. Flanders",
+            "Zhiyong Lu",
+            "Ronald M. Summers",
+            "Mingquan Lin",
+            "Hao Chen",
+            "Yuzhe Yang",
+            "George Shih",
+            "Yifan Peng"
+          ],
+          "source": "arXiv",
+          "status": "preprint",
+          "publishedAt": "2026-04-16",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://arxiv.org/abs/2604.15555v2"
+        },
+        {
+          "id": "doi:10.1016/j.media.2026.104340",
+          "title": "CXR-LT 2026 challenge: Multi-center long-tailed and zero shot chest X-ray classification.",
+          "authors": [
+            "Hexin Dong",
+            "Yi Lin",
+            "Pengyu Zhou",
+            "Fengnian Zhao",
+            "Alan Clint Legasto",
+            "Juno Cho",
+            "Dohui Kim",
+            "Justin Namuk Kim",
+            "Mingeon Kim",
+            "Sunwoo Kwak",
+            "Gabriel Moyà-Alcover",
+            "Ky Trung Nguyen",
+            "Thanh-Huy Nguyen",
+            "Ha-Hieu Pham",
+            "Huy-Hieu Pham",
+            "Huy Le Pham",
+            "Nikhileswara Rao Sulake",
+            "Aina Tur-Serrano",
+            "Ruichi Zhang",
+            "Ang Zu",
+            "Adam E Flanders",
+            "Zhiyong Lu",
+            "Ronald M Summers",
+            "Mingquan Lin",
+            "Hao Chen",
+            "Yuzhe Yang",
+            "George Shih",
+            "Yifan Peng"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-24",
+          "doi": "10.1016/j.media.2026.104340",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1016/j.media.2026.104340"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "arxiv:2604.15555",
+            "doi:10.1016/j.media.2026.104340"
+          ],
+          "title": "cxrlt2026challengemulticenterlongtailedandzeroshotchestxrayclassification",
+          "firstAuthorSurname": "dong",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "The same CXR-LT 2026 challenge, 28-author roster, 145,000-image PadChest/NIH benchmark and 30-known/6-unseen-class tasks appear in both abstracts.",
+      "evidence": [
+        {
+          "id": "arxiv:2604.15555",
+          "abstract": "Chest X-ray (CXR) interpretation is hindered by the long-tailed distribution of pathologies and the open-world nature of clinical environments. Existing benchmarks often rely on closed-set classes from a single institution, failing to capture the prevalence of rare diseases or the appearance of novel findings. To address this, we present the CXR-LT challenge. The first event, CXR-LT 2023, established a large-scale benchmark for long-tailed multi-label CXR classification and identified key challenges in rare disease recognition. CXR-LT 2024 further expanded the label space and introduced a zero-shot task to study generalization to unseen findings. Building on the success of CXR-LT 2023 and 2024, this third iteration of the benchmark introduces a multi-center dataset comprising over 145,000 images from PadChest and NIH Chest X-ray datasets. Additionally, all development and test sets in CXR-LT 2026 are annotated by radiologists, providing a more reliable and clinically grounded evaluation than report-derived labels. The challenge defines two core tasks this year: (1) Robust Multi-Label Classification on 30 known classes and (2) Open-World Generalization to 6 unseen (out-of-distribution) rare disease classes. This paper summarizes the overview of the CXR-LT 2026 challenge. We describe the data collection and annotation procedures, analyze solution strategies adopted by participating teams, and evaluate head-versus-tail performance, calibration, and cross-center generalization gaps. Our results show that vision-language foundation models improve both in-distribution and zero-shot performance, but detecting rare findings under multi-center shift remains challenging. Our study provides a foundation for developing and evaluating AI systems in realistic long-tailed and open-world clinical conditions."
+        },
+        {
+          "id": "doi:10.1016/j.media.2026.104340",
+          "abstract": "Chest X-ray (CXR) interpretation is hindered by the long-tailed distribution of pathologies and the open-world nature of clinical environments. Existing benchmarks often rely on closed-set classes from a single institution, failing to capture the prevalence of rare diseases or the appearance of novel findings. To address this, we present the CXR-LT challenge. The first event, CXR-LT 2023, established a large-scale benchmark for long-tailed multi-label CXR classification and identified key challenges in rare disease recognition. CXR-LT 2024 further expanded the label space and introduced a zero-shot task to study generalization to unseen findings. Building on the success of CXR-LT 2023 and 2024, this third iteration of the benchmark introduces a multi-center dataset comprising over 145,000 images from PadChest and NIH Chest X-ray datasets. Additionally, all development and test sets in CXR-LT 2026 are annotated by radiologists, providing a more reliable and clinically grounded evaluation than report-derived labels. The challenge defines two core tasks this year: (1) Robust Multi-Label Classification on 30 known classes and (2) Open-World Generalization to 6 unseen (out-of-distribution) rare disease classes. This paper summarizes the overview of the CXR-LT 2026 challenge. We describe the data collection and annotation procedures, analyze solution strategies adopted by participating teams, and evaluate head-versus-tail performance, calibration, and cross-center generalization gaps. Our results show that vision-language foundation models improve both in-distribution and zero-shot performance, but detecting rare findings under multi-center shift remains challenging. Our study provides a foundation for developing and evaluating AI systems in realistic long-tailed and open-world clinical conditions."
+        }
+      ]
+    },
+    {
+      "id": "f4f93cdb3322bbf7",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "arxiv:2604.27697",
+          "title": "Deep Learning-Based Segmentation of Peritoneal Cancer Index Regions from CT Imaging",
+          "authors": [
+            "Pieter C. Gort",
+            "Lotte J. S. Fleurkens-Ewals",
+            "Lenah D. Kampmeijer",
+            "Anna F. van Herwijnen",
+            "Marion W. Tops-Welten",
+            "Cris H. B. Claessens",
+            "Joost Nederend",
+            "Ignace H. J. T. De Hingh",
+            "Max J. Lahaye",
+            "Misha D. P. Luyer",
+            "Fons van der Sommen"
+          ],
+          "source": "arXiv",
+          "status": "preprint",
+          "publishedAt": "2026-04-30",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://arxiv.org/abs/2604.27697v2"
+        },
+        {
+          "id": "doi:10.1007/s11548-026-03796-9",
+          "title": "Deep learning-based segmentation of peritoneal cancer index regions from CT imaging.",
+          "authors": [
+            "Pieter C Gort",
+            "Lotte J S Fleurkens-Ewals",
+            "Lenah D Kampmeijer",
+            "Anna F van Herwijnen",
+            "Marion W Tops-Welten",
+            "Cris H B Claessens",
+            "Joost Nederend",
+            "Ignace H J T De Hingh",
+            "Max J Lahaye",
+            "Misha D P Luyer",
+            "Fons van der Sommen"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-27",
+          "doi": "10.1007/s11548-026-03796-9",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1007/s11548-026-03796-9"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "arxiv:2604.27697",
+            "doi:10.1007/s11548-026-03796-9"
+          ],
+          "title": "deeplearningbasedsegmentationofperitonealcancerindexregionsfromctimaging",
+          "firstAuthorSurname": "gort",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "The same authors and 62-scan rPCI study compare nnU-Net with Swin UNETR; the same 0.81/0.76 baseline and 0.84 constrained-pipeline Dice support a version relationship.",
+      "evidence": [
+        {
+          "id": "arxiv:2604.27697",
+          "abstract": "Peritoneal metastases (PM) are staged using the surgically determined Peritoneal Cancer Index (sPCI), which requires invasive laparoscopic assessment. Although CT is routinely used for preoperative evaluation, imaging-based assessment of PM extent remains challenging and is often less structured than surgical PCI scoring. A recent consensus study defined radiological PCI (rPCI) regions for cross-sectional imaging. We present the first deep learning approach to automatically segment 13 rPCI regions on CT. 62 contrast-enhanced CT scans were retrospectively collected across the full PCI range. Each scan was annotated into non-overlapping rPCI regions by one researcher, reviewed by a second, with disagreements resolved by a radiologist. Using five-fold cross-validation, we compared nnU-Net and Swin UNETR with Dice, 95th-percentile Hausdorff distance (HD95) and Average Surface Distance (ASD). We introduce an anatomically constrained pipeline that trains on merged super-regions and splits them during post-processing using TotalSegmentator landmarks at the hips and the ligament of Treitz. On this 62-scan cohort, the baseline nnU-Net reached an overall Dice of 0.81 and outperformed Swin UNETR (0.76). The proposed pipeline improved the overall Dice to 0.84 and reduced boundary error (HD95 13.7 to 11.8 mm; ASD 4.1 to 3.4 mm), with the largest gains in the small-bowel regions, approaching the interobserver Dice of 0.87. Automated rPCI region segmentation on CT is feasible and approaches interobserver agreement. Encoding anatomical boundary constraints substantially improves segmentation quality in the most challenging regions. This provides a reproducible foundation for non-invasive, imaging-based PCI assessment. The main limitations are the single-center cohort and the small interobserver subset."
+        },
+        {
+          "id": "doi:10.1007/s11548-026-03796-9",
+          "abstract": "Purpose Peritoneal metastases (PM) are staged using the surgically determined peritoneal cancer index (PCI), which requires invasive laparoscopic assessment. Although CT is routinely used for preoperative evaluation, imaging-based assessment of PM extent remains challenging and is often less structured than surgical PCI scoring. A recent consensus study defined radiological PCI (rPCI) regions for cross-sectional imaging. We present the first deep learning approach to automatically segment 13 rPCI regions on CT. Methods 62 contrast-enhanced CT scans were retrospectively collected across the full PCI range. Each scan was annotated into non-overlapping rPCI regions by one researcher, reviewed by a second, with disagreements resolved by a radiologist. Using fivefold cross-validation, we compared nnU-Net and Swin UNETR with Dice, 95th-percentile Hausdorff distance (HD95) and Average Surface Distance (ASD). We introduce an anatomically constrained pipeline that trains on merged super-regions and splits them during post-processing using TotalSegmentator landmarks at the hips and the ligament of Treitz. Results On the identical 62-scan cohort, the baseline nnU-Net reached an overall Dice of 0.81 and outperformed Swin UNETR (0.76). The proposed anatomically constrained pipeline improved the overall Dice to 0.84 and reduced boundary error (HD95 13.7→11.8 mm; ASD 4.1→3.4 mm), with the largest gains in the small-bowel regions, approaching the interobserver Dice of 0.87. Conclusions Automated rPCI region segmentation on CT is feasible and approaches interobserver agreement. Encoding anatomical boundary constraints substantially improves segmentation quality in the most challenging regions. This provides a reproducible foundation for noninvasive, imaging-based PCI assessment. The main limitations are the single-center cohort and the small interobserver subset. Code is available at: https://github.com/PieterGort/rpci-region-segmentation."
+        }
+      ]
+    },
+    {
+      "id": "f31b899e0cb14f7f",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "arxiv:2609.00704",
+          "title": "FTU-Seek: Foundation Model-Guided Hard-Negative Learning for Sparse Functional Tissue Unit Segmentation",
+          "authors": [
+            "Zonghao Liu",
+            "Lei Su",
+            "Jiguang Yu",
+            "Xuqing Geng",
+            "Louis Shuo Wang",
+            "Jianmin Wang",
+            "Jingfeng Liu"
+          ],
+          "source": "arXiv",
+          "status": "preprint",
+          "publishedAt": "2026-09-01",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://arxiv.org/abs/2609.00704v1"
+        },
+        {
+          "id": "doi:10.3390/biomedicines14091935",
+          "title": "FTU-Seek: Foundation Model-Guided Hard-Negative Learning for Sparse Functional Tissue Unit Segmentation.",
+          "authors": [
+            "Zonghao Liu",
+            "Lei Su",
+            "Jiguang Yu",
+            "Xuqing Geng",
+            "Louis Shuo Wang",
+            "Jianmin Wang",
+            "Jingfeng Liu"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-08-28",
+          "doi": "10.3390/biomedicines14091935",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.3390/biomedicines14091935"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "arxiv:2609.00704",
+            "doi:10.3390/biomedicines14091935"
+          ],
+          "title": "ftuseekfoundationmodelguidedhardnegativelearningforsparsefunctionaltissueunitsegmentation",
+          "firstAuthorSurname": "liu",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "Both records describe FTU-Seek, UNI frozen features, TopK hard negatives and the same TLS/vessel/gland tasks. The published abstract adds numerical results; its earlier source date alone does not refute the shared-work evidence.",
+      "evidence": [
+        {
+          "id": "arxiv:2609.00704",
+          "abstract": "Functional tissue units (FTUs), including tertiary lymphoid structures (TLSs), blood vessels, and glands, encode localized immune, vascular, and epithelial organization in histopathology. Accurate quantification of these structures is important for studying tissue architecture and disease-associated tissue organization. However, FTUs are frequently sparse, heterogeneous, and surrounded by large amounts of morphologically similar background tissue, making automated segmentation in whole-slide images (WSIs) challenging. We therefore developed FTU-Seek, a pathology foundation model-guided framework that treats morphology-aware negative-patch selection as a key component of sparse FTU segmentation. FTU-Seek uses frozen multi-depth features from the UNI pathology foundation model to train a patch-level classifier that distinguishes FTU-containing from FTU-absent tissue. Target-absent patches are subsequently ranked according to their predicted target-containing probabilities, and the highest-scoring hard negatives are selected through a static Top$K$ strategy to construct compact segmentation training sets. The framework was evaluated using five-fold cross-validation and internal test cohorts across TLS, blood-vessel, and gland segmentation tasks, with an additional independent 30-WSI held-out cohort for TLS. Positive-only, all-tissue, random-negative, and matched random Top$K$ sampling strategies served as comparators. Segmentation-derived phenotypes were further explored in external TCGA cohorts."
+        },
+        {
+          "id": "doi:10.3390/biomedicines14091935",
+          "abstract": "Background/Objectives : Functional tissue units (FTUs), including tertiary lymphoid structures (TLSs), blood vessels, and glands, encode localized immune, vascular, and epithelial organization in histopathology. Accurate quantification of these structures is important for studying tissue architecture and disease-associated tissue organization. However, FTUs are frequently sparse, heterogeneous, and surrounded by large amounts of morphologically similar background tissue, making automated segmentation in whole-slide images (WSIs) challenging. We therefore developed FTU-Seek, a pathology foundation model-guided framework that treats morphology-aware negative-patch selection as a key component of sparse FTU segmentation. Methods : FTU-Seek uses frozen multi-depth features from the UNI pathology foundation model to train a patch-level classifier that distinguishes FTU-containing from FTU-absent tissue. Target-absent patches are subsequently ranked according to their predicted target-containing probabilities, and the highest-scoring hard negatives are selected through a static Top K strategy to construct compact segmentation training sets. The framework was evaluated using five-fold cross-validation and internal test cohorts across TLS, blood-vessel, and gland segmentation tasks, with an additional independent 30-WSI held-out cohort for TLS. Positive-only, all-tissue, random-negative, and matched random Top K sampling strategies served as comparators. Segmentation-derived phenotypes were further explored in external TCGA cohorts. Results : The patch-level classifiers achieved mean validation AUCs of 95.92%, 90.11%, and 98.16% for TLS, blood vessel, and gland classification, respectively. For TLS segmentation, the pre-specified Top1000 configuration retained 27.6% of the all-tissue training workload and achieved a slide-level Dice of 76.69 ± 11.89% on the independent 30-WSI held-out cohort. Compared with matched random Top1000 sampling, it improved Dice by 3.72 percentage points (95% CI, 2.05-5.38). Blood vessel and gland segmentation achieved performance approaching all-tissue training while reducing the retained training workload by approximately one-half and one-third, respectively. Compared with matched random sampling, classifier-guided hard-negative selection produced the greatest improvements for sparse and morphologically ambiguous FTUs. Exploratory TCGA analyses further showed associations of TLS phenotypes with overall survival, vascular phenotypes with overall survival and microvascular invasion, and glandular phenotypes with clinicopathological characteristics. Conclusions : FTU-Seek demonstrates that pathology foundation models can support sparse FTU segmentation not only through feature representation but also through morphology-aware construction of segmentation training sets. By prioritizing informative hard negatives, the framework reduces redundant segmentation-training workload while maintaining competitive segmentation performance and supporting quantitative tissue phenotyping from routine histopathology."
+        }
+      ]
+    },
+    {
+      "id": "f24b0aebc63cc939",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "arxiv:2610.08849",
+          "title": "Abdominal Ultrasound Simulation from Semantic Labels using Paired Label-to-Physics-Based Image Translation",
+          "authors": [
+            "Santiago Vitale",
+            "Duilio Deangeli",
+            "Ignacio Larrabide",
+            "José Ignacio Orlando"
+          ],
+          "source": "arXiv",
+          "status": "preprint",
+          "publishedAt": "2026-10-02",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://arxiv.org/abs/2610.08849v1"
+        },
+        {
+          "id": "doi:10.1007/s10439-026-04411-3",
+          "title": "Abdominal Ultrasound Simulation from Semantic Labels Using Paired Label-to-Physics-Based Image Translation.",
+          "authors": [
+            "Santiago Vitale",
+            "Duilio Deangeli",
+            "Ignacio Larrabide",
+            "José Ignacio Orlando"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-16",
+          "doi": "10.1007/s10439-026-04411-3",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1007/s10439-026-04411-3"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "arxiv:2610.08849",
+            "doi:10.1007/s10439-026-04411-3"
+          ],
+          "title": "abdominalultrasoundsimulationfromsemanticlabelsusingpairedlabeltophysicsbasedimagetranslation",
+          "firstAuthorSurname": "vitale",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "The four authors, two-stage semantic-label/physics US synthesis, SDM versus Pix2Pix and shared numerical metrics agree across records.",
+      "evidence": [
+        {
+          "id": "arxiv:2610.08849",
+          "abstract": "Purpose: Current abdominal ultrasound (US) simulation methods often require CT-based anatomical references for ray-casting, limiting deformation and pathology variability. We propose a learning-based pipeline trained to predict physics-based images derived from CT scans from semantic labels, enabling controlled simulations without patient-specific CT volumes at inference time. Methods: We introduce a two-stage pipeline that maps anatomical segmentations to realistic US images through a simplified US image. Stage~I synthesizes this image from semantic labels using models trained on CT-based ray-casting outputs. Stage~II refines it into a realistic US scan using anatomically guided unpaired translation. Deformations and pathologies are generated by editing anatomical maps. Results: We evaluated Pix2Pix and the Semantic Diffusion Model (SDM) in Stage~I, followed by segmentation-guided CycleGAN (SG-CycleGAN) refinement in Stage~II. SDM significantly outperformed Pix2Pix in morphological metrics, including MAE (19.85 vs. 21.65), SSIM (0.28 vs. 0.24), and mIoU (0.43 vs. 0.29), whereas Pix2Pix yielded better perceptual point estimates (LPIPS: 0.17 vs. 0.19; FID: 0.32 vs. 0.37; KID: 0.25 vs. 0.48). Conclusion: Training paired generative models with physics-based supervision enables approximation of CT-derived ray-casting outputs at inference time directly from semantic labels. Although the pipeline does not require patient-specific CT volumes at inference time, CT-derived segmentations and ray-casting simulations remain necessary to train Stage~I. Once trained, the framework enables controllable healthy and pathological simulations through semantic-map modification."
+        },
+        {
+          "id": "doi:10.1007/s10439-026-04411-3",
+          "abstract": "Purpose Current abdominal ultrasound (US) simulation methods often require CT-based anatomical references for ray-casting, limiting deformation, and pathology variability. We propose a learning-based pipeline trained to predict physics-based images derived from CT scans from semantic labels, enabling controlled simulations without patient-specific CT volumes at inference time. Methods We introduce a two-stage pipeline that maps anatomical segmentations to realistic US images through a simplified US image. Stage I synthesizes this image from semantic labels using models trained on CT-based ray-casting outputs. Stage II refines it into a realistic US scan using anatomically guided unpaired translation. Deformations and pathologies are generated by editing anatomical maps. Results We evaluated Pix2Pix and the Semantic Diffusion Model (SDM) in Stage I, followed by segmentation-guided CycleGAN (SG-CycleGAN) refinement in Stage II. SDM significantly outperformed Pix2Pix in morphological metrics, including MAE ↓ (19.85 vs. 21.65), SSIM ↑ (0.28 vs. 0.24), and mIoU ↑ (0.43 vs. 0.29), whereas Pix2Pix yielded better perceptual point estimates (LPIPS ↓ : 0.17 vs. 0.19; FID ↓ : 0.32 vs. 0.37; KID ↓ : 0.25 vs. 0.48). Conclusion Training paired generative models with physics-based supervision enables approximation of CT-derived ray-casting outputs at inference time directly from semantic labels. Although the pipeline does not require patient-specific CT volumes at inference time, CT-derived segmentations and ray-casting simulations remain necessary to train Stage I. Once trained, the framework enables controllable healthy and pathological simulations through semantic map modification."
+        }
+      ]
+    },
+    {
+      "id": "e50191c8959bec91",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "arxiv:2609.20340",
+          "title": "FreqDINO++: A Frequency-Guided Multi-Task Routing Vision Foundation Model for Universal Ultrasound Analysis",
+          "authors": [
+            "Qing Xu",
+            "Yixuan Zhang",
+            "Yue Li",
+            "Xiangjian He",
+            "Qian Zhang",
+            "Mainul Haque",
+            "Rong Qu",
+            "Wenting Duan",
+            "Jieyun Bai",
+            "Zhen Chen"
+          ],
+          "source": "arXiv",
+          "status": "preprint",
+          "publishedAt": "2026-09-17",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://arxiv.org/abs/2609.20340v1"
+        },
+        {
+          "id": "doi:10.1109/tbme.2026.3733527",
+          "title": "FreqDINO++: A Frequency-Guided Multi-Task Routing Vision Foundation Model for Universal Ultrasound Analysis.",
+          "authors": [
+            "Qing Xu",
+            "Yixuan Zhang",
+            "Yue Li",
+            "Xiangjian He",
+            "Qian Zhang",
+            "Mainul Haque",
+            "Rong Qu",
+            "Wenting Duan",
+            "Jieyun Bai",
+            "Zhen Chen"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-15",
+          "doi": "10.1109/tbme.2026.3733527",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1109/tbme.2026.3733527"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "arxiv:2609.20340",
+            "doi:10.1109/tbme.2026.3733527"
+          ],
+          "title": "freqdinoafrequencyguidedmultitaskroutingvisionfoundationmodelforuniversalultrasoundanalysis",
+          "firstAuthorSurname": "xu",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "The ten authors, FreqDINO++ modules (MR-Adapter/F2-Enhancer/TC-Decoder) and 27 clinical tasks agree. Publication and preprint dates are retained separately.",
+      "evidence": [
+        {
+          "id": "arxiv:2609.20340",
+          "abstract": "Ultrasound image analysis plays a crucial role in cancer screening and prenatal diagnosis, yet comprehensive assessment requires jointly addressing tasks such as lesion segmentation and benign-malignant classification. While recent vision foundation models have shown remarkable universal representations, unlocking their potential for ultrasound is bottlenecked by the considerable domain gap from natural images. Existing methods typically fine-tune heavy vision encoders for isolated tasks, incurring substantial computational overhead while overlooking the underlying commonalities across heterogeneous tasks. In this work, we propose FreqDINO++, a frequency-guided multi-task routing vision foundation model for universal ultrasound analysis. We first introduce a Multi-task Routing Adapter (MR-Adapter) to support parameter-efficient integration of task-common and task-specific knowledge, a Frequency-aware Feature Enhancer (F$^2$-Enhancer) is then designed to capture the rich multi-scale frequency characteristics of ultrasound images, and a Task-aligned Collaborative Decoder (TC-Decoder) is devised to promote collaboration between dense and global prediction tasks through global-local token interaction. Extensive experiments on large-scale multi-task and external single-task ultrasound benchmarks demonstrate that FreqDINO++ consistently outperforms strong baselines and recent foundation models across 27 diverse clinical task scenarios, while also showing promising generalization to unseen data. The code is at https://github.com/MingLang-FD/FreqDINO-Plus."
+        },
+        {
+          "id": "doi:10.1109/tbme.2026.3733527",
+          "abstract": "Ultrasound image analysis plays a crucial role in cancer screening and prenatal diagnosis, yet comprehensive assessment requires jointly addressing tasks such as lesion segmentation and benign-malignant classification. While recent vision foundation models have shown remarkable universal representations, unlocking their potential for ultrasound is bottlenecked by the considerable domain gap from natural images. Existing methods typically fine-tune heavy vision encoders for isolated tasks, incurring substantial computational overhead while overlooking the underlying commonalities across heterogeneous tasks. In this work, we propose FreqDINO++, a frequency-guided multi-task routing vision foundation model for universal ultrasound analysis. We first introduce a Multi-task Routing Adapter (MR-Adapter) to support parameter-efficient integration of task-common and task-specific knowledge, a Frequency-aware Feature Enhancer (F$^{2}$-Enhancer) is then designed to capture the rich multi-scale frequency characteristics of ultrasound images, and a Task-aligned Collaborative Decoder (TC-Decoder) is devised to promote collaboration between dense and global prediction tasks through global-local token interaction. Extensive experiments on large-scale multi-task and external single-task ultrasound benchmarks demonstrate that FreqDINO++ consistently outperforms strong baselines and recent foundation models across 27 diverse clinical task scenarios, while also showing promising generalization to unseen data."
+        }
+      ]
+    },
+    {
+      "id": "421722ada6c7c06c",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": true,
+      "records": [
+        {
+          "id": "doi:10.1109/jbhi.2026.3734932",
+          "title": "Comparative Analysis of Muscle Fascia Tracking Algorithms for Real-Time Muscle Monitoring using Wearable Ultrasound.",
+          "authors": [
+            "Erica L King",
+            "Connor Delaney",
+            "Morgan A Lamarre",
+            "Amad Qureshi",
+            "Siddhartha Sikdar",
+            "Qi Wei",
+            "Parag V Chitnis"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-16",
+          "doi": "10.1109/jbhi.2026.3734932",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1109/jbhi.2026.3734932"
+        },
+        {
+          "id": "doi:10.64898/2026.07.30.26359276",
+          "title": "Comparative Analysis of Muscle Fascia Tracking Algorithms for Real-Time Muscle Monitoring using Wearable Ultrasound",
+          "authors": [
+            "King, E. L.",
+            "Delaney, C. M.",
+            "Lamarre, M. A.",
+            "Qureshi, A.",
+            "Sikdar, S.",
+            "Wei, Q.",
+            "Chitnis, P. V."
+          ],
+          "source": "medRxiv",
+          "status": "preprint",
+          "publishedAt": "2026-08-02",
+          "doi": "10.64898/2026.07.30.26359276",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.64898/2026.07.30.26359276"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.1109/jbhi.2026.3734932",
+            "doi:10.64898/2026.07.30.26359276"
+          ],
+          "title": "comparativeanalysisofmusclefasciatrackingalgorithmsforrealtimemusclemonitoringusingwearableultrasound",
+          "firstAuthorSurname": "king",
+          "authorJaccard": 0
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "The full and abbreviated author rosters align; both abstracts report 572 M-mode scans, five fascia trackers and identical error/correlation figures. This corroborates surname matching despite name-set Jaccard 0.",
+      "evidence": [
+        {
+          "id": "doi:10.1109/jbhi.2026.3734932",
+          "abstract": "Musculoskeletal ultrasound (MSK-US) enables real-time imaging of muscle structure and function, and wearable ultrasound (WUS) has extended this capability to dynamic movement tasks. Accurate tracking of muscle fascia displacement in M-mode WUS images is essential for quantifying muscle function, yet the relative performance of existing fascia-tracking algorithms remains uncharacterized. This study directly compares five fascia-tracking algorithms: Maximum Pixel Intensity (MPI), Muscle Boundary Tracking Algorithm (MBTA), Principal Component Analysis (PCA), Composite-Factorization PCA (CF-PCA), and U-Net segmentation, against expert-annotated ground truth to identify which approach best supports wearable muscle-monitoring applications. A total of 572 M-mode ultrasound images were collected during isometric quadricep activations (QA) and squats (SQ) using a multi-site WUS system with transducers positioned on the vastus lateralis (VL), rectus femoris (RF), and vastus medialis oblique (VMO). Fascia tracking using U-Net segmentation exhibited the lowest mean absolute error (median QA = 0.57, median SQ = 1.22; p<0.05), functional range not statistically different from expert traces (QA p = 0.33; SQ p = 1) and the most accurate estimates of functional error (median QA = -0.21; median SQ = -0.65; p<0.05). PCA-based methods demonstrated the highest correlation with the expert traces (PCA median QA = 0.88; CF-PCA median QA = 0.88; PCA median SQ = 0.78; CF-PCA median SQ = 0.75; p<0.005), reflecting superior tracking of relative contraction patterns. These results indicate U-Net segmentation is best suited for applications requiring precise fascia-depth estimation when labeled training data are available, while PCA-based methods are preferable for tracking relative contraction patterns without supervised training, informing algorithm selection for wearable neuromuscular monitoring in clinical and performance settings."
+        },
+        {
+          "id": "doi:10.64898/2026.07.30.26359276",
+          "abstract": "Musculoskeletal ultrasound (MSK-US) enables real-time imaging of muscle structure and function, and wearable ultrasound (WUS) has extended this capability to dynamic movement tasks. Accurate tracking of muscle fascia displacement in M-mode WUS images is essential for quantifying muscle function, yet the relative performance of existing fascia-tracking algorithms remains uncharacterized. This study directly compares five fascia-tracking algorithms: Maximum Pixel Intensity (MPI), Muscle Boundary Tracking Algorithm (MBTA), Principal Component Analysis (PCA), Composite-Factorization PCA (CF-PCA), and U-Net segmentation, against expert-annotated ground truth to identify which approach best supports wearable muscle-monitoring applications. A total of 572 M-mode ultrasound images were collected during isometric quadricep activations (QA) and squats (SQ) using a multi-site WUS system with transducers positioned on the vastus lateralis (VL), rectus femoris (RF), and vastus medialis oblique (VMO). Fascia tracking using U-Net segmentation exhibited the lowest mean absolute error (median QA=0.57, median SQ=1.22; p<0.05), functional range not statistically different from expert traces (QA p=0.33; SQ p=1) and the most accurate estimates of functional error (median QA=-0.21; median SQ=-0.65; p<0.05). PCA-based methods demonstrated the highest correlation with the expert traces (PCA median QA=0.88; CF-PCA median QA=0.88; PCA median SQ=0.78; CF-PCA median SQ=0.75; p<0.005), reflecting superior tracking of relative contraction patterns. These results indicate U-Net segmentation is best suited for applications requiring precise fascia-depth estimation when labeled training data are available, while PCA-based methods are preferable for tracking relative contraction patterns without supervised training, informing algorithm selection for wearable neuromuscular monitoring in clinical and performance settings."
+        }
+      ]
+    },
+    {
+      "id": "5b330d5aa19fad88",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "doi:10.3390/diagnostics16193247",
+          "title": "Quantitative 0.55 T MRI of the Infraclavicular Brachial Plexus: Topography and Neurovascular Morphometry Relevant to Infraclavicular Block.",
+          "authors": [
+            "Petar-Preslav Petrov",
+            "Delyan Dimitrov",
+            "Tanya Kitova",
+            "Pavel Timonov",
+            "Antoaneta Fasova",
+            "Darina Barbutska",
+            "Nikoleta Dimitrova",
+            "Yasen Getsov",
+            "Milena Sandeva"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-08",
+          "doi": "10.3390/diagnostics16193247",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.3390/diagnostics16193247"
+        },
+        {
+          "id": "epmc:PMC:PMC13664571",
+          "title": "Quantitative 0.55 T MRI of the Infraclavicular Brachial Plexus: Topography and Neurovascular Morphometry Relevant to Infraclavicular Block",
+          "authors": [
+            "Petar-Preslav Petrov",
+            "Delyan Dimitrov",
+            "Tanya Kitova",
+            "Pavel Timonov",
+            "Antoaneta Fasova",
+            "Darina Barbutska",
+            "Nikoleta Dimitrova",
+            "Yasen Getsov",
+            "Milena Sandeva"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-01",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://europepmc.org/article/PMC/PMC13664571"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.3390/diagnostics16193247",
+            "epmc:PMC:PMC13664571"
+          ],
+          "title": "quantitative055tmrioftheinfraclavicularbrachialplexustopographyandneurovascularmorphometryrelevanttoinfraclavicularblock",
+          "firstAuthorSurname": "petrov",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "metadata_only_missing_abstract",
+      "aiReason": "Exact specific title and all nine authors agree for the 0.55 T brachial-plexus study. Only the DOI record has an abstract; metadata supports a possible duplicate, but content equivalence cannot be checked on both records.",
+      "evidence": [
+        {
+          "id": "doi:10.3390/diagnostics16193247",
+          "abstract": "Background/Objectives: Quantitative MRI data describing the infraclavicular brachial plexus cords together with both axillary vessels remain limited. This study characterized artery-centered cord topography and neurovascular morphometry on 0.55 T MRI and discussed the potential anatomical implications for infraclavicular block. Methods: This prospective cross-sectional imaging study included 100 adults undergoing clinically indicated MRI. One infraclavicular region was analyzed per participant. Within the mid-infraclavicular retropectoral region posterior to the pectoralis minor muscle, the axial T1-weighted image providing the clearest simultaneous visualization of the lateral cord (LC), medial cord (MC), posterior cord (PC), axillary artery (AA), and axillary vein (AV) was selected. The LC, MC, PC, and AV were mapped using a 12-sector clock-face model centered on the AA, and center-to-center intercord, cord-to-AA, and cord-to-AV distances were measured. Results: The LC was most frequently located at 11 o'clock (62%), the MC at 3 o'clock (41%), the PC at 6 o'clock (40%), and the AV at 2 o'clock (71.1%; n = 90). Mean intercord distances were 11.73 ± 3.17 mm (LC-MC), 11.09 ± 2.43 mm (LC-PC), and 8.13 ± 2.83 mm (MC-PC). Mean cord-to-AA distances were 6.33 ± 1.69, 7.36 ± 2.03, and 7.13 ± 1.83 mm for LC, MC, and PC, respectively. In 92 participants with complete cord-to-AV measurements, corresponding means were 17.01 ± 5.01, 9.61 ± 2.90, and 16.54 ± 3.87 mm. Conclusions: At the mid-infraclavicular retropectoral level, 0.55 T MRI demonstrated a structured but non-equidistant neurovascular arrangement. These imaging-derived data provide quantitative anatomical reference information but are not procedural safety margins or predictors of block success."
+        },
+        {
+          "id": "epmc:PMC:PMC13664571",
+          "abstract": ""
+        }
+      ]
+    },
+    {
+      "id": "1766d86c891f4b52",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "doi:10.3390/biomedicines14091893",
+          "title": "Feasibility of Conventional Abdominal Ultrasound for Monitoring Tumor Size After Stereotactic Body Radiotherapy for Hepatocellular Carcinoma.",
+          "authors": [
+            "Masayuki Ueno",
+            "Yohei Yamanouchi",
+            "Hideki Hanazawa",
+            "Hiroyuki Takabatake",
+            "Takahisa Kayahara",
+            "Youichi Morimoto",
+            "Satoshi Itasaka",
+            "Hirokazu Mouri",
+            "Motowo Mizuno"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-08-25",
+          "doi": "10.3390/biomedicines14091893",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.3390/biomedicines14091893"
+        },
+        {
+          "id": "epmc:PMC:PMC13604174",
+          "title": "Feasibility of Conventional Abdominal Ultrasound for Monitoring Tumor Size After Stereotactic Body Radiotherapy for Hepatocellular Carcinoma",
+          "authors": [
+            "Masayuki Ueno",
+            "Yohei Yamanouchi",
+            "Hideki Hanazawa",
+            "Hiroyuki Takabatake",
+            "Takahisa Kayahara",
+            "Youichi Morimoto",
+            "Satoshi Itasaka",
+            "Hirokazu Mouri",
+            "Motowo Mizuno"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-08-25",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://europepmc.org/article/PMC/PMC13604174"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.3390/biomedicines14091893",
+            "epmc:PMC:PMC13604174"
+          ],
+          "title": "feasibilityofconventionalabdominalultrasoundformonitoringtumorsizeafterstereotacticbodyradiotherapyforhepatocellularcarcinoma",
+          "firstAuthorSurname": "ueno",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "metadata_only_missing_abstract",
+      "aiReason": "Exact specific title and all nine authors agree for post-SBRT HCC ultrasound monitoring. The PMC record lacks an abstract; retain this as metadata-supported rather than content-confirmed.",
+      "evidence": [
+        {
+          "id": "doi:10.3390/biomedicines14091893",
+          "abstract": "Background/Objectives : Stereotactic body radiotherapy (SBRT) is increasingly used for hepatocellular carcinoma (HCC) that is unsuitable for surgery, radiofrequency ablation (RFA), or transplantation. Although current evidence for imaging assessment after SBRT is largely based on contrast-enhanced computed tomography (CT) or magnetic resonance imaging (MRI), repeated contrast-enhanced imaging may be difficult to perform at every routine follow-up visit. Thus, we evaluated whether conventional abdominal ultrasound (US) can monitor tumor size after SBRT for HCC. Methods : We retrospectively reviewed 67 consecutive patients who underwent SBRT for HCC at our institution between January 2015 and October 2020. After excluding patients treated for local recurrence after RFA or transarterial chemoembolization, those whose lesions were not visible on pretreatment US, and those without follow-up US within one year, 32 patients with 32 nodules were analyzed. Tumor visibility and size changes on US were assessed before treatment and at <6, 6-12, and 12-18 months after SBRT. Results : The treated lesion was identified as a discrete nodule on US in 100% (15/15; 95% CI, 78.2-100%), 75.0% (18/24; 95% CI, 53.3-90.2%), and 50.0% (8/16; 95% CI, 24.7-75.3%) of examinations at <6, 6-12, and 12-18 months, respectively. In all cases in which the lesion was no longer measurable on US, contrast-enhanced CT/MRI showed complete or partial response. Local tumor progression occurred in one patient (3.1%) during a median follow-up of 24.1 months; in this patient, interval enlargement was first detected by US 3.7 months after SBRT and was subsequently confirmed by dynamic CT/MRI. Conclusions : These descriptive findings suggest that in selected patients with lesions clearly visible on pretreatment US, conventional abdominal US may provide complementary morphologic information during the first year after SBRT when used alongside periodic dynamic CT/MRI. Prospective validation is required before routine implementation."
+        },
+        {
+          "id": "epmc:PMC:PMC13604174",
+          "abstract": ""
+        }
+      ]
+    },
+    {
+      "id": "ab884d455bd580d4",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "doi:10.7759/cureus.115376",
+          "title": "Accuracy of Ultrasound in Estimating Uterine Fibroid Size: A Correlative Study With Intraoperative Findings.",
+          "authors": [
+            "Viral B Makwana",
+            "Prafull D Patil",
+            "Abhay S Chandibhamar"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-08-28",
+          "doi": "10.7759/cureus.115376",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.7759/cureus.115376"
+        },
+        {
+          "id": "epmc:PMC:PMC13617145",
+          "title": "Accuracy of Ultrasound in Estimating Uterine Fibroid Size: A Correlative Study With Intraoperative Findings",
+          "authors": [
+            "Viral B Makwana",
+            "Prafull D Patil",
+            "Abhay S Chandibhamar"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-29",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://europepmc.org/article/PMC/PMC13617145"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.7759/cureus.115376",
+            "epmc:PMC:PMC13617145"
+          ],
+          "title": "accuracyofultrasoundinestimatinguterinefibroidsizeacorrelativestudywithintraoperativefindings",
+          "firstAuthorSurname": "makwana",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "metadata_only_missing_abstract",
+      "aiReason": "Exact title and the same three authors identify a fibroid-size correlation study. The PMC abstract is missing, so two-sided content confirmation remains unavailable.",
+      "evidence": [
+        {
+          "id": "doi:10.7759/cureus.115376",
+          "abstract": "Background Uterine fibroids are the most common benign tumors of the female reproductive tract and frequently require surgical management. Accurate preoperative estimation of fibroid size is essential for selecting the optimal surgical approach, anticipating operative complexity, and improving surgical outcomes. Ultrasonography remains the most widely used first-line imaging modality because of its accessibility, cost-effectiveness, and noninvasive nature. However, its ability to accurately reflect true intraoperative fibroid size may vary. Objective To evaluate the accuracy of preoperative ultrasonography in estimating uterine fibroid size by comparing ultrasonographic measurements with intraoperative findings. Materials and methods This prospective observational correlational study included women diagnosed with uterine fibroids who were scheduled for elective myomectomy or hysterectomy at a tertiary care center. The maximum diameter of the dominant fibroid measured on preoperative ultrasonography was compared with the corresponding intraoperative measurement, which served as the reference standard. Statistical analysis included the paired t-test, Pearson's correlation coefficient, intraclass correlation coefficient (ICC), Bland-Altman analysis, and subgroup analysis according to fibroid size and type. Results Eighty participants with complete paired measurements were included in the analysis. The mean ultrasonographic fibroid diameter was 5.20 ± 2.10 cm, compared with an intraoperative diameter of 5.52 ± 2.18 cm. Ultrasonography underestimated fibroid size by a mean of 0.32 ± 0.88 cm. This difference was statistically significant (t(79) = -3.25, p = 0.0017), with a 95% confidence interval (CI) ranging from -0.52 to -0.12 cm. Ultrasonographic and intraoperative measurements demonstrated strong positive correlation and excellent agreement. Overall, 62 (77.5%) participants had ultrasonographic measurements within ±1 cm of the intraoperative measurement. Greater measurement discrepancies were observed among intramural fibroids. Conclusion Preoperative ultrasonography demonstrated strong correlation and excellent agreement with intraoperative measurements of uterine fibroid size. Although it showed a small but statistically significant tendency to underestimate fibroid size, particularly in intramural fibroids, ultrasonography remains a reliable first-line imaging modality for routine preoperative assessment. Awareness of its limitations may facilitate more accurate surgical planning, and supplementary imaging may be considered in selected complex cases."
+        },
+        {
+          "id": "epmc:PMC:PMC13617145",
+          "abstract": ""
+        }
+      ]
+    },
+    {
+      "id": "259df341fca34e7c",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "doi:10.1002/mp.70624",
+          "title": "Context-informed personalized segmentation from radiology reports: A fully automated framework for long-term liver tumor follow-up.",
+          "authors": [
+            "Jaehee Chun",
+            "McKell Woodland",
+            "Austin Castelo",
+            "Caleb O'Connor",
+            "Mais Altaie",
+            "Aashish Gupta",
+            "Shanli Ding",
+            "Allyson Nguyen",
+            "Eugene J Koay",
+            "Kristy K Brock"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-01",
+          "doi": "10.1002/mp.70624",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1002/mp.70624"
+        },
+        {
+          "id": "epmc:PMC:PMC13578125",
+          "title": "Context‐informed personalized segmentation from radiology reports: A fully automated framework for long‐term liver tumor follow‐up",
+          "authors": [
+            "Jaehee Chun",
+            "McKell Woodland",
+            "Austin Castelo",
+            "Caleb O'Connor",
+            "Mais Altaie",
+            "Aashish Gupta",
+            "Shanli Ding",
+            "Allyson Nguyen",
+            "Eugene J Koay",
+            "Kristy K Brock"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-01",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://europepmc.org/article/PMC/PMC13578125"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.1002/mp.70624",
+            "epmc:PMC:PMC13578125"
+          ],
+          "title": "contextinformedpersonalizedsegmentationfromradiologyreportsafullyautomatedframeworkforlongtermlivertumorfollowup",
+          "firstAuthorSurname": "chun",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "metadata_only_missing_abstract",
+      "aiReason": "Punctuation-normalized title and ten authors agree for report-informed longitudinal liver segmentation. Only the DOI record describes the 171/41-patient cohorts; missing PMC abstract limits confirmation.",
+      "evidence": [
+        {
+          "id": "doi:10.1002/mp.70624",
+          "abstract": "Purpose Personalized segmentation has been shown to improve performance over generalized models in follow-up imaging; however, its robustness across large temporal gaps remains unclear. We propose a fully automated, context-informed personalization framework that integrates radiology report-derived clinical context with imaging features to improve longitudinal liver tumor segmentation. Methods This retrospective study included 171 patients for generalized model training and 41 longitudinal patients with follow-up CT scans acquired 3-15 months after baseline for personalization and evaluation. We developed a U-Net-based vision-language segmentation framework that automatically summarizes free-text radiology reports, encodes them into language embeddings, and integrates them into intermediate image features to provide clinical context. A generalized model was trained using paired CT-report data. For each longitudinal patient, personalization was performed at the 3-month follow-up using either image-only input (vision-only personalization) or paired image-report input (context-informed personalization). Models were then evaluated on subsequent 6-15-month follow-up scans without further adaptation. Patients were stratified into Stable and Dynamic cohorts based on relative GTV volume variability. Performance was assessed using the Dice similarity coefficient (DSC) and LogPenalty Score (LPS), with additional ablation studies examining language models and report components. Results In the Dynamic cohort, vision-only personalization exhibited diminishing gains at later follow-up, whereas context-informed personalization maintained statistically significant improvements in ΔLPS at 9-15 months (p < 0.05). In the Stable cohort, both personalization strategies showed sustained performance with comparable segmentation accuracy, indicating that incorporating report-derived clinical context did not degrade performance in cases with limited anatomical variability. Ablation studies demonstrated that domain-specific encoder-based language models (BioClinicalBERT) outperformed larger generative models and that effective context integration did not require complex architectural modifications. Conclusion Incorporating report-derived clinical context improves the longitudinal robustness of personalized liver tumor segmentation, particularly in patients with dynamic tumor evolution. These findings suggest that clinically grounded language representations can stabilize personalization across extended follow-up while enabling fully automated and scalable deployment."
+        },
+        {
+          "id": "epmc:PMC:PMC13578125",
+          "abstract": ""
+        }
+      ]
+    },
+    {
+      "id": "6c7f425b0e3bb8a9",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "doi:10.21037/jtd-2026-1263",
+          "title": "Development and internal validation of a clinicopathological and CT radiomics based prediction model for extracranial distant metastasis after radical resection in early-stage non-small cell lung cancer.",
+          "authors": [
+            "Yimei Zhang",
+            "Biwei Liu",
+            "Qiyu Nian",
+            "Yicong Chen",
+            "Liying Yang",
+            "Xiaorong Sun",
+            "Ligang Xing"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-23",
+          "doi": "10.21037/jtd-2026-1263",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.21037/jtd-2026-1263"
+        },
+        {
+          "id": "epmc:PMC:PMC13655902",
+          "title": "Development and internal validation of a clinicopathological and CT radiomics based prediction model for extracranial distant metastasis after radical resection in early-stage non-small cell lung cancer",
+          "authors": [
+            "Yimei Zhang",
+            "Biwei Liu",
+            "Qiyu Nian",
+            "Yicong Chen",
+            "Liying Yang",
+            "Xiaorong Sun",
+            "Ligang Xing"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-23",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://europepmc.org/article/PMC/PMC13655902"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.21037/jtd-2026-1263",
+            "epmc:PMC:PMC13655902"
+          ],
+          "title": "developmentandinternalvalidationofaclinicopathologicalandctradiomicsbasedpredictionmodelforextracranialdistantmetastasisafterradicalresectioninearlystagenonsmallcelllungcancer",
+          "firstAuthorSurname": "zhang",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "metadata_only_missing_abstract",
+      "aiReason": "Exact specific title and seven authors agree for postoperative distant-metastasis CT radiomics. The PMC record lacks an abstract, so support is bibliographic metadata only.",
+      "evidence": [
+        {
+          "id": "doi:10.21037/jtd-2026-1263",
+          "abstract": "Background Wide use of low-dose chest CT detects more early NSCLC, though recurrence (mostly extracranial distant metastasis) still occurs. This study aimed to establish and validate computed tomography (CT) radiomics models that can be used for predicting the risk of extracranial distant metastasis (EDM) after radical resection in early-stage non-small cell lung cancer (e-NSCLC). Methods This retrospective study included 312 patients with e-NSCLC who underwent radical surgery at Shandong Cancer Hospital from 2014 to 2019. The cases were randomly divided into a training set (n=200) and a validation set (n=112). The study excluded patients who received neoadjuvant therapy, had interrupted follow-up, or died of non-tumor-related causes. The patients were followed up for an average of 30.6 months after the first postoperative CT examination. This study defined EDM as distant metastasis in other organs other than brain metastasis after surgery, and accounted for 78.6% of all metastatic cases. The region of interest (ROI) was delineated, and the radiomics features were selected by using least absolute shrinkage and selection operator (LASSO) logistic regression models to construct radiomics signatures. The association between the radiomics signature and the occurrence of EDM was also evaluated. A combined nomogram incorporating the selected radiomics and clinical-pathological predictors was constructed using multivariable regression. The concordance index (C-index) was used to evaluate the performance of the model. To determine the clinical effectiveness of nomogram in radiomics, the decision curve analysis (DCA) was performed. Results A total of 75 patients (24.0%) experienced metastasis, with EDM accounting for 78.6%. In the overall cohort, radiomics signature were significantly associated with the occurrence of the EDM. The discrimination performance of the radiomics nomogram is significantly better than the clinical-pathologic nomogram (P<0.001), with the C-indexes 0.818 [95% confidence interval (CI): 0.780-0.856] and 0.823 (95% CI: 0.769-0.877) in the training and validation cohorts, respectively. Analysis of the calibration and decision curves indicated that the comprehensive nomogram was superior to the clinical-pathological and radiomics nomogram in predicting EDM survival. Conclusions CT radiomics features have the potential to predict postoperative EDM and may assist in preliminarily identifying patients at high metastatic risk, which could provide a reference for individualized postoperative adjuvant decision-making in e-NSCLC."
+        },
+        {
+          "id": "epmc:PMC:PMC13655902",
+          "abstract": ""
+        }
+      ]
+    },
+    {
+      "id": "4e9d8f3e65d703ff",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "doi:10.34133/research.1435",
+          "title": "Integrated CT Foundation Model and Radiomic Features Define Clinically and Biologically Distinct Colorectal Cancer Subtypes.",
+          "authors": [
+            "Du Cai",
+            "Haoning Qi",
+            "Qiuxia Yang",
+            "Yibin Zhao",
+            "Chenghang Li",
+            "Chuling Hu",
+            "Yinmeng Zhang",
+            "Rende Huang",
+            "Wenjun Mao",
+            "Xiaojian Wu",
+            "Yize Mao",
+            "Feng Gao"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-06",
+          "doi": "10.34133/research.1435",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.34133/research.1435"
+        },
+        {
+          "id": "epmc:PMC:PMC13639147",
+          "title": "Integrated CT Foundation Model and Radiomic Features Define Clinically and Biologically Distinct Colorectal Cancer Subtypes",
+          "authors": [
+            "Du Cai",
+            "Haoning Qi",
+            "Qiuxia Yang",
+            "Yibin Zhao",
+            "Chenghang Li",
+            "Chuling Hu",
+            "Yinmeng Zhang",
+            "Rende Huang",
+            "Wenjun Mao",
+            "Xiaojian Wu",
+            "Yize Mao",
+            "Feng Gao"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-07",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://europepmc.org/article/PMC/PMC13639147"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.34133/research.1435",
+            "epmc:PMC:PMC13639147"
+          ],
+          "title": "integratedctfoundationmodelandradiomicfeaturesdefineclinicallyandbiologicallydistinctcolorectalcancersubtypes",
+          "firstAuthorSurname": "cai",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "metadata_only_missing_abstract",
+      "aiReason": "Exact title and the twelve-author list agree for CT foundation/radiomic colorectal phenotypes. The PMC abstract is missing; no two-sided content verification was possible.",
+      "evidence": [
+        {
+          "id": "doi:10.34133/research.1435",
+          "abstract": "Colorectal cancer is clinically heterogeneous, and current risk stratification does not fully capture differences in recurrence, survival, or treatment response. Molecular subtyping has improved biological classification, but sequencing-based workflows are not always available before treatment or at the population scale. We developed a survival-informed computed tomography (CT) phenotyping framework that combines CT foundation-model representations with PyRadiomics descriptors of tumor shape, intensity, and texture. Across 4 nonoverlapping cohorts, including SYSU6H cohort 1 ( N = 902), SYSU6H cohort 2 ( N = 3,267), external Ningbo cohort 1 ( N = 509), and SYSU6HNAT neoadjuvant-treatment cohort ( N = 709), fused CT features were selected and integrated to derive survival-informed CT imaging phenotypes, followed by evaluation of survival, adjusted prognostic associations, molecular correlates, phenotype assignment, and treatment response. The fused representation identified 2 survival-informed imaging phenotypes with marked survival differences. Compared with CT-S1, CT-S2 was associated with worse disease-free survival and overall survival (disease-free survival hazard ratio = 11.16, 95% confidence interval 9.19 to 13.55; overall survival hazard ratio = 14.29, 95% confidence interval 10.83 to 18.85; both P < 0.0001) and remained associated with outcomes after adjustment for clinicopathologic variables and measured tumor size. CT-S2 was enriched for consensus molecular subtype 4-like composition and stromal/extracellular matrix programs, suggesting transcriptomic and microenvironment-associated correlates linked to the adverse imaging phenotype. A flexible phenotype-assignment model reproduced prognostic separation in internal and external cohorts, and assigned phenotypes were associated with survival and pathological response in SYSU6HNAT. These findings suggest that integrated CT phenotyping may provide a noninvasive approach for identifying survival-informed colorectal cancer imaging phenotypes with exploratory molecular correlates, supporting further independent validation."
+        },
+        {
+          "id": "epmc:PMC:PMC13639147",
+          "abstract": ""
+        }
+      ]
+    },
+    {
+      "id": "e92e642175963ed2",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "arxiv:2609.06807",
+          "title": "Comparative Study of Anatomical and Learned Features in AI Models for Structural Brain MRI",
+          "authors": [
+            "Boyang Yu",
+            "Miquel Lopez Escoriza",
+            "Long Chen",
+            "Arjun V. Masurkar",
+            "Narges Razavian",
+            "Carlos Fernandez-Granda"
+          ],
+          "source": "arXiv",
+          "status": "preprint",
+          "publishedAt": "2026-09-06",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://arxiv.org/abs/2609.06807v1"
+        },
+        {
+          "id": "doi:10.21203/rs.3.rs-10851563/v1",
+          "title": "Comparative Study of Anatomical and Learned Features in AI Models for Structural Brain MRI",
+          "authors": [
+            "Boyang Yu",
+            "Miquel López Escoriza",
+            "Long Chen",
+            "Arjun Masurkar",
+            "Narges Razavian",
+            "Carlos Fernandez Granda"
+          ],
+          "source": "Europe PMC",
+          "status": "preprint",
+          "publishedAt": "2026-09-09",
+          "doi": "10.21203/rs.3.rs-10851563/v1",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.21203/rs.3.rs-10851563/v1"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "arxiv:2609.06807",
+            "doi:10.21203/rs.3.rs-10851563/v1"
+          ],
+          "title": "comparativestudyofanatomicalandlearnedfeaturesinaimodelsforstructuralbrainmri",
+          "firstAuthorSurname": "yu",
+          "authorJaccard": 0.5
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "supported_by_abstract_and_metadata",
+      "aiReason": "Both abstracts describe the same three feature paradigms, 18 datasets, approximately 80,000 participants, seven tasks and ASP. Accent/middle-name variations reduce Jaccard to 0.5 but first author and substantive content agree.",
+      "evidence": [
+        {
+          "id": "arxiv:2609.06807",
+          "abstract": "In this work, we comprehensively evaluate three popular feature-extraction paradigms in AI-based neuroimaging modeling: (1) computation of anatomical surfaces and volumes, (2) supervised learning with convolutional neural networks (CNNs), and (3) unsupervised pretraining of vision transformer (ViT) foundation models, followed by supervised finetuning. Our study is based on 18 publicly available datasets containing 3D structural T1-weighted MRI scans from approximately 80,000 participants across seven distinct clinical tasks. We observe that a linear model based on anatomical features matches the diagnostic performance of complex nonlinear features learned by sophisticated AI frameworks, including foundation models trained on thousands of scans. Conversely, CNNs and pretrained ViTs learn features that implicitly capture relevant anatomical information, bypassing the need for explicit feature extraction. Building upon these insights, we propose Anatomy Segmentation Pretraining (ASP), a novel method to incorporate anatomical information during foundation-model pretraining, which outperforms existing models in biological age estimation."
+        },
+        {
+          "id": "doi:10.21203/rs.3.rs-10851563/v1",
+          "abstract": "Abstract In this work, we comprehensively evaluate three popular feature-extractionparadigms in AI-based neuroimaging modeling: (1) computation of anatomicalsurfaces and volumes, (2) supervised learning with convolutional neural net-works (CNNs), and (3) unsupervised pretraining of vision transformer (ViT)foundation models, followed by supervised finetuning. Our study is based on18 publicly available datasets containing 3D structural T1-weighted MRI scansfrom approximately 80,000 participants across seven distinct clinical tasks. Weobserve that a linear model based on anatomical features matches the diag-nostic performance of complex nonlinear features learned by sophisticated AIframeworks, including foundation models trained on thousands of scans. Con-versely, CNNs and pretrained ViTs learn features that implicitly capture relevantanatomical information, bypassing the need for explicit feature extraction. Build-ing upon these insights, we propose Anatomy Segmentation Pretraining (ASP),a novel method to incorporate anatomical information during foundation-modelpretraining, which outperforms existing models in biological age estimation."
+        }
+      ]
+    },
+    {
+      "id": "60a6236a7eb6ec32",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "doi:10.3390/healthcare14183104",
+          "title": "Cardiac Magnetic Resonance Radiomics for Diagnosis, Phenotyping and Risk Stratification of Cardiomyopathies.",
+          "authors": [
+            "Cosimo Granitto",
+            "Kristi Hoxha",
+            "Gianmarco Forasassi",
+            "Giovanni Scribano",
+            "Alberto Cossu",
+            "Simona Tassinari",
+            "Simone Boldrin",
+            "Rita Pavasini",
+            "Federico Marchini",
+            "Gianluca Campo",
+            "Luigi Manco",
+            "Elisabetta Tonet"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-20",
+          "doi": "10.3390/healthcare14183104",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.3390/healthcare14183104"
+        },
+        {
+          "id": "epmc:PMC:PMC13606121",
+          "title": "Cardiac Magnetic Resonance Radiomics for Diagnosis, Phenotyping and Risk Stratification of Cardiomyopathies",
+          "authors": [
+            "Cosimo Granitto",
+            "Kristi Hoxha",
+            "Gianmarco Forasassi",
+            "Giovanni Scribano",
+            "Alberto Cossu",
+            "Simona Tassinari",
+            "Simone Boldrin",
+            "Rita Pavasini",
+            "Federico Marchini",
+            "Gianluca Campo",
+            "Luigi Manco",
+            "Elisabetta Tonet"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-09-01",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://europepmc.org/article/PMC/PMC13606121"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.3390/healthcare14183104",
+            "epmc:PMC:PMC13606121"
+          ],
+          "title": "cardiacmagneticresonanceradiomicsfordiagnosisphenotypingandriskstratificationofcardiomyopathies",
+          "firstAuthorSurname": "granitto",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "metadata_only_missing_abstract",
+      "aiReason": "Exact title and twelve authors agree for the cardiomyopathy CMR radiomics review. Only the DOI record has the review abstract; possible duplication is supported by metadata only.",
+      "evidence": [
+        {
+          "id": "doi:10.3390/healthcare14183104",
+          "abstract": "Background Cardiovascular magnetic resonance (CMR) is the reference non-invasive imaging modality for evaluating cardiomyopathies, providing comprehensive assessment of cardiac morphology, function, and tissue characterization. Radiomics has recently emerged as an advanced image analysis technique that extracts quantitative imaging biomarkers from routine CMR images, potentially enhancing disease characterization beyond conventional visual assessment. This systematic review summarizes current evidence on the role of CMR-based radiomics in the diagnosis, phenotypic characterization and risk stratification of cardiomyopathies. Methods A structured search identified English-language, peer-reviewed studies published up to August 2026 investigating CMR-based radiomics in hypertrophic, dilated, arrhythmogenic, and infiltrative cardiomyopathies, including cardiac amyloidosis, Fabry disease, and cardiac sarcoidosis. Study selection followed PRISMA 2020 guidelines. Methodological quality was assessed using the Methodological Index for Non-Randomized Studies (MINORS) and the Radiomics Quality Score 2.0 (RQS 2.0) The authors have reviewed and edited the output and take full responsibility for the content of this publication. Results Current evidence indicates that CMR radiomics provides incremental diagnostic information beyond conventional CMR by quantifying myocardial tissue heterogeneity. Radiomic features derived from cine imaging, late gadolinium enhancement, native T1/T2 mapping, and extracellular volume maps showed promising performance in differentiating cardiomyopathy subtypes, distinguishing pathological from physiological remodeling, and identifying infiltrative and inflammatory myocardial diseases. Multiparametric radiomic models generally outperformed individual imaging biomarkers, with preliminary evidence supporting applications in risk stratification and outcome prediction. However, studies were predominantly retrospective, involved small cohorts, used heterogeneous imaging and radiomics workflows, and rarely included external validation. RQS 2.0 assessment demonstrated low-to-moderate methodological quality. Conclusions CMR-based radiomics shows considerable potential for improving diagnosis and phenotypic characterization of cardiomyopathies. However, methodological standardization, multicenter prospective validation, and demonstration of incremental clinical value are required before routine clinical implementation."
+        },
+        {
+          "id": "epmc:PMC:PMC13606121",
+          "abstract": ""
+        }
+      ]
+    },
+    {
+      "id": "b8cd4deecf686634",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "doi:10.1002/acm2.70831",
+          "title": "Frequency Schrödinger bridge diffusion model for fast MRI reconstruction in abdominal MR-guided online adaptive radiotherapy.",
+          "authors": [
+            "Zhiqun Wang",
+            "Shaobin Wang",
+            "Nan Liu",
+            "Qiu Guan",
+            "Qi Chen",
+            "Fang Chen",
+            "Bei Wang",
+            "Yongguang Liang",
+            "Xia Liu",
+            "Bo Yang",
+            "Lang Yu",
+            "Hongen Liao",
+            "Jie Qiu"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-01",
+          "doi": "10.1002/acm2.70831",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1002/acm2.70831"
+        },
+        {
+          "id": "epmc:PMC:PMC13653140",
+          "title": "Frequency Schrödinger bridge diffusion model for fast MRI reconstruction in abdominal MR‐guided online adaptive radiotherapy",
+          "authors": [
+            "Zhiqun Wang",
+            "Shaobin Wang",
+            "Nan Liu",
+            "Qiu Guan",
+            "Qi Chen",
+            "Fang Chen",
+            "Bei Wang",
+            "Yongguang Liang",
+            "Xia Liu",
+            "Bo Yang",
+            "Lang Yu",
+            "Hongen Liao",
+            "Jie Qiu"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-01",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://europepmc.org/article/PMC/PMC13653140"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.1002/acm2.70831",
+            "epmc:PMC:PMC13653140"
+          ],
+          "title": "frequencyschrödingerbridgediffusionmodelforfastmrireconstructioninabdominalmrguidedonlineadaptiveradiotherapy",
+          "firstAuthorSurname": "wang",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "metadata_only_missing_abstract",
+      "aiReason": "Exact normalized title and thirteen authors agree for the FSBD MRI reconstruction study. The PMC abstract is absent, preventing an independent comparison of the 31-scan method/results.",
+      "evidence": [
+        {
+          "id": "doi:10.1002/acm2.70831",
+          "abstract": "Background Online adaptive radiotherapy (ART) employs modalities like CBCT, CT, and MRI. For abdominal malignancies, MRI stands out with superior soft-tissue contrast, no ionizing radiation, and functional imaging capabilities. Yet, MRI-guided ART for such cases is challenged by long treatment time. Thus, boosting efficiency, especially via accelerated MRI scanning, is vital. Purpose This study presents the first accurate and fast MRI reconstruction method tailored for the Unity MR-Linear system. By slashing MRI acquisition time, it aims to enhance patient compliance, reduce intra-fraction anatomical motion, and optimize clinical resource use. Methods A frequency Schrödinger bridge diffusion (FSBD) model for MRI reconstruction (converting 22-second MRI to full-duration MRI) was proposed, based on a retrospective analysis of 31 fractional MRI scans from 14 patients. Its reconstruction performance was compared with state-of-the-art methods: paired diffusion-based Refusion, and unpaired CycleGAN and CSGAN. Of the initially acquired 40 fractional scans, 9 examinations were excluded following predefined exclusion criteria, leaving 31 valid cases. Dataset was split strictly at patient level: 23 fractional scans for training and the remaining independent patients for testing. An extra baseline using pairwise full-duration MRI from different fractions of identical patients was supplemented for reliability verification. All metrics were calculated on complete 3D volumetric MRI rather than individual 2D slices. Results Quantitative evaluation shows the FSBD model's superiority. It achieved significantly lower error metrics: MAE (86.00) and RMSE (123.42), outperforming Refusion (MAE: 99.95, RMSE: 172.55), CycleGAN (MAE: 112.92, RMSE: 149.16), and CSGAN (MAE: 103.04, RMSE: 162.29). In image quality, FSBD's PSNR (28.44 dB) and SSIM (0.885) surpassed Refusion (26.77 dB / 0.870), CycleGAN (25.82 dB / 0.881), and CSGAN (26.34 dB / 0.878). Moreover, it delivered high-fidelity reconstruction with an efficient 20-s inference time. Conclusions This study is the first to propose a sub-one-minute MRI imaging method for the Unity MR linear accelerator in an MR-guided online adaptive radiotherapy (ART) workflow. Experimental results confirm the method's significantly better reconstruction performance than state-of-the-art approaches. Total MRI imaging time dropped drastically from 3 min (full-duration) to 42 s (22 seconds for MR imaging plus 20 seconds for reconstruction). This reduction brings notable clinical benefits, including improved patient compliance and fewer intra-fractional anatomical variations."
+        },
+        {
+          "id": "epmc:PMC:PMC13653140",
+          "abstract": ""
+        }
+      ]
+    },
+    {
+      "id": "ebec2d2f52c423c2",
+      "addedByTitleAuthors": true,
+      "mixedPreprintPublished": false,
+      "records": [
+        {
+          "id": "doi:10.1186/s41747-026-00791-2",
+          "title": "Radiomics machine learning models for lung cancer early diagnosis in heterogenous multicentre chest CT data: LIBRA study results.",
+          "authors": [
+            "Benjamin Hunter",
+            "Prashanthi Ratnakumar",
+            "Daniel Tong",
+            "Nishanthi Senthivel",
+            "Amyn Bhamani",
+            "Abigail Coe",
+            "Susannah Bloch",
+            "Samuel V Kemp",
+            "Simon Doran",
+            "Neal Navani",
+            "Arjun Nair",
+            "Jonathan Ratoff",
+            "Claire E Wells",
+            "Justin Garner",
+            "Andrew Nicolson",
+            "Catey Bunce",
+            "Matthew Blackledge",
+            "Anand Devaraj",
+            "Eric O Aboagye",
+            "Richard W Lee"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-05",
+          "doi": "10.1186/s41747-026-00791-2",
+          "relatedDoi": null,
+          "url": "https://doi.org/10.1186/s41747-026-00791-2"
+        },
+        {
+          "id": "epmc:PMC:PMC13638909",
+          "title": "Radiomics machine learning models for lung cancer early diagnosis in heterogenous multicentre chest CT data: LIBRA study results",
+          "authors": [
+            "Benjamin Hunter",
+            "Prashanthi Ratnakumar",
+            "Daniel Tong",
+            "Nishanthi Senthivel",
+            "Amyn Bhamani",
+            "Abigail Coe",
+            "Susannah Bloch",
+            "Samuel V. Kemp",
+            "Simon Doran",
+            "Neal Navani",
+            "Arjun Nair",
+            "Jonathan Ratoff",
+            "Claire E. Wells",
+            "Justin Garner",
+            "Andrew Nicolson",
+            "Catey Bunce",
+            "Matthew Blackledge",
+            "Anand Devaraj",
+            "Eric O. Aboagye",
+            "Richard W. Lee"
+          ],
+          "source": "Europe PMC",
+          "status": "published",
+          "publishedAt": "2026-10-05",
+          "doi": null,
+          "relatedDoi": null,
+          "url": "https://europepmc.org/article/PMC/PMC13638909"
+        }
+      ],
+      "matches": [
+        {
+          "recordIds": [
+            "doi:10.1186/s41747-026-00791-2",
+            "epmc:PMC:PMC13638909"
+          ],
+          "title": "radiomicsmachinelearningmodelsforlungcancerearlydiagnosisinheterogenousmulticentrechestctdatalibrastudyresults",
+          "firstAuthorSurname": "hunter",
+          "authorJaccard": 1
+        }
+      ],
+      "humanConfirmed": false,
+      "aiReviewed": true,
+      "aiFinding": "metadata_only_missing_abstract",
+      "aiReason": "Exact LIBRA title and twenty names agree after punctuation normalization. The PMC record has no abstract; the DOI abstract alone is not evidence of identical full text.",
+      "evidence": [
+        {
+          "id": "doi:10.1186/s41747-026-00791-2",
+          "abstract": "Objective We developed and validated radiomics models for lung cancer prediction in indeterminate pulmonary nodules that retain performance in heterogenous data from multiple centres. Materials and methods The retrospective Lung Imaging Biobank for Radiomics and AI (LIBRA) study recruited 1,026 patients (2,071 computed tomography scans) with 5-to-30-mm lung nodules from seven UK hospitals (01/07/2020-30/09/2022). Benign and malignant nodules were segmented for feature extraction using PyRadiomics. Principal component analysis reduced feature dimensionality to twenty components. Logistic regression models using ComBat correction, fixed effects or random effects to mitigate for disparate data across study centres were compared. Models were fit to the whole dataset and evaluated using 10-fold cross-validation. Internal-external validation assessed between-centre heterogeneity. Models were benchmarked against volume, Brock score and scrambled voxels. Calibration was assessed using calibration curves. Decision-curve analysis was used to assess net benefit. Results Between-centre discrimination variability was observed with an area under the curve (AUC) ranging 0.75-0.91. The mixed-effects model provided better discrimination over ComBat or fixed effects alone (AUC 0.91 (95% confidence interval [CI]: 0.90-0.93) versus 0.75 (95% CI: 0.72-0.78) and 0.88 (95% CI: 0.86-0.90), respectively (p < 0.0001 and 0.003, respectively) in cross-validation. Radiomics features retained significance in multivariable models including established clinical features. The final model was superior to models developed using volume alone, Brock score, and scrambled-voxels. The model was well calibrated (intercept -0.036, slope 0.89 with net benefit compared to volume or Brock score alone. Conclusion Radiomics models show between-centre heterogeneity, with resilience best achieved with mixed-effects models. The final model had high performance with net benefit over established risk models. Key points Question Can heterogeneous data from multiple centres be used to predict lung nodule malignancy risk? Findings Radiomics cancer prediction models must account for heterogeneity to maintain performance between different centres. The mixed-effects model achieved AUC 0.91 (cross-validation) for cancer prediction. Relevance statement The model provided net benefit for nodule investigation over Brock score and volume alone and could assist in decision-making following prospective validation."
+        },
+        {
+          "id": "epmc:PMC:PMC13638909",
+          "abstract": ""
+        }
+      ]
+    }
+  ],
+  "reviewedAt": "2026-10-21",
+  "reviewer": "AI assistant; not a human bibliographic audit",
+  "limitations": "No source pages/full texts were independently retrieved. Nine groups lack an abstract on one record. No conflicting evidence was found in this sample; this does not satisfy or replace the required human 20-group acceptance check."
+}

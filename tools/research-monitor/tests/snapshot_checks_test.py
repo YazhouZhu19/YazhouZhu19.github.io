@@ -42,6 +42,15 @@ class PublishedSnapshotTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.verify()
 
+    def test_optional_month_buckets_accept_legacy_and_reject_invalid_values(self):
+        for bucket in ['2026-10', '2026-10.part-2', 'undated', 'undated.part-1']:
+            self.manifest['shards'][0]['bucket'] = bucket
+            self.assertEqual(self.verify(), 1)
+        for bucket in ['2026-13', '2026-10.part-0', '../unsafe', '', None, 10]:
+            self.manifest['shards'][0]['bucket'] = bucket
+            with self.assertRaises(ValueError):
+                self.verify()
+
 
 if __name__ == '__main__':
     unittest.main()

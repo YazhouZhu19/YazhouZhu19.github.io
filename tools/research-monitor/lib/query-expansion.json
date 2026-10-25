@@ -1,0 +1,97 @@
+[
+  {
+    "aliases": ["分割", "segmentation", "delineation", "contouring"],
+    "terms": ["segmentation", "delineation", "contouring"]
+  },
+  {
+    "aliases": ["人在回路", "人机协同", "human in the loop", "reader study"],
+    "terms": ["human in the loop", "reader study", "interactive", "clinician feedback"]
+  },
+  {
+    "aliases": ["检测", "诊断", "分类", "diagnosis", "detection", "classification"],
+    "terms": ["detection", "diagnosis", "classification", "screening"]
+  },
+  {
+    "aliases": ["重建", "增强", "合成", "reconstruction"],
+    "terms": ["reconstruction", "denoising", "super resolution", "image synthesis"]
+  },
+  {
+    "aliases": ["配准", "运动跟踪", "registration"],
+    "terms": ["registration", "alignment", "motion tracking"]
+  },
+  {
+    "aliases": ["影像组学", "定量", "标志物", "radiomics"],
+    "terms": ["radiomics", "quantitative imaging", "imaging biomarker", "morphometry"]
+  },
+  {
+    "aliases": ["预后", "疗效", "生存", "prognosis"],
+    "terms": ["prognosis", "survival", "treatment response", "outcome prediction"]
+  },
+  {
+    "aliases": ["影像语言", "报告生成", "视觉问答", "report generation"],
+    "terms": ["vision language", "report generation", "visual question answering", "image text"]
+  },
+  {
+    "aliases": ["治疗规划", "导航", "放疗", "intervention"],
+    "terms": ["radiotherapy", "treatment planning", "surgical navigation", "image guided"]
+  },
+  {
+    "aliases": ["基础模型", "foundation model", "medsam"],
+    "terms": ["foundation model", "segment anything", "MedSAM", "universal segmentation"]
+  },
+  { "aliases": ["磁共振", "核磁", "MRI"], "terms": ["MRI", "magnetic resonance"] },
+  { "aliases": ["CT", "计算机断层"], "terms": ["CT", "computed tomography"] },
+  { "aliases": ["X-ray", "X光", "胸片", "乳腺摄影"], "terms": ["X ray", "radiography", "mammography"] },
+  { "aliases": ["超声", "ultrasound"], "terms": ["ultrasound", "ultrasonography", "echocardiography"] },
+  { "aliases": ["PET", "SPECT", "正电子"], "terms": ["PET", "SPECT", "positron emission"] },
+  {
+    "aliases": ["病理", "组织切片", "histopathology", "WSI"],
+    "terms": ["histopathology", "histology", "whole slide", "WSI", "digital pathology"]
+  },
+  { "aliases": ["眼底", "OCT"], "terms": ["fundus", "retinal imaging", "optical coherence", "OCT"] },
+  { "aliases": ["内镜", "肠镜", "endoscopy"], "terms": ["endoscopy", "colonoscopy", "gastroscopy"] },
+  { "aliases": ["脑", "神经", "brain"], "terms": ["brain", "glioma", "cerebral", "neuroimaging"] },
+  { "aliases": ["胸部", "肺", "lung"], "terms": ["lung", "pulmonary", "thoracic", "chest"] },
+  { "aliases": ["腹部", "abdominal"], "terms": ["abdominal", "liver", "kidney", "pancreas", "spleen"] },
+  { "aliases": ["肝", "liver"], "terms": ["liver", "hepatic"] },
+  { "aliases": ["肾", "kidney"], "terms": ["kidney", "renal"] },
+  { "aliases": ["胰腺", "pancreas"], "terms": ["pancreas", "pancreatic"] },
+  {
+    "aliases": ["心血管", "心脏", "cardiac"],
+    "terms": ["cardiac", "cardiovascular", "heart", "coronary", "aorta"]
+  },
+  { "aliases": ["乳腺", "breast"], "terms": ["breast", "mammography"] },
+  { "aliases": ["眼科", "眼睛", "eye"], "terms": ["retina", "fundus", "ophthalmology", "eye"] },
+  {
+    "aliases": ["骨肌", "骨骼", "脊柱", "musculoskeletal"],
+    "terms": ["musculoskeletal", "bone", "vertebra", "spine", "cartilage"]
+  },
+  { "aliases": ["皮肤", "skin"], "terms": ["dermoscopy", "melanoma", "skin lesion"] },
+  { "aliases": ["多器官", "全身", "multi organ"], "terms": ["multi organ", "multiple organs", "whole body"] },
+  {
+    "aliases": ["肿瘤", "病灶", "tumor", "tumour", "lesion"],
+    "terms": ["tumor", "tumour", "lesion", "cancer", "neoplasm"]
+  },
+  { "aliases": ["甲状腺", "thyroid"], "terms": ["thyroid"] },
+  { "aliases": ["结节", "nodule"], "terms": ["nodule"] },
+  {
+    "aliases": ["提示式学习", "提示学习", "prompt learning"],
+    "terms": ["prompt learning", "prompt tuning", "promptable"]
+  },
+  { "aliases": ["自监督", "self supervised"], "terms": ["self supervised", "contrastive learning"] },
+  {
+    "aliases": ["弱监督", "半监督", "少样本", "few shot"],
+    "terms": ["weakly supervised", "semi supervised", "few shot"]
+  },
+  { "aliases": ["生成式", "扩散模型", "diffusion"], "terms": ["diffusion model", "generative", "GAN"] },
+  {
+    "aliases": ["域适应", "泛化", "跨域", "domain adaptation"],
+    "terms": ["domain adaptation", "domain generalization", "cross domain", "out of distribution"]
+  },
+  { "aliases": ["联邦学习", "federated"], "terms": ["federated learning"] },
+  {
+    "aliases": ["多模态", "multimodal"],
+    "terms": ["multimodal", "multi modal", "vision language", "image text"]
+  },
+  { "aliases": ["主动学习", "active learning"], "terms": ["active learning"] }
+]

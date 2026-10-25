@@ -1,0 +1,303 @@
+{
+  "schemaVersion": 1,
+  "baseline": {
+    "measuredAt": "2026-10-20T16:26:16.388Z",
+    "sourceRevision": "1a2c0da37dd8a2d7a7a7e6abe8bd505c05a242f5",
+    "notes": [
+      "Task P0.1, measured 2026-10-21 Asia/Shanghai; gzip level 9, each resource independently.",
+      "Papers collected 2026-10-20T14:35:21.416Z: 8326 records, v2 manifest plus 16 shards, 68812492 raw / 11215528 gzip bytes.",
+      "Signals generated 2026-10-20T14:35:32.144Z: 50790 records, 48640306 raw / 7847487 gzip bytes.",
+      "Initial JS 571063 raw / 176919 gzip; initial CSS 263903 raw / 43892 gzip bytes.",
+      "Limits allow 2% for code assets and 5% for naturally growing data, rounded up to 1 KiB; paper files retain the existing 4 MiB cap.",
+      "These are temporary regression ceilings, not performance targets. Tighten after each optimization; never auto-update limits during builds.",
+      "assets/lib.js is the optional WebLLM runtime; assets/ai-worker.js is the optional AI worker. Neither is loaded by the default page."
+    ]
+  },
+  "initialData": [
+    {
+      "id": "papers",
+      "kind": "paper-snapshot",
+      "path": "data/public-papers-v3.json"
+    }
+  ],
+  "limits": {
+    "assets": {
+      "assets/ai-research-panel.js": {
+        "rawBytes": 46080,
+        "gzipBytes": 18432
+      },
+      "assets/ai-worker.js": {
+        "rawBytes": 6247424,
+        "gzipBytes": 2203648
+      },
+      "assets/analysis.js": {
+        "rawBytes": 10240,
+        "gzipBytes": 5120
+      },
+      "assets/foresight-view.js": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/lib.js": {
+        "rawBytes": 6030336,
+        "gzipBytes": 2155520
+      },
+      "assets/main.css": {
+        "rawBytes": 120000,
+        "gzipBytes": 22000
+      },
+      "assets/main.js": {
+        "rawBytes": 163840,
+        "gzipBytes": 110000
+      },
+      "assets/monitor-views.js": {
+        "rawBytes": 15360,
+        "gzipBytes": 6144
+      },
+      "assets/paper-analysis.js": {
+        "rawBytes": 3072,
+        "gzipBytes": 2048
+      },
+      "assets/preliminary-analysis.js": {
+        "rawBytes": 14336,
+        "gzipBytes": 6144
+      },
+      "assets/research-signals-view.js": {
+        "rawBytes": 73728,
+        "gzipBytes": 25600
+      },
+      "assets/research-signals-view.css": {
+        "rawBytes": 32768,
+        "gzipBytes": 6144
+      },
+      "assets/team-foresight.js": {
+        "rawBytes": 28672,
+        "gzipBytes": 11264
+      },
+      "assets/team-foresight.css": {
+        "rawBytes": 14336,
+        "gzipBytes": 3072
+      },
+      "assets/research-signals.js": {
+        "rawBytes": 5120,
+        "gzipBytes": 2048
+      },
+      "assets/signals-snapshot.js": {
+        "rawBytes": 8192,
+        "gzipBytes": 4096
+      },
+      "assets/data-worker.js": {
+        "rawBytes": 86016,
+        "gzipBytes": 24576
+      },
+      "assets/paper-index.js": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/public-paper-loader.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/shard-cache.js": {
+        "rawBytes": 9216,
+        "gzipBytes": 4096
+      },
+      "assets/arrow-up-right.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/badge.js": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/classify.js": {
+        "rawBytes": 14336,
+        "gzipBytes": 7168
+      },
+      "assets/createLucideIcon.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/foresight.css": {
+        "rawBytes": 16384,
+        "gzipBytes": 4096
+      },
+      "assets/foresight.js": {
+        "rawBytes": 62464,
+        "gzipBytes": 25600
+      },
+      "assets/github-dashboard.js": {
+        "rawBytes": 20480,
+        "gzipBytes": 8192
+      },
+      "assets/github-dashboard.css": {
+        "rawBytes": 8192,
+        "gzipBytes": 2048
+      },
+      "assets/locale-provider.js": {
+        "rawBytes": 55296,
+        "gzipBytes": 21504
+      },
+      "assets/news-dashboard.js": {
+        "rawBytes": 16384,
+        "gzipBytes": 6144
+      },
+      "assets/news-dashboard.css": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/paper-analysis.css": {
+        "rawBytes": 4096,
+        "gzipBytes": 1024
+      },
+      "assets/paper-detail-sheet.js": {
+        "rawBytes": 7168,
+        "gzipBytes": 3072
+      },
+      "assets/paper-filters.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/paper-library.js": {
+        "rawBytes": 6144,
+        "gzipBytes": 3072
+      },
+      "assets/paper-picker.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/preliminary-analysis.css": {
+        "rawBytes": 24576,
+        "gzipBytes": 4096
+      },
+      "assets/rolldown-runtime.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/search.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/select.js": {
+        "rawBytes": 33792,
+        "gzipBytes": 11264
+      },
+      "assets/signal-dashboard.js": {
+        "rawBytes": 9216,
+        "gzipBytes": 4096
+      },
+      "assets/source-dashboard-charts.js": {
+        "rawBytes": 12288,
+        "gzipBytes": 5120
+      },
+      "assets/source-dashboard-charts.css": {
+        "rawBytes": 6144,
+        "gzipBytes": 2048
+      },
+      "assets/textarea.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/types.js": {
+        "rawBytes": 58368,
+        "gzipBytes": 14336
+      },
+      "assets/vendor-react.js": {
+        "rawBytes": 194560,
+        "gzipBytes": 61440
+      },
+      "assets/vendor-ui.js": {
+        "rawBytes": 101376,
+        "gzipBytes": 33792
+      },
+      "assets/x.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      },
+      "assets/ai-research-panel.css": {
+        "rawBytes": 10240,
+        "gzipBytes": 3072
+      },
+      "assets/button.js": {
+        "rawBytes": 30720,
+        "gzipBytes": 10240
+      },
+      "assets/publication-date.js": {
+        "rawBytes": 2048,
+        "gzipBytes": 1024
+      },
+      "assets/trend-statistics.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/monitor-views.css": {
+        "rawBytes": 25600,
+        "gzipBytes": 5120
+      },
+      "assets/paper-library.css": {
+        "rawBytes": 12288,
+        "gzipBytes": 3072
+      },
+      "assets/check.js": {
+        "rawBytes": 1024,
+        "gzipBytes": 1024
+      }
+    },
+    "totals": {
+      "initialJs": {
+        "rawBytes": 696320,
+        "gzipBytes": 220160
+      },
+      "initialCss": {
+        "rawBytes": 120000,
+        "gzipBytes": 22000
+      },
+      "optionalJs": {
+        "rawBytes": 12558336,
+        "gzipBytes": 4457472
+      },
+      "optionalCss": {
+        "rawBytes": 141312,
+        "gzipBytes": 26624
+      },
+      "initialData": {
+        "rawBytes": 58959872,
+        "gzipBytes": 12232704
+      },
+      "initialMeasuredResources": {
+        "rawBytes": 59776192,
+        "gzipBytes": 12474864
+      }
+    },
+    "datasets": {
+      "papers": {
+        "rawBytes": 58959872,
+        "gzipBytes": 12232704,
+        "fileRawBytes": 4194304,
+        "fileGzipBytes": 1048576
+      },
+      "signals": {
+        "rawBytes": 51073024,
+        "gzipBytes": 8240128,
+        "fileRawBytes": 51073024,
+        "fileGzipBytes": 8240128
+      }
+    }
+  },
+  "initialAssetKeys": [
+    "assets/data-worker.js"
+  ],
+  "optimizationNotes": [
+    "P1.4 removes signals from startup; GitHub/news overview is a separately loaded 36,437-byte gzip manifest.",
+    "P1.5 explicitly includes the 71,944-byte raw / 18,289-byte gzip startup data Worker; fallback modules are optional. Worker isolation duplicates validation code, increasing initial JS by about 18 KB gzip until P2 splitting.",
+    "P1.2 switches startup measurement to v3: 50,501,670 raw / 10,649,085 gzip bytes for all 8,326 papers. Fewer, denser shards have larger per-shard gzip size; the unchanged 4 MiB raw cap still applies.",
+    "P2.1/P2.2: explicit React/Radix groups, lazy paper views, separate source dashboards and AI settings. Measured main is 131483 raw / 41129 gzip; a 110000-byte gzip cap enforces the plan target. Main-file reduction is not a claim that all startup JS fell by the same amount.",
+    "P2.2 integration includes P4 draft classification code in both Worker and validated fallback. Total startup JS is 655719 raw / 205184 gzip (all shared vendors and Worker counted), versus P1 643341 / 195386. New explicit chunk budgets plus a 210944-byte startup gzip ceiling expose this cost; no automatic rebasing occurs.",
+    "P2.1 removes unused vendor CSS (pre-token main 164624 raw / 30803 gzip). P3 moves view CSS into optional resources; optional CSS allowance reflects that relocation and does not waive the main CSS target still under work.",
+    "P3.3: tokens, lazy styles and removal of 20 obsolete notice/personal-gate selectors reduce main CSS to 119450 raw bytes in the browser fixture build. The final enforced cap is 120000 raw / 22000 gzip; later feature changes must continue to fit.",
+    "P3/P4 reviewed chunk changes: button and publication-date are shared extraction boundaries; monitor-views and paper-library CSS move existing styles out of main. Preliminary-analysis/source-chart CSS limits account for the same lazy relocation, not a relaxation of the 120000-byte main CSS cap.",
+    "P4 explicit feature allowances cover bilingual scope/version labels, question retrieval and model budgets, PI author-position/identity hints, source maturity/event views, and shared trend-statistics. Each named resource remains bounded; newly emitted unlisted keys still fail. Final startup and optional totals are independently measured and reviewed.",
+    "Final P3/P4 integration: main JS 152757 raw / 49300 gzip; total initial JS including Worker/shared vendors is 681436 / 215802, versus P0 571063 / 176919. The increase pays for scope/date validation, work grouping, comparative statistics and recovery UI and is explicitly reported. Reviewed total ceilings allow about 2% headroom. Optional CSS 137796 / 25858 reflects lazy style relocation; main CSS remains 119567 / 19966 under the unchanged 120000 raw cap. New check.js is a 163-byte extracted icon. No build automatically updates any limit.",
+    "Release CI 40205053101 (2026-10-25), merged live data revision 906cd809: 9025 papers versus the frozen 8326 (+699, +8.4%). Production v3 data measures 56152199 raw / 11649303 gzip; initial code and CSS remain exactly 687619/218063 and 119567/19966. Manually recalibrated only paper/data totals to this verified snapshot plus 5% (rounded to KiB); combined totals are data plus unchanged JS/CSS ceilings. All asset, per-file and publication caps remain unchanged. Builds never change these limits; future data growth still requires review."
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "status": "diagnostic-not-gold",
+  "dataset": "frozen 400-paper sample",
+  "examples": [
+    {
+      "question": "甲状腺超声分割的最新方法",
+      "candidates": 40,
+      "expandedTerms": [
+        "segmentation",
+        "delineation",
+        "contouring",
+        "ultrasound",
+        "ultrasonography",
+        "echocardiography",
+        "thyroid"
+      ],
+      "before": [
+        {
+          "id": "doi:10.1109/tmi.2026.3741804",
+          "title": "PSGMM++: Pulmonary Segment Segmentation with Anatomical Insights."
+        },
+        {
+          "id": "doi:10.1007/s00259-026-08190-w",
+          "title": "¹⁸F-sodium fluoride PET/CT as a complementary measure of osteoblastic disease burden in axial spondyloarthritis: a prospective exploratory study."
+        },
+        {
+          "id": "doi:10.1117/12.3085625",
+          "title": "Glo-VLMs: Leveraging Vision-Language Models for Fine-Grained Diseased Glomerulus Classification."
+        },
+        {
+          "id": "arxiv:2602.00128",
+          "title": "Quantum Model Parallelism for MRI-Based Classification of Alzheimer's Disease Stages"
+        },
+        {
+          "id": "arxiv:2508.17299",
+          "title": "FoundDiff: Foundational Diffusion Model for Generalizable Low-Dose CT Denoising"
+        },
+        {
+          "id": "doi:10.12688/f1000research.166604.2",
+          "title": "Evaluation and Clinical Relevance of Plan Quality Indices in Intracavitary Brachytherapy for Cervical Cancer."
+        }
+      ],
+      "after": [
+        {
+          "id": "arxiv:2610.18926",
+          "title": "Personalising Deformable Image Registration with Clinical Context and Deformation History for Adaptive Radiotherapy"
+        },
+        {
+          "id": "doi:10.64898/2026.07.30.26359276",
+          "title": "Comparative Analysis of Muscle Fascia Tracking Algorithms for Real-Time Muscle Monitoring using Wearable Ultrasound"
+        },
+        {
+          "id": "arxiv:2606.05628",
+          "title": "Transcranial FUS Therapy and Monitoring using Nonlinear Acoustics"
+        },
+        {
+          "id": "arxiv:2602.00990",
+          "title": "Diagnostic Impact of Cine Clips for Thyroid Nodule Assessment on Ultrasound"
+        },
+        {
+          "id": "arxiv:2509.18159",
+          "title": "Improved Segmentation of Polyps and Visual Explainability Analysis"
+        },
+        {
+          "id": "arxiv:2502.12713",
+          "title": "Uncertainty Propagation for Echocardiography Clinical Metric Estimation via Contour Sampling"
+        }
+      ]
+    },
+    {
+      "question": "病理基础模型的跨域泛化",
+      "candidates": 40,
+      "expandedTerms": [
+        "foundation model",
+        "segment anything",
+        "MedSAM",
+        "universal segmentation",
+        "histopathology",
+        "histology",
+        "whole slide",
+        "WSI",
+        "digital pathology",
+        "domain adaptation",
+        "domain generalization",
+        "cross domain",
+        "out of distribution"
+      ],
+      "before": [
+        {
+          "id": "doi:10.1109/tmi.2026.3741804",
+          "title": "PSGMM++: Pulmonary Segment Segmentation with Anatomical Insights."
+        },
+        {
+          "id": "doi:10.1007/s00259-026-08190-w",
+          "title": "¹⁸F-sodium fluoride PET/CT as a complementary measure of osteoblastic disease burden in axial spondyloarthritis: a prospective exploratory study."
+        },
+        {
+          "id": "doi:10.1117/12.3085625",
+          "title": "Glo-VLMs: Leveraging Vision-Language Models for Fine-Grained Diseased Glomerulus Classification."
+        },
+        {
+          "id": "arxiv:2602.00128",
+          "title": "Quantum Model Parallelism for MRI-Based Classification of Alzheimer's Disease Stages"
+        },
+        {
+          "id": "arxiv:2508.17299",
+          "title": "FoundDiff: Foundational Diffusion Model for Generalizable Low-Dose CT Denoising"
+        },
+        {
+          "id": "doi:10.12688/f1000research.166604.2",
+          "title": "Evaluation and Clinical Relevance of Plan Quality Indices in Intracavitary Brachytherapy for Cervical Cancer."
+        }
+      ],
+      "after": [
+        {
+          "id": "epmc:PMC:PMC13658689",
+          "title": "Adapting Segment Anything Model 3 for concept-driven lesion segmentation in medical images: an experimental study"
+        },
+        {
+          "id": "doi:10.1109/cvprf71909.2026.00500",
+          "title": "Mitigating Batch Effects in Histopathology via Language-Mediated Robust Embedding Generation."
+        },
+        {
+          "id": "arxiv:2603.18660",
+          "title": "Multimodal Model for Computational Pathology:Representation Learning and Image Compression"
+        },
+        {
+          "id": "arxiv:2602.23782",
+          "title": "VesselBridge3D: A Foundation Model Adaptation Framework for Label-Efficient 3D Vessel Segmentation"
+        },
+        {
+          "id": "arxiv:2509.23097",
+          "title": "Streamline pathology foundation model by cross-magnification distillation"
+        },
+        {
+          "id": "arxiv:2504.13754",
+          "title": "Towards Accurate and Lightweight Peripheral Neuroblastic Tumor Diagnosis via Contrastive Multi-scale Pathological Image Analysis"
+        }
+      ]
+    },
+    {
+      "question": "MRI reconstruction diffusion models",
+      "candidates": 40,
+      "expandedTerms": [
+        "reconstruction",
+        "denoising",
+        "super resolution",
+        "image synthesis",
+        "MRI",
+        "magnetic resonance",
+        "diffusion model",
+        "generative",
+        "GAN"
+      ],
+      "before": [
+        {
+          "id": "doi:10.1109/tmi.2026.3741804",
+          "title": "PSGMM++: Pulmonary Segment Segmentation with Anatomical Insights."
+        },
+        {
+          "id": "doi:10.1007/s00259-026-08190-w",
+          "title": "¹⁸F-sodium fluoride PET/CT as a complementary measure of osteoblastic disease burden in axial spondyloarthritis: a prospective exploratory study."
+        },
+        {
+          "id": "doi:10.1117/12.3085625",
+          "title": "Glo-VLMs: Leveraging Vision-Language Models for Fine-Grained Diseased Glomerulus Classification."
+        },
+        {
+          "id": "arxiv:2602.00128",
+          "title": "Quantum Model Parallelism for MRI-Based Classification of Alzheimer's Disease Stages"
+        },
+        {
+          "id": "arxiv:2508.17299",
+          "title": "FoundDiff: Foundational Diffusion Model for Generalizable Low-Dose CT Denoising"
+        },
+        {
+          "id": "doi:10.12688/f1000research.166604.2",
+          "title": "Evaluation and Clinical Relevance of Plan Quality Indices in Intracavitary Brachytherapy for Cervical Cancer."
+        }
+      ],
+      "after": [
+        {
+          "id": "arxiv:2610.26475",
+          "title": "3D Diffusion Models for Medical Imaging"
+        },
+        {
+          "id": "doi:10.64898/2026.09.04.26362236",
+          "title": "Balancing optimization and standardization in multisite fMRI data analyses to address site-specific parameters"
+        },
+        {
+          "id": "arxiv:2606.05113",
+          "title": "3D-GlioPREDICT: 3D Latent Diffusion for Post-Radiotherapy Brain MRI Prediction in Patients with Glioma"
+        },
+        {
+          "id": "epmc:PMC:PMC13597306",
+          "title": "Deep learning super-resolution of paediatric ultra-low-field MRI without paired high-field scans"
+        },
+        {
+          "id": "arxiv:2510.26834",
+          "title": "MedForj: An open, large-scale foundational generative prior for high-resolution 3D brain MRI"
+        },
+        {
+          "id": "arxiv:2507.09227",
+          "title": "PanoDiff-SR: Synthesizing Dental Panoramic Radiographs using Diffusion and Super-resolution"
+        }
+      ]
+    }
+  ]
+}

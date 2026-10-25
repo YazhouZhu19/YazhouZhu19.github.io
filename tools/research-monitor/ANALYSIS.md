@@ -2,7 +2,35 @@
 
 This view supports topic selection and reading. It computes from the public metadata snapshot in the browser, without an AI model, generated summary, translation, citation-quality score, or claim of exhaustive field coverage.
 
+## Research-scope classification / 研究范围
+
+`scopeOf(title, abstract)` assigns `core` (computational medical-image method clues), `adjacent` (imaging or diagnostic-accuracy context without such clues), or `out` (no medical-image context, or clinical-only trial/case/cohort clues). Rules require affirmative local context: a negated AI/software mention does not promote a record to `core`. Every result carries inspectable `scopeReasons` and the separate `SCOPE_CLASSIFIER_VERSION`; the ten direction IDs and `INTEREST_TAXONOMY_VERSION` stay unchanged.
+
+These are text-screening rules, not a full-text determination. Background method mentions, generic multimodal terms, and clinical studies using quantitative image processing can cross the wrong boundary. The plan's clinical case/cohort exclusion is stricter than the provisional annotation convention when imaging is the study's central evidence. Missing abstracts remain uncertain and are marked in reasons where title evidence determines scope. No scope result deletes a record.
+
+Public snapshot validation computes the current scope in the data Worker (or the verified main-thread fallback) even for older snapshots. Collection normalization recomputes every retained paper. A network-free explicit migration is available with `tsx scripts/collect.ts --input INPUT --output OUTPUT --reclassify-only`; it preserves record IDs, order, custom metadata and collection timestamps without merging duplicates or declaring a successful source sync. The raw snapshots are not changed by a browser load.
+
+The fixed 400-paper AI-reconciled evaluation remains **provisional**, with unresolved boundaries and missing abstracts. Its metrics diagnose the rules; they are not human-gold acceptance measurements.
+
+## Detection and classification tags / 检测分类口径
+
+Since `2026-10-21-diagnosis-v2`, `diagnosis` requires an explicit detection/classification task, studied diagnostic accuracy, or affirmative downstream classification experiments. Standalone “diagnosis”, “diagnosed with” and “differential diagnosis” do not trigger the tag. Background benefits alone, negated tasks, anatomical/device/image-quality detection and screening-uptake studies are excluded where local wording identifies them. Title evidence and reported method/evaluation context remain imperfect proxies; report generation, methodological reviews and molecular/phenotype classification still have unresolved boundaries.
+
+`TASK_CLASSIFIER_VERSION` identifies this change independently from scope and the stable interest taxonomy. Public validation recalculates the derived tags in the Worker before indexes and charts consume them; collection and `--reclassify-only` use the same classifier. The other nine direction rules and IDs are unchanged. Historical counts can change because classification changed, not because new publications appeared; consumers should show the rule-version date when comparing counts.
+
+## Publication-date evidence / 发表日期证据
+
+Europe PMC normalization compares `firstPublicationDate`, `electronicPublicationDate` and `firstIndexDate`, choosing the earliest valid calendar date no later than the UTC collection day. Every supplied raw value and the chosen field remain in provenance. `firstIndexDate` is a source-observation fallback, not proof of the bibliographic publication date. Impossible days, partial dates and malformed timestamps do not become fabricated January 1 or collection dates.
+
+When all valid candidates are future dates, the preferred original value remains in `publishedAt` with `dateAnomaly: "future"`. Records remain in the library. Overview trends (including discovery-clock views), reading clues and AI evidence exclude both flagged records and dates later than their current Beijing-day window. A later normalization can clear the flag once a valid elapsed date is available; merging incoming corrections evaluates dates independently from metadata-version precedence.
+
+The unchanged 8,326-record snapshot collected on 2026-10-20 contains 43 future-dated records, all from Europe PMC. Their stored metadata has no alternative date candidates, so a local pass can flag them but cannot invent corrected dates. Source retrieval is needed to obtain any earlier electronic/index dates. No source snapshot was rewritten during this implementation.
+
 ## Shared scope and denominators
+
+`groupWorks` now adds exact normalized-title equality (case, punctuation and whitespace removed) with either a matching first-author surname or author-name Jaccard ≥ 0.5 to the existing DOI/PMID/arXiv/source-identifier relationships. Missing author lists never match by title alone. Conflicting same-title author groups cannot be joined by an overlap bridge. Single unstructured names and collective names are not guessed as surnames. Source records remain separate; `buildWorkIndex` exposes a work count and candidate-version links without rewriting IDs, source dates or metadata.
+
+The 2026-10-20 snapshot has 8,326 records and 8,170 possible works (8,322 under identifier-only grouping), with 156 multi-record groups, 152 newly connected by title/author evidence and 24 preprint/published groups. [The complete group report](eval/work-groups.md) and [20-group provisional AI review](eval/work-groups-review.json) retain the evidence. Eleven sampled groups have supporting abstracts on both records; nine rely on metadata because one abstract is missing. No conflict was identified in that AI sample, but human review has not been completed, and “no false merges” has not been established.
 
 `buildPreliminaryAnalysis` applies the selected source, research interest, and publication-date window together. Publication dates remain the clock even if a caller passes a discovery-clock filter. Paper IDs are deduplicated; malformed dates, impossible calendar dates, and future publication dates are excluded. All charts, drill-down IDs, reading candidates, author counts, and watchlist matches use those same records.
 
@@ -20,6 +48,91 @@ At most six reading candidates are selected from the same scope. Records with ab
 
 ## Authors and watchlists
 
+The PI/author directory now ranks by distinct last-author works, then total distinct works; users can switch to total works. First-author and last-author positions count once per grouped work even when several source versions exist. All source records remain available. A solo author counts in both positions. `seniorShare` is last-author works divided by all works, not a probability of being a PI. Alphabetical authorship, consortia, shared first/senior authorship and field-specific ordering conventions limit this proxy; no PI role, lab membership or leadership is confirmed.
+
+Directory construction defaults to `core`; the workspace passes its already selected core/all scope explicitly. Invalid or future-flagged publication dates are excluded. Direction filtering recomputes work counts, author positions, affiliations and hints together. The default listing requires at least two works rather than two version records.
+
+The directory prefers an available full name over a source's initials. A name-only identity and an ORCID identity may receive a bidirectional “possibly the same person” hint only when normalized full names match and they share an affiliation string or at least two distinct named coauthors. Abbreviated names cannot establish the hint; distinct ORCIDs are never linked by this rule. Hints preserve independent identities, counts and source records and link to the other entry for review.
+
 Author grouping prefers a supplied ORCID, otherwise a normalized name. Name-only identities are explicitly uncertain; ORCID values are source metadata and are not independently verified. Repeat authors within a paper count once per identity. Coauthor pairs represent shared authorship only. Papers with more than forty distinct author identities are excluded from pair enumeration and counted in `coauthorExcludedLargePapers`; they remain in paper and author totals. Watchlists use the existing exact member/ORCID and optional affiliation matching. These features do not infer lab membership, competitive strength, or willingness to collaborate.
 
 中文说明：所有分析使用同一来源、感兴趣方向及来源发表日期筛选范围，并按记录 ID 去重。方向与器官/模态比例以范围内记录数为分母，方向×方法比例以该方向内记录数为分母，研究线索比例以有摘要记录数为分母。标签允许重叠，未识别并不表示没有。摘要内容为原文句子摘录，不调用模型生成总结。阅读候选依据组合覆盖、摘要线索和发表日期选取，不是论文质量排名；作者与共同署名分析也不用于判断团队实力。基础模型方向与同名方法的组合因定义重复而省略。
+
+## Question retrieval and local-model budgets (P4.5 / P4.6)
+
+Independent-interest and question-bearing team analyses use deterministic local BM25 with bilingual
+query expansion, title weight ×2 and a positive-score pool capped at max(4 × limit, 40). Sampling then
+balances time/source and evidence kind. No match yields no evidence; it is not evidence that a topic is
+unstudied. Landscape selection uses tag Jaccard diversity within the strata. These are lexical sampling
+rules, not population estimates or human relevance judgments. Three frozen-sample comparisons and
+limitations are in `docs/question-retrieval.md` and `eval/retrieval-examples.json`.
+
+Model inputs are estimated at English characters /4 and Han characters /1.5 plus framing, with separate
+4,200/5,200/5,600 input caps for local Qwen3-0.6B/1.7B/4B. These are approximate counts. Methods,
+results and limitations use complete source sentences before batches split. Nonconsecutive passages
+have complete omission markers; sentences and negative qualifiers are not clipped into fragments.
+`abstractExcerptStatus=excerpted` identifies selected passages; `omitted-budget` identifies an empty
+excerpt when no complete sentence fits, distinct from a missing source abstract. The prompt explains
+both states. Original records, questions and citation IDs are retained. Lightweight quick preview uses
+four items. Full prompts and synthesis are checked before model calls; no paid fallback is introduced.
+The excerpt follow-up passes 69 related tests, including 300/180/80-character boundaries and an actual
+smallest-model budget request; normal batch counts do not increase. These are local deterministic and
+mocked checks, not live model validation. See `docs/local-model-budgets.md`.
+
+## GitHub maturity and pending relevance review (P4.8)
+
+`GITHUB_QUALITY_VERSION = 2026-10-21-v1` adds a separate metadata maturity view;
+it does not modify `SIGNAL_RELEVANCE_VERSION`, direct evidence, paper scope or
+stored records. Thresholds and missing-data behavior are specified in `SIGNALS.md`.
+The snapshot of 2026-10-20 contains 48,410 repositories: 2,376 established, 4,864
+active and 41,170 early. The 30-day overview changes from 5,229 to 2,255 repositories
+under the default mature selection; all 48,410 remain in the library. Global
+collection totals remain unfiltered and are labelled separately.
+
+P0.2 is a paper evaluation set and cannot measure repository precision. The
+separate 200-direct-repository stratified metadata review has 171 provisional
+positive, 8 negative and 21 uncertain annotations, awaiting human confirmation.
+Its balanced strata are not population weights. These counts are not an accepted
+accuracy result, and no claim that the direct-precision target has been achieved
+is made. No relevance rule has changed, so its before/after prediction is identical.
+
+## Comparable trend windows and collection-rule markers (P4.10)
+
+Direction bars retain absolute counts and add a percentage view. The denominator is
+the number of distinct records in the same period and source scope, before the
+direction selector is applied. The paper scope setting, GitHub maturity setting,
+relevance and text filters remain part of that scope. Selecting a direction changes
+the numerator and its co-occurring labels, not the denominator. News percentages
+count source records, not inferred event clusters; paper percentages count records,
+not candidate grouped works. All-date denominators include eligible records before
+the selected direction's first appearance. Multi-label shares must not be added together.
+
+A bounded date window is compared with the immediately preceding window of equal
+inclusive calendar length. Both windows use the selected date field and identical
+source and non-direction restrictions; invalid/future paper dates are excluded.
+Source comparisons stop at the last observable date while retaining the displayed
+start, and the resulting actual window length also defines the preceding window.
+All-time views do not invent a preceding window. Each proportion is accompanied by
+a Wilson 95% interval. The difference in percentage points uses the independent
+Newcombe interval derived from those two Wilson intervals. Either denominator
+below 30 suppresses directional conclusions and displays “样本不足 / Insufficient
+sample”. Zero denominators produce no estimate. These are descriptive archive
+comparisons: records are not randomly sampled, overlapping versions and correlated
+reports violate independence, and the intervals do not cover missed retrieval,
+changing classification rules or source coverage bias.
+
+Dotted timeline markers use explicit dates in manifest `interestTaxonomyVersion`,
+`sourceTaxonomyVersions`, the active `SCOPE_CLASSIFIER_VERSION`, or signal discovery
+`catalogVersion`. The legend exposes the full version strings. Dates identify rule
+releases, not the date every record was classified or a causal explanation for a
+change in publication counts. Current manifests retain only latest versions and
+short rolling run histories. A recent source check or first retained run is not
+proof of when a source was introduced; unavailable source-addition histories and
+older rule versions remain unmarked rather than being inferred. Markers outside
+the displayed daily/monthly buckets are hidden.
+
+### P4.9：新闻去重事件口径
+
+2026-10-20T14:35:32.144Z 快照包含 2,380 篇新闻，标题与发布时间聚类得到 2,318 个事件线索，其中 51 组包含 113 篇报道，最大组 4 篇。默认近 30 天（按新闻来源观测截止）450 篇报道对应 421 个事件线索。全部 2,380 条原始记录保留；原来的新闻量曲线、方向分布及检索分析分母仍按报道计数，不能用事件数替换它们或推断独立科研成果数。事件数在同一筛选范围内另行计算。
+
+P0.2 的标签集仅评价论文相关性，不评价新闻事件同一性，因此该任务的 precision/recall 为不适用，不伪报改善。20 个较大分组的标题元数据暂查支持重复阅读压缩用途，未做原文事件核验；评估方法与完整样例记录在 `eval/news-clustering-report.md` 和 `eval/news-clustering-samples.json`。

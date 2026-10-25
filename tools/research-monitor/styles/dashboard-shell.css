@@ -1,0 +1,78 @@
+@layer theme, base, components, utilities, app-base, app-surface, app-type, app-view;
+@layer app-view {
+  .research-dashboard.dashboard-shell {
+    margin-top: 0;
+  }
+  .dashboard-shell-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-16);
+    margin-bottom: var(--space-20);
+  }
+  .dashboard-shell-heading h2 {
+    margin: 0;
+    font-size: var(--text-20);
+  }
+  .dashboard-shell-heading p {
+    margin: var(--space-4) 0 0;
+    color: var(--muted-foreground);
+    font-size: var(--text-13);
+  }
+  .dashboard-shell-date {
+    color: var(--muted-foreground);
+    font: var(--text-12) / 1.6 var(--font-ui);
+    text-align: right;
+  }
+  .dashboard-shell > .dashboard-shell-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-16);
+  }
+  .dashboard-shell-metric {
+    min-height: 120px;
+    min-width: 0;
+  }
+  .dashboard-shell-metric .dash-metric-label {
+    min-height: 40px;
+    align-items: flex-start;
+    white-space: normal;
+    line-height: 1.5;
+  }
+  .dashboard-shell-metric[aria-disabled="true"] {
+    cursor: default;
+    opacity: 0.65;
+  }
+  .dashboard-shell-metric[aria-disabled="true"]:hover {
+    transform: none;
+  }
+  .dashboard-metric-comparison {
+    display: block;
+    color: var(--muted-foreground);
+    font-size: var(--text-12);
+  }
+  .dashboard-metric-tooltip {
+    max-width: min(320px, calc(100vw - 32px));
+    font: var(--text-12) / 1.7 var(--font-ui);
+  }
+  .dashboard-shell-library {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: var(--space-16);
+    margin-top: var(--space-20);
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 768px) {
+    .dashboard-shell-heading {
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+    .dashboard-shell-date {
+      text-align: left;
+    }
+    .dashboard-shell > .dashboard-shell-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-12);
+    }
+  }
+}

@@ -1,0 +1,53 @@
+@layer theme, base, components, utilities, app-base, app-surface, app-type, app-view;
+@layer app-view {
+  .view-state {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: var(--space-12);
+    min-height: 220px;
+    padding: var(--space-24);
+    margin: var(--space-16) 0;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-14);
+    background: var(--card);
+    color: var(--muted-foreground);
+    text-align: center;
+  }
+  .view-state .view-state-title {
+    margin: 0;
+    color: var(--foreground);
+    font: 600 var(--text-16) / 1.6 var(--font-ui);
+  }
+  .view-state-description {
+    max-width: 64ch;
+    font: var(--text-13) / 1.8 var(--font-ui);
+  }
+  .view-state-actions {
+    display: flex;
+    gap: var(--space-8);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .view-state-actions :is(button, a) {
+    min-height: 40px;
+  }
+  .view-state-skeleton {
+    display: grid;
+    gap: var(--space-8);
+    width: min(100%, 480px);
+  }
+  .view-state-skeleton > * {
+    height: 16px;
+  }
+  .view-state-skeleton > :last-child {
+    width: 65%;
+  }
+  .view-state-compact {
+    min-height: 0;
+    padding: var(--space-16);
+  }
+  .view-state-error > svg {
+    color: var(--status-error);
+  }
+}

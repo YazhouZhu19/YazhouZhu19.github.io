@@ -26,63 +26,114 @@ const root = fileURLToPath(new URL("../", import.meta.url));
 const snapshotPath = resolve(root, argument("--snapshot", "data/papers.json"));
 const manifestText = await readFile(snapshotPath, "utf8");
 const manifest = parseSnapshotManifest(JSON.parse(manifestText));
-const papers: Paper[] = (await Promise.all(manifest.shards.map(async shard => JSON.parse(await readFile(resolve(dirname(snapshotPath), shard.path), "utf8")) as Paper[]))).flat();
+const papers: Paper[] = (
+  await Promise.all(
+    manifest.shards.map(
+      async (shard) =>
+        JSON.parse(await readFile(resolve(dirname(snapshotPath), shard.path), "utf8")) as Paper[],
+    ),
+  )
+).flat();
 const snapshot = { ...manifest.metadata, papers, storageAvailable: true } as MonitorData;
 const now = new Date(argument("--now", "2026-10-04T06:00:00Z"));
 const iterations = Number(argument("--iterations", "3"));
 assert.ok(Number.isFinite(now.getTime()), "--now must be a valid timestamp");
-assert.ok(Number.isInteger(iterations) && iterations > 0 && iterations <= 20, "--iterations must be between 1 and 20");
+assert.ok(
+  Number.isInteger(iterations) && iterations > 0 && iterations <= 20,
+  "--iterations must be between 1 and 20",
+);
 const baselineDir = argument("--baseline-dir", "");
-const baselineDashboard: typeof buildDashboard | undefined = baselineDir ? (await import(pathToFileURL(resolve(baselineDir, "dashboard.ts")).href)).buildDashboard : undefined;
-const baselineAnalysis: typeof buildPreliminaryAnalysis | undefined = baselineDir ? (await import(pathToFileURL(resolve(baselineDir, "analysis.ts")).href)).buildPreliminaryAnalysis : undefined;
-const freshData = (): MonitorData => ({ ...snapshot, papers: papers.map(paper => ({ ...paper })) });
+const baselineDashboard: typeof buildDashboard | undefined = baselineDir
+  ? (await import(pathToFileURL(resolve(baselineDir, "dashboard.ts")).href)).buildDashboard
+  : undefined;
+const baselineAnalysis: typeof buildPreliminaryAnalysis | undefined = baselineDir
+  ? (await import(pathToFileURL(resolve(baselineDir, "analysis.ts")).href)).buildPreliminaryAnalysis
+  : undefined;
+const freshData = (): MonitorData => ({ ...snapshot, papers: papers.map((paper) => ({ ...paper })) });
 const measure = <T>(run: () => T) => {
   const start = performance.now();
   const value = run();
   return { value, ms: performance.now() - start };
 };
 const warmMedian = (run: () => unknown) => {
-  const timings = Array.from({length: iterations}, () => measure(run).ms).sort((a, b) => a - b);
+  const timings = Array.from({ length: iterations }, () => measure(run).ms).sort((a, b) => a - b);
   return timings[Math.floor(timings.length / 2)];
 };
 const round = (value: number) => Math.round(value * 10) / 10;
-console.log(JSON.stringify({
-  snapshot: snapshotPath, manifestSha256: createHash("sha256").update(manifestText).digest("hex"), now: now.toISOString(),
-  papers: papers.length, shards: manifest.shards.length, iterations,
-  snapshotMiB: round(manifest.shards.reduce((sum, shard) => sum + shard.bytes, 0) / 1048576),
-}));
+console.log(
+  JSON.stringify({
+    snapshot: snapshotPath,
+    manifestSha256: createHash("sha256").update(manifestText).digest("hex"),
+    now: now.toISOString(),
+    papers: papers.length,
+    shards: manifest.shards.length,
+    iterations,
+    snapshotMiB: round(manifest.shards.reduce((sum, shard) => sum + shard.bytes, 0) / 1048576),
+  }),
+);
 
 for (const scenario of [
-  {name: "dashboard:30d-publication", filters: defaultDashboardFilters},
-  {name: "dashboard:all-discovery", filters: {...defaultDashboardFilters, days: "all", clock: "discovery" as const}},
+  { name: "dashboard:30d-publication", filters: defaultDashboardFilters },
+  {
+    name: "dashboard:all-discovery",
+    filters: { ...defaultDashboardFilters, days: "all", clock: "discovery" as const },
+  },
 ]) {
   const input = freshData();
-  const baseline = baselineDashboard ? measure(() => baselineDashboard(input, [], scenario.filters, now)) : undefined;
+  const baseline = baselineDashboard
+    ? measure(() => baselineDashboard(input, [], scenario.filters, now))
+    : undefined;
   const optimized = measure(() => buildDashboard(input, [], scenario.filters, now));
   if (baseline) assert.deepStrictEqual(optimized.value, baseline.value, `${scenario.name}: output changed`);
-  console.log(JSON.stringify({
-    scenario: scenario.name, deepEqual: baseline ? true : "no baseline supplied", rows: optimized.value.rows.length,
-    baselineFirstMs: baseline && round(baseline.ms), optimizedFirstMs: round(optimized.ms),
-    baselineMedianMs: baselineDashboard && round(warmMedian(() => baselineDashboard(input, [], scenario.filters, now))),
-    optimizedMedianMs: round(warmMedian(() => buildDashboard(input, [], scenario.filters, now))),
-  }));
+  console.log(
+    JSON.stringify({
+      scenario: scenario.name,
+      deepEqual: baseline ? true : "no baseline supplied",
+      rows: optimized.value.rows.length,
+      baselineFirstMs: baseline && round(baseline.ms),
+      optimizedFirstMs: round(optimized.ms),
+      baselineMedianMs:
+        baselineDashboard && round(warmMedian(() => baselineDashboard(input, [], scenario.filters, now))),
+      optimizedMedianMs: round(warmMedian(() => buildDashboard(input, [], scenario.filters, now))),
+    }),
+  );
 }
 
 for (const days of ["30", "all"]) {
-  const filters = {...defaultDashboardFilters, days};
+  const filters = { ...defaultDashboardFilters, days };
   const input = freshData();
   const baseline = baselineAnalysis ? measure(() => baselineAnalysis(input, filters, [], now)) : undefined;
   const optimized = measure(() => buildPreliminaryAnalysis(input, filters, [], now));
   if (baseline) assert.deepStrictEqual(optimized.value, baseline.value, `analysis:${days}: output changed`);
   const fastInput = freshData();
-  const fast = measure(() => buildPreliminaryAnalysis(fastInput, filters, [], now, {skipPeople: true}));
-  const withoutPeople = ({authorsTop, coauthorPairs, coauthorExcludedLargePapers, watchlistMatches, ...visible}: typeof optimized.value) => visible;
-  assert.deepStrictEqual(withoutPeople(fast.value), withoutPeople(optimized.value), `analysis:${days}: skipPeople changed displayed data`);
-  console.log(JSON.stringify({
-    scenario: `analysis:${days}`, deepEqual: baseline ? true : "no baseline supplied", visibleDataEqual: true, rows: optimized.value.scope.total,
-    baselineFirstMs: baseline && round(baseline.ms), optimizedFirstMs: round(optimized.ms), skipPeopleFirstMs: round(fast.ms),
-    baselineMedianMs: baselineAnalysis && round(warmMedian(() => baselineAnalysis(input, filters, [], now))),
-    optimizedMedianMs: round(warmMedian(() => buildPreliminaryAnalysis(input, filters, [], now))),
-    skipPeopleMedianMs: round(warmMedian(() => buildPreliminaryAnalysis(fastInput, filters, [], now, {skipPeople: true}))),
-  }));
+  const fast = measure(() => buildPreliminaryAnalysis(fastInput, filters, [], now, { skipPeople: true }));
+  const withoutPeople = ({
+    authorsTop,
+    coauthorPairs,
+    coauthorExcludedLargePapers,
+    watchlistMatches,
+    ...visible
+  }: typeof optimized.value) => visible;
+  assert.deepStrictEqual(
+    withoutPeople(fast.value),
+    withoutPeople(optimized.value),
+    `analysis:${days}: skipPeople changed displayed data`,
+  );
+  console.log(
+    JSON.stringify({
+      scenario: `analysis:${days}`,
+      deepEqual: baseline ? true : "no baseline supplied",
+      visibleDataEqual: true,
+      rows: optimized.value.scope.total,
+      baselineFirstMs: baseline && round(baseline.ms),
+      optimizedFirstMs: round(optimized.ms),
+      skipPeopleFirstMs: round(fast.ms),
+      baselineMedianMs:
+        baselineAnalysis && round(warmMedian(() => baselineAnalysis(input, filters, [], now))),
+      optimizedMedianMs: round(warmMedian(() => buildPreliminaryAnalysis(input, filters, [], now))),
+      skipPeopleMedianMs: round(
+        warmMedian(() => buildPreliminaryAnalysis(fastInput, filters, [], now, { skipPeople: true })),
+      ),
+    }),
+  );
 }

@@ -74,3 +74,26 @@ The news overview follows the same dashboard layout and shared dropdowns as the 
 News readers can select 7/30/90 days, all dates or a custom interval, by source publication time (default) or platform first collection. The overview starts with all relevance levels; candidates remain in the library but do not enter AI assessments. Calendar windows, cards and chart bins use Beijing dates. Publication counts include the earliest collection batch whenever publication dates match; discovery counts separate that fixed batch and do not draw observations before collection began. The news evidence cutoff is the latest valid successful news-source observation or retained news-record observation, bounded by the overall snapshot timestamp. Failed checks and GitHub-only refreshes cannot advance this cutoff; successful empty news searches can. Dates after this cutoff remain unknown rather than zero, and invalid/future dates are separately inspectable. Long windows aggregate by month, with partial edge months disclosed. Charts, recent messages, filters and library sorting share the same date basis and exact record IDs. Source check times are shown separately from the shared snapshot generation time.
 
 The type ring and publisher buckets reconcile to the scoped population; broad research areas can overlap. Top-language and publisher breakdowns retain Other/Unknown buckets. Unknown dates, missing enrichment and unavailable original links are never treated as evidence that a repository lacks releases or a publisher lacks an original article.
+
+## Repository maturity — 2026-10-21-v1
+
+Maturity is separate from the unchanged `direct`/`candidate` relevance rules.
+`established` means at least 50 stars, at least 10 forks, or a DOI/arXiv link in
+`relatedUrls` plus at least 10 stars. `active` requires a push within the preceding
+180 days and an identified license, a README excerpt with at least 200 normalized
+characters, or at least 5 stars. Other repositories are `early`; archived
+established repositories are capped at `active`. Placeholder licenses, impossible
+or future push dates, and whitespace-only README text do not qualify. The snapshot
+instant anchors this rule, so repeated views of the same data are reproducible.
+
+The overview defaults to established plus active repositories and offers an
+“Include early repositories” checkbox. Global library/addition totals still count
+all records; the resource library searches all maturity levels. Chart drills and
+full rankings retain the exact overview population. Maturity never deletes or
+changes a record, and neither stars nor these levels establish scientific quality,
+reproducibility, maintenance guarantees or clinical effectiveness.
+
+A 200-record stratified audit of the existing direct population is exported in
+`eval/github-direct-review.csv`, with frozen evidence, Codex provisional labels and
+empty human-review columns. The labels describe public metadata, not a tested
+implementation. No direct-relevance rule is tightened before human confirmation.

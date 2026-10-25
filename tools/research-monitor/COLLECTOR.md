@@ -22,6 +22,8 @@ Candidates are selected by local title/abstract keyword rules with medical imagi
 
 Non-arXiv records deduplicate by normalized DOI and available native IDs. arXiv deduplicates by its versionless arXiv ID; its DOI can identify the journal publication, so it is preserved as a relationship without collapsing the preprint and journal record. Merging retains earliest `firstSeenAt`, nonempty abstracts/authors, combined sources/affiliations/provenance/version metadata, and updates classifications from the retained text. No title-similarity merging is performed.
 
+Snapshot storage uses stable publication-month buckets, with IDs sorted inside each bucket and bounded 4 MiB content-addressed parts. Invalid, missing or post-`collectedAt` publication dates go into `undated`; the comparison is anchored to the snapshot time, not the build machine's clock. New current-month papers therefore do not move unchanged older records across shard boundaries. Re-collected historical records can legitimately change their bucket's hash because their retained provenance has changed. The v2 transport dictionary appends new query URLs without renumbering published entries, and decoded records retain every source field.
+
 All existing papers survive source outages and bounded fetch windows. There is no 3,000-paper storage cap. `totalStored` is the full stored count; a UI may choose to render the latest 3,000. The initial snapshot `queryRuns` are preserved unchanged for frontend compatibility. The last 45 source `runs` and 500 individual `requestLogs` are retained; new requests are never mixed into the initial query snapshot.
 
 ## Errors and Actions behavior
