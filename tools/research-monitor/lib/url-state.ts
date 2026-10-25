@@ -1,5 +1,14 @@
 import { TRACKS } from "./classify";
 import type { DashboardDrill } from "./dashboard";
+import {
+  defaultPublicTeamState,
+  defaultSourceBrowseState,
+  parseSourceBrowseState,
+  publicAuthorId,
+  writeSourceBrowseState,
+  type PublicTeamState,
+  type SourceBrowseState,
+} from "./public-browse-state";
 
 export const WORKSPACE_ROUTES = {
   dashboard: "/papers/overview",
@@ -28,6 +37,8 @@ export type WorkspaceUrlState = {
   human?: string;
   sort?: string;
   clock?: "publication" | "discovery";
+  sourceBrowse?: SourceBrowseState;
+  teamDirectory?: PublicTeamState;
   drill?: { label: string; origin: WorkspaceView };
 };
 export const DEFAULT_URL_STATE: WorkspaceUrlState = {
@@ -55,10 +66,36 @@ export function parseWorkspaceHash(hash: string): WorkspaceUrlState {
   const view = Object.entries(WORKSPACE_ROUTES).find(([, route]) => route === path)?.[0];
   if (!view) return { ...DEFAULT_URL_STATE };
   const params = new URLSearchParams(query);
+  const scope = params.get("scope");
+  const publicBase = {
+    ...DEFAULT_URL_STATE,
+    view: workspaceView(view),
+    period: defaultPeriod(view),
+    scope: scope === "adjacent" || scope === "all" ? scope : "core",
+  };
+  if (view === "github" || view === "news") {
+    const sourceBrowse = parseSourceBrowseState(view, params);
+    const label = params.get("drill");
+    if (label) sourceBrowse.tab = "library";
+    return {
+      ...publicBase,
+      sourceBrowse,
+      ...(label ? { drill: { label, origin: view } } : {}),
+    };
+  }
+  if (view === "teams") {
+    const directory = defaultPublicTeamState();
+    const track = params.get("track") ?? "all";
+    directory.track = Object.hasOwn(TRACKS, track) ? track : "all";
+    directory.query = params.get("q") ?? "";
+    directory.sort = params.get("sort") === "works" ? "works" : "senior";
+    directory.tab = params.get("tab") === "saved" ? "saved" : "directory";
+    directory.author = directory.tab === "directory" ? publicAuthorId(params.get("author") ?? "") : "";
+    return { ...publicBase, teamDirectory: directory };
+  }
   const track = params.get("track") ?? (view === "foresight" ? "segmentation" : "all");
   const period = params.get("days") ?? defaultPeriod(view);
   const label = params.get("drill");
-  const scope = params.get("scope");
   const validTrack = track === "all" || Object.hasOwn(TRACKS, track) ? track : "all";
   const extra: Partial<WorkspaceUrlState> = {};
   for (const key of extraFilters) {
@@ -82,6 +119,26 @@ export function parseWorkspaceHash(hash: string): WorkspaceUrlState {
 
 export function serializeWorkspaceHash(state: WorkspaceUrlState): string {
   const params = new URLSearchParams();
+  if (state.view === "github" || state.view === "news" || state.view === "teams") {
+    if (state.scope && state.scope !== "core") params.set("scope", state.scope);
+    if (state.view === "teams") {
+      const directory = state.teamDirectory ?? defaultPublicTeamState();
+      if (directory.track !== "all") params.set("track", directory.track);
+      if (directory.query) params.set("q", directory.query);
+      if (directory.sort !== "senior") params.set("sort", directory.sort);
+      if (directory.tab === "saved") params.set("tab", "saved");
+      const author = directory.tab === "directory" ? publicAuthorId(directory.author) : "";
+      if (author) params.set("author", author);
+    } else {
+      writeSourceBrowseState(state.view, state.sourceBrowse ?? defaultSourceBrowseState(state.view), params);
+      if (state.drill) {
+        params.set("tab", "library");
+        params.set("drill", state.drill.label);
+      }
+    }
+    const query = params.toString();
+    return `#${WORKSPACE_ROUTES[state.view]}${query ? `?${query}` : ""}`;
+  }
   if (state.track !== "all") params.set("track", state.track);
   if (state.period !== defaultPeriod(state.view)) params.set("days", state.period);
   if (state.source !== "all") params.set("source", state.source);
@@ -103,6 +160,30 @@ export function serializeWorkspaceHash(state: WorkspaceUrlState): string {
 export function withoutUnrestorableDrill(state: WorkspaceUrlState): WorkspaceUrlState {
   if (!state.drill) return state;
   const { drill, ...rest } = state;
+  if (state.view === "github" || state.view === "news") {
+    return {
+      ...rest,
+      sourceBrowse: { ...(rest.sourceBrowse ?? defaultSourceBrowseState(state.view)), tab: "overview" },
+    };
+  }
+  if (drill.origin === "github" || drill.origin === "news") {
+    return {
+      ...DEFAULT_URL_STATE,
+      view: drill.origin,
+      period: "all",
+      scope: rest.scope,
+      sourceBrowse: defaultSourceBrowseState(drill.origin),
+    };
+  }
+  if (drill.origin === "teams") {
+    return {
+      ...DEFAULT_URL_STATE,
+      view: "teams",
+      period: "all",
+      scope: rest.scope,
+      teamDirectory: defaultPublicTeamState(),
+    };
+  }
   return {
     ...rest,
     view: drill.origin === "feed" ? "dashboard" : drill.origin,
@@ -135,7 +216,7 @@ function historyFields(state: unknown): Record<string, unknown> {
 /** A hash/history adapter with document-local drill IDs and snapshot-generation checks. */
 export function createWorkspaceHistory(
   target: WorkspaceHistoryTarget,
-  getGeneration: () => string | undefined,
+  getGeneration: (view: WorkspaceView) => string | undefined,
   onRestore: (state: WorkspaceUrlState, drill: DashboardDrill | null) => void,
 ) {
   let previous = initialWorkspaceUrlState(target.read().hash);
@@ -145,6 +226,7 @@ export function createWorkspaceHistory(
   let nextKey = 0;
   const documentKey = globalThis.crypto.randomUUID();
   const remembered = new Map<string, RememberedDrill>();
+  const provenance = new WeakMap<DashboardDrill, RememberedDrill>();
 
   function commit(state: WorkspaceUrlState, drill: DashboardDrill | null) {
     const hash = serializeWorkspaceHash(state);
@@ -153,14 +235,22 @@ export function createWorkspaceHistory(
     pendingRestore = null;
     const location = target.read();
     const fields = historyFields(location.historyState);
-    const generation = getGeneration();
+    const generation = getGeneration(state.view);
     if (state.drill && drill && drill !== currentDrill && generation) {
       currentDrillKey = `${documentKey}:${++nextKey}`;
-      remembered.set(currentDrillKey, { drill, origin: state.drill.origin, generation });
+      const original = provenance.get(drill) ?? { drill, origin: state.drill.origin, generation };
+      provenance.set(drill, original);
+      remembered.set(currentDrillKey, original);
       currentDrill = drill;
     }
     const entryKey = state.drill ? currentDrillKey : undefined;
-    const method = previous.view === state.view ? "replace" : "push";
+    const sameTab =
+      previous.view === state.view &&
+      ((state.view !== "github" && state.view !== "news") ||
+        (previous.sourceBrowse?.tab ?? "overview") === (state.sourceBrowse?.tab ?? "overview")) &&
+      (state.view !== "teams" ||
+        (previous.teamDirectory?.tab ?? "directory") === (state.teamDirectory?.tab ?? "directory"));
+    const method = sameTab ? "replace" : "push";
     previous = state;
     if (location.hash === hash && fields[drillStateKey] === entryKey) return;
     if (entryKey) fields[drillStateKey] = entryKey;
@@ -177,7 +267,7 @@ export function createWorkspaceHistory(
     const drill =
       state.drill &&
       saved &&
-      saved.generation === getGeneration() &&
+      saved.generation === getGeneration(state.view) &&
       saved.origin === state.drill.origin &&
       saved.drill.label === state.drill.label
         ? saved.drill

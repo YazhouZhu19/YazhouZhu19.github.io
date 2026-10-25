@@ -9,6 +9,16 @@ import { usePersonalData } from "@/hooks/use-personal-data";
 import { usePaperLibrary } from "@/hooks/use-paper-library";
 import { useWorkspaceUrlState } from "@/hooks/use-workspace-url-state";
 import { initialWorkspaceUrlState, workspaceView } from "@/lib/url-state";
+import {
+  defaultPublicTeamState,
+  defaultSourceBrowseState,
+  publicTeamState,
+  sourceBrowseGeneration,
+  teamPreferencesFromPublic,
+  type SourceBrowseState,
+  type SourceBrowseDrill,
+  type SourceKind,
+} from "@/lib/public-browse-state";
 import { SignalsContext } from "./signals-context";
 import { LocalDataControls } from "./local-data-controls";
 import { useI18n } from "./locale-provider";
@@ -103,9 +113,78 @@ export default function MonitorWorkspace() {
     horizon: "6–12",
   });
   const [teamPreferences, setTeamPreferences] = useState<TeamForesightPreferences>({
-    teamId: "",
+    ...teamPreferencesFromPublic(initialUrlState.teamDirectory ?? defaultPublicTeamState()),
     horizon: "6–12",
   });
+  const [sourcePreferences, setSourcePreferences] = useState<Record<SourceKind, SourceBrowseState>>(() => ({
+    github:
+      initialUrlState.view === "github" && initialUrlState.sourceBrowse
+        ? initialUrlState.sourceBrowse
+        : defaultSourceBrowseState("github"),
+    news:
+      initialUrlState.view === "news" && initialUrlState.sourceBrowse
+        ? initialUrlState.sourceBrowse
+        : defaultSourceBrowseState("news"),
+  }));
+  const sourceGenerations = useMemo(
+    () => ({
+      github: sourceBrowseGeneration(signalsManifest, "github"),
+      news: sourceBrowseGeneration(signalsManifest, "news"),
+    }),
+    [signalsManifest],
+  );
+  const [sourceRestoreKey, setSourceRestoreKey] = useState(0);
+  const [sourceDrills, setSourceDrills] = useState<Record<SourceKind, SourceBrowseDrill | null>>({
+    github: null,
+    news: null,
+  });
+  const changeGitHubDrill = useCallback(
+    (drill: SourceBrowseDrill | null) => {
+      setSourceDrills((current) => ({
+        ...current,
+        github: drill ? { ...drill, snapshotGeneration: sourceGenerations.github } : null,
+      }));
+    },
+    [sourceGenerations.github],
+  );
+  const changeNewsDrill = useCallback(
+    (drill: SourceBrowseDrill | null) => {
+      setSourceDrills((current) => ({
+        ...current,
+        news: drill ? { ...drill, snapshotGeneration: sourceGenerations.news } : null,
+      }));
+    },
+    [sourceGenerations.news],
+  );
+  useEffect(() => {
+    const stale = (["github", "news"] as const).filter((kind) => {
+      const drill = sourceDrills[kind];
+      return drill && drill.snapshotGeneration !== sourceGenerations[kind];
+    });
+    if (!stale.length) return;
+    setSourceDrills((current) => {
+      const next = { ...current };
+      for (const kind of stale) if (current[kind] === sourceDrills[kind]) next[kind] = null;
+      return next;
+    });
+    setSourcePreferences((current) => {
+      const next = { ...current };
+      for (const kind of stale) next[kind] = { ...current[kind], tab: "overview" };
+      return next;
+    });
+  }, [sourceDrills, sourceGenerations]);
+  const changeGitHubPreferences = useCallback((update: React.SetStateAction<SourceBrowseState>) => {
+    setSourcePreferences((current) => ({
+      ...current,
+      github: typeof update === "function" ? update(current.github) : update,
+    }));
+  }, []);
+  const changeNewsPreferences = useCallback((update: React.SetStateAction<SourceBrowseState>) => {
+    setSourcePreferences((current) => ({
+      ...current,
+      news: typeof update === "function" ? update(current.news) : update,
+    }));
+  }, []);
   const initialDashboardFilters = (target: string): DashboardFilters =>
     initialUrlState.view === target
       ? {
@@ -161,14 +240,40 @@ export default function MonitorWorkspace() {
       status: library.status,
       human: library.human,
       sort: library.sort,
+      ...(view === "github" || view === "news"
+        ? {
+            sourceBrowse: sourcePreferences[view],
+            ...(sourceDrills[view] ? { drill: { label: sourceDrills[view].label, origin: view } } : {}),
+          }
+        : {}),
+      ...(view === "teams" ? { teamDirectory: publicTeamState(teamPreferences) } : {}),
       ...(view === "feed" && dashboardDrill
         ? { drill: { label: dashboardDrill.label, origin: workspaceView(drillOrigin) } }
         : {}),
     },
-    dashboardDrill,
+    view === "github" || view === "news" ? sourceDrills[view] : dashboardDrill,
     (next, drill) => {
       setView(next.view);
-      library.restoreFilters(next);
+      // Source/PI URLs carry their own filters; do not overwrite the remembered paper library.
+      if (next.view === "github" || next.view === "news") {
+        const kind = next.view;
+        setSourcePreferences((current) => ({
+          ...current,
+          [kind]: next.sourceBrowse ?? defaultSourceBrowseState(kind),
+        }));
+        setSourceDrills((current) => ({ ...current, [kind]: drill }));
+        // Only generation-validated document-local drills can return; analysis stays opt-in.
+        setSourceRestoreKey((current) => current + 1);
+        library.setScope(next.scope ?? "core");
+      } else if (next.view === "teams") {
+        setTeamPreferences((current) => ({
+          ...current,
+          ...teamPreferencesFromPublic(next.teamDirectory ?? defaultPublicTeamState()),
+        }));
+        library.setScope(next.scope ?? "core");
+      } else {
+        library.restoreFilters(next);
+      }
       const filters: DashboardFilters = {
         days: next.period,
         track: next.track,
@@ -184,9 +289,10 @@ export default function MonitorWorkspace() {
           modality: next.modality ?? "",
           query: next.search,
         }));
-      setDashboardDrill(drill);
+      setDashboardDrill(next.view === "feed" ? drill : null);
       setDrillOrigin(next.drill?.origin ?? "foresight");
     },
+    sourceGenerations,
   );
   const { reset, setSort } = library;
   const openDrill = useCallback(
@@ -262,8 +368,12 @@ export default function MonitorWorkspace() {
             <Suspense fallback={viewFallback}>
               {signalsView ? (
                 <ResearchSignalsView
-                  key={view}
+                  key={`${view}:${sourceRestoreKey}`}
                   kind={view as "github" | "news"}
+                  preferences={sourcePreferences[view as SourceKind]}
+                  drill={sourceDrills[view as SourceKind]}
+                  onBrowseDrillChange={view === "github" ? changeGitHubDrill : changeNewsDrill}
+                  onPreferencesChange={view === "github" ? changeGitHubPreferences : changeNewsPreferences}
                   snapshot={signals}
                   manifest={signalsManifest}
                   recordsLoaded={signalsLoaded[view as "github" | "news"]}

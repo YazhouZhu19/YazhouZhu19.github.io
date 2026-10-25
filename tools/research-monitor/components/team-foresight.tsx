@@ -45,6 +45,7 @@ export type TeamForesightPreferences = {
   query?: string;
   listSource?: ListSource;
   savedKind?: string;
+  directorySort?: TeamDirectorySort;
 };
 type Props = {
   data: MonitorData;
@@ -88,7 +89,7 @@ export function TeamForesight({
     onPreferencesChange?.(next);
   };
   const [visibleLimit, setVisibleLimit] = useState(6);
-  const [directorySort, setDirectorySort] = useState<TeamDirectorySort>("senior");
+  const directorySort = viewPreferences.directorySort ?? "senior";
   const [trajectoryDimension, setTrajectoryDimension] = useState<TrajectoryDimension>("tracks");
   const [relationshipsOpen, setRelationshipsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -319,7 +320,11 @@ export function TeamForesight({
                 <select
                   value={directorySort}
                   onChange={(event) => {
-                    setDirectorySort(event.target.value as TeamDirectorySort);
+                    changePreferences({
+                      ...viewPreferences,
+                      listSource,
+                      directorySort: event.target.value as TeamDirectorySort,
+                    });
                     setVisibleLimit(6);
                   }}
                 >

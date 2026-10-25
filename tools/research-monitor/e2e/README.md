@@ -24,6 +24,16 @@ the same URL. Only that explicitly injected import failure is allowed; other
 page errors and external requests still fail. Mobile checks also exercise the
 shared native dashboard date, source and direction controls.
 
+Source sharing checks restore GitHub and news filters from a fresh URL, navigate
+away and back/forward, open the URL in another page, and switch language while
+retaining the same filter hash. Mobile checks also reject truncated primary
+library choices and page-level horizontal overflow across all five entries at
+768px. The source smoke flow expands a news event and checks its original-report
+link without following that external URL.
+Public-author links restore the directory search, direction, ordering and chosen
+author without starting AI. A copied source drill link falls back to its source
+overview with public filters; temporary record IDs do not travel in the URL.
+
 The small fixture verifies behavior and accessibility; it is not a performance
 dataset. For an existing production build, start `npm run preview -- --port 4173`
 and run:

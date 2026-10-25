@@ -7,7 +7,10 @@ export function useWorkspaceUrlState(
   state: WorkspaceUrlState,
   drill: DashboardDrill | null,
   onRestore: (state: WorkspaceUrlState, drill: DashboardDrill | null) => void,
+  sourceGenerations?: Partial<Record<"github" | "news", string>>,
 ) {
+  const generation = useRef(sourceGenerations);
+  generation.current = sourceGenerations;
   const restore = useRef(onRestore);
   restore.current = onRestore;
   const controller = useRef<ReturnType<typeof createWorkspaceHistory> | null>(null);
@@ -19,7 +22,10 @@ export function useWorkspaceUrlState(
           window.history[method === "push" ? "pushState" : "replaceState"](historyState, "", hash);
         },
       },
-      () => getLoadedPaperSnapshot()?.generation,
+      (view) =>
+        view === "github" || view === "news"
+          ? generation.current?.[view]
+          : getLoadedPaperSnapshot()?.generation,
       (next, nextDrill) => restore.current(next, nextDrill),
     );
     controller.current = current;

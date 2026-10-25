@@ -52,6 +52,7 @@ import { RELEVANCE_REASON_LABELS } from "@/lib/signal-relevance";
 import { explicitEvidenceKeys, findRelatedSignals } from "@/lib/signal-evidence";
 import type { Paper } from "@/lib/types";
 import type { DashboardDrill } from "@/lib/dashboard";
+import type { SourceBrowseState, SourceBrowseDrill } from "@/lib/public-browse-state";
 
 import type { SignalDashboardDrill } from "./signal-dashboard";
 
@@ -80,6 +81,10 @@ const AiResearchPanel = lazy(() =>
 
 type Props = {
   kind: "github" | "news";
+  preferences: SourceBrowseState;
+  drill: SourceBrowseDrill | null;
+  onBrowseDrillChange: (drill: SourceBrowseDrill | null) => void;
+  onPreferencesChange: React.Dispatch<React.SetStateAction<SourceBrowseState>>;
   snapshot: ResearchSignalsData | null;
   manifest: SignalsManifest | null;
   recordsLoaded: boolean;
@@ -91,28 +96,6 @@ type Props = {
   onPaper: (paper: Paper) => void;
   onDrill: (drill: DashboardDrill) => void;
 };
-type RelevanceFilter = "direct" | "candidate" | "all";
-type DashboardRange = 7 | 30 | 90 | "all" | "custom";
-type BrowseDrill = SignalDashboardDrill & { global?: boolean; exactIds?: boolean };
-type BrowseState = {
-  query: string;
-  category: string;
-  relevance: RelevanceFilter;
-  from: string;
-  to: string;
-  sort: string;
-  limit: number;
-  compareIds: string[];
-  analyze: boolean;
-  view: "overview" | "library";
-  drill: BrowseDrill | null;
-  dateRange?: DashboardRange;
-  githubClock?: "activity" | "creation";
-  newsClock?: NewsDashboardClock;
-  includeEarly?: boolean;
-  newsGroupEvents?: boolean;
-};
-const browseSessions = new Map<Props["kind"], BrowseState>();
 
 function discoverySearchUrl(kind: Props["kind"], query: string): string {
   if (kind === "github") return `https://github.com/search?q=${encodeURIComponent(query)}&type=repositories`;
@@ -154,6 +137,10 @@ function SourceLink({ url, children }: { url: string | null | undefined; childre
 
 export function ResearchSignalsView({
   kind,
+  preferences,
+  onPreferencesChange,
+  drill,
+  onBrowseDrillChange: setDrill,
   snapshot,
   manifest,
   recordsLoaded,
@@ -168,31 +155,32 @@ export function ResearchSignalsView({
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
   const viewLoading = <LoadingState title={<>{t("正在读取公开数据…", "Loading public data…")}</>} />;
-  const [query, setQuery] = useState(() => browseSessions.get(kind)?.query ?? "");
+  const {
+    query,
+    category,
+    relevance,
+    from,
+    to,
+    sort,
+    includeEarly,
+    tab: view,
+    range: dateRange,
+    groupEvents: newsGroupEvents,
+  } = preferences;
+  const githubClock = preferences.clock as "activity" | "creation";
+  const newsClock = preferences.clock as NewsDashboardClock;
+  const changePreference = useCallback(
+    <K extends keyof SourceBrowseState>(key: K, value: SourceBrowseState[K]) => {
+      onPreferencesChange((current) => ({ ...current, [key]: value }));
+    },
+    [onPreferencesChange],
+  );
   const deferredQuery = useDeferredValue(query);
-  const [category, setCategory] = useState(() => browseSessions.get(kind)?.category ?? "all");
-  const [relevance, setRelevance] = useState<RelevanceFilter>(
-    () => browseSessions.get(kind)?.relevance ?? "all",
-  );
-  const [from, setFrom] = useState(() => browseSessions.get(kind)?.from ?? "");
-  const [to, setTo] = useState(() => browseSessions.get(kind)?.to ?? "");
-  const [sort, setSort] = useState(() => browseSessions.get(kind)?.sort ?? "latest");
-  const [limit, setLimit] = useState(() => browseSessions.get(kind)?.limit ?? 24);
-  const [compareIds, setCompareIds] = useState<string[]>(() => browseSessions.get(kind)?.compareIds ?? []);
-  const [analyze, setAnalyze] = useState(() => browseSessions.get(kind)?.analyze ?? false);
-  const [view, setView] = useState<BrowseState["view"]>(() => browseSessions.get(kind)?.view ?? "overview");
-  const [drill, setDrill] = useState<BrowseDrill | null>(() => browseSessions.get(kind)?.drill ?? null);
-  const [dateRange, setDateRange] = useState<DashboardRange>(() => browseSessions.get(kind)?.dateRange ?? 30);
-  const [githubClock, setGithubClock] = useState<"activity" | "creation">(
-    () => browseSessions.get(kind)?.githubClock ?? "activity",
-  );
-  const [newsClock, setNewsClock] = useState<NewsDashboardClock>(
-    () => browseSessions.get(kind)?.newsClock ?? "publication",
-  );
-  const [newsGroupEvents, setNewsGroupEvents] = useState(
-    () => browseSessions.get(kind)?.newsGroupEvents ?? true,
-  );
-  const [includeEarly, setIncludeEarly] = useState(() => browseSessions.get(kind)?.includeEarly ?? false);
+  // Only public filters are retained by the workspace. Explicit URL restores remount this
+  // session, cancelling pending drills and leaving analysis/comparison opt-in.
+  const [limit, setLimit] = useState(24);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [analyze, setAnalyze] = useState(false);
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
@@ -537,44 +525,6 @@ export function ResearchSignalsView({
     newsGroupEvents,
   ]);
   useEffect(() => {
-    browseSessions.set(kind, {
-      query,
-      category,
-      relevance,
-      from,
-      to,
-      sort,
-      limit,
-      compareIds,
-      analyze,
-      view,
-      drill,
-      dateRange,
-      githubClock,
-      newsClock,
-      includeEarly,
-      newsGroupEvents,
-    });
-  }, [
-    kind,
-    query,
-    category,
-    relevance,
-    from,
-    to,
-    sort,
-    limit,
-    compareIds,
-    analyze,
-    view,
-    drill,
-    dateRange,
-    githubClock,
-    newsClock,
-    includeEarly,
-    newsGroupEvents,
-  ]);
-  useEffect(() => {
     if (!snapshot || !recordsLoaded) return;
     const available = new Set(records.map((record) => record.id));
     setCompareIds((ids) =>
@@ -589,21 +539,20 @@ export function ResearchSignalsView({
   const reset = () => {
     selectionAction.invalidate();
     setDrill(null);
-    setQuery("");
-    setCategory("all");
-    setRelevance("all");
-    setFrom("");
-    setTo("");
-    setSort("latest");
-    setDateRange(30);
-    setGithubClock("activity");
-    setNewsClock("publication");
-    setIncludeEarly(false);
-    setNewsGroupEvents(true);
+    changePreference("query", "");
+    changePreference("category", "all");
+    changePreference("relevance", "all");
+    changePreference("from", "");
+    changePreference("to", "");
+    changePreference("sort", "latest");
+    changePreference("range", 30);
+    changePreference("clock", kind === "github" ? "activity" : "publication");
+    changePreference("includeEarly", false);
+    changePreference("groupEvents", true);
   };
-  const switchView = (next: BrowseState["view"]) => {
+  const switchView = (next: SourceBrowseState["tab"]) => {
     selectionAction.invalidate();
-    setView(next);
+    changePreference("tab", next);
     setDrill(null);
   };
   const retrySources = () => {
@@ -614,7 +563,7 @@ export function ResearchSignalsView({
     if (!recordsLoaded && (needsRecords || recordsRequested.current)) void onLoadRecords(kind);
   };
   const openRankedRepositories = (metric: GitHubPopularityMetric) => {
-    setSort(metric);
+    changePreference("sort", metric);
     const total = githubModel?.scoped.metrics.find((item) => item.id === "total");
     if (total)
       void openDashboardRecords({
@@ -655,7 +604,7 @@ export function ResearchSignalsView({
         (selection) => {
           if (!selection) return;
           setDrill({ ...selection, exactIds: true });
-          setView("library");
+          changePreference("tab", "library");
           setLimit(24);
           requestAnimationFrame(() => {
             contentRef.current?.focus({ preventScroll: true });
@@ -664,24 +613,23 @@ export function ResearchSignalsView({
         },
       );
     },
-    [selectionAction, resolveSelection],
+    [selectionAction, resolveSelection, changePreference, setDrill],
   );
   const openGlobalRecords = async (input: SignalDashboardDrill) => {
     await selectionAction.run(
       () => resolveSelection(input),
       (selection) => {
         if (!selection) return;
-        setQuery("");
-        setCategory("all");
-        setRelevance("all");
-        setFrom("");
-        setTo("");
-        setDateRange("all");
-        setGithubClock("activity");
-        setNewsClock("publication");
-        setSort("latest");
+        changePreference("query", "");
+        changePreference("category", "all");
+        changePreference("relevance", "all");
+        changePreference("from", "");
+        changePreference("to", "");
+        changePreference("range", "all");
+        changePreference("clock", kind === "github" ? "activity" : "publication");
+        changePreference("sort", "latest");
         setDrill({ ...selection, global: true });
-        setView("library");
+        changePreference("tab", "library");
         setLimit(24);
         requestAnimationFrame(() => {
           contentRef.current?.focus({ preventScroll: true });
@@ -706,7 +654,7 @@ export function ResearchSignalsView({
           id={`${fieldId}-search`}
           type="search"
           value={query}
-          onChange={(event) => changeScope(() => setQuery(event.target.value))}
+          onChange={(event) => changeScope(() => changePreference("query", event.target.value))}
           placeholder={
             kind === "github"
               ? t("项目、模型、任务或开发者…", "Repository, model, task, or developer…")
@@ -752,7 +700,7 @@ export function ResearchSignalsView({
         sort,
         (value) => {
           selectionAction.invalidate();
-          setSort(value);
+          changePreference("sort", value as SourceBrowseState["sort"]);
         },
         sortOptions,
       )}
@@ -931,13 +879,14 @@ export function ResearchSignalsView({
             value={String(dateRange)}
             onChange={(value) =>
               changeScope(() => {
-                setDateRange(
+                changePreference(
+                  "range",
                   ["7", "30", "90"].includes(value)
                     ? (Number(value) as 7 | 30 | 90)
                     : (value as "all" | "custom"),
                 );
-                setFrom("");
-                setTo("");
+                changePreference("from", "");
+                changePreference("to", "");
               })
             }
             options={[
@@ -956,7 +905,9 @@ export function ResearchSignalsView({
               id={`${fieldId}-clock`}
               label={t("日期口径", "Date basis")}
               value={githubClock}
-              onChange={(value) => changeScope(() => setGithubClock(value as "activity" | "creation"))}
+              onChange={(value) =>
+                changeScope(() => changePreference("clock", value as "activity" | "creation"))
+              }
               options={[
                 ["activity", t("仓库最近活动", "Latest repository activity")],
                 ["creation", t("仓库最初发布时间", "Initial repository publication")],
@@ -967,7 +918,7 @@ export function ResearchSignalsView({
               id={`${fieldId}-clock`}
               label={t("日期口径", "Date basis")}
               value={newsClock}
-              onChange={(value) => changeScope(() => setNewsClock(value as NewsDashboardClock))}
+              onChange={(value) => changeScope(() => changePreference("clock", value as NewsDashboardClock))}
               options={[
                 ["publication", t("消息发布时间", "Announcement publication")],
                 ["discovery", t("平台入库时间", "Library discovery date")],
@@ -981,7 +932,7 @@ export function ResearchSignalsView({
             `${fieldId}-category`,
             t("研究方向", "Research area"),
             category,
-            (value) => changeScope(() => setCategory(value)),
+            (value) => changeScope(() => changePreference("category", value)),
             [
               ["all", `${t("全部方向", "All directions")} (${recordCount})`],
               ...categories.map((group): [string, string] => [
@@ -998,7 +949,8 @@ export function ResearchSignalsView({
             `${fieldId}-relevance`,
             t("相关性", "Relevance"),
             relevance,
-            (value) => changeScope(() => setRelevance(value as RelevanceFilter)),
+            (value) =>
+              changeScope(() => changePreference("relevance", value as SourceBrowseState["relevance"])),
             [
               ["direct", `${t("高相关", "Directly relevant")} (${directCount})`],
               ["candidate", `${t("待复核", "Needs review")} (${candidateCount})`],
@@ -1031,7 +983,7 @@ export function ResearchSignalsView({
           counts={qualitySummary.counts}
           includeEarly={includeEarly}
           library={view === "library"}
-          onChange={(value) => changeScope(() => setIncludeEarly(value))}
+          onChange={(value) => changeScope(() => changePreference("includeEarly", value))}
         />
       )}
       {dateRange === "custom" && (
@@ -1043,7 +995,7 @@ export function ResearchSignalsView({
               type="date"
               value={from}
               max={to || undefined}
-              onChange={(event) => changeScope(() => setFrom(event.target.value))}
+              onChange={(event) => changeScope(() => changePreference("from", event.target.value))}
             />
           </div>
           <div>
@@ -1053,7 +1005,7 @@ export function ResearchSignalsView({
               type="date"
               value={to}
               min={from || undefined}
-              onChange={(event) => changeScope(() => setTo(event.target.value))}
+              onChange={(event) => changeScope(() => changePreference("to", event.target.value))}
             />
           </div>
         </div>
@@ -1532,7 +1484,7 @@ export function ResearchSignalsView({
                     <input
                       type="checkbox"
                       checked={newsGroupEvents}
-                      onChange={(event) => setNewsGroupEvents(event.target.checked)}
+                      onChange={(event) => changePreference("groupEvents", event.target.checked)}
                     />
                     {t("按事件整理", "Group by event")}
                   </label>
