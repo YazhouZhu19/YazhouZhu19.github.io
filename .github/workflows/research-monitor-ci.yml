@@ -45,6 +45,7 @@ jobs:
 
       - name: Build and enforce resource budgets
         run: |
+          node --import tsx scripts/compact-archive.ts
           npm run build
           npm run measure
           site_bytes="$(du -sb dist | cut -f1)"
@@ -53,6 +54,11 @@ jobs:
             exit 1
           fi
           echo "Publication apparent size: $site_bytes bytes (limit 800000000)." >> "$GITHUB_STEP_SUMMARY"
+          # Simulate the final Pages index in this disposable CI checkout.
+          rsync -a --delete dist/ ../../research-monitor/
+          git -C ../.. add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ research-monitor/
+          (cd ../.. && python3 tools/research-monitor/scripts/check_pages_tree.py --max-bytes 950000000) \
+            | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Evaluate frozen relevance evidence
         id: evaluate

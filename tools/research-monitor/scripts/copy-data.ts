@@ -1,4 +1,4 @@
-import { readSnapshotFile } from "./snapshot-files";
+import { readSnapshotFile, writeSnapshotFile } from "./snapshot-files";
 import { monitorDataSchema } from "../lib/local-api";
 import { writePublicSnapshot, writePublicSnapshotV3 } from "./public-snapshot";
 import { copyPreviousSnapshotShards } from "./snapshot-install";
@@ -23,12 +23,9 @@ const compact = await writePublicSnapshotV3(
 // generations after all writers finish, for clients crossing the deployment.
 for (const version of [2, 3])
   await copyPreviousSnapshotShards(`../../research-monitor/data/public-papers-v${version}.json`, "dist/data");
-// Cached v1 bundles keep polling this original URL. Preserve the full v1
-// manifest and both archive generations after the public writer has pruned.
-for (const name of await readdir("data/papers")) {
-  if (/^[a-f0-9]{64}\.json$/.test(name)) await copyFile(`data/papers/${name}`, `dist/data/papers/${name}`);
-}
-await copyFile("data/papers.json", "dist/data/papers.json");
+// Generate v1 independently of the internal archive codec. Publication retention
+// below also restores the preceding deployed v1 generation for cached clients.
+await writeSnapshotFile("dist/data/papers.json", data);
 assert.deepEqual(await readSnapshotFile("dist/data/papers.json"), data);
 assert.deepEqual(await readSnapshotFile("dist/data/public-papers-v2.json"), data);
 assert.deepEqual(await readSnapshotFile("dist/data/public-papers-v3.json"), data);
@@ -55,4 +52,4 @@ console.log(
   `Publication budget: ${publication.bytes} / 800000000 bytes; kept ${retention.retained} referenced shards and removed ${retention.removed.length} orphans (${retention.removedBytes} bytes)`,
 );
 import assert from "node:assert/strict";
-import { copyFile, readFile, readdir } from "node:fs/promises";
+import { copyFile, readFile } from "node:fs/promises";

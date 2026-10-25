@@ -183,8 +183,8 @@ jobs:
           signal_manifest_data = (dist / 'data/signals-v2/manifest.json').read_bytes()
           if signal_data != Path('tools/research-monitor/data/research-signals.json').read_bytes() or len(signal_data) > 96 * 1024 * 1024:
               raise SystemExit('Public signal snapshot differs from the archive or exceeds the limit')
-          if source_data != legacy_data:
-              raise SystemExit('Legacy public manifest differs from the v1 archive')
+          if json.loads(legacy_data).get('schema') != 'research-monitor-shards-v1':
+              raise SystemExit('Legacy endpoint must retain the v1 codec')
           json.loads(public_data)
           source_snapshot = verify_snapshot(source_data, lambda path: (Path('tools/research-monitor/data') / path).read_bytes(), return_data=True)
           public_snapshot = verify_snapshot(public_data, lambda path: (dist / 'data' / path).read_bytes(), return_data=True)
@@ -216,6 +216,10 @@ jobs:
           }
           (dist / 'deployment.json').write_text(json.dumps(manifest, indent=2) + '\n')
           PY
+
+            # Public current/preceding generations have been verified above.
+            # Compact the internal archive without duplicating legacy payloads.
+            (cd tools/research-monitor && node --import tsx scripts/compact-archive.ts)
 
             staged_site_bytes="$(du -sb tools/research-monitor/dist | cut -f1)"
             if [ "$staged_site_bytes" -gt 800000000 ]; then
