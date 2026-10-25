@@ -46,7 +46,7 @@ test("discovery checkpoints retain independent providers and accept old snapshot
   assert.deepEqual(parsed.discoveryState, { github, news });
   assert.throws(() => parseResearchSignalsData({ ...snapshot, discoveryState: { thirdParty: {} } }));
   assert.equal(SIGNALS_MAX_RECORDS, 100000);
-  assert.equal(SIGNALS_MAX_BYTES, 64 * 1024 * 1024);
+  assert.equal(SIGNALS_MAX_BYTES, 96 * 1024 * 1024);
 });
 
 function repositorySnapshot(size: number) {

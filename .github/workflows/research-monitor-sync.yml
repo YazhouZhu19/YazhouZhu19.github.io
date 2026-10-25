@@ -181,7 +181,7 @@ jobs:
           compact_data = (dist / 'data/public-papers-v3.json').read_bytes()
           signal_data = (dist / 'data/research-signals.json').read_bytes()
           signal_manifest_data = (dist / 'data/signals-v2/manifest.json').read_bytes()
-          if signal_data != Path('tools/research-monitor/data/research-signals.json').read_bytes() or len(signal_data) > 64 * 1024 * 1024:
+          if signal_data != Path('tools/research-monitor/data/research-signals.json').read_bytes() or len(signal_data) > 96 * 1024 * 1024:
               raise SystemExit('Public signal snapshot differs from the archive or exceeds the limit')
           if source_data != legacy_data:
               raise SystemExit('Legacy public manifest differs from the v1 archive')
@@ -412,7 +412,7 @@ jobs:
                               raise RuntimeError('Legacy public manifest does not match this deployment')
                           if verify_snapshot(legacy_data, lambda path: read_public('data/' + path, MAX_BYTES)) != total:
                               raise RuntimeError('Legacy and current public paper counts differ')
-                          signal_data = read_public('data/research-signals.json', 64 * 1024 * 1024)
+                          signal_data = read_public('data/research-signals.json', 96 * 1024 * 1024)
                           if hashlib.sha256(signal_data).hexdigest() != expected_manifest['signalsSha256']:
                               raise RuntimeError('Public GitHub/news data does not match this deployment')
                           split_data = read_public('data/signals-v2/manifest.json', MAX_BYTES)

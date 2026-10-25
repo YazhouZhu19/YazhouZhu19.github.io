@@ -2,7 +2,9 @@ import { z } from "zod";
 
 // A complete snapshot is loaded atomically. Reject oversized updates rather than
 // silently dropping older discoveries to make a publication fit.
-export const SIGNALS_MAX_BYTES = 64 * 1024 * 1024;
+// The live archive reached 63.6 MiB; keep ingestion bounded while allowing growth.
+// Split browser loading and the complete-site publication budgets remain enforced.
+export const SIGNALS_MAX_BYTES = 96 * 1024 * 1024;
 export const SIGNALS_MAX_RECORDS = 100000;
 export const SIGNALS_MAX_SOURCES = 160;
 
