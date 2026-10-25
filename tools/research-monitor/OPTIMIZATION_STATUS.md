@@ -46,7 +46,7 @@ scores must not be presented as independently validated accuracy.
 | P4.9 | Implemented | 2,380 reports → 2,318 event leads; all reports expandable, no source records merged. |
 | P4.10 | Implemented | Explicit version markers, source/period denominators and Wilson/Newcombe intervals; missing source history is not inferred. |
 | P5.1 | Implemented; live CI pending | Both workflows check format/build/budgets; PR evaluation job summary stays provisional. |
-| P5.2 | Final local validation ongoing; live CI pending | Bilingual smoke, axe, mobile/tablet and injected chunk-failure recovery checks; external requests blocked. |
+| P5.2 | Local checks passed; live CI pending | All 28 bilingual browser checks pass; 96 full-data screenshots refreshed. |
 | Section 6 | Deferred by plan | Requires at least 30 days after new formats launch and maintainer approval. |
 
 ## Explicit review gates
@@ -241,3 +241,5 @@ scores must not be presented as independently validated accuracy.
   full paper/signals round-trip, retention and all resource budgets pass. Earlier full integration
   covered 519 TypeScript, 25 local API and 20 Python tests; the subsequent one-test addition
   is covered by the focused URL run. Final screenshots are refreshed separately.
+
+- Final screenshot audit: 96 images; zero uncaught errors and external requests. Repaired tablet PI/source and mobile library layouts visually rechecked. At 4× CPU, library direction changes measured 80/56 ms (zh), 120/72 ms (en). Native dashboard selection remains unmeasured; worst sampled overall interactions were 208/528 ms. Overall <200 ms acceptance is not established.
