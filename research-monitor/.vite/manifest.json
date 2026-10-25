@@ -1,0 +1,508 @@
+{
+  "_analysis-B9py03eK.js": {
+    "file": "assets/analysis-B9py03eK.js",
+    "name": "analysis",
+    "imports": [
+      "_main-CbPRZw0w.js",
+      "_classify-DUPFSOo1.js",
+      "_publication-date-byVfQZTn.js"
+    ]
+  },
+  "_arrow-up-right-DCq1M2IV.js": {
+    "file": "assets/arrow-up-right-DCq1M2IV.js",
+    "name": "arrow-up-right",
+    "imports": [
+      "_locale-provider-BHdo5HjW.js"
+    ]
+  },
+  "_badge-CXN9135X.js": {
+    "file": "assets/badge-CXN9135X.js",
+    "name": "badge",
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_button-B9wkucSn.js",
+      "_vendor-ui-RPLNgHPC.js",
+      "_vendor-react-3e9vAv1h.js"
+    ]
+  },
+  "_button-B9wkucSn.js": {
+    "file": "assets/button-B9wkucSn.js",
+    "name": "button",
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_vendor-ui-RPLNgHPC.js",
+      "_vendor-react-3e9vAv1h.js"
+    ]
+  },
+  "_check-g--3n10-.js": {
+    "file": "assets/check-g--3n10-.js",
+    "name": "check",
+    "imports": [
+      "_locale-provider-BHdo5HjW.js"
+    ]
+  },
+  "_classify-DUPFSOo1.js": {
+    "file": "assets/classify-DUPFSOo1.js",
+    "name": "classify"
+  },
+  "_foresight-B5_VtAWd.js": {
+    "file": "assets/foresight-B5_VtAWd.js",
+    "name": "foresight",
+    "imports": [
+      "_main-CbPRZw0w.js",
+      "_analysis-B9py03eK.js",
+      "_classify-DUPFSOo1.js",
+      "_publication-date-byVfQZTn.js",
+      "_research-signals-TnHyfYN9.js",
+      "_types-C_y5RDFa.js"
+    ],
+    "css": [
+      "assets/foresight-C9rG_I11.css"
+    ]
+  },
+  "_foresight-C9rG_I11.css": {
+    "file": "assets/foresight-C9rG_I11.css",
+    "src": "_foresight-C9rG_I11.css"
+  },
+  "_github-dashboard-Dfi8R7g6.js": {
+    "file": "assets/github-dashboard-Dfi8R7g6.js",
+    "name": "github-dashboard",
+    "imports": [
+      "_locale-provider-BHdo5HjW.js",
+      "_signal-dashboard-D8WQUS_P.js"
+    ]
+  },
+  "_locale-provider-BHdo5HjW.js": {
+    "file": "assets/locale-provider-BHdo5HjW.js",
+    "name": "locale-provider",
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_vendor-react-3e9vAv1h.js"
+    ]
+  },
+  "_main-C07t4O2K.css": {
+    "file": "assets/main-C07t4O2K.css",
+    "src": "_main-C07t4O2K.css"
+  },
+  "_main-CbPRZw0w.js": {
+    "file": "assets/main-CbPRZw0w.js",
+    "name": "main",
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_button-B9wkucSn.js",
+      "_classify-DUPFSOo1.js",
+      "_publication-date-byVfQZTn.js",
+      "_trend-statistics-DCBH9Jxr.js",
+      "_vendor-ui-RPLNgHPC.js",
+      "_arrow-up-right-DCq1M2IV.js",
+      "_vendor-react-3e9vAv1h.js",
+      "_types-C_y5RDFa.js"
+    ],
+    "dynamicImports": [
+      "lib/signals-snapshot.ts",
+      "lib/paper-index.ts",
+      "lib/public-paper-loader.ts",
+      "components/paper-filters.tsx",
+      "components/paper-library.tsx",
+      "components/paper-detail-sheet.tsx",
+      "components/foresight-view.tsx",
+      "components/team-foresight.tsx",
+      "components/monitor-views.tsx",
+      "components/preliminary-analysis.tsx",
+      "components/research-signals-view.tsx"
+    ],
+    "css": [
+      "assets/main-C07t4O2K.css"
+    ]
+  },
+  "_news-dashboard-Cu_4A0Od.js": {
+    "file": "assets/news-dashboard-Cu_4A0Od.js",
+    "name": "news-dashboard",
+    "imports": [
+      "_signal-dashboard-D8WQUS_P.js"
+    ]
+  },
+  "_paper-library-ChR9sxs0.css": {
+    "file": "assets/paper-library-ChR9sxs0.css",
+    "src": "_paper-library-ChR9sxs0.css"
+  },
+  "_paper-picker-BoaMMjRf.js": {
+    "file": "assets/paper-picker-BoaMMjRf.js",
+    "name": "paper-picker",
+    "imports": [
+      "_locale-provider-BHdo5HjW.js",
+      "_select-DfFWNyDS.js",
+      "_vendor-react-3e9vAv1h.js"
+    ]
+  },
+  "_publication-date-byVfQZTn.js": {
+    "file": "assets/publication-date-byVfQZTn.js",
+    "name": "publication-date"
+  },
+  "_research-signals-TnHyfYN9.js": {
+    "file": "assets/research-signals-TnHyfYN9.js",
+    "name": "research-signals",
+    "imports": [
+      "_types-C_y5RDFa.js"
+    ]
+  },
+  "_rolldown-runtime-ciTZEWaI.js": {
+    "file": "assets/rolldown-runtime-ciTZEWaI.js",
+    "name": "rolldown-runtime"
+  },
+  "_select-DfFWNyDS.js": {
+    "file": "assets/select-DfFWNyDS.js",
+    "name": "select",
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_button-B9wkucSn.js",
+      "_vendor-ui-RPLNgHPC.js",
+      "_check-g--3n10-.js",
+      "_vendor-react-3e9vAv1h.js"
+    ]
+  },
+  "_shard-cache-DdUb2Ue1.js": {
+    "file": "assets/shard-cache-DdUb2Ue1.js",
+    "name": "shard-cache"
+  },
+  "_signal-dashboard-D8WQUS_P.js": {
+    "file": "assets/signal-dashboard-D8WQUS_P.js",
+    "name": "signal-dashboard",
+    "imports": [
+      "_research-signals-TnHyfYN9.js"
+    ]
+  },
+  "_source-dashboard-charts-CaD8W8Gb.js": {
+    "file": "assets/source-dashboard-charts-CaD8W8Gb.js",
+    "name": "source-dashboard-charts",
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_arrow-up-right-DCq1M2IV.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "css": [
+      "assets/source-dashboard-charts-Dr-JpRww.css"
+    ]
+  },
+  "_source-dashboard-charts-Dr-JpRww.css": {
+    "file": "assets/source-dashboard-charts-Dr-JpRww.css",
+    "src": "_source-dashboard-charts-Dr-JpRww.css"
+  },
+  "_textarea-C-A6yvqu.js": {
+    "file": "assets/textarea-C-A6yvqu.js",
+    "name": "textarea",
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_button-B9wkucSn.js",
+      "_vendor-react-3e9vAv1h.js"
+    ]
+  },
+  "_trend-statistics-DCBH9Jxr.js": {
+    "file": "assets/trend-statistics-DCBH9Jxr.js",
+    "name": "trend-statistics",
+    "imports": [
+      "_publication-date-byVfQZTn.js"
+    ]
+  },
+  "_types-C_y5RDFa.js": {
+    "file": "assets/types-C_y5RDFa.js",
+    "name": "types"
+  },
+  "_vendor-react-3e9vAv1h.js": {
+    "file": "assets/vendor-react-3e9vAv1h.js",
+    "name": "vendor-react",
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js"
+    ]
+  },
+  "_vendor-ui-RPLNgHPC.js": {
+    "file": "assets/vendor-ui-RPLNgHPC.js",
+    "name": "vendor-ui",
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_vendor-react-3e9vAv1h.js"
+    ]
+  },
+  "components/ai-research-panel.tsx": {
+    "file": "assets/ai-research-panel-B45X9WTG.js",
+    "name": "ai-research-panel",
+    "src": "components/ai-research-panel.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_foresight-B5_VtAWd.js",
+      "_research-signals-TnHyfYN9.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "dynamicImports": [
+      "node_modules/@mlc-ai/web-llm/lib/index.js"
+    ],
+    "css": [
+      "assets/ai-research-panel-C1o6Gkgl.css"
+    ]
+  },
+  "components/foresight-view.tsx": {
+    "file": "assets/foresight-view-CkrOhn4E.js",
+    "name": "foresight-view",
+    "src": "components/foresight-view.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_main-CbPRZw0w.js",
+      "components/ai-research-panel.tsx",
+      "_locale-provider-BHdo5HjW.js",
+      "_foresight-B5_VtAWd.js",
+      "_vendor-react-3e9vAv1h.js",
+      "_types-C_y5RDFa.js"
+    ]
+  },
+  "components/github-dashboard.tsx": {
+    "file": "assets/github-dashboard-UKvSOcgU.js",
+    "name": "github-dashboard",
+    "src": "components/github-dashboard.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_source-dashboard-charts-CaD8W8Gb.js",
+      "_button-B9wkucSn.js",
+      "_github-dashboard-Dfi8R7g6.js",
+      "_arrow-up-right-DCq1M2IV.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "css": [
+      "assets/github-dashboard-8pzG-D43.css"
+    ]
+  },
+  "components/monitor-views.tsx": {
+    "file": "assets/monitor-views-C2XqSToW.js",
+    "name": "monitor-views",
+    "src": "components/monitor-views.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_badge-CXN9135X.js",
+      "_button-B9wkucSn.js",
+      "_select-DfFWNyDS.js",
+      "_textarea-C-A6yvqu.js",
+      "_classify-DUPFSOo1.js",
+      "_vendor-ui-RPLNgHPC.js",
+      "_arrow-up-right-DCq1M2IV.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "css": [
+      "assets/monitor-views-DDiiSyS8.css",
+      "assets/paper-library-ChR9sxs0.css"
+    ]
+  },
+  "components/news-dashboard.tsx": {
+    "file": "assets/news-dashboard-BeQwUg6f.js",
+    "name": "news-dashboard",
+    "src": "components/news-dashboard.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_source-dashboard-charts-CaD8W8Gb.js",
+      "_button-B9wkucSn.js",
+      "_news-dashboard-Cu_4A0Od.js",
+      "_research-signals-TnHyfYN9.js",
+      "_arrow-up-right-DCq1M2IV.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "css": [
+      "assets/news-dashboard-BiojHbJK.css"
+    ]
+  },
+  "components/paper-analysis.tsx": {
+    "file": "assets/paper-analysis-DDmsrrdX.js",
+    "name": "paper-analysis",
+    "src": "components/paper-analysis.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_analysis-B9py03eK.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "css": [
+      "assets/paper-analysis-CqXBLNP2.css"
+    ]
+  },
+  "components/paper-detail-sheet.tsx": {
+    "file": "assets/paper-detail-sheet-DCew2Be1.js",
+    "name": "paper-detail-sheet",
+    "src": "components/paper-detail-sheet.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_paper-picker-BoaMMjRf.js",
+      "_badge-CXN9135X.js",
+      "_button-B9wkucSn.js",
+      "_textarea-C-A6yvqu.js",
+      "_classify-DUPFSOo1.js",
+      "_arrow-up-right-DCq1M2IV.js",
+      "_check-g--3n10-.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "dynamicImports": [
+      "components/paper-analysis.tsx"
+    ],
+    "css": [
+      "assets/paper-library-ChR9sxs0.css"
+    ]
+  },
+  "components/paper-filters.tsx": {
+    "file": "assets/paper-filters-Bn2x8OE7.js",
+    "name": "paper-filters",
+    "src": "components/paper-filters.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_paper-picker-BoaMMjRf.js",
+      "_button-B9wkucSn.js",
+      "_classify-DUPFSOo1.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "css": [
+      "assets/paper-library-ChR9sxs0.css"
+    ]
+  },
+  "components/paper-library.tsx": {
+    "file": "assets/paper-library-BmiU4aqg.js",
+    "name": "paper-library",
+    "src": "components/paper-library.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_paper-picker-BoaMMjRf.js",
+      "_badge-CXN9135X.js",
+      "_button-B9wkucSn.js",
+      "_classify-DUPFSOo1.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "css": [
+      "assets/paper-library-Bc0Hs91R.css",
+      "assets/paper-library-ChR9sxs0.css"
+    ]
+  },
+  "components/preliminary-analysis.tsx": {
+    "file": "assets/preliminary-analysis-fhP98eIN.js",
+    "name": "preliminary-analysis",
+    "src": "components/preliminary-analysis.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_button-B9wkucSn.js",
+      "_select-DfFWNyDS.js",
+      "_analysis-B9py03eK.js",
+      "_classify-DUPFSOo1.js",
+      "_arrow-up-right-DCq1M2IV.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "css": [
+      "assets/preliminary-analysis-Dmg88fMs.css"
+    ]
+  },
+  "components/research-signals-view.tsx": {
+    "file": "assets/research-signals-view-DG4hEHSm.js",
+    "name": "research-signals-view",
+    "src": "components/research-signals-view.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_main-CbPRZw0w.js",
+      "_locale-provider-BHdo5HjW.js",
+      "_button-B9wkucSn.js",
+      "_foresight-B5_VtAWd.js",
+      "_github-dashboard-Dfi8R7g6.js",
+      "_news-dashboard-Cu_4A0Od.js",
+      "_research-signals-TnHyfYN9.js",
+      "_signal-dashboard-D8WQUS_P.js",
+      "_trend-statistics-DCBH9Jxr.js",
+      "_arrow-up-right-DCq1M2IV.js",
+      "_check-g--3n10-.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "dynamicImports": [
+      "components/github-dashboard.tsx",
+      "components/news-dashboard.tsx",
+      "components/ai-research-panel.tsx"
+    ],
+    "css": [
+      "assets/research-signals-view-DaoyDF9-.css"
+    ]
+  },
+  "components/team-foresight.tsx": {
+    "file": "assets/team-foresight-yRBfyLaJ.js",
+    "name": "team-foresight",
+    "src": "components/team-foresight.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-ciTZEWaI.js",
+      "_main-CbPRZw0w.js",
+      "components/ai-research-panel.tsx",
+      "_locale-provider-BHdo5HjW.js",
+      "components/monitor-views.tsx",
+      "_button-B9wkucSn.js",
+      "_textarea-C-A6yvqu.js",
+      "_foresight-B5_VtAWd.js",
+      "_classify-DUPFSOo1.js",
+      "_publication-date-byVfQZTn.js",
+      "_research-signals-TnHyfYN9.js",
+      "_arrow-up-right-DCq1M2IV.js",
+      "_vendor-react-3e9vAv1h.js"
+    ],
+    "css": [
+      "assets/team-foresight-jHnSfxBa.css"
+    ]
+  },
+  "lib/paper-index.ts": {
+    "file": "assets/paper-index-Cquzy051.js",
+    "name": "paper-index",
+    "src": "lib/paper-index.ts",
+    "isDynamicEntry": true
+  },
+  "lib/public-paper-loader.ts": {
+    "file": "assets/public-paper-loader-DN8Vkjz_.js",
+    "name": "public-paper-loader",
+    "src": "lib/public-paper-loader.ts",
+    "isDynamicEntry": true,
+    "imports": [
+      "_main-CbPRZw0w.js",
+      "_shard-cache-DdUb2Ue1.js"
+    ]
+  },
+  "lib/signals-snapshot.ts": {
+    "file": "assets/signals-snapshot-jB5PBCKv.js",
+    "name": "signals-snapshot",
+    "src": "lib/signals-snapshot.ts",
+    "isDynamicEntry": true,
+    "imports": [
+      "_shard-cache-DdUb2Ue1.js",
+      "_research-signals-TnHyfYN9.js",
+      "_types-C_y5RDFa.js"
+    ]
+  },
+  "node_modules/@mlc-ai/web-llm/lib/index.js": {
+    "file": "assets/lib-jOcaIHI_.js",
+    "name": "lib",
+    "src": "node_modules/@mlc-ai/web-llm/lib/index.js",
+    "isDynamicEntry": true
+  }
+}

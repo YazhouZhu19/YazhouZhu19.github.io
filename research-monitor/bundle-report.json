@@ -1,0 +1,1939 @@
+{
+  "note": "Chunk bytes are final uncompressed output. Module figures are bundler rendered-code contributions; they do not sum to separately gzipped transport bytes.",
+  "chunks": [
+    {
+      "file": "assets/lib-jOcaIHI_.js",
+      "bytes": 5911792,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "node_modules/@mlc-ai/web-llm/lib/index.js",
+          "renderedCodeBytes": 6277783,
+          "renderedLength": 6277783
+        }
+      ]
+    },
+    {
+      "file": "assets/vendor-react-3e9vAv1h.js",
+      "bytes": 189639,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "node_modules/react-dom/cjs/react-dom-client.production.js",
+          "renderedCodeBytes": 452058,
+          "renderedLength": 452058
+        },
+        {
+          "id": "node_modules/react/cjs/react.production.js",
+          "renderedCodeBytes": 15098,
+          "renderedLength": 15098
+        },
+        {
+          "id": "node_modules/scheduler/cjs/scheduler.production.js",
+          "renderedCodeBytes": 8994,
+          "renderedLength": 8994
+        },
+        {
+          "id": "node_modules/react-dom/cjs/react-dom.production.js",
+          "renderedCodeBytes": 5708,
+          "renderedLength": 5708
+        },
+        {
+          "id": "node_modules/react/cjs/react-jsx-runtime.production.js",
+          "renderedCodeBytes": 866,
+          "renderedLength": 866
+        },
+        {
+          "id": "node_modules/react-dom/client.js",
+          "renderedCodeBytes": 473,
+          "renderedLength": 473
+        },
+        {
+          "id": "node_modules/react-dom/index.js",
+          "renderedCodeBytes": 468,
+          "renderedLength": 468
+        },
+        {
+          "id": "node_modules/react/jsx-runtime.js",
+          "renderedCodeBytes": 200,
+          "renderedLength": 200
+        },
+        {
+          "id": "node_modules/scheduler/index.js",
+          "renderedCodeBytes": 188,
+          "renderedLength": 188
+        },
+        {
+          "id": "node_modules/react/index.js",
+          "renderedCodeBytes": 176,
+          "renderedLength": 176
+        }
+      ]
+    },
+    {
+      "file": "assets/main-CbPRZw0w.js",
+      "bytes": 157075,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/button-B9wkucSn.js",
+        "assets/classify-DUPFSOo1.js",
+        "assets/publication-date-byVfQZTn.js",
+        "assets/trend-statistics-DCBH9Jxr.js",
+        "assets/vendor-ui-RPLNgHPC.js",
+        "assets/arrow-up-right-DCq1M2IV.js",
+        "assets/vendor-react-3e9vAv1h.js",
+        "assets/types-C_y5RDFa.js"
+      ],
+      "dynamicImports": [
+        "assets/signals-snapshot-jB5PBCKv.js",
+        "assets/paper-index-Cquzy051.js",
+        "assets/public-paper-loader-DN8Vkjz_.js",
+        "assets/paper-filters-Bn2x8OE7.js",
+        "assets/paper-library-BmiU4aqg.js",
+        "assets/paper-detail-sheet-DCew2Be1.js",
+        "assets/foresight-view-CkrOhn4E.js",
+        "assets/team-foresight-yRBfyLaJ.js",
+        "assets/monitor-views-C2XqSToW.js",
+        "assets/preliminary-analysis-fhP98eIN.js",
+        "assets/research-signals-view-DG4hEHSm.js"
+      ],
+      "modules": [
+        {
+          "id": "node_modules/sonner/dist/index.mjs",
+          "renderedCodeBytes": 53503,
+          "renderedLength": 53503
+        },
+        {
+          "id": "components/research-dashboard.tsx",
+          "renderedCodeBytes": 27476,
+          "renderedLength": 25339
+        },
+        {
+          "id": "components/spatial-chart.tsx",
+          "renderedCodeBytes": 22149,
+          "renderedLength": 21662
+        },
+        {
+          "id": "components/monitor-workspace.tsx",
+          "renderedCodeBytes": 15875,
+          "renderedLength": 15859
+        },
+        {
+          "id": "components/ui/sidebar.tsx",
+          "renderedCodeBytes": 11281,
+          "renderedLength": 11281
+        },
+        {
+          "id": "lib/local-api.ts",
+          "renderedCodeBytes": 9790,
+          "renderedLength": 9396
+        },
+        {
+          "id": "lib/data-worker-client.ts",
+          "renderedCodeBytes": 9555,
+          "renderedLength": 9555
+        },
+        {
+          "id": "lib/url-state.ts",
+          "renderedCodeBytes": 8853,
+          "renderedLength": 8853
+        },
+        {
+          "id": "components/workspace-header.tsx",
+          "renderedCodeBytes": 8443,
+          "renderedLength": 7413
+        },
+        {
+          "id": "lib/dashboard.ts",
+          "renderedCodeBytes": 6730,
+          "renderedLength": 6604
+        },
+        {
+          "id": "lib/paper-works.ts",
+          "renderedCodeBytes": 6263,
+          "renderedLength": 6261
+        },
+        {
+          "id": "components/trend-annotations.tsx",
+          "renderedCodeBytes": 5922,
+          "renderedLength": 5567
+        },
+        {
+          "id": "hooks/use-paper-library.ts",
+          "renderedCodeBytes": 5654,
+          "renderedLength": 5654
+        },
+        {
+          "id": "lib/public-browse-state.ts",
+          "renderedCodeBytes": 4614,
+          "renderedLength": 4614
+        },
+        {
+          "id": "components/local-data-controls.tsx",
+          "renderedCodeBytes": 4369,
+          "renderedLength": 3981
+        },
+        {
+          "id": "lib/signals-store.ts",
+          "renderedCodeBytes": 4312,
+          "renderedLength": 4312
+        },
+        {
+          "id": "components/app-sidebar.tsx",
+          "renderedCodeBytes": 4171,
+          "renderedLength": 4070
+        },
+        {
+          "id": "lib/public-data-schema.ts",
+          "renderedCodeBytes": 4095,
+          "renderedLength": 4095
+        },
+        {
+          "id": "components/dashboard-shell.tsx",
+          "renderedCodeBytes": 3743,
+          "renderedLength": 3713
+        },
+        {
+          "id": "components/ui/dialog.tsx",
+          "renderedCodeBytes": 3440,
+          "renderedLength": 3440
+        },
+        {
+          "id": "hooks/use-personal-data.ts",
+          "renderedCodeBytes": 3253,
+          "renderedLength": 3145
+        },
+        {
+          "id": "components/workspace-navigation.tsx",
+          "renderedCodeBytes": 3231,
+          "renderedLength": 3064
+        },
+        {
+          "id": "components/state-views.tsx",
+          "renderedCodeBytes": 3184,
+          "renderedLength": 3130
+        },
+        {
+          "id": "components/ui/sheet.tsx",
+          "renderedCodeBytes": 3147,
+          "renderedLength": 3147
+        },
+        {
+          "id": "hooks/use-paper-snapshot.ts",
+          "renderedCodeBytes": 3144,
+          "renderedLength": 3112
+        },
+        {
+          "id": "components/notice-stack.tsx",
+          "renderedCodeBytes": 2341,
+          "renderedLength": 2321
+        },
+        {
+          "id": "lib/dashboard-base.ts",
+          "renderedCodeBytes": 2223,
+          "renderedLength": 2223
+        },
+        {
+          "id": "vite/preload-helper.js",
+          "renderedCodeBytes": 2121,
+          "renderedLength": 2121
+        },
+        {
+          "id": "components/paper-scope-control.tsx",
+          "renderedCodeBytes": 1868,
+          "renderedLength": 1578
+        },
+        {
+          "id": "lib/snapshot-refresh.ts",
+          "renderedCodeBytes": 1754,
+          "renderedLength": 1718
+        },
+        {
+          "id": "components/ui/table.tsx",
+          "renderedCodeBytes": 1749,
+          "renderedLength": 1749
+        },
+        {
+          "id": "components/ui/tooltip.tsx",
+          "renderedCodeBytes": 1456,
+          "renderedLength": 1456
+        },
+        {
+          "id": "hooks/use-workspace-url-state.ts",
+          "renderedCodeBytes": 1342,
+          "renderedLength": 1342
+        },
+        {
+          "id": "lib/manifest-polling.ts",
+          "renderedCodeBytes": 1320,
+          "renderedLength": 1320
+        },
+        {
+          "id": "vite/modulepreload-polyfill.js",
+          "renderedCodeBytes": 1205,
+          "renderedLength": 1205
+        },
+        {
+          "id": "lib/paper-export.ts",
+          "renderedCodeBytes": 1139,
+          "renderedLength": 1079
+        },
+        {
+          "id": "components/app-error-boundary.tsx",
+          "renderedCodeBytes": 1129,
+          "renderedLength": 989
+        },
+        {
+          "id": "components/ui/input.tsx",
+          "renderedCodeBytes": 919,
+          "renderedLength": 919
+        },
+        {
+          "id": "components/dashboard-choice.tsx",
+          "renderedCodeBytes": 799,
+          "renderedLength": 799
+        },
+        {
+          "id": "lib/workspace-navigation.ts",
+          "renderedCodeBytes": 706,
+          "renderedLength": 652
+        },
+        {
+          "id": "lib/collection-notice.ts",
+          "renderedCodeBytes": 672,
+          "renderedLength": 672
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/chart-no-axes-combined.mjs",
+          "renderedCodeBytes": 654,
+          "renderedLength": 654
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/layout-dashboard.mjs",
+          "renderedCodeBytes": 639,
+          "renderedLength": 639
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/layers.mjs",
+          "renderedCodeBytes": 620,
+          "renderedLength": 620
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/radio.mjs",
+          "renderedCodeBytes": 588,
+          "renderedLength": 588
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/newspaper.mjs",
+          "renderedCodeBytes": 559,
+          "renderedLength": 559
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/focus.mjs",
+          "renderedCodeBytes": 555,
+          "renderedLength": 555
+        },
+        {
+          "id": "hooks/use-mobile.ts",
+          "renderedCodeBytes": 545,
+          "renderedLength": 545
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs",
+          "renderedCodeBytes": 517,
+          "renderedLength": 517
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/circle-alert.mjs",
+          "renderedCodeBytes": 504,
+          "renderedLength": 504
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/users.mjs",
+          "renderedCodeBytes": 503,
+          "renderedLength": 503
+        },
+        {
+          "id": "lib/paper-scope.ts",
+          "renderedCodeBytes": 502,
+          "renderedLength": 502
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/circle-question-mark.mjs",
+          "renderedCodeBytes": 501,
+          "renderedLength": 501
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/triangle-alert.mjs",
+          "renderedCodeBytes": 482,
+          "renderedLength": 482
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/workflow.mjs",
+          "renderedCodeBytes": 481,
+          "renderedLength": 481
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/chart-bar.mjs",
+          "renderedCodeBytes": 478,
+          "renderedLength": 478
+        },
+        {
+          "id": "hooks/use-signals.ts",
+          "renderedCodeBytes": 458,
+          "renderedLength": 458
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/book-open.mjs",
+          "renderedCodeBytes": 439,
+          "renderedLength": 439
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/database.mjs",
+          "renderedCodeBytes": 437,
+          "renderedLength": 437
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/git-branch.mjs",
+          "renderedCodeBytes": 431,
+          "renderedLength": 431
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/download.mjs",
+          "renderedCodeBytes": 411,
+          "renderedLength": 411
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/arrow-down-to-line.mjs",
+          "renderedCodeBytes": 405,
+          "renderedLength": 405
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/upload.mjs",
+          "renderedCodeBytes": 402,
+          "renderedLength": 402
+        },
+        {
+          "id": "main.tsx",
+          "renderedCodeBytes": 399,
+          "renderedLength": 399
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/info.mjs",
+          "renderedCodeBytes": 385,
+          "renderedLength": 385
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/panel-left.mjs",
+          "renderedCodeBytes": 375,
+          "renderedLength": 375
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/bookmark.mjs",
+          "renderedCodeBytes": 367,
+          "renderedLength": 367
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/circle-dot.mjs",
+          "renderedCodeBytes": 350,
+          "renderedLength": 350
+        },
+        {
+          "id": "lib/workspace-format.ts",
+          "renderedCodeBytes": 349,
+          "renderedLength": 335
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/x.mjs",
+          "renderedCodeBytes": 280,
+          "renderedLength": 280
+        },
+        {
+          "id": "components/ui/skeleton.tsx",
+          "renderedCodeBytes": 269,
+          "renderedLength": 269
+        },
+        {
+          "id": "components/signals-context.tsx",
+          "renderedCodeBytes": 189,
+          "renderedLength": 189
+        },
+        {
+          "id": "components/ui/separator.tsx",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/state-views.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/notice-stack.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/paper-scope.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/dashboard-common.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/spatial-charts.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/dashboard-shell.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/workspace-dashboards.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/globals.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/typography.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/accessibility.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/vendor-ui-RPLNgHPC.js",
+      "bytes": 98864,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "node_modules/@radix-ui/react-select/dist/index.mjs",
+          "renderedCodeBytes": 42823,
+          "renderedLength": 42821
+        },
+        {
+          "id": "node_modules/@floating-ui/core/dist/floating-ui.core.mjs",
+          "renderedCodeBytes": 19580,
+          "renderedLength": 19580
+        },
+        {
+          "id": "node_modules/@radix-ui/react-tooltip/dist/index.mjs",
+          "renderedCodeBytes": 18399,
+          "renderedLength": 18399
+        },
+        {
+          "id": "node_modules/@floating-ui/dom/dist/floating-ui.dom.mjs",
+          "renderedCodeBytes": 18383,
+          "renderedLength": 18383
+        },
+        {
+          "id": "node_modules/@radix-ui/react-collection/dist/index.mjs",
+          "renderedCodeBytes": 15928,
+          "renderedLength": 15928
+        },
+        {
+          "id": "node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs",
+          "renderedCodeBytes": 12144,
+          "renderedLength": 12144
+        },
+        {
+          "id": "node_modules/@radix-ui/react-popper/dist/index.mjs",
+          "renderedCodeBytes": 10028,
+          "renderedLength": 10028
+        },
+        {
+          "id": "node_modules/@radix-ui/react-dialog/dist/index.mjs",
+          "renderedCodeBytes": 9932,
+          "renderedLength": 9932
+        },
+        {
+          "id": "node_modules/@radix-ui/react-focus-scope/dist/index.mjs",
+          "renderedCodeBytes": 8004,
+          "renderedLength": 8004
+        },
+        {
+          "id": "node_modules/@floating-ui/react-dom/dist/floating-ui.react-dom.mjs",
+          "renderedCodeBytes": 6926,
+          "renderedLength": 6926
+        },
+        {
+          "id": "node_modules/react-remove-scroll/dist/es2015/SideEffect.js",
+          "renderedCodeBytes": 6428,
+          "renderedLength": 6428
+        },
+        {
+          "id": "node_modules/@radix-ui/react-presence/dist/index.mjs",
+          "renderedCodeBytes": 5662,
+          "renderedLength": 5662
+        },
+        {
+          "id": "node_modules/@radix-ui/react-slot/dist/index.mjs",
+          "renderedCodeBytes": 5510,
+          "renderedLength": 5510
+        },
+        {
+          "id": "node_modules/@floating-ui/utils/dist/floating-ui.utils.dom.mjs",
+          "renderedCodeBytes": 4777,
+          "renderedLength": 4777
+        },
+        {
+          "id": "node_modules/@radix-ui/react-use-controllable-state/dist/index.mjs",
+          "renderedCodeBytes": 4535,
+          "renderedLength": 4535
+        },
+        {
+          "id": "node_modules/@radix-ui/react-context/dist/index.mjs",
+          "renderedCodeBytes": 4168,
+          "renderedLength": 4168
+        },
+        {
+          "id": "node_modules/@floating-ui/utils/dist/floating-ui.utils.mjs",
+          "renderedCodeBytes": 3715,
+          "renderedLength": 3715
+        },
+        {
+          "id": "node_modules/aria-hidden/dist/es2015/index.js",
+          "renderedCodeBytes": 3643,
+          "renderedLength": 3643
+        },
+        {
+          "id": "node_modules/react-remove-scroll/dist/es2015/handleScroll.js",
+          "renderedCodeBytes": 3055,
+          "renderedLength": 3055
+        },
+        {
+          "id": "node_modules/react-remove-scroll-bar/dist/es2015/component.js",
+          "renderedCodeBytes": 2610,
+          "renderedLength": 2610
+        },
+        {
+          "id": "node_modules/react-remove-scroll/dist/es2015/UI.js",
+          "renderedCodeBytes": 1882,
+          "renderedLength": 1882
+        },
+        {
+          "id": "node_modules/@radix-ui/primitive/dist/index.mjs",
+          "renderedCodeBytes": 1822,
+          "renderedLength": 1822
+        },
+        {
+          "id": "node_modules/use-sidecar/dist/es2015/medium.js",
+          "renderedCodeBytes": 1777,
+          "renderedLength": 1777
+        },
+        {
+          "id": "node_modules/@radix-ui/react-focus-guards/dist/index.mjs",
+          "renderedCodeBytes": 1335,
+          "renderedLength": 1335
+        },
+        {
+          "id": "node_modules/@radix-ui/react-use-size/dist/index.mjs",
+          "renderedCodeBytes": 1222,
+          "renderedLength": 1222
+        },
+        {
+          "id": "node_modules/@radix-ui/react-primitive/dist/index.mjs",
+          "renderedCodeBytes": 1139,
+          "renderedLength": 1139
+        },
+        {
+          "id": "node_modules/@radix-ui/react-compose-refs/dist/index.mjs",
+          "renderedCodeBytes": 1114,
+          "renderedLength": 1114
+        },
+        {
+          "id": "node_modules/tslib/tslib.es6.mjs",
+          "renderedCodeBytes": 1058,
+          "renderedLength": 1058
+        },
+        {
+          "id": "node_modules/react-style-singleton/dist/es2015/singleton.js",
+          "renderedCodeBytes": 1008,
+          "renderedLength": 1008
+        },
+        {
+          "id": "node_modules/react-remove-scroll-bar/dist/es2015/utils.js",
+          "renderedCodeBytes": 978,
+          "renderedLength": 978
+        },
+        {
+          "id": "node_modules/use-callback-ref/dist/es2015/useMergeRef.js",
+          "renderedCodeBytes": 956,
+          "renderedLength": 956
+        },
+        {
+          "id": "node_modules/@radix-ui/react-use-effect-event/dist/index.mjs",
+          "renderedCodeBytes": 927,
+          "renderedLength": 927
+        },
+        {
+          "id": "node_modules/@radix-ui/react-visually-hidden/dist/index.mjs",
+          "renderedCodeBytes": 805,
+          "renderedLength": 805
+        },
+        {
+          "id": "node_modules/@radix-ui/react-portal/dist/index.mjs",
+          "renderedCodeBytes": 767,
+          "renderedLength": 767
+        },
+        {
+          "id": "node_modules/@radix-ui/react-arrow/dist/index.mjs",
+          "renderedCodeBytes": 742,
+          "renderedLength": 742
+        },
+        {
+          "id": "node_modules/@radix-ui/react-label/dist/index.mjs",
+          "renderedCodeBytes": 678,
+          "renderedLength": 678
+        },
+        {
+          "id": "node_modules/@radix-ui/react-id/dist/index.mjs",
+          "renderedCodeBytes": 604,
+          "renderedLength": 604
+        },
+        {
+          "id": "node_modules/@radix-ui/react-use-previous/dist/index.mjs",
+          "renderedCodeBytes": 552,
+          "renderedLength": 552
+        },
+        {
+          "id": "node_modules/use-sidecar/dist/es2015/exports.js",
+          "renderedCodeBytes": 540,
+          "renderedLength": 540
+        },
+        {
+          "id": "node_modules/@radix-ui/react-use-callback-ref/dist/index.mjs",
+          "renderedCodeBytes": 521,
+          "renderedLength": 521
+        },
+        {
+          "id": "node_modules/use-callback-ref/dist/es2015/useRef.js",
+          "renderedCodeBytes": 503,
+          "renderedLength": 503
+        },
+        {
+          "id": "node_modules/react-remove-scroll/dist/es2015/aggresiveCapture.js",
+          "renderedCodeBytes": 496,
+          "renderedLength": 496
+        },
+        {
+          "id": "node_modules/@radix-ui/react-direction/dist/index.mjs",
+          "renderedCodeBytes": 455,
+          "renderedLength": 455
+        },
+        {
+          "id": "node_modules/react-style-singleton/dist/es2015/hook.js",
+          "renderedCodeBytes": 335,
+          "renderedLength": 335
+        },
+        {
+          "id": "node_modules/react-remove-scroll/dist/es2015/Combination.js",
+          "renderedCodeBytes": 325,
+          "renderedLength": 325
+        },
+        {
+          "id": "node_modules/@radix-ui/number/dist/index.mjs",
+          "renderedCodeBytes": 314,
+          "renderedLength": 314
+        },
+        {
+          "id": "node_modules/react-remove-scroll-bar/dist/es2015/constants.js",
+          "renderedCodeBytes": 309,
+          "renderedLength": 309
+        },
+        {
+          "id": "node_modules/react-style-singleton/dist/es2015/component.js",
+          "renderedCodeBytes": 297,
+          "renderedLength": 297
+        },
+        {
+          "id": "node_modules/get-nonce/dist/es2015/index.js",
+          "renderedCodeBytes": 229,
+          "renderedLength": 229
+        },
+        {
+          "id": "node_modules/use-callback-ref/dist/es2015/assignRef.js",
+          "renderedCodeBytes": 206,
+          "renderedLength": 206
+        },
+        {
+          "id": "node_modules/@radix-ui/react-use-layout-effect/dist/index.mjs",
+          "renderedCodeBytes": 172,
+          "renderedLength": 172
+        },
+        {
+          "id": "node_modules/react-remove-scroll/dist/es2015/sidecar.js",
+          "renderedCodeBytes": 148,
+          "renderedLength": 148
+        },
+        {
+          "id": "node_modules/react-remove-scroll/dist/es2015/medium.js",
+          "renderedCodeBytes": 117,
+          "renderedLength": 117
+        },
+        {
+          "id": "node_modules/react-style-singleton/dist/es2015/index.js",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "node_modules/react-remove-scroll-bar/dist/es2015/index.js",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/research-signals-view-DG4hEHSm.js",
+      "bytes": 67565,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/button-B9wkucSn.js",
+        "assets/foresight-B5_VtAWd.js",
+        "assets/github-dashboard-Dfi8R7g6.js",
+        "assets/news-dashboard-Cu_4A0Od.js",
+        "assets/research-signals-TnHyfYN9.js",
+        "assets/signal-dashboard-D8WQUS_P.js",
+        "assets/trend-statistics-DCBH9Jxr.js",
+        "assets/arrow-up-right-DCq1M2IV.js",
+        "assets/check-g--3n10-.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [
+        "assets/github-dashboard-UKvSOcgU.js",
+        "assets/news-dashboard-BeQwUg6f.js",
+        "assets/ai-research-panel-B45X9WTG.js"
+      ],
+      "modules": [
+        {
+          "id": "components/research-signals-view.tsx",
+          "renderedCodeBytes": 67380,
+          "renderedLength": 63573
+        },
+        {
+          "id": "lib/news-discovery.ts",
+          "renderedCodeBytes": 9686,
+          "renderedLength": 9018
+        },
+        {
+          "id": "lib/github-discovery.ts",
+          "renderedCodeBytes": 9205,
+          "renderedLength": 8399
+        },
+        {
+          "id": "lib/news-cluster.ts",
+          "renderedCodeBytes": 4159,
+          "renderedLength": 4155
+        },
+        {
+          "id": "lib/signal-relevance.ts",
+          "renderedCodeBytes": 2764,
+          "renderedLength": 2236
+        },
+        {
+          "id": "lib/github-quality.ts",
+          "renderedCodeBytes": 2733,
+          "renderedLength": 2733
+        },
+        {
+          "id": "components/news-event-list.tsx",
+          "renderedCodeBytes": 2379,
+          "renderedLength": 2308
+        },
+        {
+          "id": "components/github-quality-control.tsx",
+          "renderedCodeBytes": 2336,
+          "renderedLength": 2030
+        },
+        {
+          "id": "lib/signal-trends.ts",
+          "renderedCodeBytes": 1563,
+          "renderedLength": 1563
+        },
+        {
+          "id": "lib/signal-overview.ts",
+          "renderedCodeBytes": 1370,
+          "renderedLength": 1370
+        },
+        {
+          "id": "lib/latest-async-action.ts",
+          "renderedCodeBytes": 328,
+          "renderedLength": 328
+        },
+        {
+          "id": "styles/news-events.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/github-quality.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/research-signals.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        },
+        {
+          "id": "styles/signal-dashboard.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/foresight-B5_VtAWd.js",
+      "bytes": 60764,
+      "imports": [
+        "assets/main-CbPRZw0w.js",
+        "assets/analysis-B9py03eK.js",
+        "assets/classify-DUPFSOo1.js",
+        "assets/publication-date-byVfQZTn.js",
+        "assets/research-signals-TnHyfYN9.js",
+        "assets/types-C_y5RDFa.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/foresight.ts",
+          "renderedCodeBytes": 42116,
+          "renderedLength": 34928
+        },
+        {
+          "id": "lib/ai-evidence.ts",
+          "renderedCodeBytes": 21230,
+          "renderedLength": 21196
+        },
+        {
+          "id": "lib/signal-evidence.ts",
+          "renderedCodeBytes": 6574,
+          "renderedLength": 6568
+        },
+        {
+          "id": "lib/query-expansion.json",
+          "renderedCodeBytes": 5825,
+          "renderedLength": 5441
+        },
+        {
+          "id": "lib/retrieval.ts",
+          "renderedCodeBytes": 3982,
+          "renderedLength": 3982
+        },
+        {
+          "id": "styles/foresight.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/types-C_y5RDFa.js",
+      "bytes": 56493,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "node_modules/zod/v3/types.js",
+          "renderedCodeBytes": 86340,
+          "renderedLength": 86340
+        },
+        {
+          "id": "node_modules/zod/v3/locales/en.js",
+          "renderedCodeBytes": 4383,
+          "renderedLength": 4383
+        },
+        {
+          "id": "node_modules/zod/v3/helpers/util.js",
+          "renderedCodeBytes": 2994,
+          "renderedLength": 2994
+        },
+        {
+          "id": "node_modules/zod/v3/helpers/parseUtil.js",
+          "renderedCodeBytes": 2669,
+          "renderedLength": 2669
+        },
+        {
+          "id": "node_modules/zod/v3/ZodError.js",
+          "renderedCodeBytes": 2634,
+          "renderedLength": 2634
+        },
+        {
+          "id": "node_modules/zod/v3/helpers/errorUtil.js",
+          "renderedCodeBytes": 324,
+          "renderedLength": 324
+        },
+        {
+          "id": "node_modules/zod/v3/errors.js",
+          "renderedCodeBytes": 139,
+          "renderedLength": 139
+        }
+      ]
+    },
+    {
+      "file": "assets/locale-provider-BHdo5HjW.js",
+      "bytes": 53169,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/en.json",
+          "renderedCodeBytes": 50187,
+          "renderedLength": 35386
+        },
+        {
+          "id": "lib/analysis-en.json",
+          "renderedCodeBytes": 9635,
+          "renderedLength": 6818
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/shared/src/build/buildLucideIconNode.mjs",
+          "renderedCodeBytes": 2617,
+          "renderedLength": 2617
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/Icon.mjs",
+          "renderedCodeBytes": 1363,
+          "renderedLength": 1363
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/createLucideIcon.mjs",
+          "renderedCodeBytes": 548,
+          "renderedLength": 548
+        },
+        {
+          "id": "components/locale-provider.tsx",
+          "renderedCodeBytes": 532,
+          "renderedLength": 532
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/shared/src/build/buildLucideIconForReact.mjs",
+          "renderedCodeBytes": 436,
+          "renderedLength": 436
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/shared/src/utils/toCamelCase.mjs",
+          "renderedCodeBytes": 423,
+          "renderedLength": 423
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/shared/src/utils/toLucideIconData.mjs",
+          "renderedCodeBytes": 375,
+          "renderedLength": 375
+        },
+        {
+          "id": "lib/i18n.ts",
+          "renderedCodeBytes": 346,
+          "renderedLength": 346
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/shared/src/build/defaultAttributes.mjs",
+          "renderedCodeBytes": 328,
+          "renderedLength": 328
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/shared/src/utils/mergeClasses.mjs",
+          "renderedCodeBytes": 287,
+          "renderedLength": 287
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/shared/src/utils/hasA11yProp.mjs",
+          "renderedCodeBytes": 249,
+          "renderedLength": 249
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs",
+          "renderedCodeBytes": 247,
+          "renderedLength": 247
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/shared/src/utils/toPascalCase.mjs",
+          "renderedCodeBytes": 232,
+          "renderedLength": 232
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/context.mjs",
+          "renderedCodeBytes": 201,
+          "renderedLength": 201
+        }
+      ]
+    },
+    {
+      "file": "assets/ai-research-panel-B45X9WTG.js",
+      "bytes": 44306,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/foresight-B5_VtAWd.js",
+        "assets/research-signals-TnHyfYN9.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [
+        "assets/lib-jOcaIHI_.js"
+      ],
+      "modules": [
+        {
+          "id": "components/ai-research-panel.tsx",
+          "renderedCodeBytes": 45104,
+          "renderedLength": 41672
+        },
+        {
+          "id": "lib/ai-client.ts",
+          "renderedCodeBytes": 20454,
+          "renderedLength": 19137
+        },
+        {
+          "id": "lib/ai-models.ts",
+          "renderedCodeBytes": 4455,
+          "renderedLength": 4435
+        },
+        {
+          "id": "styles/ai-research.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/button-B9wkucSn.js",
+      "bytes": 29903,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/vendor-ui-RPLNgHPC.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "node_modules/tailwind-merge/dist/bundle-mjs.mjs",
+          "renderedCodeBytes": 55854,
+          "renderedLength": 55854
+        },
+        {
+          "id": "components/ui/button.tsx",
+          "renderedCodeBytes": 2020,
+          "renderedLength": 2020
+        },
+        {
+          "id": "node_modules/class-variance-authority/dist/index.mjs",
+          "renderedCodeBytes": 1986,
+          "renderedLength": 1986
+        },
+        {
+          "id": "node_modules/clsx/dist/clsx.mjs",
+          "renderedCodeBytes": 595,
+          "renderedLength": 595
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/search.mjs",
+          "renderedCodeBytes": 318,
+          "renderedLength": 318
+        },
+        {
+          "id": "lib/utils.ts",
+          "renderedCodeBytes": 94,
+          "renderedLength": 94
+        }
+      ]
+    },
+    {
+      "file": "assets/team-foresight-yRBfyLaJ.js",
+      "bytes": 27893,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/main-CbPRZw0w.js",
+        "assets/ai-research-panel-B45X9WTG.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/monitor-views-C2XqSToW.js",
+        "assets/button-B9wkucSn.js",
+        "assets/textarea-C-A6yvqu.js",
+        "assets/foresight-B5_VtAWd.js",
+        "assets/classify-DUPFSOo1.js",
+        "assets/publication-date-byVfQZTn.js",
+        "assets/research-signals-TnHyfYN9.js",
+        "assets/arrow-up-right-DCq1M2IV.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/team-foresight.tsx",
+          "renderedCodeBytes": 43376,
+          "renderedLength": 41057
+        },
+        {
+          "id": "lib/team-directory.ts",
+          "renderedCodeBytes": 6774,
+          "renderedLength": 6774
+        },
+        {
+          "id": "styles/team-foresight.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/github-dashboard-UKvSOcgU.js",
+      "bytes": 18916,
+      "imports": [
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/source-dashboard-charts-CaD8W8Gb.js",
+        "assets/button-B9wkucSn.js",
+        "assets/github-dashboard-Dfi8R7g6.js",
+        "assets/arrow-up-right-DCq1M2IV.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/github-dashboard.tsx",
+          "renderedCodeBytes": 19512,
+          "renderedLength": 17716
+        },
+        {
+          "id": "components/github-popularity.tsx",
+          "renderedCodeBytes": 8628,
+          "renderedLength": 8238
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/package-check.mjs",
+          "renderedCodeBytes": 628,
+          "renderedLength": 628
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/file-check-corner.mjs",
+          "renderedCodeBytes": 535,
+          "renderedLength": 535
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/activity.mjs",
+          "renderedCodeBytes": 368,
+          "renderedLength": 368
+        },
+        {
+          "id": "styles/github-dashboard.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/news-dashboard-BeQwUg6f.js",
+      "bytes": 15397,
+      "imports": [
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/source-dashboard-charts-CaD8W8Gb.js",
+        "assets/button-B9wkucSn.js",
+        "assets/news-dashboard-Cu_4A0Od.js",
+        "assets/research-signals-TnHyfYN9.js",
+        "assets/arrow-up-right-DCq1M2IV.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/news-dashboard.tsx",
+          "renderedCodeBytes": 21814,
+          "renderedLength": 19634
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/box.mjs",
+          "renderedCodeBytes": 476,
+          "renderedLength": 476
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/wrench.mjs",
+          "renderedCodeBytes": 427,
+          "renderedLength": 427
+        },
+        {
+          "id": "styles/news-dashboard.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/monitor-views-C2XqSToW.js",
+      "bytes": 14793,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/badge-CXN9135X.js",
+        "assets/button-B9wkucSn.js",
+        "assets/select-DfFWNyDS.js",
+        "assets/textarea-C-A6yvqu.js",
+        "assets/classify-DUPFSOo1.js",
+        "assets/vendor-ui-RPLNgHPC.js",
+        "assets/arrow-up-right-DCq1M2IV.js",
+        "assets/vendor-react-3e9vAv1h.js",
+        "assets/paper-library-jO9QRi6h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/monitor-views.tsx",
+          "renderedCodeBytes": 24223,
+          "renderedLength": 22246
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/trash.mjs",
+          "renderedCodeBytes": 547,
+          "renderedLength": 547
+        },
+        {
+          "id": "components/ui/label.tsx",
+          "renderedCodeBytes": 546,
+          "renderedLength": 546
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/plus.mjs",
+          "renderedCodeBytes": 291,
+          "renderedLength": 291
+        },
+        {
+          "id": "styles/monitor-views.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/preliminary-analysis-fhP98eIN.js",
+      "bytes": 13466,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/button-B9wkucSn.js",
+        "assets/select-DfFWNyDS.js",
+        "assets/analysis-B9py03eK.js",
+        "assets/classify-DUPFSOo1.js",
+        "assets/arrow-up-right-DCq1M2IV.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/preliminary-analysis.tsx",
+          "renderedCodeBytes": 21462,
+          "renderedLength": 19137
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/telescope.mjs",
+          "renderedCodeBytes": 866,
+          "renderedLength": 866
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/funnel.mjs",
+          "renderedCodeBytes": 408,
+          "renderedLength": 408
+        },
+        {
+          "id": "styles/analysis.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/classify-DUPFSOo1.js",
+      "bytes": 11706,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/classify.ts",
+          "renderedCodeBytes": 11816,
+          "renderedLength": 11282
+        },
+        {
+          "id": "lib/scope.ts",
+          "renderedCodeBytes": 2599,
+          "renderedLength": 2309
+        }
+      ]
+    },
+    {
+      "file": "assets/source-dashboard-charts-CaD8W8Gb.js",
+      "bytes": 11146,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/arrow-up-right-DCq1M2IV.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/source-dashboard-charts.tsx",
+          "renderedCodeBytes": 19810,
+          "renderedLength": 19258
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/code-xml.mjs",
+          "renderedCodeBytes": 399,
+          "renderedLength": 399
+        },
+        {
+          "id": "styles/source-dashboard-charts.css",
+          "renderedCodeBytes": 122,
+          "renderedLength": 122
+        }
+      ]
+    },
+    {
+      "file": "assets/analysis-B9py03eK.js",
+      "bytes": 9930,
+      "imports": [
+        "assets/main-CbPRZw0w.js",
+        "assets/classify-DUPFSOo1.js",
+        "assets/publication-date-byVfQZTn.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/analysis.ts",
+          "renderedCodeBytes": 14798,
+          "renderedLength": 14663
+        }
+      ]
+    },
+    {
+      "file": "assets/signal-dashboard-D8WQUS_P.js",
+      "bytes": 8567,
+      "imports": [
+        "assets/research-signals-TnHyfYN9.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/signal-dashboard.ts",
+          "renderedCodeBytes": 7722,
+          "renderedLength": 7468
+        },
+        {
+          "id": "lib/signal-browse-categories.ts",
+          "renderedCodeBytes": 5376,
+          "renderedLength": 4974
+        }
+      ]
+    },
+    {
+      "file": "assets/shard-cache-DdUb2Ue1.js",
+      "bytes": 8551,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/snapshot.ts",
+          "renderedCodeBytes": 5526,
+          "renderedLength": 5526
+        },
+        {
+          "id": "lib/shard-cache.ts",
+          "renderedCodeBytes": 3940,
+          "renderedLength": 3940
+        },
+        {
+          "id": "lib/snapshot-v3.ts",
+          "renderedCodeBytes": 3227,
+          "renderedLength": 3227
+        },
+        {
+          "id": "lib/manifest-loader.ts",
+          "renderedCodeBytes": 1981,
+          "renderedLength": 1981
+        }
+      ]
+    },
+    {
+      "file": "assets/signals-snapshot-jB5PBCKv.js",
+      "bytes": 7723,
+      "imports": [
+        "assets/shard-cache-DdUb2Ue1.js",
+        "assets/research-signals-TnHyfYN9.js",
+        "assets/types-C_y5RDFa.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/signals-snapshot.ts",
+          "renderedCodeBytes": 12606,
+          "renderedLength": 12606
+        }
+      ]
+    },
+    {
+      "file": "assets/paper-detail-sheet-DCew2Be1.js",
+      "bytes": 6331,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/paper-picker-BoaMMjRf.js",
+        "assets/badge-CXN9135X.js",
+        "assets/button-B9wkucSn.js",
+        "assets/textarea-C-A6yvqu.js",
+        "assets/classify-DUPFSOo1.js",
+        "assets/arrow-up-right-DCq1M2IV.js",
+        "assets/check-g--3n10-.js",
+        "assets/vendor-react-3e9vAv1h.js",
+        "assets/paper-library-jO9QRi6h.js"
+      ],
+      "dynamicImports": [
+        "assets/paper-analysis-DDmsrrdX.js"
+      ],
+      "modules": [
+        {
+          "id": "components/paper-detail-sheet.tsx",
+          "renderedCodeBytes": 10830,
+          "renderedLength": 10101
+        }
+      ]
+    },
+    {
+      "file": "assets/github-dashboard-Dfi8R7g6.js",
+      "bytes": 5978,
+      "imports": [
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/signal-dashboard-D8WQUS_P.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/github-dashboard.ts",
+          "renderedCodeBytes": 8014,
+          "renderedLength": 7894
+        },
+        {
+          "id": "lib/github-popularity.ts",
+          "renderedCodeBytes": 1499,
+          "renderedLength": 1499
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/star.mjs",
+          "renderedCodeBytes": 592,
+          "renderedLength": 592
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/git-fork.mjs",
+          "renderedCodeBytes": 569,
+          "renderedLength": 569
+        }
+      ]
+    },
+    {
+      "file": "assets/news-dashboard-Cu_4A0Od.js",
+      "bytes": 4999,
+      "imports": [
+        "assets/signal-dashboard-D8WQUS_P.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/news-dashboard.ts",
+          "renderedCodeBytes": 9095,
+          "renderedLength": 8955
+        }
+      ]
+    },
+    {
+      "file": "assets/paper-library-BmiU4aqg.js",
+      "bytes": 4927,
+      "imports": [
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/paper-picker-BoaMMjRf.js",
+        "assets/badge-CXN9135X.js",
+        "assets/button-B9wkucSn.js",
+        "assets/classify-DUPFSOo1.js",
+        "assets/vendor-react-3e9vAv1h.js",
+        "assets/paper-library-jO9QRi6h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/paper-library.tsx",
+          "renderedCodeBytes": 7679,
+          "renderedLength": 7306
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/bookmark-check.mjs",
+          "renderedCodeBytes": 435,
+          "renderedLength": 435
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/chevron-right.mjs",
+          "renderedCodeBytes": 267,
+          "renderedLength": 267
+        },
+        {
+          "id": "styles/render-containment.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/research-signals-TnHyfYN9.js",
+      "bytes": 4111,
+      "imports": [
+        "assets/types-C_y5RDFa.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/research-signals.ts",
+          "renderedCodeBytes": 6171,
+          "renderedLength": 6171
+        }
+      ]
+    },
+    {
+      "file": "assets/select-DfFWNyDS.js",
+      "bytes": 4066,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/button-B9wkucSn.js",
+        "assets/vendor-ui-RPLNgHPC.js",
+        "assets/check-g--3n10-.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/ui/select.tsx",
+          "renderedCodeBytes": 5024,
+          "renderedLength": 5024
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/chevron-down.mjs",
+          "renderedCodeBytes": 269,
+          "renderedLength": 269
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/chevron-up.mjs",
+          "renderedCodeBytes": 259,
+          "renderedLength": 259
+        }
+      ]
+    },
+    {
+      "file": "assets/paper-filters-Bn2x8OE7.js",
+      "bytes": 3109,
+      "imports": [
+        "assets/main-CbPRZw0w.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/paper-picker-BoaMMjRf.js",
+        "assets/button-B9wkucSn.js",
+        "assets/classify-DUPFSOo1.js",
+        "assets/vendor-react-3e9vAv1h.js",
+        "assets/paper-library-jO9QRi6h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/paper-filters.tsx",
+          "renderedCodeBytes": 4433,
+          "renderedLength": 4171
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/sliders-horizontal.mjs",
+          "renderedCodeBytes": 715,
+          "renderedLength": 715
+        }
+      ]
+    },
+    {
+      "file": "assets/trend-statistics-DCBH9Jxr.js",
+      "bytes": 2832,
+      "imports": [
+        "assets/publication-date-byVfQZTn.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/trend-statistics.ts",
+          "renderedCodeBytes": 5149,
+          "renderedLength": 5093
+        }
+      ]
+    },
+    {
+      "file": "assets/paper-analysis-DDmsrrdX.js",
+      "bytes": 2219,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/analysis-B9py03eK.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/paper-analysis.tsx",
+          "renderedCodeBytes": 2855,
+          "renderedLength": 2540
+        },
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/scan-text.mjs",
+          "renderedCodeBytes": 641,
+          "renderedLength": 641
+        },
+        {
+          "id": "styles/paper-analysis.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/public-paper-loader-DN8Vkjz_.js",
+      "bytes": 2195,
+      "imports": [
+        "assets/main-CbPRZw0w.js",
+        "assets/shard-cache-DdUb2Ue1.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/public-paper-loader.ts",
+          "renderedCodeBytes": 3817,
+          "renderedLength": 3817
+        }
+      ]
+    },
+    {
+      "file": "assets/badge-CXN9135X.js",
+      "bytes": 1392,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/button-B9wkucSn.js",
+        "assets/vendor-ui-RPLNgHPC.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/ui/badge.tsx",
+          "renderedCodeBytes": 1521,
+          "renderedLength": 1521
+        }
+      ]
+    },
+    {
+      "file": "assets/foresight-view-CkrOhn4E.js",
+      "bytes": 1366,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/main-CbPRZw0w.js",
+        "assets/ai-research-panel-B45X9WTG.js",
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/foresight-B5_VtAWd.js",
+        "assets/vendor-react-3e9vAv1h.js",
+        "assets/types-C_y5RDFa.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/assessment-history.ts",
+          "renderedCodeBytes": 1001,
+          "renderedLength": 1001
+        },
+        {
+          "id": "components/foresight-view.tsx",
+          "renderedCodeBytes": 828,
+          "renderedLength": 820
+        },
+        {
+          "id": "components/assessment-history.tsx",
+          "renderedCodeBytes": 105,
+          "renderedLength": 105
+        }
+      ]
+    },
+    {
+      "file": "assets/publication-date-byVfQZTn.js",
+      "bytes": 1013,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/publication-date.ts",
+          "renderedCodeBytes": 1797,
+          "renderedLength": 1797
+        }
+      ]
+    },
+    {
+      "file": "assets/paper-index-Cquzy051.js",
+      "bytes": 985,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "lib/paper-index.ts",
+          "renderedCodeBytes": 1758,
+          "renderedLength": 1758
+        }
+      ]
+    },
+    {
+      "file": "assets/textarea-C-A6yvqu.js",
+      "bytes": 711,
+      "imports": [
+        "assets/rolldown-runtime-ciTZEWaI.js",
+        "assets/button-B9wkucSn.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/ui/textarea.tsx",
+          "renderedCodeBytes": 801,
+          "renderedLength": 801
+        }
+      ]
+    },
+    {
+      "file": "assets/rolldown-runtime-ciTZEWaI.js",
+      "bytes": 567,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "rolldown/runtime.js",
+          "renderedCodeBytes": 1124,
+          "renderedLength": 1124
+        }
+      ]
+    },
+    {
+      "file": "assets/paper-picker-BoaMMjRf.js",
+      "bytes": 476,
+      "imports": [
+        "assets/locale-provider-BHdo5HjW.js",
+        "assets/select-DfFWNyDS.js",
+        "assets/vendor-react-3e9vAv1h.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "components/paper-picker.tsx",
+          "renderedCodeBytes": 703,
+          "renderedLength": 703
+        }
+      ]
+    },
+    {
+      "file": "assets/arrow-up-right-DCq1M2IV.js",
+      "bytes": 206,
+      "imports": [
+        "assets/locale-provider-BHdo5HjW.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/arrow-up-right.mjs",
+          "renderedCodeBytes": 317,
+          "renderedLength": 317
+        }
+      ]
+    },
+    {
+      "file": "assets/check-g--3n10-.js",
+      "bytes": 163,
+      "imports": [
+        "assets/locale-provider-BHdo5HjW.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "node_modules/lucide-react/dist/esm/icons/check.mjs",
+          "renderedCodeBytes": 246,
+          "renderedLength": 246
+        }
+      ]
+    },
+    {
+      "file": "assets/en-CDaTR3Px.js",
+      "bytes": 27,
+      "imports": [
+        "assets/main-CbPRZw0w.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "en/index.html",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/zh-CiIlSZUj.js",
+      "bytes": 27,
+      "imports": [
+        "assets/main-CbPRZw0w.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "index.html",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/paper-library-jO9QRi6h.js",
+      "bytes": 0,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "styles/paper-library.css",
+          "renderedCodeBytes": null,
+          "renderedLength": 0
+        }
+      ]
+    }
+  ]
+}
