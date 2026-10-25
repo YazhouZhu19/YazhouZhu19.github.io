@@ -7,7 +7,7 @@ import { readSnapshotManifest } from "./snapshot-install";
 import { writePublicSnapshotV3 } from "./public-snapshot";
 
 /** Internal archive only. Public compatibility generations are retained separately. */
-export async function compactArchive(file: string) {
+export async function compactArchive(file: string, previousPublicFile?: string) {
   const directory = dirname(file);
   const before = await readSnapshotFile(file);
   // Validate every sibling before changing the archive or removing any files.
@@ -22,7 +22,9 @@ export async function compactArchive(file: string) {
       siblings.push(manifest);
     }
   }
-  const manifest = await writePublicSnapshotV3(file, before);
+  // Collection writes v1, which has no dictionaries. Seed from the preceding
+  // public v3 generation so newly discovered URLs do not renumber old shards.
+  const manifest = await writePublicSnapshotV3(file, before, previousPublicFile);
   assert.deepEqual(await readSnapshotFile(file), before, "Archive compaction changed records");
   const keep = new Set([manifest, ...siblings].flatMap((m) => m.shards.map((s) => s.path)));
   let removedBytes = 0;
@@ -40,5 +42,12 @@ export async function compactArchive(file: string) {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  console.log(JSON.stringify(await compactArchive(resolve(process.argv[2] ?? "data/papers.json"))));
+  console.log(
+    JSON.stringify(
+      await compactArchive(
+        resolve(process.argv[2] ?? "data/papers.json"),
+        resolve(process.argv[3] ?? "../../research-monitor/data/public-papers-v3.json"),
+      ),
+    ),
+  );
 }

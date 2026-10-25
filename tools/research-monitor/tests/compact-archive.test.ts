@@ -6,6 +6,7 @@ import test from "node:test";
 import { compactArchive } from "../scripts/compact-archive";
 import { readSnapshotFile, writeSnapshotFile } from "../scripts/snapshot-files";
 import { SNAPSHOT_SCHEMA, resolveSnapshot } from "../lib/snapshot";
+import { writePublicSnapshotV3 } from "../scripts/public-snapshot";
 
 const library = (id: string) => ({
   totalStored: 12,
@@ -55,4 +56,27 @@ test("corrupt archive data is rejected before any compaction or cleanup", async 
   await assert.rejects(compactArchive(file));
   assert.deepEqual(await readFile(file), before);
   assert.deepEqual(await readdir(join(dir, "papers")), names);
+});
+
+test("collection through v1 preserves prior public dictionary indices during internal compaction", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "compact-stable-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const file = join(dir, "archive", "papers.json");
+  const previous = join(dir, "published", "public-papers-v3.json");
+  const original = library("stable");
+  const oldManifest = await writePublicSnapshotV3(previous, original);
+  const next = structuredClone(original);
+  next.papers.push({
+    ...next.papers[0],
+    id: "new",
+    provenance: [{ queryUrl: "https://aaa.org/earlier", extra: 99 }],
+  });
+  next.totalStored++;
+  await writeSnapshotFile(file, next);
+  const expected = await readSnapshotFile(file);
+  await compactArchive(file, previous);
+  const current = JSON.parse(await readFile(file, "utf8"));
+  assert.deepEqual(current.queryUrls.slice(0, oldManifest.queryUrls!.length), oldManifest.queryUrls);
+  assert.deepEqual(await readSnapshotFile(file), expected);
+  assert.deepEqual(await readSnapshotFile(previous), original);
 });
