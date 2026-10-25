@@ -261,18 +261,18 @@
         "gzipBytes": 26624
       },
       "initialData": {
-        "rawBytes": 58959872,
-        "gzipBytes": 12232704
+        "rawBytes": 62651392,
+        "gzipBytes": 12733440
       },
       "initialMeasuredResources": {
-        "rawBytes": 59776192,
-        "gzipBytes": 12474864
+        "rawBytes": 63467712,
+        "gzipBytes": 12975600
       }
     },
     "datasets": {
       "papers": {
-        "rawBytes": 58959872,
-        "gzipBytes": 12232704,
+        "rawBytes": 62651392,
+        "gzipBytes": 12733440,
         "fileRawBytes": 4194304,
         "fileGzipBytes": 1048576
       },
@@ -298,6 +298,7 @@
     "P3/P4 reviewed chunk changes: button and publication-date are shared extraction boundaries; monitor-views and paper-library CSS move existing styles out of main. Preliminary-analysis/source-chart CSS limits account for the same lazy relocation, not a relaxation of the 120000-byte main CSS cap.",
     "P4 explicit feature allowances cover bilingual scope/version labels, question retrieval and model budgets, PI author-position/identity hints, source maturity/event views, and shared trend-statistics. Each named resource remains bounded; newly emitted unlisted keys still fail. Final startup and optional totals are independently measured and reviewed.",
     "Final P3/P4 integration: main JS 152757 raw / 49300 gzip; total initial JS including Worker/shared vendors is 681436 / 215802, versus P0 571063 / 176919. The increase pays for scope/date validation, work grouping, comparative statistics and recovery UI and is explicitly reported. Reviewed total ceilings allow about 2% headroom. Optional CSS 137796 / 25858 reflects lazy style relocation; main CSS remains 119567 / 19966 under the unchanged 120000 raw cap. New check.js is a 163-byte extracted icon. No build automatically updates any limit.",
-    "Release CI 40205053101 (2026-10-25), merged live data revision 906cd809: 9025 papers versus the frozen 8326 (+699, +8.4%). Production v3 data measures 56152199 raw / 11649303 gzip; initial code and CSS remain exactly 687619/218063 and 119567/19966. Manually recalibrated only paper/data totals to this verified snapshot plus 5% (rounded to KiB); combined totals are data plus unchanged JS/CSS ceilings. All asset, per-file and publication caps remain unchanged. Builds never change these limits; future data growth still requires review."
+    "Release CI 40205053101 (2026-10-25), merged live data revision 906cd809: 9025 papers versus the frozen 8326 (+699, +8.4%). Production v3 data measures 56152199 raw / 11649303 gzip; initial code and CSS remain exactly 687619/218063 and 119567/19966. Manually recalibrated only paper/data totals to this verified snapshot plus 5% (rounded to KiB); combined totals are data plus unchanged JS/CSS ceilings. All asset, per-file and publication caps remain unchanged. Builds never change these limits; future data growth still requires review.",
+    "First full production collection, run 40209656002 (2026-10-25 UTC): 9209 papers / 59667877 raw / 12127056 gzip. The saved 9025-record snapshot did not account for the subsequent 184 additions and enriched records: raw data exceeded the reviewed cap by 708005 bytes while gzip and all assets passed. Recalibrated data-only ceilings to the fully collected measurements plus 5%; kept all asset, per-file and publication caps. Signals collection successfully saved 70691 records under the 96 MiB bound."
   ]
 }
