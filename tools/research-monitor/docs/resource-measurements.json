@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "measuredAt": "2026-10-20T18:39:02.199Z",
-  "sourceRevision": "f9d95ef7c4d79e080259251cd8761f09955cade4",
+  "measuredAt": "2026-10-25T14:22:23.274Z",
+  "sourceRevision": "c4e05e59f49bd4adc2ed34f4a22304aed51affce",
   "nodeVersion": "v24.19.0",
   "compression": "gzip level 9, each HTTP resource compressed independently; bytes, not kB/KiB",
   "note": "Final production frontend build. Resource budgets were explicitly reviewed for P3/P4 features and style relocation; no automatic rebasing. All record and legacy endpoint checks passed.",
@@ -22,31 +22,39 @@
   },
   "totals": {
     "initialJs": {
-      "rawBytes": 681436,
-      "gzipBytes": 215802
+      "rawBytes": 687619,
+      "gzipBytes": 218063
     },
     "initialCss": {
       "rawBytes": 119567,
       "gzipBytes": 19966
     },
     "optionalJs": {
-      "rawBytes": 12390216,
-      "gzipBytes": 4411054
+      "rawBytes": 12389768,
+      "gzipBytes": 4410922
     },
     "optionalCss": {
-      "rawBytes": 137796,
-      "gzipBytes": 25858
+      "rawBytes": 138043,
+      "gzipBytes": 25904
     },
     "initialData": {
       "rawBytes": 50501670,
       "gzipBytes": 10649085
     },
     "initialMeasuredResources": {
-      "rawBytes": 51302673,
-      "gzipBytes": 10884853
+      "rawBytes": 51308856,
+      "gzipBytes": 10887114
     }
   },
   "assets": [
+    {
+      "path": "assets/ai-research-panel-B45X9WTG.js",
+      "key": "assets/ai-research-panel.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 44292,
+      "gzipBytes": 16663
+    },
     {
       "path": "assets/ai-research-panel-C1o6Gkgl.css",
       "key": "assets/ai-research-panel.css",
@@ -54,14 +62,6 @@
       "initial": false,
       "rawBytes": 9503,
       "gzipBytes": 2058
-    },
-    {
-      "path": "assets/ai-research-panel-CsEejvwq.js",
-      "key": "assets/ai-research-panel.js",
-      "type": "js",
-      "initial": false,
-      "rawBytes": 44292,
-      "gzipBytes": 16662
     },
     {
       "path": "assets/ai-worker-rgMh5oRs.js",
@@ -72,7 +72,7 @@
       "gzipBytes": 2159751
     },
     {
-      "path": "assets/analysis-X6EDlev_.js",
+      "path": "assets/analysis-B9py03eK.js",
       "key": "assets/analysis.js",
       "type": "js",
       "initial": false,
@@ -128,6 +128,14 @@
       "gzipBytes": 23878
     },
     {
+      "path": "assets/foresight-B5_VtAWd.js",
+      "key": "assets/foresight.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 60764,
+      "gzipBytes": 25069
+    },
+    {
       "path": "assets/foresight-C9rG_I11.css",
       "key": "assets/foresight.css",
       "type": "css",
@@ -136,15 +144,7 @@
       "gzipBytes": 2676
     },
     {
-      "path": "assets/foresight-bDCGJ24x.js",
-      "key": "assets/foresight.js",
-      "type": "js",
-      "initial": false,
-      "rawBytes": 60764,
-      "gzipBytes": 25069
-    },
-    {
-      "path": "assets/foresight-view-MhFa_8y_.js",
+      "path": "assets/foresight-view-CkrOhn4E.js",
       "key": "assets/foresight-view.js",
       "type": "js",
       "initial": false,
@@ -152,20 +152,12 @@
       "gzipBytes": 776
     },
     {
-      "path": "assets/github-dashboard-DAjH-fcP.js",
-      "key": "assets/github-dashboard.js",
-      "type": "js",
-      "initial": false,
-      "rawBytes": 18916,
-      "gzipBytes": 7111
-    },
-    {
-      "path": "assets/github-dashboard-DfHIOIfc.css",
+      "path": "assets/github-dashboard-8pzG-D43.css",
       "key": "assets/github-dashboard.css",
       "type": "css",
       "initial": false,
-      "rawBytes": 6376,
-      "gzipBytes": 1425
+      "rawBytes": 6369,
+      "gzipBytes": 1414
     },
     {
       "path": "assets/github-dashboard-Dfi8R7g6.js",
@@ -174,6 +166,14 @@
       "initial": false,
       "rawBytes": 5978,
       "gzipBytes": 2857
+    },
+    {
+      "path": "assets/github-dashboard-UKvSOcgU.js",
+      "key": "assets/github-dashboard.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 18916,
+      "gzipBytes": 7112
     },
     {
       "path": "assets/lib-jOcaIHI_.js",
@@ -200,15 +200,15 @@
       "gzipBytes": 19966
     },
     {
-      "path": "assets/main-DPjLkTwk.js",
+      "path": "assets/main-CbPRZw0w.js",
       "key": "assets/main.js",
       "type": "js",
       "initial": true,
-      "rawBytes": 152757,
-      "gzipBytes": 49300
+      "rawBytes": 158940,
+      "gzipBytes": 51561
     },
     {
-      "path": "assets/monitor-views-BW1_o-eG.js",
+      "path": "assets/monitor-views-C2XqSToW.js",
       "key": "assets/monitor-views.js",
       "type": "js",
       "initial": false,
@@ -224,20 +224,20 @@
       "gzipBytes": 4160
     },
     {
+      "path": "assets/news-dashboard-BeQwUg6f.js",
+      "key": "assets/news-dashboard.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 15397,
+      "gzipBytes": 6069
+    },
+    {
       "path": "assets/news-dashboard-BiojHbJK.css",
       "key": "assets/news-dashboard.css",
       "type": "css",
       "initial": false,
       "rawBytes": 769,
       "gzipBytes": 414
-    },
-    {
-      "path": "assets/news-dashboard-C3V7UCJB.js",
-      "key": "assets/news-dashboard.js",
-      "type": "js",
-      "initial": false,
-      "rawBytes": 15397,
-      "gzipBytes": 6070
     },
     {
       "path": "assets/news-dashboard-Cu_4A0Od.js",
@@ -256,7 +256,7 @@
       "gzipBytes": 673
     },
     {
-      "path": "assets/paper-analysis-NxoamGNM.js",
+      "path": "assets/paper-analysis-DDmsrrdX.js",
       "key": "assets/paper-analysis.js",
       "type": "js",
       "initial": false,
@@ -264,15 +264,15 @@
       "gzipBytes": 1170
     },
     {
-      "path": "assets/paper-detail-sheet-tTQgqiYO.js",
+      "path": "assets/paper-detail-sheet-DCew2Be1.js",
       "key": "assets/paper-detail-sheet.js",
       "type": "js",
       "initial": false,
       "rawBytes": 6939,
-      "gzipBytes": 3070
+      "gzipBytes": 3071
     },
     {
-      "path": "assets/paper-filters-Dl2enevl.js",
+      "path": "assets/paper-filters-Bn2x8OE7.js",
       "key": "assets/paper-filters.js",
       "type": "js",
       "initial": false,
@@ -288,7 +288,15 @@
       "gzipBytes": 554
     },
     {
-      "path": "assets/paper-library-BT97sMZJ.js",
+      "path": "assets/paper-library-Bc0Hs91R.css",
+      "key": "assets/paper-library.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 150,
+      "gzipBytes": 109
+    },
+    {
+      "path": "assets/paper-library-BmiU4aqg.js",
       "key": "assets/paper-library.js",
       "type": "js",
       "initial": false,
@@ -296,20 +304,12 @@
       "gzipBytes": 2236
     },
     {
-      "path": "assets/paper-library-Bbf6bzZw.css",
+      "path": "assets/paper-library-ChR9sxs0.css",
       "key": "assets/paper-library.css",
       "type": "css",
       "initial": false,
-      "rawBytes": 11527,
-      "gzipBytes": 2397
-    },
-    {
-      "path": "assets/paper-library-Bc0Hs91R.css",
-      "key": "assets/paper-library.css",
-      "type": "css",
-      "initial": false,
-      "rawBytes": 150,
-      "gzipBytes": 109
+      "rawBytes": 11605,
+      "gzipBytes": 2420
     },
     {
       "path": "assets/paper-picker-BoaMMjRf.js",
@@ -320,14 +320,6 @@
       "gzipBytes": 308
     },
     {
-      "path": "assets/preliminary-analysis-BpwsJiU3.js",
-      "key": "assets/preliminary-analysis.js",
-      "type": "js",
-      "initial": false,
-      "rawBytes": 13466,
-      "gzipBytes": 5290
-    },
-    {
       "path": "assets/preliminary-analysis-Dmg88fMs.css",
       "key": "assets/preliminary-analysis.css",
       "type": "css",
@@ -336,7 +328,15 @@
       "gzipBytes": 3835
     },
     {
-      "path": "assets/public-paper-loader-DmUDQReD.js",
+      "path": "assets/preliminary-analysis-fhP98eIN.js",
+      "key": "assets/preliminary-analysis.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 13466,
+      "gzipBytes": 5289
+    },
+    {
+      "path": "assets/public-paper-loader-DN8Vkjz_.js",
       "key": "assets/public-paper-loader.js",
       "type": "js",
       "initial": false,
@@ -360,20 +360,20 @@
       "gzipBytes": 1741
     },
     {
+      "path": "assets/research-signals-view-DG4hEHSm.js",
+      "key": "assets/research-signals-view.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 68888,
+      "gzipBytes": 23729
+    },
+    {
       "path": "assets/research-signals-view-DaoyDF9-.css",
       "key": "assets/research-signals-view.css",
       "type": "css",
       "initial": false,
       "rawBytes": 26076,
       "gzipBytes": 4151
-    },
-    {
-      "path": "assets/research-signals-view-jYqkP5QY.js",
-      "key": "assets/research-signals-view.js",
-      "type": "js",
-      "initial": false,
-      "rawBytes": 69366,
-      "gzipBytes": 23865
     },
     {
       "path": "assets/rolldown-runtime-ciTZEWaI.js",
@@ -416,7 +416,7 @@
       "gzipBytes": 3089
     },
     {
-      "path": "assets/source-dashboard-charts-DFRL6rIy.js",
+      "path": "assets/source-dashboard-charts-CaD8W8Gb.js",
       "key": "assets/source-dashboard-charts.js",
       "type": "js",
       "initial": false,
@@ -432,20 +432,20 @@
       "gzipBytes": 1427
     },
     {
-      "path": "assets/team-foresight-B9DMOcwj.css",
+      "path": "assets/team-foresight-jHnSfxBa.css",
       "key": "assets/team-foresight.css",
       "type": "css",
       "initial": false,
-      "rawBytes": 13444,
-      "gzipBytes": 2533
+      "rawBytes": 13620,
+      "gzipBytes": 2567
     },
     {
-      "path": "assets/team-foresight-iSQkXUkp.js",
+      "path": "assets/team-foresight-yRBfyLaJ.js",
       "key": "assets/team-foresight.js",
       "type": "js",
       "initial": false,
-      "rawBytes": 27863,
-      "gzipBytes": 9937
+      "rawBytes": 27893,
+      "gzipBytes": 9940
     },
     {
       "path": "assets/textarea-C-A6yvqu.js",
@@ -491,6 +491,6 @@
   "paperCount": 8326,
   "githubCount": 48410,
   "newsCount": 2380,
-  "publicationBytes": 435254911,
+  "publicationBytes": 435286241,
   "violations": []
 }

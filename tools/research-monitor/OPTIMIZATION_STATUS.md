@@ -23,30 +23,30 @@ scores must not be presented as independently validated accuracy.
 | P1.4 | Complete | Kind/month shards, compact exact overview and on-demand records; retry and stale-drill guards verified. |
 | P1.2 | Complete | Lossless v3 transport; raw shards reduced 30.001%; v1/v2 compatibility retained. |
 | P1.5 | Complete | Worker fetch/decode/validate/index/search, cancellation and validated fallback; initial local longest task 97 ms. |
-| P1.7 | Implemented; live timing pending | Shallow checkout, fail-closed verification, 800 MB guard and exact generation cleanup tested. |
+| P1.7 | Implemented; live timing pending | Shallow checkout, fail-closed verification, 800 MB publication / 950 MB complete-root guards and exact generation cleanup tested. |
 | P3.1 | Complete | Prettier 3.6.2, width 110; formatting-only pass preserves 417 + 25 passing tests and build. |
 | P3.2 | Complete | Workspace reduced from 1,389 to 253 lines; 14 extracted files ≤253 lines, bilingual SSR unchanged. |
 | P2.1 | Complete | Removed 48 unreachable UI modules, an orphan chart view and 13 unused dependencies. |
-| P2.2 | Implemented | Main JS 41,129 B gzip; source/paper UI lazy; startup total still explicitly counts vendors and Worker. |
-| P2.3 | Implemented; throttled measurement pending | List containment, memoized charts/stable callbacks and Worker facets; 4× CPU acceptance awaits P5 runner. |
-| P2.4 | Implemented | Shared hash state, push/replace navigation, locale preservation and generation-bound drill recovery; 11 URL tests pass. |
-| P3.3 | Implemented; visual checks ongoing | One token system and dark palette; 5,404 selector/property pairs retained; main CSS 117,360 B. |
-| P3.4 | Pending | Shared dashboard shell while preserving metrics. |
-| P3.5 | Pending | Severity-based notices with all limitation text retained. |
-| P3.6 | Pending | Shared loading, empty and error states. |
-| P3.7 | Pending | Accessibility and mobile interaction checks. |
+| P2.2 | Implemented | Main JS is below the fixed 110 KB gzip target; final sizes are in docs/resource-measurements.json, including vendors and Worker. |
+| P2.3 | Implemented; performance acceptance unverified | Full-data 4× CPU runner records real timings; native-control coverage is incomplete and is never counted as a pass. |
+| P2.4 | Implemented | Source/PI public context and version-bound drill restoration; 20 focused tests and 28 bilingual browser checks pass. |
+| P3.3 | Implemented; final visual checks ongoing | One token system and dark palette; 5,404 selector/property pairs retained; main CSS remains below 120,000 B. |
+| P3.4 | Implemented | Shared shell/slots, four/two-column metrics and accessible description tooltips; bilingual SSR verified. |
+| P3.5 | Implemented | Single global error banner, expandable warning/info notices; original explanations retained. |
+| P3.6 | Implemented | Shared bilingual loading/empty/retry states across paper, source, reading and AI views. |
+| P3.7 | Implemented | Eight bilingual axe pages: no serious/critical issues; mobile drawers/filters/details and 40px controls pass. |
 | P4.1 | Implemented; accuracy gate unmet | Default methods scope with all-record switch; diagnostic P/R 92.5%/86.9%, out→core 31.5% (target ≤3%). |
 | P4.2 | Implemented; precision gate unmet | Diagnosis precision 48.9%→79.8%, recall 66.3%→64.4% on provisional labels; other nine directions unchanged. |
-| P4.3 | Pending | Publication-date provenance and future-date handling. |
-| P4.4 | Pending | Conservative work grouping without merging source records. |
-| P4.5 | Pending | Question-aware bilingual retrieval and deterministic diverse sampling. |
-| P4.6 | Pending | Model-specific input budgets and excerpts. |
-| P4.7 | Pending | Author-position counts and non-merging identity hints. |
-| P4.8 | Pending | Repository maturity tiers and provisional relevance review. |
-| P4.9 | Pending | News event grouping with individual reports retained. |
-| P4.10 | Pending | Collection-method annotations, proportions and uncertainty. |
-| P5.1 | Pending | PR and synchronization quality gates. |
-| P5.2 | Pending | Bilingual local-fixture smoke tests. |
+| P4.3 | Implemented | Earliest valid nonfuture date, raw-date provenance, unresolved future badges; 117 focused tests pass. |
+| P4.4 | Implemented; human group audit pending | 8,326 records → 8,170 probable works; candidate-version links and work count. 20 groups AI-reviewed only. |
+| P4.5 | Implemented | BM25 plus bilingual expansions, explicit no-match result, tag-diverse landscape; 34 focused tests and three query comparisons. |
+| P4.6 | Implemented | Complete-sentence excerpts with excerpted/omitted-budget states, per-model caps, lightweight preview 4 items; 69 related tests pass. |
+| P4.7 | Implemented | Work-level author positions, senior/works sorting and non-merging identity hints; 44 focused tests pass. |
+| P4.8 | Implemented; human relevance audit pending | All 48,410 repositories retained; 7,240 established/active by metadata. 200 provisional labels; direct rules unchanged. |
+| P4.9 | Implemented | 2,380 reports → 2,318 event leads; all reports expandable, no source records merged. |
+| P4.10 | Implemented | Explicit version markers, source/period denominators and Wilson/Newcombe intervals; missing source history is not inferred. |
+| P5.1 | Implemented; live CI pending | Both workflows check format/build/budgets; PR evaluation job summary stays provisional. |
+| P5.2 | Final local validation ongoing; live CI pending | Bilingual smoke, axe, mobile/tablet and injected chunk-failure recovery checks; external requests blocked. |
 | Section 6 | Deferred by plan | Requires at least 30 days after new formats launch and maintainer approval. |
 
 ## Explicit review gates
@@ -54,6 +54,8 @@ scores must not be presented as independently validated accuracy.
 - **P0.2:** Review the provisional paper labels before designating `eval/relevance-gold.csv`.
 - **P1.7:** Review `docs/data-hosting-options.md`; no orphan-branch migration, history rewrite or
   scheduling change is authorized by preparing the options.
+- **P4.4:** The 20 candidate work groups have been AI-reviewed, not human-reviewed. Candidate
+  links remain explicitly provisional and never merge the original records.
 - **P4.8:** Review provisional repository labels before changing the `direct` relevance rules.
 - **Section 6:** Keep old endpoints active; a 30-day observation period and explicit decision are required.
 
@@ -163,3 +165,79 @@ scores must not be presented as independently validated accuracy.
 - **P4.1:** Independent scope rules and version metadata are calculated for old records in the Worker and for the complete archive by the collector. The UI applies methods-only by default to overview, reading clues, team directory and AI inputs, with clinical/all switches and explicit excluded counts; saved personal papers remain available. Offline migration preserves all 8,326 records and original non-derived fields. Current archive counts are 3,960 core / 2,829 adjacent / 1,537 out. On the provisional AI-reviewed 400, core precision/recall are 92.5%/86.9%, but 17/54 annotated-out records become core (31.5%), missing the ≤3% target. This is an unresolved accuracy gate, not gold-standard validation.
 
 - **P4.2:** Explicit diagnosis action/object and accuracy rules replace bare diagnosis mentions. A separate task version triggers complete retained-record reclassification without changing taxonomy IDs/version. Full-archive diagnosis count is 4,257→1,666; all other nine directions are unchanged. Provisional precision improves to 79.8% but does not meet 85%; recall falls 1.9 percentage points. Public old-data fallback uses the same rules, with full-record tests and an offline migration checking identity, ordering, non-derived fields and collection time. The UI and README mark the version change so it is not interpreted as a research trend.
+
+- **P4.3–P4.7 integration:** Date normalization preserves all original date fields and flags 43 unresolved future EPMC records; a later source refresh may supply an earlier valid date, but none is invented. Conservative title/author grouping adds 152 groups and preserves 8,326 records. The 20-group audit is AI-assisted (11 with matching abstracts, nine missing one abstract), never a claim of human review. See `eval/work-groups.md`. Question retrieval and local model budgets are documented in `docs/question-retrieval.md` and `docs/local-model-budgets.md`; lexical matching can include adjacent themes and token estimates are approximate. All paid/free and citation boundaries remain in place.
+
+- **P4.6 excerpt follow-up:** Small budgets select complete source sentences, keeping stated limitations
+  and negative conclusions instead of cutting words or omission markers. `excerpted` marks partial
+  coverage; empty `omitted-budget` means no full sentence fit, not that the source lacked an abstract.
+  Source text, questions and citation IDs remain unchanged. The 300/180/80-character boundaries,
+  explicit single-sentence omission and a 2,000-Han-character question with four long titles pass in
+  the actual 0.6B budget path. Standard batch counts do not increase. All 69 related local/mocked tests
+  and TypeScript checks pass; no live model quality or latency claim is made.
+
+- **P4.8:** Metadata maturity is 2,376 established / 4,864 active / 41,170 early.
+  All 48,410 repositories remain searchable; the default overview excludes early records and
+  offers an explicit switch. On the frozen default 30-day window, the overview changes from
+  5,229 to 2,255 records. The 200-item direct-relevance audit has 171 provisional yes,
+  eight no and 21 uncertain labels. Its stratified counts do not estimate population precision.
+  No `direct` rule was tightened using unconfirmed labels. See `eval/github-quality-report.md`.
+
+- **P4.9:** Conservative complete-link title/time clustering yields 2,318 event leads from
+  2,380 reports, including 51 multi-report groups containing 113 reports. The default 30-day
+  view has 450 reports / 421 leads. Titles use character trigrams, similarity ≥0.6 and a
+  seven-day maximum span; unidentified dates and short generic titles remain singletons.
+  Event leads are possible shared announcements, not verified independent scientific outcomes.
+  All original reports, publisher identities and URLs remain available. See
+  `eval/news-clustering-report.md`.
+
+- **P4.10:** The same-period/source denominator is preserved before direction filtering,
+  including all-time source views where the selected direction starts later. Equal adjacent
+  windows use Wilson single-proportion and Newcombe difference intervals; either window
+  below 30 records suppresses directional conclusions. Source comparisons load on demand
+  so overview startup remains manifest-only. Seventy-one focused checks cover denominators,
+  invalid dates, empty windows, exact zero/one intervals and marker positioning. Version
+  dates are shown only when present in explicit metadata. Historical source-addition dates
+  cannot be reconstructed reliably from current manifests and are left unmarked.
+
+- **Remaining classification limitations:** Scope false positives include general computer
+  vision or industrial imaging that mentions medical examples, and opinion/review articles
+  mentioning AI without evaluating an imaging method. Diagnosis false positives include
+  image-quality/site labels and auxiliary classification probes. The frozen labels also
+  contain unresolved main-task versus auxiliary-task boundaries and 31 missing abstracts.
+  These explain why keyword rules and AI labels cannot establish the outstanding precision
+  targets. Record-specific exceptions were not introduced to inflate the evaluation score.
+
+
+- **P2.3 final implementation:** Immutable snapshot metadata caches publication/discovery facts,
+  source counts and work identity keys. Filtered work groups are still recomputed from each subset;
+  caching does not change group membership. All three dashboards share native 40px selectors.
+  The full-data 4× CPU probe cannot commit native keyboard selection in this headless environment;
+  it explicitly reports those latencies as unknown. Synthetic fallback only checks behavior.
+  Remaining recorded library interactions and the coverage flag are preserved in
+  `docs/screenshots/full-data-audit.json`; no full <200 ms acceptance claim is made.
+
+- **P5.2 recovery and visual fixes:** A top-level localized error boundary makes a failed lazy-view
+  import recoverable through explicit reload while retaining the URL and saved personal data.
+  Tests inject a 404 and verify recovery without an automatic reload loop. Visual review of the
+  96-image matrix found and repaired tablet PI overflow, clipped mobile library choices, and
+  overlapping source-filter action buttons. Final screenshots must correspond to the final build.
+
+
+- **P1.7 whole-root follow-up:** Pages serves the repository root, which also includes tracked
+  source archives. In addition to the 800 MB generated-subtree check, publication now measures
+  every staged Git blob at every published path and fails above 950,000,000 bytes. Missing
+  objects, unsupported file modes, unmerged entries and Git failures cannot produce a passing
+  zero-size result. Seven new boundary/failure checks and all 20 Python tests pass; the real
+  index passes and a one-byte threshold exits with failure. This gate runs after staging the
+  generated publication and before commit/push. See `docs/data-hosting-options.md` for the
+  distinction between the old checked-in publication and the replacement build estimate.
+
+
+- **Resumed integration (2026-10-25):** Completed source and public PI share links, including
+  separate per-kind shard signatures so same-timestamp data changes invalidate stale selections.
+  Fixed the interrupted implementation's missing drill-generation type. TypeScript, 20 focused
+  URL/state tests and all 28 bilingual browser checks pass (41 seconds). Production Vite build,
+  full paper/signals round-trip, retention and all resource budgets pass. Earlier full integration
+  covered 519 TypeScript, 25 local API and 20 Python tests; the subsequent one-test addition
+  is covered by the focused URL run. Final screenshots are refreshed separately.
