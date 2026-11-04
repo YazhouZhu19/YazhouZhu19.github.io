@@ -55,6 +55,34 @@ test("timeout aborts the request and releases the pending slot for retry", async
   assert.equal(await loader.load(), "recovered");
 });
 
+test("a cold multi-shard load can complete after a minute but still has a finite deadline", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  let finish!: (value: string) => void;
+  let signal!: AbortSignal;
+  const loader = createSnapshotLoader((current) => {
+    signal = current;
+    return new Promise<string>((resolve) => {
+      finish = resolve;
+    });
+  });
+  const request = loader.load();
+  await Promise.resolve();
+  t.mock.timers.tick(90_000);
+  assert.equal(signal.aborted, false);
+  finish("complete verified snapshot");
+  assert.equal(await request, "complete verified snapshot");
+
+  const stalled = loader.load();
+  const rejection = assert.rejects(
+    stalled,
+    (error) => error instanceof SnapshotRequestError && error.kind === "timeout",
+  );
+  await Promise.resolve();
+  t.mock.timers.tick(300_000);
+  await rejection;
+  assert.equal(signal.aborted, true);
+});
+
 test("unmount cancellation rejects promptly and allows an immediate fresh request", async () => {
   let calls = 0;
   let oldSignal: AbortSignal | undefined;

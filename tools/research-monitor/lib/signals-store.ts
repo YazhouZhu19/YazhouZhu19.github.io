@@ -1,5 +1,6 @@
 import type { ResearchSignal, ResearchSignalsData } from "./research-signals";
 import type { SignalKind, SignalsManifest, createSignalsSnapshotLoader } from "./signals-snapshot";
+import { FULL_SNAPSHOT_TIMEOUT_MS } from "./snapshot-refresh";
 
 type Loader = ReturnType<typeof createSignalsSnapshotLoader>;
 export type SignalsState = {
@@ -80,7 +81,8 @@ export function createSignalsStore(
         active = controller;
         const timer = setTimeout(
           () => controller.abort(new Error("Signal loading timed out")),
-          options.timeoutMs ?? 60_000,
+          options.timeoutMs ??
+            (kind || Object.values(state.loaded).some(Boolean) ? FULL_SNAPSHOT_TIMEOUT_MS : 60_000),
         );
         publish({ loading: true, error: false });
         try {

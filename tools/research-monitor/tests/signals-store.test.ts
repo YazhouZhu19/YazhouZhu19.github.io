@@ -231,6 +231,35 @@ test(
   },
 );
 
+test("manifest checks retain a short deadline while complete record loads can exceed a minute", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const manifest = createSignalsSnapshot(data()).manifest;
+  const metadata = deferred<SignalsManifest>();
+  const records = deferred<GitHubSignal[]>();
+  let first = true;
+  const store = createSignalsStore("/", async () => ({
+    loadManifest: async () => {
+      if (!first) return manifest;
+      first = false;
+      return metadata.promise;
+    },
+    loadKind: async () => records.promise,
+  }));
+  const check = store.ensureManifest();
+  await new Promise((resolve) => setImmediate(resolve));
+  t.mock.timers.tick(60_000);
+  assert.equal(await check, null);
+  assert.equal(store.getSnapshot().error, true);
+  const complete = store.ensureKind("github");
+  await new Promise((resolve) => setImmediate(resolve));
+  t.mock.timers.tick(90_000);
+  assert.equal(store.getSnapshot().loading, true);
+  assert.equal(store.getSnapshot().error, false);
+  records.resolve([repo]);
+  await complete;
+  assert.deepEqual(store.getSnapshot().snapshot?.records, [repo]);
+});
+
 for (const phase of ["initialization", "manifest", "records"] as const) {
   test(
     `a timed-out ${phase} read releases the queue and cannot publish after retry`,

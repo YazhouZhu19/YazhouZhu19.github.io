@@ -7,8 +7,15 @@ export class SnapshotRequestError extends Error {
   }
 }
 
+// A cold load downloads and verifies many shards, rather than one small manifest.
+// Keep a finite deadline while allowing slower connections to complete the library.
+export const FULL_SNAPSHOT_TIMEOUT_MS = 5 * 60_000;
+
 /** One active snapshot request, shared by manual and background refreshes. */
-export function createSnapshotLoader<T>(read: (signal: AbortSignal) => Promise<T>, timeoutMs = 60_000) {
+export function createSnapshotLoader<T>(
+  read: (signal: AbortSignal) => Promise<T>,
+  timeoutMs = FULL_SNAPSHOT_TIMEOUT_MS,
+) {
   let pending: { controller: AbortController; promise: Promise<T> } | null = null;
   return {
     load(): Promise<T> {
