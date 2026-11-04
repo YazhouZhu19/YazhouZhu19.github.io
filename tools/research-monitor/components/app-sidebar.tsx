@@ -1,3 +1,4 @@
+import type { DashboardData, DashboardPaper } from "@/lib/dashboard-base";
 import { useI18n } from "./locale-provider";
 import { ArrowUpRight, Database, Focus } from "lucide-react";
 import {
@@ -33,7 +34,7 @@ type Props = {
   view: string;
   setView: (view: string) => void;
   savedCount: number;
-  data: MonitorData | null;
+  data: DashboardData<DashboardPaper> | null;
   signals: ResearchSignalsData | null;
   sourceRecordCount: number;
 };

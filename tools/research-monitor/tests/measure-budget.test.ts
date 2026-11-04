@@ -229,3 +229,30 @@ test("bounded record growth allows more papers but never relaxes code or individ
   assert.ok(checkBudget(report, limits).some((v) => v.includes("reviewed maximum")));
   assert.equal(JSON.stringify(limits), unchanged);
 });
+
+test("deferred paper snapshots stay measured and budgeted without inflating startup data", async (t) => {
+  const root = await fixture(t);
+  const deferred: BudgetConfig = {
+    ...config,
+    initialData: [config.initialData[1]],
+    optionalData: [config.initialData[0]],
+  };
+  const report = await measureBuild(root, deferred);
+  assert.equal(report.initialData.length, 1);
+  assert.equal(report.optionalData?.[0].id, "papers");
+  assert.equal(report.totals.initialData.rawBytes, report.initialData[0].rawBytes);
+  deferred.limits = {
+    ...deferred.limits,
+    datasets: { papers: { rawBytes: 0, gzipBytes: 0, fileRawBytes: 0, fileGzipBytes: 0 } },
+  };
+  assert.ok(
+    checkBudget(report, deferred).some(
+      (message) => message.startsWith("data:papers: rawBytes") && message.includes("exceeds"),
+    ),
+  );
+  assert.ok(
+    checkBudget(report, deferred).some(
+      (message) => message.startsWith("data/papers/") && message.includes("exceeds"),
+    ),
+  );
+});

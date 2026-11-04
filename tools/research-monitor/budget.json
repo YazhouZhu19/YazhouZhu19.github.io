@@ -15,9 +15,9 @@
   },
   "initialData": [
     {
-      "id": "papers",
-      "kind": "paper-snapshot",
-      "path": "data/public-papers-v3.json"
+      "id": "paper-overview",
+      "kind": "file",
+      "path": "data/paper-overview.json"
     }
   ],
   "limits": {
@@ -241,6 +241,14 @@
       "assets/check.js": {
         "rawBytes": 1024,
         "gzipBytes": 1024
+      },
+      "assets/paper-overview.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
+      },
+      "assets/snapshot-v3.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
       }
     },
     "totals": {
@@ -261,12 +269,12 @@
         "gzipBytes": 26624
       },
       "initialData": {
-        "rawBytes": 62651392,
-        "gzipBytes": 12733440
+        "rawBytes": 14680064,
+        "gzipBytes": 4194304
       },
       "initialMeasuredResources": {
-        "rawBytes": 63467712,
-        "gzipBytes": 12975600
+        "rawBytes": 15496384,
+        "gzipBytes": 4436464
       }
     },
     "datasets": {
@@ -281,12 +289,16 @@
         "gzipBytes": 8240128,
         "fileRawBytes": 51073024,
         "fileGzipBytes": 8240128
+      },
+      "paper-overview": {
+        "rawBytes": 14680064,
+        "gzipBytes": 4194304,
+        "fileRawBytes": 67108864,
+        "fileGzipBytes": 16777216
       }
     }
   },
-  "initialAssetKeys": [
-    "assets/data-worker.js"
-  ],
+  "initialAssetKeys": [],
   "optimizationNotes": [
     "P1.4 removes signals from startup; GitHub/news overview is a separately loaded 36,437-byte gzip manifest.",
     "P1.5 explicitly includes the 71,944-byte raw / 18,289-byte gzip startup data Worker; fallback modules are optional. Worker isolation duplicates validation code, increasing initial JS by about 18 KB gzip until P2 splitting.",
@@ -300,10 +312,21 @@
     "Final P3/P4 integration: main JS 152757 raw / 49300 gzip; total initial JS including Worker/shared vendors is 681436 / 215802, versus P0 571063 / 176919. The increase pays for scope/date validation, work grouping, comparative statistics and recovery UI and is explicitly reported. Reviewed total ceilings allow about 2% headroom. Optional CSS 137796 / 25858 reflects lazy style relocation; main CSS remains 119567 / 19966 under the unchanged 120000 raw cap. New check.js is a 163-byte extracted icon. No build automatically updates any limit.",
     "Release CI 40205053101 (2026-10-25), merged live data revision 906cd809: 9025 papers versus the frozen 8326 (+699, +8.4%). Production v3 data measures 56152199 raw / 11649303 gzip; initial code and CSS remain exactly 687619/218063 and 119567/19966. Manually recalibrated only paper/data totals to this verified snapshot plus 5% (rounded to KiB); combined totals are data plus unchanged JS/CSS ceilings. All asset, per-file and publication caps remain unchanged. Builds never change these limits; future data growth still requires review.",
     "First full production collection, run 40209656002 (2026-10-25 UTC): 9209 papers / 59667877 raw / 12127056 gzip. The saved 9025-record snapshot did not account for the subsequent 184 additions and enriched records: raw data exceeded the reviewed cap by 708005 bytes while gzip and all assets passed. Recalibrated data-only ceilings to the fully collected measurements plus 5%; kept all asset, per-file and publication caps. Signals collection successfully saved 70691 records under the 96 MiB bound.",
-    "Independent data publication: paper total allowances scale only with validated record count from the reviewed 9209-record baseline, capped at 30000 records. Per-file caps, code/CSS budgets and the 800 MB artifact ceiling remain fixed. No build rewrites budgets."
+    "Independent data publication: paper total allowances scale only with validated record count from the reviewed 9209-record baseline, capped at 30000 records. Per-file caps, code/CSS budgets and the 800 MB artifact ceiling remain fixed. No build rewrites budgets.",
+    "Dashboard projection replaces full paper startup. Complete v3 papers move to explicitly checked optionalData; per-file/full archive caps remain. Overview data uses the bounded paper-count envelope; browser accepts at most 64 MiB. The paper Worker is loaded only on demand and is no longer counted as a startup asset."
   ],
   "paperGrowth": {
     "referenceRecords": 9209,
     "maxRecords": 30000
-  }
+  },
+  "optionalData": [
+    {
+      "id": "papers",
+      "kind": "paper-snapshot",
+      "path": "data/public-papers-v3.json"
+    }
+  ],
+  "initialDynamicEntries": [
+    "lib/paper-overview.ts"
+  ]
 }

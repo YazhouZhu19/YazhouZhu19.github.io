@@ -16,6 +16,7 @@ export type BudgetConfig = {
   basePath?: string;
   entryHtml?: string[];
   initialData: DataInput[];
+  optionalData?: DataInput[];
   paperGrowth?: { referenceRecords: number; maxRecords: number };
   initialDynamicEntries?: string[];
   initialAssetKeys?: string[];
@@ -32,6 +33,7 @@ export type BudgetReport = {
   notes: string[];
   assets: Asset[];
   initialData: Dataset[];
+  optionalData?: Dataset[];
   totals: Record<string, Size>;
   violations: string[];
 };
@@ -145,7 +147,9 @@ export function checkBudget(report: BudgetReport, config: BudgetConfig): string[
   let paperScale = 1;
   if (config.paperGrowth) {
     const { referenceRecords, maxRecords } = config.paperGrowth;
-    const records = report.initialData.find((dataset) => dataset.id === "papers")?.records;
+    const records = [...report.initialData, ...(report.optionalData ?? [])].find(
+      (dataset) => dataset.id === "papers",
+    )?.records;
     if (
       !Number.isSafeInteger(referenceRecords) ||
       referenceRecords < 1 ||
@@ -166,7 +170,10 @@ export function checkBudget(report: BudgetReport, config: BudgetConfig): string[
       rawBytes: Math.ceil(limit.rawBytes * paperScale),
       gzipBytes: Math.ceil(limit.gzipBytes * paperScale),
     };
-  const paperLimit = config.limits.datasets.papers;
+  const paperLimit =
+    config.limits.datasets[
+      config.initialData.some((input) => input.id === "paper-overview") ? "paper-overview" : "papers"
+    ];
   const adjustedTotal = (key: string, limit: Size | undefined): Size | undefined => {
     if (!limit || !paperLimit || !["initialData", "initialMeasuredResources"].includes(key)) return limit;
     const grown = scaled(paperLimit)!;
@@ -194,9 +201,13 @@ export function checkBudget(report: BudgetReport, config: BudgetConfig): string[
   for (const asset of report.assets) check(asset.key, asset, config.limits.assets[asset.key]);
   for (const [key, size] of Object.entries(report.totals))
     check(`total:${key}`, size, adjustedTotal(key, config.limits.totals[key]));
-  for (const dataset of report.initialData) {
+  for (const dataset of [...report.initialData, ...(report.optionalData ?? [])]) {
     const limits = config.limits.datasets[dataset.id];
-    check(`data:${dataset.id}`, dataset, dataset.id === "papers" ? scaled(limits) : limits);
+    check(
+      `data:${dataset.id}`,
+      dataset,
+      ["papers", "paper-overview"].includes(dataset.id) ? scaled(limits) : limits,
+    );
     for (const file of dataset.files) {
       check(
         file.path,
@@ -236,6 +247,8 @@ export async function measureBuild(root: string, config: BudgetConfig): Promise<
   }
   const initialData: Dataset[] = [];
   for (const input of config.initialData) initialData.push(await measureDataset(root, input));
+  const optionalData: Dataset[] = [];
+  for (const input of config.optionalData ?? []) optionalData.push(await measureDataset(root, input));
   const totals = {
     initialJs: total(assets.filter((asset) => asset.initial && asset.type === "js")),
     initialCss: total(assets.filter((asset) => asset.initial && asset.type === "css")),
@@ -257,6 +270,7 @@ export async function measureBuild(root: string, config: BudgetConfig): Promise<
     ],
     assets,
     initialData,
+    optionalData,
     totals,
     violations: [],
   };

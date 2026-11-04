@@ -2,7 +2,7 @@ import type { MonitorData } from "./types";
 
 /** Request failures are distinct from intentionally capped source coverage. */
 export function collectionNotice(
-  data: MonitorData | null | undefined,
+  data: Pick<MonitorData, "runs" | "status" | "error" | "errors"> | null | undefined,
 ): { severity: "warning" | "error"; sources: string[] } | null {
   if (!data) return null;
   const latest = new Map<string, MonitorData["runs"][number]>();

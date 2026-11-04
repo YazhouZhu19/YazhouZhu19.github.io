@@ -1,9 +1,11 @@
 "use client";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { LoadingState } from "./state-views";
 import { useSignals } from "@/hooks/use-signals";
+import { usePaperOverview } from "@/hooks/use-paper-overview";
+import type { DashboardPaper } from "@/lib/dashboard-base";
 import { usePaperSnapshot } from "@/hooks/use-paper-snapshot";
 import { usePersonalData } from "@/hooks/use-personal-data";
 import { usePaperLibrary } from "@/hooks/use-paper-library";
@@ -93,12 +95,16 @@ export default function MonitorWorkspace() {
     async () => (signalsStore.getSnapshot().manifest ? (await signalsStore.refresh()) !== null : true),
     [signalsStore],
   );
-  const snapshot = usePaperSnapshot(pollOtherSources);
+  const overview = usePaperOverview(view === "dashboard");
+  const fullRequired =
+    !["dashboard", "github", "news"].includes(view) || (view === "dashboard" && !!overview.error);
+  const snapshot = usePaperSnapshot(pollOtherSources, fullRequired);
   const { data, loading } = snapshot;
+  const displayData = data ?? overview.data;
   const papers = data?.papers ?? EMPTY_PAPERS;
   const personal = usePersonalData({
     papers,
-    storageAvailable: !!data?.personalStorageAvailable,
+    storageAvailable: !!displayData?.personalStorageAvailable,
     onStorageStatus: snapshot.updatePersonalStorageStatus,
     tr,
   });
@@ -216,7 +222,49 @@ export default function MonitorWorkspace() {
         ? initialUrlState
         : { scope: initialUrlState.scope },
   });
-  const scopeCounts = useMemo(() => paperScopeCounts(papers), [papers]);
+  const scopeCounts = useMemo(
+    () =>
+      data
+        ? paperScopeCounts(papers)
+        : (overview.data?.papers ?? []).reduce(
+            (counts, p) => {
+              counts[p.scope]++;
+              return counts;
+            },
+            { core: 0, adjacent: 0, out: 0 },
+          ),
+    [data, papers, overview.data],
+  );
+  const scopedOverview = useMemo(
+    () =>
+      overview.data
+        ? {
+            ...overview.data,
+            papers: overview.data.papers.filter(
+              (p) =>
+                library.scope === "all" ||
+                (library.scope === "adjacent" ? p.scope !== "out" : p.scope === "core"),
+            ),
+          }
+        : null,
+    [overview.data, library.scope],
+  );
+  const openOverviewPaper = useCallback(
+    async (paper: DashboardPaper) => {
+      const found = data?.papers.find((p) => p.id === paper.id);
+      if (found) {
+        openPaper(found);
+        return;
+      }
+      const notice = toast.loading(ui("正在读取完整论文资料", "Loading complete paper details"));
+      const complete = await snapshot.load();
+      toast.dismiss(notice);
+      const selected = complete?.papers.find((p) => p.id === paper.id);
+      if (selected) openPaper(selected);
+      else toast.error(ui("论文资料读取失败，请重试", "Could not load paper details. Please retry."));
+    },
+    [data, openPaper, snapshot.load, locale],
+  );
   const scopedPapers = useMemo(
     () => papers.filter((paper) => matchesPaperScope(paper, library.scope)),
     [papers, library.scope],
@@ -324,7 +372,7 @@ export default function MonitorWorkspace() {
           view={view}
           setView={setView}
           savedCount={collections.length}
-          data={data}
+          data={displayData}
           signals={signals}
           sourceRecordCount={sourceRecordCount}
         />
@@ -332,7 +380,7 @@ export default function MonitorWorkspace() {
           <WorkspaceTopbar view={view} accountControl={accountControl} hash={urlHash} />
           <div className="workspace foresight-workspace">
             <WorkspaceHeader
-              {...snapshot}
+              {...(view === "dashboard" && !data && !overview.error ? overview : snapshot)}
               view={view}
               setView={setView}
               signals={signals}
@@ -344,13 +392,13 @@ export default function MonitorWorkspace() {
             <WorkspaceNavigation
               view={view}
               setView={setView}
-              paperCount={data ? papers.length : null}
+              paperCount={displayData ? displayData.papers.length : null}
               dashboardDrill={dashboardDrill}
               setDashboardDrill={setDashboardDrill}
               drillOrigin={drillOrigin}
               reset={reset}
             />
-            {data && ["dashboard", "analysis", "feed", "teams", "foresight"].includes(view) && (
+            {displayData && ["dashboard", "analysis", "feed", "teams", "foresight"].includes(view) && (
               <PaperScopeControl
                 value={library.scope}
                 counts={scopeCounts}
@@ -382,10 +430,25 @@ export default function MonitorWorkspace() {
                   error={signalsError}
                   onRefresh={() => void loadSignals()}
                   papers={scopedPapers}
+                  papersReady={!!data}
+                  papersError={snapshot.error}
+                  onLoadPapers={snapshot.load}
                   onPaper={openPaper}
                   onDrill={(d) => openDrill(d, view)}
                 />
-              ) : loading ? (
+              ) : view === "dashboard" && !data && scopedOverview ? (
+                <ResearchDashboard
+                  authenticated={authenticated}
+                  data={scopedOverview}
+                  teams={teams}
+                  collections={collections}
+                  filters={dashboardFilters}
+                  onFilters={setDashboardFilters}
+                  onDrill={(d) => openDrill(d, "dashboard")}
+                  onNavigate={setView}
+                  onPaper={openOverviewPaper}
+                />
+              ) : loading || (!data && fullRequired) || (view === "dashboard" && overview.loading) ? (
                 viewFallback
               ) : view === "dashboard" && scopedData ? (
                 <ResearchDashboard
@@ -397,7 +460,7 @@ export default function MonitorWorkspace() {
                   onFilters={setDashboardFilters}
                   onDrill={(d) => openDrill(d, "dashboard")}
                   onNavigate={setView}
-                  onPaper={openPaper}
+                  onPaper={openOverviewPaper}
                 />
               ) : view === "analysis" && scopedData ? (
                 <PreliminaryAnalysisView
