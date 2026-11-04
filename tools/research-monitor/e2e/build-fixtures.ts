@@ -1,3 +1,4 @@
+import { createPaperOverview } from "../scripts/paper-overview";
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
@@ -189,6 +190,7 @@ const signals = ResearchSignalsDataSchema.parse({
 });
 const target = resolve(".e2e-dist/data");
 await mkdir(target, { recursive: true });
+await writeFile(join(target, "paper-overview.json"), JSON.stringify(createPaperOverview(data)));
 await writeSnapshotFile(join(target, "papers.json"), data);
 await writePublicSnapshot(join(target, "public-papers-v2.json"), data);
 await writePublicSnapshotV3(join(target, "public-papers-v3.json"), data);

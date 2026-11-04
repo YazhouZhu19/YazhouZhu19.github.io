@@ -7,7 +7,7 @@ test("home loads local snapshot and shows metric cards", async ({ page }, testIn
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     testInfo.project.name === "en" ? "Paper insights" : "论文洞察",
   );
-  expect(requests.some((url) => url.includes("/public-papers-v3.json"))).toBeTruthy();
+  expect(requests.some((url) => url.includes("/paper-overview.json"))).toBeTruthy();
   expect(requests.some((url) => url.includes("/signals-v2/"))).toBeFalsy();
 });
 

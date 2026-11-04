@@ -1,3 +1,4 @@
+import type { DashboardData, DashboardPaper } from "@/lib/dashboard-base";
 import { NoticeStack, type WorkspaceNotice } from "./notice-stack";
 import { useI18n } from "./locale-provider";
 import { Button } from "@/components/ui/button";
@@ -52,10 +53,9 @@ export function WorkspaceTopbar({
     </header>
   );
 }
-type Props = Pick<
-  ReturnType<typeof usePaperSnapshot>,
-  "data" | "loading" | "error" | "refreshing" | "checkResult" | "load"
-> & {
+type Props = Pick<ReturnType<typeof usePaperSnapshot>, "loading" | "error" | "refreshing" | "checkResult"> & {
+  data: DashboardData<DashboardPaper> | null;
+  load: (manual?: boolean) => Promise<unknown>;
   view: string;
   setView: (view: string) => void;
   signals: ResearchSignalsData | null;

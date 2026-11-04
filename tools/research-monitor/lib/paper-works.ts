@@ -15,7 +15,12 @@ function arxiv(value: unknown): string | null {
     .toLowerCase();
   return /^(?:\d{4}\.\d{4,5}|[a-z.-]+\/\d{7})$/.test(id) ? id : null;
 }
-function identityKeys(paper: Paper): string[] {
+export type WorkPaper = Pick<
+  Paper,
+  "id" | "title" | "authors" | "doi" | "relatedDoi" | "pmid" | "arxivId" | "source"
+> & { provenance: { sourceRecordId?: string }[] };
+
+function identityKeys(paper: WorkPaper): string[] {
   const keys = paper.id ? [`id:${paper.id}`] : [];
   for (const value of [paper.doi, paper.relatedDoi]) {
     const id = doi(value);
@@ -46,7 +51,7 @@ function identityKeys(paper: Paper): string[] {
 export const WORK_GROUPING_VERSION = "2026-10-21-title-authors-v1";
 
 type WorkIdentity = { keys: string[]; title?: string };
-export type WorkGroupingCache = WeakMap<Paper, WorkIdentity>;
+export type WorkGroupingCache = WeakMap<WorkPaper, WorkIdentity>;
 
 /** Callers own this cache for one immutable snapshot; every subset is still grouped afresh. */
 export function createWorkGroupingCache(): WorkGroupingCache {
@@ -87,7 +92,7 @@ function surnameOfFirstAuthor(author: Author | undefined): string | null {
   return last.length >= 2 ? nameKey(last) : null;
 }
 
-function authorNames(paper: Paper): Set<string> {
+function authorNames(paper: WorkPaper): Set<string> {
   return new Set(
     paper.authors.map((author) => nameKey(author.name || author.displayName || "")).filter(Boolean),
   );
@@ -100,7 +105,7 @@ export type TitleAuthorMatch = {
 };
 
 /** A possible version link, not a claim of verified bibliographic equivalence. */
-export function titleAuthorMatch(a: Paper, b: Paper): TitleAuthorMatch | null {
+export function titleAuthorMatch(a: WorkPaper, b: WorkPaper): TitleAuthorMatch | null {
   const title = normalizedWorkTitle(a.title);
   if (!title || title !== normalizedWorkTitle(b.title)) return null;
   const aNames = authorNames(a),
@@ -115,10 +120,10 @@ export function titleAuthorMatch(a: Paper, b: Paper): TitleAuthorMatch | null {
 }
 
 /** Group known identifiers first, then exact-title matches with explicit author support. */
-export function groupWorks(
-  papers: Paper[],
+export function groupWorks<T extends WorkPaper>(
+  papers: T[],
   options: { titleAuthors?: boolean; cache?: WorkGroupingCache } = {},
-): Paper[][] {
+): T[][] {
   const parent = papers.map((_, index) => index);
   const members = papers.map((_, index) => [index]);
   const keys = new Map<string, number>();
@@ -188,7 +193,7 @@ export function groupWorks(
       }
     }
   }
-  const groups = new Map<number, Paper[]>();
+  const groups = new Map<number, T[]>();
   papers.forEach((paper, index) => {
     const key = root(index),
       group = groups.get(key) ?? [];
@@ -199,9 +204,9 @@ export function groupWorks(
 }
 
 /** One shared index supports headline counts and version links without modifying source records. */
-export function buildWorkIndex(papers: Paper[], cache?: WorkGroupingCache) {
+export function buildWorkIndex<T extends WorkPaper>(papers: T[], cache?: WorkGroupingCache) {
   const groups = groupWorks(papers, { cache });
-  const byPaperId = new Map<string, Paper[]>();
+  const byPaperId = new Map<string, T[]>();
   for (const group of groups) for (const paper of group) byPaperId.set(paper.id, group);
   return {
     groups,

@@ -93,6 +93,9 @@ type Props = {
   error: boolean;
   onRefresh: () => void;
   papers: Paper[];
+  papersReady: boolean;
+  papersError: string;
+  onLoadPapers: () => Promise<unknown>;
   onPaper: (paper: Paper) => void;
   onDrill: (drill: DashboardDrill) => void;
 };
@@ -149,6 +152,9 @@ export function ResearchSignalsView({
   error,
   onRefresh,
   papers,
+  papersReady,
+  papersError,
+  onLoadPapers,
   onPaper,
   onDrill,
 }: Props) {
@@ -167,6 +173,9 @@ export function ResearchSignalsView({
     range: dateRange,
     groupEvents: newsGroupEvents,
   } = preferences;
+  useEffect(() => {
+    if (view === "library") void onLoadPapers();
+  }, [view, onLoadPapers]);
   const githubClock = preferences.clock as "activity" | "creation";
   const newsClock = preferences.clock as NewsDashboardClock;
   const changePreference = useCallback(
@@ -1655,6 +1664,17 @@ export function ResearchSignalsView({
         </Suspense>
       </div>
 
+      {view === "library" && !papersReady && (
+        <div role="status" className="signals-analysis-description">
+          {papersError ? (
+            <button type="button" className="foresight-button" onClick={() => void onLoadPapers()}>
+              {t("论文关联读取失败，点击重试", "Paper links could not load. Retry")}
+            </button>
+          ) : (
+            t("正在读取论文关联与联合研判所需资料…", "Loading paper links and evidence for joint assessment…")
+          )}
+        </div>
+      )}
       {sourceHealth}
       <div ref={analysisRef} className="signals-analysis">
         {view === "library" && analyze && (
@@ -1673,24 +1693,28 @@ export function ResearchSignalsView({
             </p>
             <Suspense fallback={viewLoading}>
               <AiModelSettings />
-              <AiResearchPanel
-                papers={papers}
-                signals={analysisRecords}
-                initialSources={[kind]}
-                mode="interest"
-                subjectId={`${kind}-library`}
-                title={
-                  kind === "github"
-                    ? t("GitHub 项目分析", "GitHub repository assessment")
-                    : t("模型与进展分析", "Model and progress assessment")
-                }
-                description={t(
-                  "输入需要判断的问题，比较技术路线、复现条件、证据缺口与下一步值得验证的机会。",
-                  "Ask a question about methods, reproducibility, evidence gaps, and opportunities worth testing.",
-                )}
-                onPaper={onPaper}
-                onDrill={onDrill}
-              />
+              {papersReady ? (
+                <AiResearchPanel
+                  papers={papers}
+                  signals={analysisRecords}
+                  initialSources={[kind]}
+                  mode="interest"
+                  subjectId={`${kind}-library`}
+                  title={
+                    kind === "github"
+                      ? t("GitHub 项目分析", "GitHub repository assessment")
+                      : t("模型与进展分析", "Model and progress assessment")
+                  }
+                  description={t(
+                    "输入需要判断的问题，比较技术路线、复现条件、证据缺口与下一步值得验证的机会。",
+                    "Ask a question about methods, reproducibility, evidence gaps, and opportunities worth testing.",
+                  )}
+                  onPaper={onPaper}
+                  onDrill={onDrill}
+                />
+              ) : (
+                viewLoading
+              )}
             </Suspense>
           </>
         )}

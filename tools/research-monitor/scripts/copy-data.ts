@@ -1,3 +1,4 @@
+import { createPaperOverview } from "./paper-overview";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
@@ -20,6 +21,7 @@ const compact = await writePublicSnapshotV3(
   join(previous, "public-papers-v3.json"),
 );
 assert.deepEqual(await readSnapshotFile("dist/data/public-papers-v3.json"), data);
+await writeFile("dist/data/paper-overview.json", JSON.stringify(createPaperOverview(data)));
 const signalBytes = await readFile("data/research-signals.json");
 assert.ok(signalBytes.length <= SIGNALS_MAX_BYTES, "Signal snapshot exceeds publication limit");
 const signals = parseResearchSignalsData(JSON.parse(signalBytes.toString("utf8")));
@@ -50,6 +52,7 @@ await writeFile(
       collectedAt: data.collectedAt,
       signalsGeneratedAt: signals.generatedAt,
       compactPapersSha256: await hash("dist/data/public-papers-v3.json"),
+      paperOverviewSha256: await hash("dist/data/paper-overview.json"),
       signalsManifestSha256: await hash("dist/data/signals-v2/manifest.json"),
     },
     null,

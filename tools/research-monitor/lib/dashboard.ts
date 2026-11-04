@@ -7,6 +7,8 @@ import {
   dashboardBaseMatches,
   dashboardSourceFacts,
   type DashboardBase,
+  type DashboardData,
+  type DashboardPaper,
 } from "./dashboard-base";
 export { beijingDay } from "./dashboard-base";
 
@@ -30,7 +32,7 @@ export function matchesMember(author: Author, members: string[]) {
     [author.name, author.displayName ?? "", author.orcid ?? ""].some((v) => v && identity(v) === identity(m)),
   );
 }
-export function matchesTeam(p: Paper, t: Team) {
+export function matchesTeam(p: Pick<Paper, "authors">, t: Team) {
   return p.authors.some(
     (a) =>
       matchesMember(a, t.members) &&
@@ -38,7 +40,11 @@ export function matchesTeam(p: Paper, t: Team) {
   );
 }
 /** Source age changes within a day; callers can refresh this without rebuilding every chart. */
-export function buildSourceHealth(data: MonitorData, now = new Date(), cachedBase?: DashboardBase) {
+export function buildSourceHealth<P extends DashboardPaper>(
+  data: DashboardData<P>,
+  now = new Date(),
+  cachedBase?: DashboardBase<P>,
+) {
   const facts =
     cachedBase && dashboardBaseMatches(cachedBase, data, beijingDay(now))
       ? cachedBase.sourceFacts
@@ -72,12 +78,12 @@ export function buildSourceHealth(data: MonitorData, now = new Date(), cachedBas
     };
   });
 }
-export function buildDashboard(
-  data: MonitorData,
+export function buildDashboard<P extends DashboardPaper>(
+  data: DashboardData<P>,
   teams: Team[],
   filters: DashboardFilters,
   now = new Date(),
-  cachedBase?: DashboardBase,
+  cachedBase?: DashboardBase<P>,
 ) {
   const today = beijingDay(now);
   const start =
@@ -90,9 +96,9 @@ export function buildDashboard(
       ? cachedBase
       : createDashboardBase(data, today);
   const { initialTime, newToday } = base;
-  const isInitial = (paper: Paper) => base.dates.get(paper)!.initial;
-  const statusOf = (paper: Paper) => base.dates.get(paper)!.status;
-  const dateOf = (paper: Paper) => base.dates.get(paper)![filters.clock];
+  const isInitial = (paper: P) => base.dates.get(paper)!.initial;
+  const statusOf = (paper: P) => base.dates.get(paper)!.status;
+  const dateOf = (paper: P) => base.dates.get(paper)![filters.clock];
   const sourcePool = data.papers.filter(
     (p) => filters.source === "all" || p.sources.includes(filters.source),
   );
@@ -174,7 +180,7 @@ export function buildDashboard(
   const matrix = Object.entries(TASKS).map(([task, label]) => ({
     task,
     label,
-    cells: modalities.map((modality) => ({ modality, papers: [] as Paper[] })),
+    cells: modalities.map((modality) => ({ modality, papers: [] as P[] })),
   }));
   const matrixCells = new Map(
     matrix.map((row) => [row.task, new Map(row.cells.map((cell) => [cell.modality, cell.papers]))]),

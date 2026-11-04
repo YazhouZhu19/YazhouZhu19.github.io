@@ -9,13 +9,15 @@ export type SnapshotCheckResult = {
   added?: number;
   detail?: string;
 };
-export function usePaperSnapshot(pollOtherSources: () => Promise<boolean>) {
+export function usePaperSnapshot(pollOtherSources: () => Promise<boolean>, enabled = true) {
   const [data, setData] = useState<MonitorData | null>(null),
     [loading, setLoading] = useState(true),
     [error, setError] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [checkResult, setCheckResult] = useState<SnapshotCheckResult | null>(null);
   const mounted = useRef(false);
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
   const latestData = useRef<MonitorData | null>(null);
   const snapshotLoader = useRef(createSnapshotLoader((signal) => api("/api/papers", { signal })));
   const activeLoad = useRef<{ manual: boolean; promise: Promise<MonitorData | null> | null } | null>(null);
@@ -28,6 +30,7 @@ export function usePaperSnapshot(pollOtherSources: () => Promise<boolean>) {
       activeLoad.current.manual ||= manual;
       return activeLoad.current.promise!;
     }
+    if (!latestData.current) setLoading(true);
     const request = { manual, promise: null as Promise<MonitorData | null> | null };
     activeLoad.current = request;
     request.promise = (async () => {
@@ -85,8 +88,8 @@ export function usePaperSnapshot(pollOtherSources: () => Promise<boolean>) {
   // This hook stays mounted with the workspace: one poller and one shared Worker owner.
   useEffect(() => {
     mounted.current = true;
-    void load();
     const stopPolling = startManifestPolling(async () => {
+      if (!enabledRef.current && !latestData.current) return pollOtherSources();
       const [papers, otherSourcesOk] = await Promise.all([load(), pollOtherSources()]);
       return papers !== null && otherSourcesOk;
     });
@@ -98,5 +101,8 @@ export function usePaperSnapshot(pollOtherSources: () => Promise<boolean>) {
       stopPolling();
     };
   }, [load, pollOtherSources]);
+  useEffect(() => {
+    if (enabled) void load();
+  }, [enabled, load]);
   return { data, loading, error, refreshing, checkResult, load, updatePersonalStorageStatus };
 }

@@ -25,7 +25,7 @@ import { getLoadedPaperSnapshot } from "@/lib/local-api";
 import { TRACKS, SCOPE_CLASSIFIER_VERSION } from "@/lib/classify";
 import { paperCollectionMarkers } from "@/lib/trend-statistics";
 import { WindowComparisonReadout } from "./trend-annotations";
-import { createDashboardBase } from "@/lib/dashboard-base";
+import { createDashboardBase, type DashboardData, type DashboardPaper } from "@/lib/dashboard-base";
 import {
   beijingDay,
   buildDashboard,
@@ -36,14 +36,14 @@ import {
 import type { Collection, MonitorData, Paper, Team } from "@/lib/types";
 type Props = {
   authenticated: boolean;
-  data: MonitorData;
+  data: DashboardData<DashboardPaper>;
   teams: Team[];
   collections: Collection[];
   filters: DashboardFilters;
   onFilters: (filters: DashboardFilters) => void;
   onDrill: (drill: DashboardDrill) => void;
   onNavigate: (view: string) => void;
-  onPaper: (paper: Paper) => void;
+  onPaper: (paper: DashboardPaper) => void;
 };
 const count = (n: number) => n.toLocaleString("zh-CN");
 const stamp = (s: string) =>
@@ -100,7 +100,7 @@ export const ResearchDashboard = memo(function ResearchDashboard({
   );
   const change = (key: keyof DashboardFilters, value: string) => onFilters({ ...filters, [key]: value });
   const drill = useCallback(
-    (label: string, papers: Paper[]) => onDrill({ label: tr(label), ids: papers.map((p) => p.id) }),
+    (label: string, papers: DashboardPaper[]) => onDrill({ label: tr(label), ids: papers.map((p) => p.id) }),
     [onDrill, tr],
   );
   const dateLabel = tr(filters.clock === "discovery" ? "平台发现时间" : "来源发布日期");
