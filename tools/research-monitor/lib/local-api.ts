@@ -231,7 +231,7 @@ let paperClient: ReturnType<typeof createDataWorkerClient> | undefined;
 let latestPaperResult: PaperDataResult | undefined;
 function getPaperClient() {
   return (paperClient ??= createDataWorkerClient({
-    baseUrl: import.meta.env?.BASE_URL ?? "/research-monitor/",
+    baseUrl: import.meta.env?.VITE_MONITOR_DATA_BASE_URL || import.meta.env?.BASE_URL || "/research-monitor/",
   }));
 }
 export function getLoadedPaperSnapshot() {

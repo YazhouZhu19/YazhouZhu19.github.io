@@ -23,7 +23,7 @@ async function checkedFile(file: string, optional = false): Promise<Buffer | und
   return readFile(file);
 }
 
-async function collectReferences(dataDirectory: string, optional: boolean) {
+async function collectReferences(dataDirectory: string, optional: boolean, names = paperManifests) {
   for (const directory of ["", "papers", "signals-v2", "signals-v2/shards"]) {
     let info;
     try {
@@ -36,7 +36,7 @@ async function collectReferences(dataDirectory: string, optional: boolean) {
       throw new Error(`Publication shard directory must be real: ${join(dataDirectory, directory)}`);
   }
   const references: Reference[] = [];
-  for (const name of paperManifests) {
+  for (const name of names) {
     const body = await checkedFile(join(dataDirectory, name), optional);
     if (!body) continue;
     const manifest = parseSnapshotManifest(JSON.parse(body.toString("utf8")));
@@ -57,9 +57,14 @@ async function collectReferences(dataDirectory: string, optional: boolean) {
 }
 
 /** Keep exactly the current and preceding references of every public format. */
-export async function prunePublishedShards(dataDirectory: string, previousDataDirectory?: string) {
-  const current = await collectReferences(dataDirectory, false);
-  const previous = previousDataDirectory ? await collectReferences(previousDataDirectory, true) : [];
+export async function prunePublishedShards(
+  dataDirectory: string,
+  previousDataDirectory?: string,
+  names = paperManifests,
+) {
+  if (names.some((name) => !paperManifests.includes(name))) throw new Error("Unknown publication format");
+  const current = await collectReferences(dataDirectory, false, names);
+  const previous = previousDataDirectory ? await collectReferences(previousDataDirectory, true, names) : [];
   const keep = new Map<string, Reference>();
   for (const reference of [...current, ...previous]) {
     const existing = keep.get(reference.path);

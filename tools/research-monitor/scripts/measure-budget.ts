@@ -16,6 +16,7 @@ export type BudgetConfig = {
   basePath?: string;
   entryHtml?: string[];
   initialData: DataInput[];
+  paperGrowth?: { referenceRecords: number; maxRecords: number };
   initialDynamicEntries?: string[];
   initialAssetKeys?: string[];
   limits: {
@@ -141,6 +142,39 @@ async function measureDataset(root: string, input: DataInput): Promise<Dataset> 
 
 export function checkBudget(report: BudgetReport, config: BudgetConfig): string[] {
   const violations: string[] = [];
+  let paperScale = 1;
+  if (config.paperGrowth) {
+    const { referenceRecords, maxRecords } = config.paperGrowth;
+    const records = report.initialData.find((dataset) => dataset.id === "papers")?.records;
+    if (
+      !Number.isSafeInteger(referenceRecords) ||
+      referenceRecords < 1 ||
+      !Number.isSafeInteger(maxRecords) ||
+      maxRecords < referenceRecords ||
+      !Number.isSafeInteger(records) ||
+      records! < 0
+    ) {
+      violations.push("Invalid bounded paper growth budget");
+    } else {
+      if (records! > maxRecords)
+        violations.push(`Paper count ${records} exceeds reviewed maximum ${maxRecords}`);
+      paperScale = Math.max(1, Math.min(records!, maxRecords) / referenceRecords);
+    }
+  }
+  const scaled = (limit: Size | undefined) =>
+    limit && {
+      rawBytes: Math.ceil(limit.rawBytes * paperScale),
+      gzipBytes: Math.ceil(limit.gzipBytes * paperScale),
+    };
+  const paperLimit = config.limits.datasets.papers;
+  const adjustedTotal = (key: string, limit: Size | undefined): Size | undefined => {
+    if (!limit || !paperLimit || !["initialData", "initialMeasuredResources"].includes(key)) return limit;
+    const grown = scaled(paperLimit)!;
+    return {
+      rawBytes: limit.rawBytes + grown.rawBytes - paperLimit.rawBytes,
+      gzipBytes: limit.gzipBytes + grown.gzipBytes - paperLimit.gzipBytes,
+    };
+  };
   function check(label: string, actual: Size, limit: Size | undefined) {
     if (
       !limit ||
@@ -159,10 +193,10 @@ export function checkBudget(report: BudgetReport, config: BudgetConfig): string[
   }
   for (const asset of report.assets) check(asset.key, asset, config.limits.assets[asset.key]);
   for (const [key, size] of Object.entries(report.totals))
-    check(`total:${key}`, size, config.limits.totals[key]);
+    check(`total:${key}`, size, adjustedTotal(key, config.limits.totals[key]));
   for (const dataset of report.initialData) {
     const limits = config.limits.datasets[dataset.id];
-    check(`data:${dataset.id}`, dataset, limits);
+    check(`data:${dataset.id}`, dataset, dataset.id === "papers" ? scaled(limits) : limits);
     for (const file of dataset.files) {
       check(
         file.path,

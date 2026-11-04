@@ -10,8 +10,7 @@ on:
       - 'tools/research-monitor/**'
       - '.github/workflows/research-monitor-sync.yml'
 
-# Retain Pages' existing branch source: main / (root).
-# The Pages build API needs pages:write; this branch build does not need OIDC.
+# Source collection only. Web and data Pages publications are independent.
 permissions: {}
 
 concurrency:
@@ -25,7 +24,6 @@ jobs:
     timeout-minutes: 45
     permissions:
       contents: write
-      pages: write
       actions: read
     defaults:
       run:
@@ -44,17 +42,7 @@ jobs:
           cache: npm
           cache-dependency-path: tools/research-monitor/package-lock.json
 
-      - name: Verify existing Pages configuration
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          gh api "repos/$GITHUB_REPOSITORY/pages" > "$RUNNER_TEMP/research-pages-config.json"
-          jq -e '.build_type == "legacy" and .source.branch == "main" and .source.path == "/"' \
-            "$RUNNER_TEMP/research-pages-config.json" >/dev/null
-          test -f .nojekyll
-
-      - name: Collect, build, and commit only monitor data and output
+      - name: Collect, validate, and commit source archives
         id: refresh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -74,6 +62,9 @@ jobs:
             (
               cd tools/research-monitor
               npm ci
+              mkdir -p "$RUNNER_TEMP/oevryn-archive-before/papers"
+              cp data/papers.json "$RUNNER_TEMP/oevryn-archive-before/papers.json"
+              rsync -a --delete data/papers/ "$RUNNER_TEMP/oevryn-archive-before/papers/"
               node --import tsx scripts/snapshot-cli.ts export data/papers.json "$RUNNER_TEMP/research-before-collect.json"
               python3 -c 'import time; print(time.time_ns() // 1000000)' > "$RUNNER_TEMP/research-collect-start-ms"
               collect_exit=0
@@ -134,7 +125,7 @@ jobs:
               require(isinstance(run.get('id'), str) and bool(run['id']) and run['id'] not in previous_ids, 'source run is not new')
               require(run.get('status') == 'error' and isinstance(run.get('error'), str) and bool(run['error'].strip()), 'source run is not an error')
               require(started_ms <= timestamp(run['startedAt']) <= timestamp(run.get('completedAt')) <= completed_ms, 'invalid source run timestamps')
-          print('::warning::All sources failed; publishing the fresh failure metadata while retaining the saved library. The job will fail after publication is verified.')
+          print('::warning::All sources failed; archiving fresh failure metadata while retaining the saved library. The job will report failure after saving.')
           PY
               fi
               cp data/research-signals.json "$RUNNER_TEMP/research-signals-before.json"
@@ -158,309 +149,25 @@ jobs:
               signals_failed=true
             fi
 
-            python3 - <<'PY'
-          import hashlib
-          import json
-          import os
-          import sys
-          from pathlib import Path
-
-          sys.path.insert(0, 'tools/research-monitor/scripts')
-          from snapshot_checks import verify_snapshot
-          from signals_checks import verify_signals_snapshot
-
-          dist = Path('tools/research-monitor/dist')
-          if dist.is_symlink():
-              raise SystemExit('Build output must not be a symbolic link')
-          for name in ('index.html', 'en/index.html', 'data/papers.json', 'data/public-papers-v2.json', 'data/public-papers-v3.json', 'data/research-signals.json', 'data/signals-v2/manifest.json'):
-              if not (dist / name).is_file():
-                  raise SystemExit(f'Missing build output: {name}')
-          source_data = Path('tools/research-monitor/data/papers.json').read_bytes()
-          legacy_data = (dist / 'data/papers.json').read_bytes()
-          public_data = (dist / 'data/public-papers-v2.json').read_bytes()
-          compact_data = (dist / 'data/public-papers-v3.json').read_bytes()
-          signal_data = (dist / 'data/research-signals.json').read_bytes()
-          signal_manifest_data = (dist / 'data/signals-v2/manifest.json').read_bytes()
-          if signal_data != Path('tools/research-monitor/data/research-signals.json').read_bytes() or len(signal_data) > 96 * 1024 * 1024:
-              raise SystemExit('Public signal snapshot differs from the archive or exceeds the limit')
-          if json.loads(legacy_data).get('schema') != 'research-monitor-shards-v1':
-              raise SystemExit('Legacy endpoint must retain the v1 codec')
-          json.loads(public_data)
-          source_snapshot = verify_snapshot(source_data, lambda path: (Path('tools/research-monitor/data') / path).read_bytes(), return_data=True)
-          public_snapshot = verify_snapshot(public_data, lambda path: (dist / 'data' / path).read_bytes(), return_data=True)
-          compact_snapshot = verify_snapshot(compact_data, lambda path: (dist / 'data' / path).read_bytes(), return_data=True)
-          legacy_snapshot = verify_snapshot(legacy_data, lambda path: (dist / 'data' / path).read_bytes(), return_data=True)
-          if source_snapshot != public_snapshot or source_snapshot != legacy_snapshot or source_snapshot != compact_snapshot:
-              raise SystemExit('Decoded public data differs from collected records or metadata')
-          flat_signals = json.loads(signal_data)
-          flat_signals['records'].sort(key=lambda record: record['id'])
-          split_signals = verify_signals_snapshot(signal_manifest_data, lambda path: (dist / 'data/signals-v2' / path).read_bytes(), return_data=True)
-          if split_signals != flat_signals:
-              raise SystemExit('Decoded split GitHub/news data differs from collected records or metadata')
-          forbidden = {'node_modules', '.git', '.github', '.env', '.env.local'}
-          for path in dist.rglob('*'):
-              if path.is_symlink() or forbidden.intersection(path.parts):
-                  raise SystemExit(f'Unexpected build output: {path}')
-              if path.is_file() and (path.name.startswith('.env.') or path.suffix in {'.pem', '.key', '.ts', '.tsx', '.map'}):
-                  raise SystemExit(f'Unexpected source/credential output: {path}')
-          manifest = {
-              'schemaVersion': 1,
-              'runId': os.environ['GITHUB_RUN_ID'],
-              'runAttempt': os.environ['GITHUB_RUN_ATTEMPT'],
-              'sourceRevision': os.environ['MONITOR_SOURCE_REVISION'],
-              'papersSha256': hashlib.sha256(public_data).hexdigest(),
-              'compactPapersSha256': hashlib.sha256(compact_data).hexdigest(),
-              'legacyPapersSha256': hashlib.sha256(legacy_data).hexdigest(),
-              'signalsSha256': hashlib.sha256(signal_data).hexdigest(),
-              'signalsManifestSha256': hashlib.sha256(signal_manifest_data).hexdigest(),
-          }
-          (dist / 'deployment.json').write_text(json.dumps(manifest, indent=2) + '\n')
-          PY
-
-            # Public current/preceding generations have been verified above.
-            # Compact the internal archive without duplicating legacy payloads.
-            (cd tools/research-monitor && node --import tsx scripts/compact-archive.ts)
-
-            staged_site_bytes="$(du -sb tools/research-monitor/dist | cut -f1)"
-            if [ "$staged_site_bytes" -gt 800000000 ]; then
-              echo "::error::Generated site is $staged_site_bytes bytes, exceeding the 800 MB publication budget. Remove unreferenced generated shards before publishing."
-              exit 1
-            fi
-            test ! -L research-monitor
-            mkdir -p research-monitor
-            # Delete obsolete assets only within this generated subtree.
-            rsync -a --delete tools/research-monitor/dist/ research-monitor/
-            published_site_bytes="$(du -sb research-monitor | cut -f1)"
-            if [ "$published_site_bytes" -gt 800000000 ]; then
-              echo "::error::Publication is $published_site_bytes bytes, exceeding the 800 MB budget; no commit or push will run."
-              exit 1
-            fi
-            echo "Publication apparent size: $published_site_bytes bytes (limit 800000000)." >> "$GITHUB_STEP_SUMMARY"
-            git add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ tools/research-monitor/data/research-signals.json research-monitor/
-
-            python3 - <<'PY'
-          import subprocess
-          paths = subprocess.check_output(['git', 'diff', '--cached', '--name-only', '-z']).decode().split('\0')
-          for path in filter(None, paths):
-              if path not in ('tools/research-monitor/data/papers.json', 'tools/research-monitor/data/research-signals.json') and not path.startswith(('tools/research-monitor/data/papers/', 'research-monitor/')):
-                  raise SystemExit(f'Unexpected staged file: {path}')
-          PY
-
-            # Pages serves main / (root), including the tracked source archives.
-            # Measure the final index after replacing/staging this publication;
-            # untracked dist, node_modules and .git must not inflate this gate.
-            python3 tools/research-monitor/scripts/check_pages_tree.py --max-bytes 950000000 \
-              | tee -a "$GITHUB_STEP_SUMMARY"
+            (cd tools/research-monitor && node --import tsx scripts/compact-archive.ts data/papers.json "$RUNNER_TEMP/oevryn-archive-before/papers.json")
+            git add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ tools/research-monitor/data/research-signals.json
             node tools/research-monitor/scripts/check-file-sizes.mjs
-
             if ! git diff --cached --quiet; then
-              git commit -m 'chore: refresh research monitor data and site'
+              git commit -m 'chore: refresh verified research source archives'
             fi
-            expected_commit="$(git rev-parse HEAD)"
             if git push origin HEAD:main; then
-              echo "commit=$expected_commit" >> "$GITHUB_OUTPUT"
-              echo "collection_failed=$collection_failed" >> "$GITHUB_OUTPUT"
-              echo "signals_failed=$signals_failed" >> "$GITHUB_OUTPUT"
-              break
-            fi
-
-            # If the server accepted the push but the response was lost, do not
-            # throw away the accepted commit or misreport a failed publication.
-            git fetch --depth=1 origin main
-            remote_commit="$(git rev-parse origin/main)"
-            # A depth-1 checkout cannot reliably answer merge-base queries.
-            # GitHub's compare endpoint checks ancestry on the server. A local
-            # rejected commit can legitimately be absent remotely (404); an
-            # unverified comparison is never success and keeps the rebuild path.
-            ancestry_status=""
-            if ! ancestry_status="$(gh api "repos/$GITHUB_REPOSITORY/compare/$expected_commit...$remote_commit" --jq '.status' 2>/dev/null)"; then
-              ancestry_status="unverified"
-              echo 'Could not verify remote ancestry; publication is not confirmed and will be rebuilt.'
-            fi
-            if [ "$ancestry_status" = "ahead" ] || [ "$ancestry_status" = "identical" ]; then
-              echo "commit=$expected_commit" >> "$GITHUB_OUTPUT"
               echo "collection_failed=$collection_failed" >> "$GITHUB_OUTPUT"
               echo "signals_failed=$signals_failed" >> "$GITHUB_OUTPUT"
               break
             fi
             if [ "$attempt" -eq 3 ]; then
-              echo '::error::Could not update main after 3 attempts; no force-push was attempted.'
+              echo '::error::Could not update source archives; no force push attempted.'
               exit 1
             fi
-            echo 'main changed concurrently; repeating collection and build from its latest revision.'
           done
 
-      - name: Request Pages build and verify the published revision and data
-        env:
-          GH_TOKEN: ${{ github.token }}
-          EXPECTED_COMMIT: ${{ steps.refresh.outputs.commit }}
+      - name: Report source collection failures
+        if: steps.refresh.outputs.collection_failed == 'true' || steps.refresh.outputs.signals_failed == 'true'
         run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import hashlib
-          import json
-          import os
-          import subprocess
-          import sys
-          import time
-          import urllib.error
-          import urllib.parse
-          import urllib.request
-          from pathlib import Path
-
-          sys.path.insert(0, 'tools/research-monitor/scripts')
-          from snapshot_checks import verify_snapshot, MAX_BYTES
-          from signals_checks import verify_signals_snapshot
-
-          expected_commit = os.environ['EXPECTED_COMMIT']
-          expected_manifest = json.loads(Path('research-monitor/deployment.json').read_text())
-          config = json.loads((Path(os.environ['RUNNER_TEMP']) / 'research-pages-config.json').read_text())
-          site_url = config.get('html_url', '')
-          if urllib.parse.urlparse(site_url).scheme != 'https':
-              raise SystemExit('Pages site did not return an HTTPS public URL')
-          monitor_url = site_url.rstrip('/') + '/research-monitor/'
-
-          def api(path, method=None):
-              command = ['gh', 'api', path]
-              if method:
-                  command.extend(['--method', method])
-              try:
-                  result = subprocess.run(command, capture_output=True, text=True, timeout=30)
-              except subprocess.SubprocessError:
-                  raise RuntimeError('Pages API request did not complete') from None
-              if result.returncode:
-                  raise RuntimeError('Pages API request failed')
-              return json.loads(result.stdout)
-
-          def pages_build_present(payload, latest):
-              # The legacy latest endpoint can describe a cancelled duplicate.
-              # Look at every Pages run for this exact commit before requesting.
-              runs = payload.get('workflow_runs') if isinstance(payload, dict) else None
-              total = payload.get('total_count') if isinstance(payload, dict) else None
-              if not isinstance(runs, list) or not isinstance(total, int) or total > len(runs) or not all(isinstance(run, dict) for run in runs):
-                  raise RuntimeError('Pages workflow status is incomplete')
-              matching = [run for run in runs if run.get('head_sha') == expected_commit and run.get('path') == 'dynamic/pages/pages-build-deployment']
-              if any(run.get('status') != 'completed' or run.get('conclusion') == 'success' for run in matching):
-                  return True
-              return latest.get('commit') == expected_commit and latest.get('status') in ('building', 'built')
-
-          def read_public(path, limit):
-              # Public requests contain no token or other credentials.
-              query = urllib.parse.urlencode({'run': os.environ['GITHUB_RUN_ID'], 'attempt': os.environ['GITHUB_RUN_ATTEMPT'], 'check': time.time_ns()})
-              req = urllib.request.Request(monitor_url + path + '?' + query, headers={'Cache-Control': 'no-cache', 'User-Agent': 'research-monitor-deployment-check'})
-              with urllib.request.urlopen(req, timeout=25) as response:
-                  data = response.read(limit + 1)
-              if len(data) > limit:
-                  raise RuntimeError('Public response exceeded size limit')
-              return data
-
-          # A root-homepage push may cause a later Pages commit. It is acceptable
-          # only if that commit includes this monitor commit, and the public data
-          # and marker below still match this build.
-          build_ready = False
-          deadline = time.monotonic() + 900
-          # Let an automatic Pages run become visible after the push. Only two
-          # successful observations of absence can authorize our one fallback POST.
-          request_not_before = time.monotonic() + 30
-          absent_observations = 0
-          build_requested = False
-          last_status = None
-          while time.monotonic() < deadline:
-              request_build = False
-              try:
-                  build = api(f"repos/{os.environ['GITHUB_REPOSITORY']}/pages/builds/latest")
-                  if not isinstance(build, dict):
-                      raise RuntimeError('Pages build status is invalid')
-                  status, commit = build.get('status'), build.get('commit')
-                  if (status, commit) != last_status:
-                      print(f'Pages build status={status} commit={commit}', flush=True)
-                      last_status = (status, commit)
-                  relevant = commit == expected_commit
-                  if commit and not relevant:
-                      comparison = api(f"repos/{os.environ['GITHUB_REPOSITORY']}/compare/{expected_commit}...{commit}")
-                      if not isinstance(comparison, dict) or comparison.get('status') not in ('ahead', 'identical', 'behind', 'diverged'):
-                          raise RuntimeError('Pages commit ancestry could not be verified')
-                      relevant = comparison['status'] in ('ahead', 'identical')
-                  if relevant and status == 'built':
-                      build_ready = True
-                  if not build_requested:
-                      query = urllib.parse.urlencode({'event': 'dynamic', 'head_sha': expected_commit, 'per_page': 100})
-                      runs = api(f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs?{query}")
-                      if pages_build_present(runs, build):
-                          absent_observations = 0
-                      else:
-                          absent_observations += 1
-                          request_build = absent_observations >= 2 and time.monotonic() >= request_not_before
-              except (RuntimeError, ValueError, OSError, subprocess.CalledProcessError) as error:
-                  absent_observations = 0
-                  print(f'Waiting for Pages build status ({type(error).__name__}).', flush=True)
-
-              # A duplicate cancelled Pages run can leave the legacy status
-              # errored while another run publishes the same commit. Public
-              # marker and content checks are the final publication authority.
-              try:
-                  live_manifest = json.loads(read_public('deployment.json', 65536))
-                  if live_manifest == expected_manifest:
-                      build_ready = True
-                      live_data = read_public('data/public-papers-v2.json', MAX_BYTES)
-                      json.loads(live_data)
-                      if hashlib.sha256(live_data).hexdigest() == expected_manifest['papersSha256']:
-                          total = verify_snapshot(live_data, lambda path: read_public('data/' + path, MAX_BYTES))
-                          compact_data = read_public('data/public-papers-v3.json', MAX_BYTES)
-                          if hashlib.sha256(compact_data).hexdigest() != expected_manifest['compactPapersSha256']:
-                              raise RuntimeError('Compact public manifest does not match this deployment')
-                          if verify_snapshot(compact_data, lambda path: read_public('data/' + path, MAX_BYTES)) != total:
-                              raise RuntimeError('Compact and v2 public paper counts differ')
-                          legacy_data = read_public('data/papers.json', MAX_BYTES)
-                          if hashlib.sha256(legacy_data).hexdigest() != expected_manifest['legacyPapersSha256']:
-                              raise RuntimeError('Legacy public manifest does not match this deployment')
-                          if verify_snapshot(legacy_data, lambda path: read_public('data/' + path, MAX_BYTES)) != total:
-                              raise RuntimeError('Legacy and current public paper counts differ')
-                          signal_data = read_public('data/research-signals.json', 96 * 1024 * 1024)
-                          if hashlib.sha256(signal_data).hexdigest() != expected_manifest['signalsSha256']:
-                              raise RuntimeError('Public GitHub/news data does not match this deployment')
-                          split_data = read_public('data/signals-v2/manifest.json', MAX_BYTES)
-                          if hashlib.sha256(split_data).hexdigest() != expected_manifest['signalsManifestSha256']:
-                              raise RuntimeError('Split GitHub/news manifest does not match this deployment')
-                          split_counts = verify_signals_snapshot(split_data, lambda path: read_public('data/signals-v2/' + path, MAX_BYTES))
-                          flat_records = json.loads(signal_data)['records']
-                          if split_counts != {kind: sum(record['kind'] == kind for record in flat_records) for kind in ('github', 'news')}:
-                              raise RuntimeError('Split and legacy GitHub/news counts differ')
-                          for route in ('', 'en/'):
-                              if b'<html' not in read_public(route, 2 * 1024 * 1024).lower():
-                                  raise RuntimeError('Published route did not return HTML')
-                          print(f'Published routes, build marker, v1/v2/v3 paper snapshots ({total} papers), and legacy/split GitHub/news snapshots verified.', flush=True)
-                          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
-                              summary.write(f'Published and verified: {monitor_url}\n\nCommit: `{expected_commit}`\n\nPublic data SHA-256: `{expected_manifest["papersSha256"]}`\n')
-                          break
-              except (RuntimeError, ValueError, OSError, subprocess.CalledProcessError) as error:
-                  # Transient API/CDN errors retry; no access-token values or
-                  # request headers are printed.
-                  print(f'Waiting for Pages publication ({type(error).__name__}).', flush=True)
-              if request_build:
-                  # Set this before POST: an ambiguous network response must not
-                  # cause another competing build. Public verification still runs.
-                  build_requested = True
-                  try:
-                      api(f"repos/{os.environ['GITHUB_REPOSITORY']}/pages/builds", method='POST')
-                      print('Requested one Pages fallback build; awaiting public verification.', flush=True)
-                  except (RuntimeError, ValueError, OSError) as error:
-                      print(f'Pages fallback request outcome unavailable ({type(error).__name__}); it will not be repeated.', flush=True)
-              time.sleep(15)
-          else:
-              stage = 'public data verification' if build_ready else 'Pages build'
-              raise SystemExit(f'Timed out waiting for {stage}; publication is not verified')
-          PY
-
-      - name: Mark all-source collection failure after publishing its status
-        if: steps.refresh.outputs.collection_failed == 'true'
-        run: |
-          echo '::error::All three sources failed. The site now displays the verified fresh failure status and retains its saved library.'
-          echo 'Collection failed for all three sources; the updated error status was published and verified. The saved library remains available.' >> "$GITHUB_STEP_SUMMARY"
-          exit 1
-
-      - name: Mark signal collection failure after publishing its status
-        if: always() && steps.refresh.outputs.signals_failed == 'true'
-        run: |
-          echo '::error::GitHub and Google News collection failed. The signal snapshot retains existing records and records source errors.'
+          echo '::error::Fresh failure metadata was archived while preserving saved records. Inspect source status.'
           exit 1

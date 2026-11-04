@@ -1,0 +1,66 @@
+name: Research monitor web publication
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/research-monitor/**'
+      - '!tools/research-monitor/data/**'
+      - '.github/workflows/research-monitor-pages.yml'
+      - 'index.html'
+      - 'stylesheet.css'
+      - 'images/**'
+      - 'clinician-in-the-loop/**'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: oevryn-web-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tools/research-monitor/package-lock.json
+      - name: Build web artifact with frozen compatibility URLs
+        working-directory: tools/research-monitor
+        env:
+          VITE_MONITOR_DATA_BASE_URL: https://yazhouzhu19.github.io/oevryn-data/
+          MONITOR_SOURCE_REVISION: ${{ github.sha }}
+        run: |
+          npm ci
+          npm run build
+          node --import tsx scripts/assemble-site.ts
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa
+        with:
+          path: tools/research-monitor/.site-publication
+      - id: deploy
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
+      - name: Verify public web revision
+        env:
+          EXPECTED: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, time, urllib.request
+          for attempt in range(12):
+              try:
+                  value=json.load(urllib.request.urlopen('https://yazhouzhu19.github.io/research-monitor/deployment.json?verify='+str(time.time_ns()),timeout=20))
+                  if value.get('sourceRevision') == os.environ['EXPECTED'] and value.get('role') == 'web':
+                      print('Verified public web revision');break
+              except Exception:
+                  pass
+              time.sleep(10)
+          else:
+              raise SystemExit('Public web revision was not verified')
+          PY

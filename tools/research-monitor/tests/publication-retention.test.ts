@@ -141,3 +141,21 @@ test("publication size checks reject oversized output and symbolic-link traversa
   await assert.rejects(publicationSize(dir), /symbolic link/);
   assert.deepEqual(await readdir(join(dir, "real")), []);
 });
+
+test("modern data publication retains current and previous v3/signals without copying legacy formats", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "modern-retention-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const previous = join(dir, "previous"),
+    current = join(dir, "current");
+  await generation(previous, "before");
+  const expected = await generation(current, "after");
+  const oldV3 = JSON.parse(await readFile(join(previous, "public-papers-v3.json"), "utf8"));
+  const oldV1 = JSON.parse(await readFile(join(previous, "papers.json"), "utf8"));
+  for (const name of ["papers.json", "public-papers-v2.json"]) await rm(join(current, name));
+  await prunePublishedShards(current, previous, ["public-papers-v3.json"]);
+  assert.deepEqual(await readSnapshotFile(join(current, "public-papers-v3.json")), expected.data);
+  assert.deepEqual(await readSignalsSnapshot(join(current, "signals-v2/manifest.json")), expected.signals);
+  for (const shard of oldV3.shards) assert.ok((await readFile(join(current, shard.path))).length > 0);
+  for (const shard of oldV1.shards) await assert.rejects(readFile(join(current, shard.path)));
+  await assert.rejects(prunePublishedShards(current, previous, ["../unsafe.json"]));
+});
