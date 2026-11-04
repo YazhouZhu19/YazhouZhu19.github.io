@@ -179,3 +179,53 @@ test("startup worker assets outside the page manifest are counted and cannot sil
     /must resolve once/,
   );
 });
+
+test("bounded record growth allows more papers but never relaxes code or individual-file limits", () => {
+  const report: Parameters<typeof checkBudget>[0] = {
+    schemaVersion: 1,
+    measuredAt: "test",
+    compression: "test",
+    notes: [],
+    violations: [],
+    assets: [{ path: "main.js", key: "main.js", type: "js", initial: true, rawBytes: 10, gzipBytes: 5 }],
+    initialData: [
+      {
+        id: "papers",
+        records: 200,
+        rawBytes: 200,
+        gzipBytes: 40,
+        files: [{ path: "shard.json", role: "shard", rawBytes: 10, gzipBytes: 5 }],
+      },
+    ],
+    totals: {
+      initialData: { rawBytes: 200, gzipBytes: 40 },
+      initialMeasuredResources: { rawBytes: 210, gzipBytes: 45 },
+    },
+  };
+  const limits: BudgetConfig = {
+    schemaVersion: 1,
+    initialData: [],
+    paperGrowth: { referenceRecords: 100, maxRecords: 300 },
+    limits: {
+      assets: { "main.js": { rawBytes: 10, gzipBytes: 5 } },
+      totals: {
+        initialData: { rawBytes: 100, gzipBytes: 20 },
+        initialMeasuredResources: { rawBytes: 110, gzipBytes: 25 },
+      },
+      datasets: { papers: { rawBytes: 100, gzipBytes: 20, fileRawBytes: 10, fileGzipBytes: 5 } },
+    },
+  };
+  const unchanged = JSON.stringify(limits);
+  assert.deepEqual(checkBudget(report, limits), []);
+  report.assets[0].rawBytes++;
+  assert.ok(checkBudget(report, limits).some((v) => v.startsWith("main.js:")));
+  report.assets[0].rawBytes--;
+  report.initialData[0].files[0].rawBytes++;
+  assert.ok(checkBudget(report, limits).some((v) => v.startsWith("shard.json:")));
+  report.initialData[0].files[0].rawBytes--;
+  report.initialData[0].rawBytes++;
+  assert.ok(checkBudget(report, limits).some((v) => v.startsWith("data:papers:")));
+  report.initialData[0].records = 301;
+  assert.ok(checkBudget(report, limits).some((v) => v.includes("reviewed maximum")));
+  assert.equal(JSON.stringify(limits), unchanged);
+});
