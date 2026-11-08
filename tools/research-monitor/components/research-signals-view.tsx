@@ -1693,28 +1693,27 @@ export function ResearchSignalsView({
             </p>
             <Suspense fallback={viewLoading}>
               <AiModelSettings />
-              {papersReady ? (
-                <AiResearchPanel
-                  papers={papers}
-                  signals={analysisRecords}
-                  initialSources={[kind]}
-                  mode="interest"
-                  subjectId={`${kind}-library`}
-                  title={
-                    kind === "github"
-                      ? t("GitHub 项目分析", "GitHub repository assessment")
-                      : t("模型与进展分析", "Model and progress assessment")
-                  }
-                  description={t(
-                    "输入需要判断的问题，比较技术路线、复现条件、证据缺口与下一步值得验证的机会。",
-                    "Ask a question about methods, reproducibility, evidence gaps, and opportunities worth testing.",
-                  )}
-                  onPaper={onPaper}
-                  onDrill={onDrill}
-                />
-              ) : (
-                viewLoading
-              )}
+              <AiResearchPanel
+                papers={papers}
+                papersReady={papersReady}
+                papersError={papersError}
+                onLoadPapers={onLoadPapers}
+                signals={analysisRecords}
+                initialSources={[kind]}
+                mode="interest"
+                subjectId={`${kind}-library`}
+                title={
+                  kind === "github"
+                    ? t("GitHub 项目分析", "GitHub repository assessment")
+                    : t("模型与进展分析", "Model and progress assessment")
+                }
+                description={t(
+                  "输入需要判断的问题，比较技术路线、复现条件、证据缺口与下一步值得验证的机会。",
+                  "Ask a question about methods, reproducibility, evidence gaps, and opportunities worth testing.",
+                )}
+                onPaper={onPaper}
+                onDrill={onDrill}
+              />
             </Suspense>
           </>
         )}

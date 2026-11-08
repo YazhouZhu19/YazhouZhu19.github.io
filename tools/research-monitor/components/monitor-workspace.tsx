@@ -95,11 +95,16 @@ export default function MonitorWorkspace() {
     async () => (signalsStore.getSnapshot().manifest ? (await signalsStore.refresh()) !== null : true),
     [signalsStore],
   );
-  const overview = usePaperOverview(view === "dashboard");
-  const fullRequired =
-    !["dashboard", "github", "news"].includes(view) || (view === "dashboard" && !!overview.error);
-  const snapshot = usePaperSnapshot(pollOtherSources, fullRequired);
+  const fullViewRequired = !["dashboard", "github", "news"].includes(view);
+  const snapshot = usePaperSnapshot(pollOtherSources, fullViewRequired);
   const { data, loading } = snapshot;
+  // Once complete records are accepted, their loader owns freshness checks.
+  // Re-entering the dashboard must not also refresh an ignored projection.
+  const overview = usePaperOverview(view === "dashboard" && !data);
+  const fullRequired = fullViewRequired || (view === "dashboard" && !!overview.error);
+  useEffect(() => {
+    if (view === "dashboard" && overview.error && !data) void snapshot.load();
+  }, [view, overview.error, data, snapshot.load]);
   const displayData = data ?? overview.data;
   const papers = data?.papers ?? EMPTY_PAPERS;
   const personal = usePersonalData({
@@ -511,8 +516,6 @@ export default function MonitorWorkspace() {
             <PaperDetailSheet
               {...personal}
               papers={papers}
-              authenticated={authenticated}
-              accountControl={accountControl}
               storageAvailable={!!data?.personalStorageAvailable}
             />
           </Suspense>

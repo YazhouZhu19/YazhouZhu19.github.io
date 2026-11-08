@@ -3,7 +3,7 @@ import type { Paper } from "@/lib/types";
 import "@/styles/paper-library.css";
 import { useI18n } from "./locale-provider";
 import { Button } from "@/components/ui/button";
-import { lazy, Suspense, useMemo, type ReactNode } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { ArrowUpRight, Check, RefreshCw } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,8 +23,6 @@ type Props = Pick<
 > & {
   papers: Paper[];
   storageAvailable: boolean;
-  authenticated: boolean;
-  accountControl: ReactNode;
 };
 export function PaperDetailSheet({
   selected,
@@ -37,10 +35,9 @@ export function PaperDetailSheet({
   saving,
   savePaper,
   storageAvailable,
-  authenticated,
-  accountControl,
 }: Props) {
   const { tr, locale } = useI18n();
+  const versionsLabel = locale === "en" ? "Possible other versions" : "可能的其他版本";
   const workIndex = useMemo(() => buildWorkIndex(papers), [papers]);
   const versions = selected
     ? (workIndex.byPaperId.get(selected.id) ?? []).filter((paper) => paper.id !== selected.id)
@@ -86,8 +83,8 @@ export function PaperDetailSheet({
               </a>
             </Button>
             {versions.length > 0 && (
-              <section aria-label={locale === "en" ? "Possible other versions" : "可能的其他版本"}>
-                <h3>{locale === "en" ? "Possible other versions" : "可能的其他版本"}</h3>
+              <section aria-label={versionsLabel}>
+                <h3>{versionsLabel}</h3>
                 <p>
                   {locale === "en"
                     ? "Grouped by explicit identifiers or matching title and authors; source records remain separate."
@@ -194,33 +191,26 @@ export function PaperDetailSheet({
               <p className="detail-hint">{tr("来源未提供机构，未推断当前任职。")}</p>
             )}
             <p className="detail-hint">{tr("机构为论文署名信息；medRxiv 通常仅提供通讯作者机构。")}</p>
-            {authenticated ? (
-              <>
-                <h3>{tr("我的阅读笔记")}</h3>
-                <PaperPicker
-                  label={tr("阅读状态")}
-                  value={stage}
-                  onChange={setStage}
-                  options={["待读", "已读", "选题候选", "暂不相关"].map((x) => [x, x])}
-                />
-                <Textarea
-                  className="note-input"
-                  aria-label={tr("阅读笔记")}
-                  placeholder={tr("与我们课题的关系、可复现之处、值得验证的问题\u2026")}
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                />
-                <Button onClick={() => void savePaper(selected, true)} disabled={saving || !storageAvailable}>
-                  {saving ? <RefreshCw className="animate-spin" /> : <Check />}
-                  {tr("保存笔记与收藏")}
-                </Button>
-              </>
-            ) : (
-              <div className="public-note-login">
-                <p>{tr("登录后可保存个人收藏与阅读笔记。")}</p>
-                {accountControl}
-              </div>
-            )}
+            <>
+              <h3>{tr("我的阅读笔记")}</h3>
+              <PaperPicker
+                label={tr("阅读状态")}
+                value={stage}
+                onChange={setStage}
+                options={["待读", "已读", "选题候选", "暂不相关"].map((x) => [x, x])}
+              />
+              <Textarea
+                className="note-input"
+                aria-label={tr("阅读笔记")}
+                placeholder={tr("与我们课题的关系、可复现之处、值得验证的问题\u2026")}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+              <Button onClick={() => void savePaper(selected, true)} disabled={saving || !storageAvailable}>
+                {saving ? <RefreshCw className="animate-spin" /> : <Check />}
+                {tr("保存笔记与收藏")}
+              </Button>
+            </>
             <h3>{tr("记录来源")}</h3>
             {selected.provenance.slice(-3).map((p, i) => (
               <p key={i} className="detail-hint">

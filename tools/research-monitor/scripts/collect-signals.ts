@@ -8,6 +8,7 @@ import {
   SIGNALS_MAX_BYTES,
 } from "../lib/research-signals";
 import { readSnapshotFile } from "./snapshot-files";
+import { signalsCapacityLines } from "./signals-capacity";
 
 async function main() {
   let input = "data/research-signals.json",
@@ -62,9 +63,10 @@ async function main() {
   input = resolve(input);
   output = resolve(output);
   let previous;
+  let previousBytes = 0;
   try {
-    if ((await stat(input)).size > SIGNALS_MAX_BYTES)
-      throw new Error("Signals input exceeds the safe size limit");
+    previousBytes = (await stat(input)).size;
+    if (previousBytes > SIGNALS_MAX_BYTES) throw new Error("Signals input exceeds the safe size limit");
     previous = parseResearchSignalsData(JSON.parse(await readFile(input, "utf8")));
   } catch (error: any) {
     if (error.code === "ENOENT" && init) previous = emptyResearchSignalsData();
@@ -73,6 +75,7 @@ async function main() {
         "Signals input missing or invalid; existing snapshot unchanged (first initialization requires --init)",
       );
   }
+  for (const line of signalsCapacityLines(previous.records.length, previousBytes, "input")) console.log(line);
   // Exact public links in the saved paper archive recover projects missed by keywords.
   // An absent optional paper file does not prevent independent signal collection.
   let paperUrls: string[] = [];
@@ -109,7 +112,9 @@ async function main() {
     githubToken: process.env.GH_TOKEN || process.env.GITHUB_TOKEN,
   });
   const content = JSON.stringify(data) + "\n";
-  if (Buffer.byteLength(content) > SIGNALS_MAX_BYTES)
+  const outputBytes = Buffer.byteLength(content);
+  for (const line of signalsCapacityLines(data.records.length, outputBytes, "output")) console.log(line);
+  if (outputBytes > SIGNALS_MAX_BYTES)
     throw new Error("Signals output exceeds the safe size limit; existing snapshot unchanged");
   await mkdir(dirname(output), { recursive: true });
   const temporary = `${output}.${randomUUID()}.tmp`;

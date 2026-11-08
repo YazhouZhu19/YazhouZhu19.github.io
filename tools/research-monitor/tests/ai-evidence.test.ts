@@ -131,6 +131,82 @@ test("historical analysis never reads the abstract from a version published afte
   assert.ok(!JSON.stringify(buildAiMessages(result)).includes("Secret later-version results"));
 });
 
+test("a same-ID paper revised after the cutoff cannot leak its current abstract or original abstract", () => {
+  const revised = paper("revised", {
+    publishedAt: "2026-07-01",
+    updatedAt: "2026-09-01T00:00:00Z",
+    abstract: "Later display results",
+    originalAbstract: "Later source results",
+  });
+  const result = prepareAiEvidence([revised], { ...spec, to: "2026-08-01" }, 48, now);
+  assert.deepEqual(result.papers, []);
+  assert.equal(result.totalWorks, 0);
+  assert.equal(result.totalRecords, 0);
+  assert.equal(result.duplicatesRemoved, 0);
+  assert.equal(result.excludedUpdated, 1);
+  const messages = buildAiMessages(result);
+  assert.doesNotMatch(JSON.stringify(messages), /Later display results|Later source results/);
+  assert.equal(JSON.parse(messages[1].content).coverage.paperRevisionsAfterEnd, 1);
+  assert.match(messages[0].content, /not a reconstructed historical snapshot or forecast backtest/);
+});
+
+test("paper revision cutoff is inclusive and collection time does not substitute for publication time", () => {
+  const range = { ...spec, to: "2026-08-01" };
+  const rows = [
+    paper("cutoff-day", { updatedAt: range.to }),
+    paper("cutoff-timestamp", { updatedAt: `${range.to}T23:30:00-07:00` }),
+    paper("unknown-update", { updatedAt: null }),
+    paper("invalid-update", { updatedAt: "2026-02-30" }),
+    paper("later-update", { updatedAt: "2026-08-02" }),
+  ].map((row) => ({ ...row, publishedAt: "2026-07-01", firstSeenAt: "2026-10-14T01:00:00Z" }));
+  const result = prepareAiEvidence(rows, range, 48, now);
+  assert.deepEqual(
+    result.papers.map((row) => row.id),
+    ["cutoff-day", "cutoff-timestamp", "invalid-update", "unknown-update"],
+  );
+  assert.equal(result.excludedUpdated, 1);
+  assert.equal(result.totalRecords, 4);
+  assert.match(
+    buildAiMessages(result)[0].content,
+    /missing or invalid update dates do not establish historical availability/,
+  );
+});
+
+test("revision exclusions preserve earliest work dates and can fall back to an available linked record", () => {
+  const first = paper("available-preprint", {
+    doi: "10.1000/a",
+    relatedDoi: "10.1000/b",
+    publishedAt: "2026-07-01",
+    updatedAt: "2026-07-02",
+    status: "preprint",
+  });
+  const revised = paper("revised-journal", {
+    doi: "10.1000/b",
+    publishedAt: "2026-07-15",
+    updatedAt: "2026-09-01",
+    abstract: "Later journal result",
+  });
+  const result = prepareAiEvidence([first, revised], { ...spec, to: "2026-08-01" }, 48, now);
+  assert.deepEqual(result.papers, [first]);
+  assert.equal(result.excludedUpdated, 1);
+  assert.equal(result.totalRecords, 1);
+  assert.equal(result.duplicatesRemoved, 0);
+
+  const older = { ...first, publishedAt: "2025-01-01", updatedAt: "2026-09-01" };
+  const current = { ...revised, updatedAt: null };
+  const outsideWindow = prepareAiEvidence([older, current], { ...spec, to: "2026-08-01" }, 48, now);
+  assert.deepEqual(
+    outsideWindow.papers,
+    [],
+    "excluding a revision must not move an old work into the window",
+  );
+  assert.equal(
+    outsideWindow.excludedUpdated,
+    0,
+    "revision exclusions count only otherwise in-window records",
+  );
+});
+
 test("transitive DOI/version grouping chooses one source record and preserves source dates and objects", () => {
   const rows = [
     paper("preprint", {

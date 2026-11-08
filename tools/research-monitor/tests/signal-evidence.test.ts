@@ -203,6 +203,32 @@ test("mutable snapshots cannot leak current README or search snippets into histo
   assert.equal(futureObservation.excludedUnobserved, 1, "observation uses Beijing day, not UTC slice");
 });
 
+test("combined evidence excludes later paper revisions and distinguishes paper versions from observed snapshots", () => {
+  const revised = paper("revised", {
+    publishedAt: "2026-09-01",
+    updatedAt: "2026-10-01",
+    originalAbstract: "FUTURE PAPER REVISION",
+  });
+  const result = prepareCombinedAiEvidence(
+    [revised],
+    [news("earlier", { publishedAt: "2026-09-02", observedAt: "2026-09-03T00:00:00Z" })],
+    { ...spec, to: "2026-09-30" },
+    ["paper", "news"],
+    6,
+    now,
+  );
+  assert.equal(result.excludedUpdated, 1);
+  assert.equal(result.sourceCoverage!.paper.eligible, 0);
+  assert.equal(result.sourceCoverage!.news.eligible, 1);
+  const messages = buildAiMessages(result);
+  const envelope = JSON.parse(messages[1].content);
+  assert.equal(envelope.coverage.paperRevisionsAfterEnd, 1);
+  assert.doesNotMatch(JSON.stringify(messages), /FUTURE PAPER REVISION/);
+  assert.match(envelope.coverage.selection, /only GitHub\/news snapshots observed/);
+  assert.match(envelope.coverage.selection, /they are not historical snapshots/);
+  assert.match(messages[0].content, /not a reconstructed historical snapshot or forecast backtest/);
+});
+
 test("date selection uses repo activity separately from creation and observation, and excludes unknown news dates", () => {
   const result = prepareCombinedAiEvidence(
     [],
@@ -266,11 +292,18 @@ test("PI analysis admits explicit links only, and does not use future paper vers
   const rows = [
     paper("a", { doi: "10.1000/a" }),
     paper("future-paper", { doi: "10.1000/future", publishedAt: "2026-10-15" }),
+    paper("revised-paper", {
+      updatedAt: "2026-10-15",
+      abstract: "Newly added code link: https://github.com/lab/revised-repo",
+      doi: "10.1000/revised",
+    }),
   ];
   const records = [
     github("linked", { relatedUrls: ["https://doi.org/10.1000/a"] }),
     github("unlinked"),
     news("future-linked", { relatedUrls: ["https://doi.org/10.1000/future"] }),
+    github("revised-repo"),
+    news("revised-linked", { relatedUrls: ["https://doi.org/10.1000/revised"] }),
   ];
   const result = prepareCombinedAiEvidence(
     rows,

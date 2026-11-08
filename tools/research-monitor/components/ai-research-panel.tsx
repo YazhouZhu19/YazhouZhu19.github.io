@@ -1,7 +1,16 @@
 "use client";
 import "@/styles/ai-research.css";
 
-import { useEffect, useDeferredValue, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useDeferredValue,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import {
   aiModelLabel,
   getAiSettings,
@@ -32,6 +41,9 @@ type PanelState = {
 };
 type PanelProps = {
   papers: Paper[];
+  papersReady?: boolean;
+  papersError?: string;
+  onLoadPapers?: () => Promise<unknown>;
   signals?: ResearchSignal[];
   initialSources?: AiSourceKind[];
   title?: string;
@@ -313,9 +325,13 @@ export function AiResearchPanel(props: PanelProps) {
 }
 
 const NO_SIGNALS: ResearchSignal[] = [];
+const NO_PAPERS: Paper[] = [];
 
 function AiResearchScope({
   papers,
+  papersReady = true,
+  papersError = "",
+  onLoadPapers,
   signals = NO_SIGNALS,
   initialSources,
   title: customTitle,
@@ -333,6 +349,25 @@ function AiResearchScope({
     ...initialState(initialSources),
     ...panelSessions.get(sessionKey),
   }));
+  const missingPapers = state.sources.includes("paper") && !papersReady;
+  const [paperRequestPending, setPaperRequestPending] = useState(false);
+  const [paperLoadFailed, setPaperLoadFailed] = useState(false);
+  const requestPaperEvidence = useCallback(async () => {
+    if (!onLoadPapers) return;
+    setPaperRequestPending(true);
+    setPaperLoadFailed(false);
+    try {
+      const next = await onLoadPapers();
+      if (next === null) setPaperLoadFailed(true);
+    } catch {
+      setPaperLoadFailed(true);
+    } finally {
+      setPaperRequestPending(false);
+    }
+  }, [onLoadPapers]);
+  useEffect(() => {
+    if (missingPapers && !papersError && !paperLoadFailed) void requestPaperEvidence();
+  }, [missingPapers, papersError, paperLoadFailed, requestPaperEvidence]);
   const signalAccess = useSignalsAccess();
   const ensureKind = signalAccess?.ensureKind;
   const missingSignals =
@@ -374,6 +409,8 @@ function AiResearchScope({
             "Use the selected author or team's public papers to assess research focus, methods, data applications, and possible next directions.",
           ));
   const prepared = useMemo(() => {
+    // Unloaded selected evidence is unknown, never an empty dataset.
+    if (missingPapers) return { evidence: null, validation: "" };
     if (!state.from || !state.to)
       return { evidence: null, validation: t("请填写完整的证据日期范围。", "Enter both evidence dates.") };
     if (state.from > state.to)
@@ -389,7 +426,7 @@ function AiResearchScope({
     try {
       return {
         evidence: prepareCombinedAiEvidence(
-          papers,
+          state.sources.includes("paper") || mode === "team" ? papers : NO_PAPERS,
           signals,
           {
             mode,
@@ -416,6 +453,7 @@ function AiResearchScope({
     }
   }, [
     papers,
+    missingPapers,
     signals,
     state.sources,
     mode,
@@ -491,7 +529,8 @@ function AiResearchScope({
       queryPending ||
       needsKey ||
       needsModel ||
-      missingSignals
+      missingSignals ||
+      missingPapers
     )
       return;
     request.current.controller?.abort();
@@ -730,6 +769,14 @@ function AiResearchScope({
                   {t("（本次抽样／符合日期范围）", "(sampled / eligible)")}
                 </p>
               )}
+              {!!evidence.excludedUpdated && (
+                <p className="ai-help">
+                  {t(
+                    `已排除截止日后修订的论文 ${evidence.excludedUpdated} 篇；当前版本不能作为此前时间窗口的已知证据。`,
+                    `${evidence.excludedUpdated} papers revised after the end date were excluded; their current versions are not evidence known within the earlier window.`,
+                  )}
+                </p>
+              )}
               {!!evidence.excludedUnobserved && (
                 <p className="ai-help">
                   {t(
@@ -788,6 +835,28 @@ function AiResearchScope({
             "Papers use the earliest known publication day; GitHub uses the latest push/release or creation day; news uses publication day. Repository and news snapshots must have been observed by the end date; current snapshots cannot reconstruct history.",
           )}
         </p>
+        {missingPapers &&
+          ((papersError || paperLoadFailed) && !paperRequestPending ? (
+            <ErrorState
+              compact
+              className="ai-field-full"
+              description={t(
+                "论文证据尚未读取成功，请重试，或取消勾选论文后分析其他来源。",
+                "Paper evidence could not be loaded. Retry, or deselect Papers to analyze other sources.",
+              )}
+              retryLabel={t("重新加载论文", "Retry paper loading")}
+              onRetry={() => void requestPaperEvidence()}
+            />
+          ) : (
+            <LoadingState
+              compact
+              className="ai-field-full"
+              description={t(
+                "正在读取论文证据，完成后才能进行联合研判。",
+                "Loading paper evidence. Joint assessment will be available when it is ready.",
+              )}
+            />
+          ))}
         {missingSignals &&
           (signalAccess?.error ? (
             <ErrorState
@@ -817,7 +886,13 @@ function AiResearchScope({
             type="submit"
             className="foresight-button foresight-button-primary"
             disabled={
-              pending || queryPending || missingSignals || !evidence?.papers.length || needsKey || needsModel
+              pending ||
+              queryPending ||
+              missingSignals ||
+              missingPapers ||
+              !evidence?.papers.length ||
+              needsKey ||
+              needsModel
             }
           >
             {pending

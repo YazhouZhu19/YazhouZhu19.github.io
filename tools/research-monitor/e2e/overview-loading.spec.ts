@@ -42,3 +42,21 @@ test("opening a recent overview item loads a complete paper before showing its d
   expect(requests.some((url) => url.endsWith("/data/public-papers-v3.json"))).toBe(true);
   await expect(page.getByRole("dialog")).toContainText(/deep learning|neural network|foundation model/);
 });
+
+test("returning to a dashboard after full loading does not restart the overview loader", async ({
+  page,
+}, info) => {
+  const requests: string[] = [];
+  page.on("request", (request) => requests.push(request.url()));
+  await openHome(page);
+  await openLibrary(page, info.project.name === "en");
+  const initial = requests.filter((url) => url.endsWith("/paper-overview.json")).length;
+  await page
+    .getByRole("button", { name: info.project.name === "en" ? "Overview" : "统计总览", exact: true })
+    .click();
+  await expect(page.locator(".dash-metric-primary strong")).toHaveText(/[1-9]/);
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  expect(requests.filter((url) => url.endsWith("/paper-overview.json"))).toHaveLength(initial);
+});

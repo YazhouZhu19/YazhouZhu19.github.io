@@ -38,6 +38,8 @@ export type AiEvidence = {
   sampled: boolean;
   excludedInvalid: number;
   excludedFuture: number;
+  /** In-window paper records excluded because their current revision is dated after the cutoff. */
+  excludedUpdated?: number;
   sourceCoverage?: AiSourceCoverage;
   excludedUnobserved?: number;
   retrieval?: RetrievalMetadata;
@@ -56,6 +58,11 @@ export type AiReport = { summary: string; findings: AiFinding[]; limitations: st
 const dayMs = 86400000;
 const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 const abstractOf = (paper: Paper) => textOnly(paper.originalAbstract?.trim() || paper.abstract);
+/** Use the same source-calendar date convention as paper publication dates. */
+export function paperRevisionAfterEnd(paper: Pick<Paper, "updatedAt">, endDay: string): boolean {
+  const updatedDay = publicationDay(paper.updatedAt);
+  return updatedDay !== null && updatedDay > endDay;
+}
 /** Keep whole source sentences in source order; never turn a negation into a clipped fragment. */
 export function abstractExcerpt(paper: Paper, maxCharacters = 900): string {
   const abstract = abstractOf(paper);
@@ -228,7 +235,8 @@ export function collectAiPaperEvidence(papers: Paper[], input: AiSpec, maxPapers
 
   const dates = new Map<Paper, string>();
   let excludedInvalid = 0,
-    excludedFuture = 0;
+    excludedFuture = 0,
+    excludedUpdated = 0;
   for (const paper of papers) {
     const dateStatus = publicationDateStatus(paper, today);
     if (dateStatus === "invalid") excludedInvalid++;
@@ -245,8 +253,17 @@ export function collectAiPaperEvidence(papers: Paper[], input: AiSpec, maxPapers
       today,
     );
     if (firstDay < spec.from || firstDay > spec.to) continue;
-    // A historical analysis must not read an abstract from a later linked version.
-    const available = valid.filter((paper) => dates.get(paper)! <= spec.to);
+    // Keep the work's earliest publication date even when a current record is
+    // unavailable at the cutoff. A later same-ID revision can replace its abstract.
+    const available = valid.filter((paper) => {
+      if (dates.get(paper)! > spec.to) return false;
+      if (paperRevisionAfterEnd(paper, spec.to)) {
+        excludedUpdated++;
+        return false;
+      }
+      return true;
+    });
+    if (!available.length) continue;
     totalRecords += available.length;
     available.sort(
       (a, b) =>
@@ -268,6 +285,7 @@ export function collectAiPaperEvidence(papers: Paper[], input: AiSpec, maxPapers
     missingAbstracts: works.filter((work) => !abstractOf(work.paper)).length,
     excludedInvalid,
     excludedFuture,
+    excludedUpdated,
   };
 }
 
@@ -409,6 +427,8 @@ export function buildAiMessages(
       'Schema: {"summary":"brief overview","findings":[{"title":"short title","kind":"direction|task|method|data|application|opportunity","observation":"what the cited papers support","forecast":"conditional future hypothesis","alternative":"another explanation or limitation","nextStep":"concrete validation or experiment","paperIds":["exact supplied ID"]}],"limitations":["scope limitation"]}. No extra keys; at most 3 findings, 6 citations each. Text fields under 280 characters; summary under 500. Include 1–3 limitations.',
     ].join("\n");
   system +=
+    "\nPaper evidence uses currently collected record versions filtered by publication date, not a reconstructed historical snapshot or forecast backtest. Known paper revisions after the selected end day are excluded; missing or invalid update dates do not establish historical availability. Collection time is not the original publication date. State this limitation when interpreting a past window.";
+  system +=
     "\nabstractExcerptStatus=excerpted means only complete source sentences were selected; leading/trailing sections may be absent and nonconsecutive passages have omission markers. abstractExcerptStatus=omitted-budget means a source abstract exists but no complete sentence fit the budget, so abstract is empty. This is not missing source data. Do not infer results from the title; state this evidence limitation.";
   const records = evidence.papers.map((paper) => {
     const abstract = abstractExcerpt(paper, abstractCharacters);
@@ -473,12 +493,13 @@ export function buildAiMessages(
       sampled: evidence.sampled,
       ...(evidence.retrieval ? { retrieval: evidence.retrieval } : {}),
       missingAbstractsAcrossEligibleWorks: evidence.missingAbstracts,
+      paperRevisionsAfterEnd: evidence.excludedUpdated ?? 0,
       selection:
-        "Distinct works grouped by linked identifiers, included by earliest known publication date. Source record version dates are preserved. No version published after the selected end date is supplied. Sampling balances publication time and source and does not preserve population proportions.",
+        "Distinct works grouped by linked identifiers, included by earliest known publication date. Current records with known publication or revision dates after the selected end day are excluded; retained records are not historical snapshots. Sampling balances publication time and source and does not preserve population proportions.",
       ...(combined
         ? {
             selection:
-              "Papers are identifier-deduplicated; signals are URL-deduplicated within each kind. Equal turns across evidence kinds and time strata do not preserve proportions. Linked cross-source records may describe one work; these counts are not independent studies. Only snapshots observed on or before the selected end day are supplied. GitHub uses latest push/release/creation date; news uses publication date.",
+              "Papers are identifier-deduplicated current records filtered by publication date, excluding known revisions after the selected end day; they are not historical snapshots. Signals are URL-deduplicated within each kind; only GitHub/news snapshots observed on or before the selected end day are supplied. Equal turns across kinds and time strata do not preserve proportions. Linked records may describe one work; these counts are not independent studies. GitHub uses latest push/release/creation date; news uses publication date.",
             byKind: Object.fromEntries(
               Object.entries(evidence.sourceCoverage!).map(([kind, counts]) => [
                 kind,

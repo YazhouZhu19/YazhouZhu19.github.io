@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { collectionNotice } from "../lib/collection-notice";
+import { monitorDataSchema } from "../lib/public-data-schema";
 import type { MonitorData, SyncRun } from "../lib/types";
 
 const run = (overrides: Partial<SyncRun> = {}): SyncRun => ({
@@ -80,4 +81,31 @@ test("missing data and legacy source errors keep their existing meaning", () => 
     severity: "warning",
     sources: ["medRxiv"],
   });
+});
+
+test("public snapshot validation preserves outage severity and source-specific error metadata", () => {
+  for (const status of ["partial", "error"] as const) {
+    const source = data({
+      status,
+      error: "Source update failed",
+      errors: [{ source: "arXiv", message: "timeout" }],
+    });
+    const parsed = monitorDataSchema.parse(source);
+    assert.equal(parsed.status, status);
+    assert.deepEqual(parsed.errors, source.errors);
+    assert.deepEqual(collectionNotice(parsed), collectionNotice(source));
+  }
+  const capped = data({ status: "partial", errors: [], runs: [run()] });
+  assert.equal(collectionNotice(monitorDataSchema.parse(capped)), null);
+  assert.equal(monitorDataSchema.parse(data()).status, undefined);
+});
+
+test("public collection status and errors stay bounded and validated", () => {
+  for (const invalid of [
+    { status: "unknown" },
+    { errors: [{ source: "arXiv", message: 503 }] },
+    { errors: [{ source: "arXiv", message: "x".repeat(10001) }] },
+    { errors: Array.from({ length: 1001 }, () => ({ source: "arXiv", message: "timeout" })) },
+  ])
+    assert.equal(monitorDataSchema.safeParse({ ...data(), ...invalid }).success, false);
 });

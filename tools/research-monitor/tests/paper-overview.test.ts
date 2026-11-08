@@ -6,6 +6,7 @@ import { monitorDataSchema } from "../lib/public-data-schema";
 import { normalizeRecord } from "../lib/record";
 import { buildDashboard, defaultDashboardFilters } from "../lib/dashboard";
 import { buildWorkIndex } from "../lib/paper-works";
+import { collectionNotice } from "../lib/collection-notice";
 import type { Team } from "../lib/types";
 const now = "2026-11-05T02:00:00.000Z";
 function fixture() {
@@ -89,4 +90,22 @@ test("overview rejects duplicate IDs, counts, schema and corrupt dictionary refe
   assert.throws(() => parsePaperOverview({ ...raw, records: [...raw.records, raw.records[0]] }));
   assert.throws(() => parsePaperOverview({ ...raw, affiliations: [] }));
   assert.throws(() => parsePaperOverview({ ...raw, metadata: { ...raw.metadata, totalStored: 0 } }));
+});
+
+test("overview publication and loading preserve collection failure notices without flagging limited coverage", () => {
+  for (const status of ["partial", "error"] as const) {
+    const source = {
+      ...fixture(),
+      status,
+      error: "Source update failed",
+      errors: [{ source: "arXiv", message: "timeout" }],
+    };
+    const overview = parsePaperOverview(createPaperOverview(source));
+    assert.equal(overview.status, status);
+    assert.deepEqual(overview.errors, source.errors);
+    assert.deepEqual(collectionNotice(overview), collectionNotice(source));
+  }
+  const capped = parsePaperOverview(createPaperOverview({ ...fixture(), status: "partial", errors: [] }));
+  assert.equal(capped.status, "partial");
+  assert.equal(collectionNotice(capped), null);
 });
