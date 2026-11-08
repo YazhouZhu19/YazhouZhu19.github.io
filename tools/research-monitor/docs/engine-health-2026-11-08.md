@@ -8,6 +8,8 @@ This engineering audit uses live deployment metadata, recent Actions history, th
 - The latest 12 source runs and 12 data-publication runs inspected succeeded. Both workflows request hourly scheduling, but observed execution gaps over the last three days were approximately 3–9 hours. Independent publication schedules add delay. This is a freshness limitation, not a current failed workflow; hourly configuration is not an hourly delivery guarantee.
 - News/GitHub source manifest: 41 sources `ok`, 13 `partial`, zero `error`, with no source error messages. Partial coverage includes intentional query caps and must not be reported as a source failure.
 - A single live Chromium cold/warm pair measured 8.862 s / 1.078 s to a usable paper overview. Three overviews requested no complete paper library and produced no script errors. This is a current-network sample, not an SLA or a controlled comparison with November 5.
+- Subsequent post-publication checks on the same network also encountered `ERR_CONNECTION_CLOSED` and an overview response interrupted with `ERR_CONTENT_LENGTH_MISMATCH`. The interrupted overview immediately triggered a full-library fallback. Thus latency is variable, and transport failure can amplify download volume; the fast pair above must not be presented as a guaranteed or representative loading time.
+- The current 10,765-paper production overview measures 14,557,491 raw bytes / 3,419,942 gzip bytes in the local resource-budget report. Gzip level 9 is a build estimate, not an observed wire-transfer size. This remains the dominant initial payload and should be reduced by separating on-demand relationship data.
 
 Evidence: [source run](https://github.com/YazhouZhu19/YazhouZhu19.github.io/actions/runs/42454387841), [data run](https://github.com/YazhouZhu19/oevryn-data/actions/runs/42455984026), [data deployment metadata](https://yazhouzhu19.github.io/oevryn-data/deployment.json).
 
@@ -24,6 +26,7 @@ The existing automatic relevance labels are 69,213 direct / 11,951 candidate Git
 3. Public validation retains typed `status` and `errors`. Previously an all-source error could be downgraded to a warning and lose its source names; both full and overview paths now preserve that metadata. This is a repaired failure path, not a claim that current sources failed.
 4. Paper revisions explicitly dated after an analysis cutoff cannot supply current abstracts or PI links to that window. Exclusion counts are reported. `firstSeenAt` is not treated as original publication time. Missing/invalid revision dates still cannot establish historical availability; prompts explicitly describe publication-date-filtered current versions, not a reconstructed historical snapshot or predictive backtest.
 5. Existing collection logs now expose byte/record headroom and emit an Actions warning at 80% of either source-archive limit. Limits and records are unchanged; warning alone does not resolve the approaching capacity boundary.
+6. An interrupted overview fetch/body transfer gets at most one retry before the existing full-library fallback. The original overall deadline and AbortSignal remain in force; HTTP errors, size-limit failures and invalid UTF-8/JSON/schema data are not retried. This reduces fallback caused by a single transient interruption, without claiming to fix persistent network instability.
 
 ## Next priorities
 

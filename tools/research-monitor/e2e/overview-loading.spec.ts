@@ -33,6 +33,31 @@ test("a missing overview falls back to complete records", async ({ page }) => {
   await openHome(page);
 });
 
+test("one interrupted overview retries before requesting complete records", async ({ page }) => {
+  const requests: string[] = [];
+  let attempts = 0;
+  page.on("request", (request) => requests.push(request.url()));
+  await page.route("**/data/paper-overview.json", (route) =>
+    ++attempts === 1 ? route.abort("connectionreset") : route.continue(),
+  );
+  await openHome(page);
+  expect(attempts).toBe(2);
+  expect(requests.some((url) => /public-papers|\/data\/papers\/|data-worker-/.test(url))).toBe(false);
+});
+
+test("repeated overview interruptions still fall back after one retry", async ({ page }) => {
+  const requests: string[] = [];
+  let attempts = 0;
+  page.on("request", (request) => requests.push(request.url()));
+  await page.route("**/data/paper-overview.json", (route) => {
+    attempts++;
+    return route.abort("connectionreset");
+  });
+  await openHome(page);
+  expect(attempts).toBe(2);
+  expect(requests.some((url) => url.endsWith("/data/public-papers-v3.json"))).toBe(true);
+});
+
 test("opening a recent overview item loads a complete paper before showing its details", async ({ page }) => {
   const requests: string[] = [];
   page.on("request", (request) => requests.push(request.url()));
