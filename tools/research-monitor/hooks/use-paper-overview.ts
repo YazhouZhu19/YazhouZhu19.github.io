@@ -23,6 +23,7 @@ export function usePaperOverview(enabled: boolean) {
       manifest ??= createManifestLoader(`${root}data/paper-overview.json`, {
         validate: parsePaperOverview,
         maxBytes: 64 * 1024 * 1024,
+        retryTransport: true,
       });
       return manifest.load(signal);
     }, 60_000);
