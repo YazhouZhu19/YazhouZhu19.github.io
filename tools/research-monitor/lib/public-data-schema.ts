@@ -134,7 +134,12 @@ export const monitorDataSchema = z
     queryRuns: z.array(querySchema).max(10000),
     collectedAt: timestamp,
     storageAvailable: z.boolean().optional(),
+    status: z.enum(["ok", "partial", "error"]).optional(),
     error: z.string().max(10000).optional(),
+    errors: z
+      .array(z.object({ source: shortText, message: z.string().max(10000) }))
+      .max(1000)
+      .optional(),
     lastSuccessfulSync: timestamp.nullable(),
     coverage: z.string().max(10000),
   })

@@ -74,7 +74,11 @@ export function usePaperOverview(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
     void load();
-    return startManifestPolling(async () => (await load()) !== null);
+    const stopPolling = startManifestPolling(async () => (await load()) !== null);
+    return () => {
+      stopPolling();
+      reader.current?.cancel();
+    };
   }, [enabled, load]);
   return { data, loading, refreshing, error, checkResult, load };
 }

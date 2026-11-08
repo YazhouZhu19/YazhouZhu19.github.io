@@ -4,6 +4,7 @@ import {
   evidenceFingerprint,
   prepareAiEvidence,
   collectAiPaperEvidence,
+  paperRevisionAfterEnd,
   selectAiEvidence,
   type AiEvidence,
   type AiEvidenceItem,
@@ -146,7 +147,7 @@ export function prepareCombinedAiEvidence(
     to = base.spec.to;
   const historicalPapers = papers.filter((paper) => {
     const day = publicationDay(paper.publishedAt);
-    return day && day <= to;
+    return day && day <= to && !paperRevisionAfterEnd(paper, to);
   });
   const associations = new Map(
     findRelatedSignals(historicalPapers, signals).map((item) => [item.signal.id, item]),
