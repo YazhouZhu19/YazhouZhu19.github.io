@@ -6,6 +6,8 @@ import { join } from "node:path";
 import test from "node:test";
 import { gzipSync } from "node:zlib";
 import { checkBudget, measureBuild, resourceKey, type BudgetConfig } from "../scripts/measure-budget";
+import { writeSnapshotFile } from "../scripts/snapshot-files";
+import { writePublicSnapshot, writePublicSnapshotV3 } from "../scripts/public-snapshot";
 
 const config: BudgetConfig = {
   schemaVersion: 1,
@@ -255,4 +257,173 @@ test("deferred paper snapshots stay measured and budgeted without inflating star
       (message) => message.startsWith("data/papers/") && message.includes("exceeds"),
     ),
   );
+});
+
+test("provenance growth is counted from verified v1/v2/v3 records, ignoring metadata counters", async (t) => {
+  const root = await fixture(t);
+  const source = {
+    totalStored: 1,
+    provenanceEntries: 999999,
+    papers: [
+      {
+        id: "one",
+        title: "Paper",
+        authors: [],
+        provenance: [
+          { queryUrl: "https://example.org/query", collectedAt: "2026-11-11T00:00:00Z" },
+          { queryUrl: "https://example.org/query", collectedAt: "2026-11-11T01:00:00Z" },
+        ],
+      },
+    ],
+  };
+  for (const writer of [writeSnapshotFile, writePublicSnapshot, writePublicSnapshotV3]) {
+    await writer(join(root, "data/public-papers-v2.json"), source);
+    const report = await measureBuild(root, config);
+    assert.equal(report.initialData[0].provenanceEntries, 2);
+  }
+  const manifestPath = join(root, "data/public-papers-v2.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  const shardPath = join(root, "data", manifest.shards[0].path);
+  const text = await readFile(shardPath, "utf8");
+  await writeFile(shardPath, text.replace('"Paper"', '"Other"'));
+  await assert.rejects(measureBuild(root, config), /checksum mismatch/);
+});
+
+function historyBudgetFixture() {
+  const report: Parameters<typeof checkBudget>[0] = {
+    schemaVersion: 1,
+    measuredAt: "test",
+    compression: "test",
+    notes: [],
+    violations: [],
+    assets: [{ path: "main.js", key: "main.js", type: "js", initial: true, rawBytes: 10, gzipBytes: 5 }],
+    initialData: [
+      {
+        id: "paper-overview",
+        rawBytes: 20,
+        gzipBytes: 10,
+        files: [{ path: "overview.json", role: "file", rawBytes: 20, gzipBytes: 10 }],
+      },
+    ],
+    optionalData: [
+      {
+        id: "papers",
+        records: 100,
+        provenanceEntries: 20,
+        rawBytes: 100,
+        gzipBytes: 50,
+        files: [{ path: "shard.json", role: "shard", rawBytes: 10, gzipBytes: 5 }],
+      },
+    ],
+    totals: {
+      initialJs: { rawBytes: 10, gzipBytes: 5 },
+      initialData: { rawBytes: 20, gzipBytes: 10 },
+      initialMeasuredResources: { rawBytes: 30, gzipBytes: 15 },
+    },
+  };
+  const limits: BudgetConfig = {
+    schemaVersion: 1,
+    initialData: [],
+    paperGrowth: {
+      referenceRecords: 100,
+      maxRecords: 300,
+      provenance: { referenceEntries: 20, maxEntries: 80, bytesPerEntry: { rawBytes: 4, gzipBytes: 2 } },
+    },
+    limits: {
+      assets: { "main.js": { rawBytes: 10, gzipBytes: 5 } },
+      totals: structuredClone(report.totals),
+      datasets: {
+        "paper-overview": { rawBytes: 20, gzipBytes: 10, fileRawBytes: 20, fileGzipBytes: 10 },
+        papers: { rawBytes: 100, gzipBytes: 50, fileRawBytes: 10, fileGzipBytes: 5 },
+      },
+    },
+  };
+  return { report, limits };
+}
+
+test("new history for existing papers earns only a bounded complete-paper allowance", () => {
+  const { report, limits } = historyBudgetFixture();
+  const original = JSON.stringify(limits);
+  const papers = report.optionalData![0];
+  assert.deepEqual(checkBudget(report, limits), []);
+  papers.provenanceEntries = 21;
+  papers.rawBytes = 104;
+  papers.gzipBytes = 52;
+  assert.deepEqual(checkBudget(report, limits), []);
+  papers.rawBytes++;
+  papers.gzipBytes++;
+  assert.equal(checkBudget(report, limits).filter((v) => v.startsWith("data:papers:")).length, 2);
+  papers.rawBytes = 104;
+  papers.gzipBytes = 52;
+  report.assets[0].rawBytes++;
+  report.initialData[0].rawBytes++;
+  report.totals.initialData.rawBytes++;
+  report.totals.initialMeasuredResources.rawBytes++;
+  papers.files[0].rawBytes++;
+  for (const prefix of [
+    "main.js:",
+    "data:paper-overview:",
+    "total:initialData:",
+    "total:initialMeasuredResources:",
+    "shard.json:",
+  ])
+    assert.ok(
+      checkBudget(report, limits).some((v) => v.startsWith(prefix)),
+      prefix,
+    );
+  assert.equal(JSON.stringify(limits), original);
+});
+
+test("record growth does not double-pay baseline provenance; record and history maxima stay enforced", () => {
+  const { report, limits } = historyBudgetFixture();
+  const papers = report.optionalData![0];
+  papers.records = 200;
+  papers.provenanceEntries = 40;
+  papers.rawBytes = 200;
+  papers.gzipBytes = 100;
+  assert.deepEqual(checkBudget(report, limits), []);
+  papers.rawBytes++;
+  assert.ok(checkBudget(report, limits).some((v) => v.startsWith("data:papers:")));
+  papers.provenanceEntries++;
+  assert.deepEqual(checkBudget(report, limits), []);
+  papers.provenanceEntries = 81;
+  assert.ok(checkBudget(report, limits).some((v) => v.includes("provenance count 81 exceeds")));
+  papers.records = 301;
+  assert.ok(checkBudget(report, limits).some((v) => v.includes("Paper count 301 exceeds")));
+});
+
+test("missing or invalid provenance measurements and limits cannot waive the budget", () => {
+  const { report, limits } = historyBudgetFixture();
+  for (const value of [undefined, -1, NaN, 0.5, Infinity]) {
+    report.optionalData![0].provenanceEntries = value;
+    assert.ok(checkBudget(report, limits).includes("Invalid bounded paper provenance growth budget"));
+  }
+  report.optionalData![0].provenanceEntries = 21;
+  for (const history of [
+    { referenceEntries: -1, maxEntries: 80, bytesPerEntry: { rawBytes: 4, gzipBytes: 2 } },
+    { referenceEntries: 20, maxEntries: 19, bytesPerEntry: { rawBytes: 4, gzipBytes: 2 } },
+    { referenceEntries: 20, maxEntries: 80, bytesPerEntry: { rawBytes: Infinity, gzipBytes: 2 } },
+  ]) {
+    limits.paperGrowth!.provenance = history;
+    assert.ok(checkBudget(report, limits).includes("Invalid bounded paper provenance growth budget"));
+  }
+});
+
+test("the reviewed production envelope covers run 42899828413 while preserving fixed limits", async () => {
+  const production: BudgetConfig = JSON.parse(
+    await readFile(new URL("../budget.json", import.meta.url), "utf8"),
+  );
+  const { report } = historyBudgetFixture();
+  report.assets = [];
+  report.initialData = [];
+  report.totals = {};
+  report.optionalData = [
+    { id: "papers", records: 11361, provenanceEntries: 151125, rawBytes: 77496667, gzipBytes: 0, files: [] },
+  ];
+  // The original failed raw total is known; no gzip or provenance growth credit
+  // is needed for this regression. Full collection is verified again in Actions.
+  assert.deepEqual(checkBudget(report, production), []);
+  assert.equal(production.limits.datasets.papers.fileRawBytes, 4 * 1024 * 1024);
+  assert.equal(production.limits.datasets.papers.gzipBytes, 12733440);
+  assert.equal(production.limits.datasets["paper-overview"].rawBytes, 14680064);
 });

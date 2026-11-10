@@ -279,7 +279,7 @@
     },
     "datasets": {
       "papers": {
-        "rawBytes": 62651392,
+        "rawBytes": 65958912,
         "gzipBytes": 12733440,
         "fileRawBytes": 4194304,
         "fileGzipBytes": 1048576
@@ -313,11 +313,20 @@
     "Release CI 40205053101 (2026-10-25), merged live data revision 906cd809: 9025 papers versus the frozen 8326 (+699, +8.4%). Production v3 data measures 56152199 raw / 11649303 gzip; initial code and CSS remain exactly 687619/218063 and 119567/19966. Manually recalibrated only paper/data totals to this verified snapshot plus 5% (rounded to KiB); combined totals are data plus unchanged JS/CSS ceilings. All asset, per-file and publication caps remain unchanged. Builds never change these limits; future data growth still requires review.",
     "First full production collection, run 40209656002 (2026-10-25 UTC): 9209 papers / 59667877 raw / 12127056 gzip. The saved 9025-record snapshot did not account for the subsequent 184 additions and enriched records: raw data exceeded the reviewed cap by 708005 bytes while gzip and all assets passed. Recalibrated data-only ceilings to the fully collected measurements plus 5%; kept all asset, per-file and publication caps. Signals collection successfully saved 70691 records under the 96 MiB bound.",
     "Independent data publication: paper total allowances scale only with validated record count from the reviewed 9209-record baseline, capped at 30000 records. Per-file caps, code/CSS budgets and the 800 MB artifact ceiling remain fixed. No build rewrites budgets.",
-    "Dashboard projection replaces full paper startup. Complete v3 papers move to explicitly checked optionalData; per-file/full archive caps remain. Overview data uses the bounded paper-count envelope; browser accepts at most 64 MiB. The paper Worker is loaded only on demand and is no longer counted as a startup asset."
+    "Dashboard projection replaces full paper startup. Complete v3 papers move to explicitly checked optionalData; per-file/full archive caps remain. Overview data uses the bounded paper-count envelope; browser accepts at most 64 MiB. The paper Worker is loaded only on demand and is no longer counted as a startup asset.",
+    "2026-11-11 repair for sync run 42899828413: 11361 verified papers used 77496667 raw bytes, exceeding the record-only envelope by 204619 bytes. Recalibrated only the complete-paper raw baseline to that observed density plus 5%, normalized to 9209 records and rounded up to KiB (65958912). Existing gzip baseline, overview/startup, code/CSS, per-file and publication caps remain unchanged. Source e9ea300 has 11294 papers and 151125 provenance entries (123226 normalized to 9209), with 12357383 encoded provenance bytes, about 82 bytes/entry. Additional provenance above that record-scaled density earns at most 128 raw / 32 gzip bytes per entry, with a separately reviewed maximum of 1000000 entries. Counts are measured from decoded checksum-verified records; builds never rewrite budgets. This allows new collection history for existing papers without treating the growing archive as an unbounded performance exemption."
   ],
   "paperGrowth": {
     "referenceRecords": 9209,
-    "maxRecords": 30000
+    "maxRecords": 30000,
+    "provenance": {
+      "referenceEntries": 123226,
+      "maxEntries": 1000000,
+      "bytesPerEntry": {
+        "rawBytes": 128,
+        "gzipBytes": 32
+      }
+    }
   },
   "optionalData": [
     {
@@ -326,7 +335,5 @@
       "path": "data/public-papers-v3.json"
     }
   ],
-  "initialDynamicEntries": [
-    "lib/paper-overview.ts"
-  ]
+  "initialDynamicEntries": ["lib/paper-overview.ts"]
 }

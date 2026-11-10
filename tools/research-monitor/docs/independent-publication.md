@@ -14,7 +14,13 @@ The data site validates complete round trips before upload and verifies public s
 
 The original `research-monitor/data/` URLs remain an unchanged, dated **transition snapshot**, including their originally retained shards. They are not advertised as current feeds and are not regenerated on each release. The new web client reads current data exclusively from the data site. No original record is removed from the source archives. Compatibility retirement requires a separate maintainer decision; this migration does not schedule deletion.
 
-The old 800 MB publication cap and 950 MB complete web artifact cap remain enforced. Paper dataset totals use a reviewed per-record envelope based on 9,209 records, with an explicit maximum of 30,000 records. Individual files, code and CSS remain under fixed budgets. Builds do not rewrite budgets. This separates normal corpus growth from code/data density regressions; the bounded data site is not unlimited storage.
+The old 800 MB publication cap and 950 MB complete web artifact cap remain enforced. Paper dataset totals use a reviewed per-record envelope based on 9,209 records, with an explicit maximum of 30,000 records. Individual files, code and CSS remain under fixed budgets. Builds do not rewrite budgets. The bounded data site is not unlimited storage.
+
+The November 11 repair addresses sync run `42899828413`: collection and lossless validation passed, but 11,361 papers used 77,496,667 raw bytes against a 77,292,048-byte record-only allowance. The failure stopped the source commit; the last successful public data remained available. Only the complete-paper raw baseline was recalibrated to that observed density plus 5%, normalized to 9,209 records and rounded up to KiB (65,958,912 bytes). The existing gzip baseline was retained.
+
+Record count alone cannot account for new collection history on existing papers. Source `e9ea300` contains 11,294 papers and 151,125 provenance entries, whose encoded arrays occupy 12,357,383 bytes (about 82 bytes/entry). The additional allowance is `max(0, entries - ceil(123226 * paperScale))` times 128 raw / 32 gzip bytes, capped at a reviewed 1,000,000 entries. The baseline density scales with paper count so new papers do not earn history credit twice. Counts come from decoded, checksum-verified snapshots; they are not read from metadata counters. The report includes both startup and optional dataset counts and sizes.
+
+This allowance applies only to complete paper data. It does not relax the overview/startup budget, individual-file caps, code/CSS budgets, record maximum or publication caps. Enriched paper content can still exceed its reviewed density, and history can still exceed its independent maximum; either requires investigation. The source signal archive's separate 100,000-record / 96 MiB limits are unchanged and remain a separate capacity concern.
 
 ## Bootstrap / recovery
 
