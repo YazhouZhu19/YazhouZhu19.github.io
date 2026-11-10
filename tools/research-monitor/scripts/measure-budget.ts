@@ -3,11 +3,12 @@ import { dirname, extname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
 import { parseSnapshotManifest } from "../lib/snapshot";
+import { readSnapshotFile } from "./snapshot-files";
 
 export type Size = { rawBytes: number; gzipBytes: number };
 type Asset = Size & { path: string; key: string; type: "js" | "css"; initial: boolean };
 type DataFile = Size & { path: string; role: "manifest" | "shard" | "file" };
-type Dataset = Size & { id: string; records?: number; files: DataFile[] };
+type Dataset = Size & { id: string; records?: number; provenanceEntries?: number; files: DataFile[] };
 type ViteChunk = { file: string; isEntry?: boolean; imports?: string[]; css?: string[] };
 type DataInput = { id: string; path: string; kind: "paper-snapshot" | "file" };
 export type BudgetConfig = {
@@ -17,7 +18,11 @@ export type BudgetConfig = {
   entryHtml?: string[];
   initialData: DataInput[];
   optionalData?: DataInput[];
-  paperGrowth?: { referenceRecords: number; maxRecords: number };
+  paperGrowth?: {
+    referenceRecords: number;
+    maxRecords: number;
+    provenance?: { referenceEntries: number; maxEntries: number; bytesPerEntry: Size };
+  };
   initialDynamicEntries?: string[];
   initialAssetKeys?: string[];
   limits: {
@@ -136,7 +141,15 @@ async function measureDataset(root: string, input: DataInput): Promise<Dataset> 
       if (size.rawBytes !== shard.bytes) throw new Error(`Manifest byte count differs: ${path}`);
       files.push({ path, role: "shard", ...size });
     }
-    return { id: input.id, records: manifest.totalStored, files, ...total(files) };
+    // Growth units come from decoded, checksum-verified records, never a
+    // caller-supplied metadata counter or an unverified shard description.
+    const snapshot = await readSnapshotFile(within(root, input.path));
+    let provenanceEntries = 0;
+    for (const paper of snapshot.papers) {
+      if (!Array.isArray(paper.provenance)) throw new Error("Invalid paper provenance for budget");
+      provenanceEntries += paper.provenance.length;
+    }
+    return { id: input.id, records: manifest.totalStored, provenanceEntries, files, ...total(files) };
   }
   files.push({ path: input.path, role: "file", ...first });
   return { id: input.id, files, ...first };
@@ -145,11 +158,13 @@ async function measureDataset(root: string, input: DataInput): Promise<Dataset> 
 export function checkBudget(report: BudgetReport, config: BudgetConfig): string[] {
   const violations: string[] = [];
   let paperScale = 1;
+  let extraProvenance = 0;
+  const paperDataset = [...report.initialData, ...(report.optionalData ?? [])].find(
+    (dataset) => dataset.id === "papers",
+  );
   if (config.paperGrowth) {
     const { referenceRecords, maxRecords } = config.paperGrowth;
-    const records = [...report.initialData, ...(report.optionalData ?? [])].find(
-      (dataset) => dataset.id === "papers",
-    )?.records;
+    const records = paperDataset?.records;
     if (
       !Number.isSafeInteger(referenceRecords) ||
       referenceRecords < 1 ||
@@ -164,19 +179,57 @@ export function checkBudget(report: BudgetReport, config: BudgetConfig): string[
         violations.push(`Paper count ${records} exceeds reviewed maximum ${maxRecords}`);
       paperScale = Math.max(1, Math.min(records!, maxRecords) / referenceRecords);
     }
+    const history = config.paperGrowth.provenance;
+    if (history) {
+      const entries = paperDataset?.provenanceEntries;
+      if (
+        !Number.isSafeInteger(history.referenceEntries) ||
+        history.referenceEntries < 0 ||
+        !Number.isSafeInteger(history.maxEntries) ||
+        history.maxEntries < history.referenceEntries ||
+        !Number.isSafeInteger(entries) ||
+        entries! < 0 ||
+        ![history.bytesPerEntry?.rawBytes, history.bytesPerEntry?.gzipBytes].every(
+          (value) => Number.isSafeInteger(value) && value! > 0,
+        )
+      ) {
+        violations.push("Invalid bounded paper provenance growth budget");
+      } else {
+        if (entries! > history.maxEntries)
+          violations.push(`Paper provenance count ${entries} exceeds reviewed maximum ${history.maxEntries}`);
+        // The record envelope already pays for its baseline evidence density.
+        // Only additional history earns a bounded allowance, and only for the
+        // complete paper dataset, never the overview, code or individual files.
+        extraProvenance = Math.max(
+          0,
+          Math.min(entries!, history.maxEntries) - Math.ceil(history.referenceEntries * paperScale),
+        );
+      }
+    }
   }
   const scaled = (limit: Size | undefined) =>
     limit && {
       rawBytes: Math.ceil(limit.rawBytes * paperScale),
       gzipBytes: Math.ceil(limit.gzipBytes * paperScale),
     };
-  const paperLimit =
-    config.limits.datasets[
-      config.initialData.some((input) => input.id === "paper-overview") ? "paper-overview" : "papers"
-    ];
+  const completePaperLimit = (limit: Size | undefined): Size | undefined => {
+    const grown = scaled(limit);
+    if (!grown) return grown;
+    const unit = config.paperGrowth?.provenance?.bytesPerEntry;
+    return {
+      rawBytes: grown.rawBytes + (extraProvenance ? extraProvenance * unit!.rawBytes : 0),
+      gzipBytes: grown.gzipBytes + (extraProvenance ? extraProvenance * unit!.gzipBytes : 0),
+    };
+  };
+  const initialPaper = report.initialData.find((dataset) =>
+    ["paper-overview", "papers"].includes(dataset.id),
+  );
+  const paperLimit = initialPaper && config.limits.datasets[initialPaper.id];
   const adjustedTotal = (key: string, limit: Size | undefined): Size | undefined => {
     if (!limit || !paperLimit || !["initialData", "initialMeasuredResources"].includes(key)) return limit;
-    const grown = scaled(paperLimit)!;
+    const grown = (
+      initialPaper?.id === "paper-overview" ? scaled(paperLimit) : completePaperLimit(paperLimit)
+    )!;
     return {
       rawBytes: limit.rawBytes + grown.rawBytes - paperLimit.rawBytes,
       gzipBytes: limit.gzipBytes + grown.gzipBytes - paperLimit.gzipBytes,
@@ -206,7 +259,11 @@ export function checkBudget(report: BudgetReport, config: BudgetConfig): string[
     check(
       `data:${dataset.id}`,
       dataset,
-      ["papers", "paper-overview"].includes(dataset.id) ? scaled(limits) : limits,
+      dataset.id === "papers"
+        ? completePaperLimit(limits)
+        : dataset.id === "paper-overview"
+          ? scaled(limits)
+          : limits,
     );
     for (const file of dataset.files) {
       check(
@@ -267,6 +324,7 @@ export async function measureBuild(root: string, config: BudgetConfig): Promise<
       "Unreferenced archive generations and v1 compatibility files are excluded from startup transfer, but remain published.",
       "Optional resources include later views and click-to-run WebLLM/AI workers. Model weights fetched from external providers are not build resources.",
       "The measured initial total covers JS, CSS and configured startup data, excluding HTML, images, HTTP headers and external requests; gzip is an estimate, not a browser network trace.",
+      "Complete-paper totals allow bounded record growth plus additional provenance above the reviewed evidence density. Provenance growth never enlarges overview, code/CSS or per-file budgets.",
     ],
     assets,
     initialData,
@@ -294,9 +352,14 @@ async function main() {
     })),
   );
   console.table(
-    report.initialData.map((dataset) => ({
+    [
+      ...report.initialData.map((dataset) => ({ ...dataset, load: "initial" })),
+      ...(report.optionalData ?? []).map((dataset) => ({ ...dataset, load: "optional" })),
+    ].map((dataset) => ({
       dataset: dataset.id,
+      load: dataset.load,
       records: dataset.records ?? "",
+      provenanceEntries: dataset.provenanceEntries ?? "",
       files: dataset.files.length,
       rawBytes: dataset.rawBytes,
       gzipBytes: dataset.gzipBytes,
