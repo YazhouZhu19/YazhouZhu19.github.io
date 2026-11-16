@@ -1,0 +1,345 @@
+@layer theme, base, components, utilities, app-base, app-surface, app-type, app-view;
+@layer app-view {
+  .integrated-analysis {
+    min-width: 0;
+    color: var(--foreground);
+    font-size: var(--text-15);
+    line-height: 1.7;
+  }
+  .integrated-analysis > p,
+  .integrated-directions > article p,
+  .integrated-lexical p,
+  .integrated-rules p {
+    margin: var(--space-10) 0;
+    overflow-wrap: anywhere;
+  }
+  .integrated-analysis > [role="status"],
+  .integrated-analysis .integrated-coverage,
+  .integrated-analysis > small {
+    color: var(--muted-foreground);
+    font: var(--text-12) / 1.7 var(--font-ui);
+  }
+  .integrated-analysis > [role="alert"] {
+    padding: var(--space-12) var(--space-16);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-8);
+    background: var(--status-error-surface);
+    color: var(--status-error);
+    font: var(--text-13) / 1.7 var(--font-ui);
+  }
+  .integrated-toolbar,
+  .integrated-tabs:not(.integrated-category-tabs),
+  .integrated-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8) var(--space-12);
+    margin: var(--space-16) 0;
+    min-width: 0;
+  }
+  .integrated-toolbar > div {
+    flex: 1 1 16rem;
+    min-width: 0;
+  }
+  .integrated-toolbar > span,
+  .integrated-toolbar > div > span {
+    color: var(--muted-foreground);
+    font: var(--text-12) / 1.7 var(--font-ui);
+    overflow-wrap: anywhere;
+  }
+  .integrated-category-tabs > button {
+    height: auto;
+    min-width: 0;
+    border-radius: 0;
+    box-shadow: none;
+    white-space: normal;
+    text-align: left;
+  }
+  .integrated-counts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-16);
+    margin: var(--space-20) 0 var(--space-24);
+  }
+  .integrated-counts > div {
+    display: grid;
+    align-content: start;
+    gap: var(--space-6);
+    min-width: 0;
+    padding: var(--space-20);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-14);
+    background: var(--living-paper);
+    overflow-wrap: anywhere;
+  }
+  .integrated-counts strong {
+    font: 500 var(--text-24) / 1.3 var(--font-data);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.035em;
+  }
+  .integrated-counts > div > span {
+    font: 500 var(--text-13) / 1.5 var(--font-ui);
+  }
+  .integrated-counts small {
+    color: var(--muted-foreground);
+    font: var(--text-11) / 1.65 var(--font-ui);
+  }
+
+  /* History cards own their layout; these rules only style live rule results. */
+  .integrated-directions > article,
+  .integrated-lexical .integrated-lexical-card {
+    min-width: 0;
+    margin: var(--space-20) 0;
+    padding: var(--space-24);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-14);
+    background: var(--living-paper);
+    box-shadow: var(--glass-shadow);
+    overflow-wrap: anywhere;
+  }
+  .integrated-directions > article > header,
+  .integrated-lexical-card > header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-8) var(--space-16);
+  }
+  .integrated-directions > article h3,
+  .integrated-lexical-card h3 {
+    min-width: 0;
+    margin: 0;
+    font-size: var(--text-19);
+    font-weight: 550;
+    line-height: 1.55;
+  }
+  .integrated-directions > article > header > span {
+    color: var(--muted-foreground);
+    font: var(--text-12) / 1.7 var(--font-ui);
+  }
+  .integrated-directions h4,
+  .integrated-lexical h4 {
+    margin: 0 0 var(--space-10);
+    font: 600 var(--text-13) / 1.6 var(--font-ui);
+  }
+  .integrated-score {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-8);
+    color: var(--muted-foreground);
+    font: var(--text-12) / 1.7 var(--font-ui);
+  }
+  .integrated-score strong {
+    color: var(--primary);
+    font: 500 var(--text-24) / 1.3 var(--font-data);
+    font-variant-numeric: tabular-nums;
+  }
+  .integrated-facets {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-24);
+    margin: var(--space-24) 0;
+  }
+  .integrated-facets > section {
+    min-width: 0;
+  }
+  .integrated-directions details,
+  .integrated-lexical-card details {
+    padding: var(--space-10) 0;
+  }
+  .integrated-directions summary,
+  .integrated-lexical summary,
+  .integrated-tools summary {
+    cursor: pointer;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+  }
+  .integrated-directions summary small,
+  .integrated-lexical-card small {
+    color: var(--muted-foreground);
+    font: var(--text-11) / 1.65 var(--font-ui);
+  }
+  .integrated-evidence {
+    margin: var(--space-8) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .integrated-evidence li {
+    padding: var(--space-12) 0;
+    border-bottom: 1px solid var(--border);
+    overflow-wrap: anywhere;
+  }
+  .integrated-evidence li:last-child {
+    border-bottom: 0;
+  }
+  .integrated-evidence li > span {
+    display: block;
+    margin-bottom: var(--space-4);
+    color: var(--primary);
+    font: 500 var(--text-11) / 1.6 var(--font-ui);
+  }
+  .integrated-evidence button,
+  .integrated-evidence a {
+    max-width: 100%;
+    color: var(--foreground);
+    font: 550 var(--text-14) / 1.65 var(--font-reading);
+    text-align: left;
+    text-decoration: underline;
+    text-underline-offset: var(--space-3);
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .integrated-evidence :is(button, a):hover {
+    color: var(--primary);
+  }
+  .integrated-evidence blockquote {
+    margin: var(--space-8) 0;
+    padding-left: var(--space-12);
+    border-left: 2px solid var(--border);
+    color: var(--muted-foreground);
+    font-size: var(--text-13);
+    line-height: 1.8;
+  }
+
+  .integrated-niche-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-16);
+    margin: 0 0 var(--space-24);
+    min-width: 0;
+  }
+  .integrated-niche-toolbar > label {
+    display: grid;
+    flex: 1 1 16rem;
+    gap: var(--space-8);
+    min-width: 0;
+    color: var(--muted-foreground);
+    font: 500 var(--text-12) / 1.5 var(--font-ui);
+  }
+  .integrated-niche-toolbar input {
+    width: 100%;
+    min-width: 0;
+    min-height: var(--space-40);
+    padding: var(--space-9) var(--space-12);
+    border: 1px solid var(--input);
+    border-radius: var(--radius-7);
+    background: var(--card);
+    color: var(--foreground);
+    font: var(--text-14) / 1.5 var(--font-ui);
+  }
+  .integrated-niche-toolbar input::placeholder {
+    color: var(--muted-foreground);
+  }
+  .integrated-niche-toolbar .integrated-status,
+  .integrated-niche-toolbar .integrated-tabs {
+    gap: var(--space-8);
+    margin: 0;
+  }
+  .integrated-status > button {
+    min-height: var(--space-40);
+    height: auto;
+    font-size: var(--text-13);
+    line-height: 1.5;
+    white-space: normal;
+  }
+  .integrated-niche-status {
+    display: inline-flex;
+    padding: var(--space-3) var(--space-9);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-6);
+    color: var(--muted-foreground);
+    font: 500 var(--text-12) / 1.5 var(--font-ui);
+  }
+  .integrated-lexical-card[data-evidence-status="sufficient"] .integrated-niche-status {
+    background: var(--status-success-surface);
+    color: var(--status-success);
+  }
+  .integrated-lexical-card[data-evidence-status="pending"] .integrated-niche-status {
+    background: var(--status-warning-surface);
+    color: var(--status-warning);
+  }
+
+  .integrated-tools,
+  .integrated-lexical {
+    min-width: 0;
+    margin: var(--space-24) 0;
+    padding: var(--space-16) var(--space-20);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-14);
+    background: var(--living-paper);
+  }
+  .integrated-tools > summary,
+  .integrated-lexical > summary {
+    color: var(--foreground);
+    font: 500 var(--text-13) / 1.65 var(--font-ui);
+  }
+  .integrated-tools > summary::marker,
+  .integrated-lexical > summary::marker {
+    color: var(--muted-foreground);
+  }
+  .integrated-tools[open] > summary,
+  .integrated-lexical[open] > summary {
+    margin-bottom: var(--space-16);
+  }
+  .integrated-rules {
+    padding: var(--space-12) 0 0;
+    border-top: 1px solid var(--border);
+    color: var(--muted-foreground);
+    font-size: var(--text-13);
+  }
+  .integrated-rules > summary {
+    color: var(--foreground);
+    font: 500 var(--text-13) / 1.65 var(--font-ui);
+  }
+  .integrated-analysis :is(button, a, input, summary):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: var(--space-3);
+  }
+
+  @media (max-width: 800px) {
+    .integrated-facets {
+      grid-template-columns: 1fr;
+      gap: var(--space-20);
+    }
+  }
+  @media (max-width: 640px) {
+    .integrated-counts {
+      gap: var(--space-8);
+    }
+    .integrated-counts > div {
+      padding: var(--space-12);
+      border-radius: var(--radius-10);
+    }
+    .integrated-counts strong {
+      font-size: var(--text-20);
+    }
+    .integrated-counts > div > span {
+      font-size: var(--text-12);
+    }
+    .integrated-directions > article,
+    .integrated-lexical .integrated-lexical-card {
+      padding: var(--space-16);
+    }
+    .integrated-directions > article h3,
+    .integrated-lexical-card h3 {
+      font-size: var(--text-17);
+    }
+    .integrated-toolbar > span,
+    .integrated-toolbar > div,
+    .integrated-niche-toolbar > label,
+    .integrated-niche-toolbar .integrated-status {
+      flex-basis: 100%;
+    }
+    .integrated-status > button {
+      flex: 1 1 auto;
+      padding-inline: var(--space-10);
+    }
+    .integrated-tools,
+    .integrated-lexical {
+      padding: var(--space-14) var(--space-16);
+    }
+  }
+}

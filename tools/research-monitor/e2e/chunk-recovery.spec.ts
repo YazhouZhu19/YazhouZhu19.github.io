@@ -24,7 +24,7 @@ test("missing lazy view chunk offers an explicit reload and restores the same en
     if (url.origin !== origin) {
       blockedExternal.push(url.href);
       await route.abort("blockedbyclient");
-    } else if (rejectChunk && /\/assets\/foresight-view-[^/]+\.js$/.test(url.pathname)) {
+    } else if (rejectChunk && /\/assets\/integrated-analysis-[^/]+\.js$/.test(url.pathname)) {
       blockedChunks.add(url.href);
       await route.fulfill({ status: 404, contentType: "text/plain", body: "Retired deployment chunk" });
     } else await route.continue();
@@ -42,12 +42,12 @@ test("missing lazy view chunk offers an explicit reload and restores the same en
   ).toBeVisible();
   expect(blockedChunks.size, "The test must actually reject an unloaded view chunk").toBeGreaterThan(0);
   const failedURL = page.url();
-  expect(new URL(failedURL).hash).toMatch(/^#\/outlook(?:\?|$)/);
+  expect(new URL(failedURL).hash).toMatch(/^#\/analysis(?:\?|$)/);
   expect(documentLoads, "Recovery must wait for the user's reload action").toBe(1);
 
   rejectChunk = false;
   await Promise.all([page.waitForEvent("domcontentloaded"), reload.click()]);
-  await expect(page.locator(".foresight-view")).toBeVisible();
+  await expect(page.locator(".integrated-analysis")).toBeVisible();
   await expect(reload).not.toBeVisible();
   expect(page.url()).toBe(failedURL);
   expect(documentLoads).toBe(2);

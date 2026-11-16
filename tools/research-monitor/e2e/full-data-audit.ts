@@ -32,7 +32,7 @@ const routes = {
   library: "/papers/library",
   github: "/github",
   news: "/news",
-  outlook: "/outlook",
+  outlook: "/analysis",
   teams: "/teams",
 };
 const views = arg("--views", "home").split(",");
@@ -234,7 +234,7 @@ try {
             library: ".paper-row",
             github: ".github-dashboard-summary",
             news: ".news-dashboard-summary",
-            outlook: ".foresight-view",
+            outlook: ".integrated-analysis",
             teams: ".team-foresight",
           };
           await page.locator(markers[view]).first().waitFor();

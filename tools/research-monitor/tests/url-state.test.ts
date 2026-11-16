@@ -413,3 +413,16 @@ test("same-document source drill restoration is tied to source generation, indep
   history.commit(restored!.state, null);
   assert.ok(!h.target.read().hash.includes("drill="));
 });
+
+test("legacy outlook URLs open integrated analysis and serialize to the new route", () => {
+  const state = parseWorkspaceHash("#/outlook");
+  assert.equal(state.view, "foresight");
+  assert.match(serializeWorkspaceHash(state), /^#\/analysis(?:\?|$)/);
+  assert.equal(parseWorkspaceHash("#/analysis").view, "foresight");
+  const legacy = parseWorkspaceHash("#/outlook?track=segmentation&q=brain&days=30&scope=all");
+  assert.equal(legacy.track, "all");
+  assert.equal(legacy.period, "all");
+  assert.equal(legacy.search, "");
+  assert.equal(legacy.scope, "core");
+  assert.equal(serializeWorkspaceHash(legacy), "#/analysis");
+});

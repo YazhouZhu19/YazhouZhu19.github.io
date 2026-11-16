@@ -1,0 +1,568 @@
+{
+  "version": "6.9",
+  "hitCount": 1,
+  "request": {
+    "queryString": "DOI:10.1002/mrm.26830",
+    "resultType": "core",
+    "cursorMark": "*",
+    "pageSize": 25,
+    "sort": "",
+    "synonym": false
+  },
+  "resultList": {
+    "result": [
+      {
+        "id": "28762243",
+        "source": "MED",
+        "pmid": "28762243",
+        "pmcid": "PMC5777305",
+        "fullTextIdList": {
+          "fullTextId": [
+            "PMC5777305"
+          ]
+        },
+        "doi": "10.1002/mrm.26830",
+        "title": "Quantitative susceptibility mapping: Report from the 2016 reconstruction challenge.",
+        "authorString": "Langkammer C, Schweser F, Shmueli K, Kames C, Li X, Guo L, Milovic C, Kim J, Wei H, Bredies K, Buch S, Guo Y, Liu Z, Meineke J, Rauscher A, Marques JP, Bilgic B.",
+        "authorList": {
+          "author": [
+            {
+              "fullName": "Langkammer C",
+              "lastName": "Langkammer",
+              "firstName": "Christian",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-7097-9707"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Neurology, Medical University of Graz, Graz, Austria."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Schweser F",
+              "lastName": "Schweser",
+              "firstName": "Ferdinand",
+              "initials": "F",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0003-0399-9211"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Buffalo Neuroimaging Analysis Center, Department of Neurology, Jacobs School of Medicine and Biomedical Sciences, University at Buffalo, The State University of New York, Buffalo, New York, USA."
+                  },
+                  {
+                    "affiliation": "Clinical and Translational Science Institute, Jacobs School of Medicine and Biomedical Sciences, University at Buffalo, The State University of New York, Buffalo, New York, USA."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Shmueli K",
+              "lastName": "Shmueli",
+              "firstName": "Karin",
+              "initials": "K",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-7520-2975"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Medical Physics and Biomedical Engineering, University College London, London, United Kingdom."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Kames C",
+              "lastName": "Kames",
+              "firstName": "Christian",
+              "initials": "C",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "UBC MRI Research Centre, Department of Physics and Astronomy, University of British Columbia, Vancouver, Canada."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Li X",
+              "lastName": "Li",
+              "firstName": "Xu",
+              "initials": "X",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "F.M. Kirby Research Center for Functional Brain Imaging, Kennedy Krieger Institute, Baltimore, Maryland, USA."
+                  },
+                  {
+                    "affiliation": "Department of Radiology and Radiological Science, The Johns Hopkins University School of Medicine, Baltimore, Maryland, USA."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Guo L",
+              "lastName": "Guo",
+              "firstName": "Li",
+              "initials": "L",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Guangdong Provincial Key Laboratory of Medical Image Processing, School of Biomedical Engineering, Southern Medical University, Guangzhou, People's Republic of China."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Milovic C",
+              "lastName": "Milovic",
+              "firstName": "Carlos",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-1196-6703"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Electrical Engineering, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Biomedical Imaging Center, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Kim J",
+              "lastName": "Kim",
+              "firstName": "Jinsuh",
+              "initials": "J",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Radiology, University of Illinois at Chicago, Chicago, Illinois, USA."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Wei H",
+              "lastName": "Wei",
+              "firstName": "Hongjiang",
+              "initials": "H",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Electrical Engineering and Computer Sciences, University of California, Berkeley, Berkeley, California, USA."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Bredies K",
+              "lastName": "Bredies",
+              "firstName": "Kristian",
+              "initials": "K",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-7140-043X"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Institute of Mathematics and Scientific Computing, University of Graz, Graz, Austria."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Buch S",
+              "lastName": "Buch",
+              "firstName": "Sagar",
+              "initials": "S",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-9483-269X"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "The MRI Institute for Biomedical Research, Waterloo, Ontario, Canada."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Guo Y",
+              "lastName": "Guo",
+              "firstName": "Yihao",
+              "initials": "Y",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "F.M. Kirby Research Center for Functional Brain Imaging, Kennedy Krieger Institute, Baltimore, Maryland, USA."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Liu Z",
+              "lastName": "Liu",
+              "firstName": "Zhe",
+              "initials": "Z",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-7652-5215"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Biomedical Engineering, Cornell University, Ithaca, New York, USA."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Meineke J",
+              "lastName": "Meineke",
+              "firstName": "Jakob",
+              "initials": "J",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Philips Research Europe, Hamburg, Germany."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Rauscher A",
+              "lastName": "Rauscher",
+              "firstName": "Alexander",
+              "initials": "A",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "UBC MRI Research Centre, Department of Physics and Astronomy, University of British Columbia, Vancouver, Canada."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Marques JP",
+              "lastName": "Marques",
+              "firstName": "Jos\u00e9 P",
+              "initials": "JP",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-8157-8864"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Donders Centre for Cognitive Neuroimaging, Radboud University, Nijmegen, The Netherlands."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Bilgic B",
+              "lastName": "Bilgic",
+              "firstName": "Berkin",
+              "initials": "B",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-9080-7865"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Athinoula A. Martinos Center for Biomedical Imaging, Department of Radiology, Harvard Medical School, MGH, Boston, Massachusetts, USA."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "authorIdList": {
+          "authorId": [
+            {
+              "type": "ORCID",
+              "value": "0000-0001-7140-043X"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0001-7520-2975"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0001-7652-5215"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0001-8157-8864"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0001-9483-269X"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-1196-6703"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-7097-9707"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-9080-7865"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0003-0399-9211"
+            }
+          ]
+        },
+        "dataLinksTagsList": {
+          "dataLinkstag": [
+            "altmetrics",
+            "supporting_data"
+          ]
+        },
+        "journalInfo": {
+          "issue": "3",
+          "volume": "79",
+          "journalIssueId": 2642412,
+          "dateOfPublication": "2018 Mar",
+          "monthOfPublication": 3,
+          "yearOfPublication": 2018,
+          "journal": {
+            "medlineAbbreviation": "Magn Reson Med",
+            "title": "Magnetic resonance in medicine",
+            "essn": "1522-2594",
+            "issn": "0740-3194",
+            "nlmid": "8505245",
+            "isoabbreviation": "Magn Reson Med"
+          },
+          "printPublicationDate": "2018-03-01"
+        },
+        "pubYear": "2018",
+        "pageInfo": "1661-1673",
+        "abstractText": "<h4>Purpose</h4>The aim of the 2016 quantitative susceptibility mapping (QSM) reconstruction challenge was to test the ability of various QSM algorithms to recover the underlying susceptibility from phase data faithfully.<h4>Methods</h4>Gradient-echo images of a healthy volunteer acquired at 3T in a single orientation with 1.06\u2009mm isotropic resolution. A reference susceptibility map was provided, which was computed using the susceptibility tensor imaging algorithm on data acquired at 12 head orientations. Susceptibility maps calculated from the single orientation data were compared against the reference susceptibility map. Deviations were quantified using the following metrics: root mean squared error (RMSE), structure similarity index (SSIM), high-frequency error norm (HFEN), and the error in selected white and gray matter regions.<h4>Results</h4>Twenty-seven submissions were evaluated. Most of the best scoring approaches estimated the spatial frequency content in the ill-conditioned domain of the dipole kernel using compressed sensing strategies. The top 10 maps in each category had similar error metrics but substantially different visual appearance.<h4>Conclusion</h4>Because QSM algorithms were optimized to minimize error metrics, the resulting susceptibility maps suffered from over-smoothing and conspicuity loss in fine features such as vessels. As such, the challenge highlighted the need for better numerical image quality criteria. Magn Reson Med 79:1661-1673, 2018. \u00a9 2017 International Society for Magnetic Resonance in Medicine.",
+        "affiliation": "Department of Neurology, Medical University of Graz, Graz, Austria.",
+        "publicationStatus": "ppublish",
+        "language": "eng",
+        "pubModel": "Print-Electronic",
+        "pubTypeList": {
+          "pubType": [
+            "Research Support, Non-U.S. Gov't",
+            "research-article",
+            "Journal Article",
+            "Research Support, N.I.H., Extramural"
+          ]
+        },
+        "grantsList": {
+          "grant": [
+            {
+              "agency": "NIBIB NIH HHS",
+              "acronym": "EB",
+              "grantId": "P41 EB015909",
+              "orderIn": 0
+            },
+            {
+              "agency": "Austrian Science Fund FWF",
+              "grantId": "P30134",
+              "orderIn": 0
+            },
+            {
+              "agency": "Austrian Science Fund FWF",
+              "acronym": "FWF_",
+              "grantId": "KLI 523",
+              "orderIn": 0
+            },
+            {
+              "agency": "Austrian Science Fund FWF",
+              "grantId": "KLI523",
+              "orderIn": 0
+            },
+            {
+              "agency": "Austrian Science Fund FWF",
+              "acronym": "FWF_",
+              "grantId": "P 30134",
+              "orderIn": 0
+            },
+            {
+              "agency": "NCATS NIH HHS",
+              "acronym": "TR",
+              "grantId": "UL1 TR001412",
+              "orderIn": 0
+            }
+          ]
+        },
+        "meshHeadingList": {
+          "meshHeading": [
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "DG",
+                    "qualifierName": "diagnostic imaging"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Humans"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Magnetic Resonance Imaging",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "Y",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain Mapping",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "Y",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Algorithms"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Image Processing, Computer-Assisted",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "Y",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Adult"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Female"
+            }
+          ]
+        },
+        "keywordList": {
+          "keyword": [
+            "Assessment",
+            "Challenge",
+            "Quantitative Susceptibility Mapping",
+            "Reconstruction Algorithms",
+            "Dipole Inversion"
+          ]
+        },
+        "subsetList": {
+          "subset": [
+            {
+              "code": "IM",
+              "name": "Index Medicus"
+            }
+          ]
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Subscription required",
+              "availabilityCode": "S",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/mrm.26830"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "html",
+              "site": "Europe_PMC",
+              "url": "https://europepmc.org/articles/PMC5777305"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "pdf",
+              "site": "Europe_PMC",
+              "url": "https://europepmc.org/articles/PMC5777305?pdf=render"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/mrm.26830"
+            }
+          ]
+        },
+        "isOpenAccess": "N",
+        "inEPMC": "Y",
+        "inPMC": "Y",
+        "citedByCount": 148,
+        "hasReferences": "Y",
+        "hasTextMinedTerms": "Y",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "Y",
+        "hasBook": "N",
+        "hasSuppl": "N",
+        "hasLabsLinks": "Y",
+        "hasData": "Y",
+        "authMan": "Y",
+        "epmcAuthMan": "N",
+        "nihAuthMan": "Y",
+        "manuscriptId": "NIHMS928523",
+        "hasTMAccessionNumbers": "Y",
+        "tmAccessionTypeList": {
+          "accessionType": [
+            "doi"
+          ]
+        },
+        "dateOfCompletion": "2019-04-23",
+        "dateOfCreation": "2017-08-02",
+        "dateOfRevision": "2025-05-30",
+        "electronicPublicationDate": "2017-07-31",
+        "firstPublicationDate": "2017-07-31",
+        "firstIndexDate": "2017-08-02",
+        "fullTextReceivedDate": "2025-02-05",
+        "embargoDate": "2019-03-01",
+        "hasEvaluations": "N"
+      }
+    ]
+  }
+}

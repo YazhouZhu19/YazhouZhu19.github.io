@@ -1,0 +1,45 @@
+{
+  "version": "2026-11-17-history-v1",
+  "asOf": "2026-11-17",
+  "output": "../../../OEVRYN-分析-多年积累与证据.html",
+  "bytes": 7954571,
+  "sha256": "f9c30adaefd18d4aca189d0b66c95e8f5b1e406f70ba0b33f23fbc6240be6ab4",
+  "targetedDirections": 3,
+  "verifiedWorks": 14,
+  "sufficientDirections": [
+    "spinal-cord-mri"
+  ],
+  "pendingDirections": [
+    "qsm-reconstruction",
+    "fetal-brain-mri"
+  ],
+  "tests": {
+    "fullTypeScriptInitial": {
+      "passed": 641,
+      "failed": 0
+    },
+    "localStorageAndRealSnapshot": {
+      "passed": 25,
+      "failed": 0
+    },
+    "finalAffectedHistoryAndTemplate": {
+      "passed": 23,
+      "failed": 0
+    },
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "publishedDataVerification": "passed",
+    "resourceBudgets": "passed",
+    "fileProtocolOfflineBrowser": {
+      "desktop": "passed",
+      "mobile": "passed",
+      "networkRequests": 0,
+      "pageErrors": 0
+    }
+  },
+  "limits": [
+    "定向补采而非全领域覆盖；14个核查作品与5330个原库作品单独统计。",
+    "规则测试不等于准确率/召回率验证；暂无独立人工标注金标准。",
+    "未下载或复现实验影像；发布/提交历史不等于每年持续维护。"
+  ]
+}

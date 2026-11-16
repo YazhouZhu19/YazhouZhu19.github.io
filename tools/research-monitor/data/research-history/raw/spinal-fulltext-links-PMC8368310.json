@@ -1,0 +1,145 @@
+{
+  "sourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8368310/fullTextXML",
+  "retrievedAt": "2026-11-17",
+  "resourceLinks": [
+    {
+      "url": "https://spine-generic.rtfd.io/",
+      "sourceText": "https://spine-generic.rtfd.io/"
+    },
+    {
+      "url": "https://spine-generic.rtfd.io",
+      "sourceText": "https://spine-generic.rtfd.io"
+    },
+    {
+      "url": "https://github.com/spine-generic/data-multi-subject/blob/r20201130/participants.tsv",
+      "sourceText": "https://github.com/spine-generic/data-multi-subject/blob/r20201130/participants.tsv"
+    },
+    {
+      "url": "https://github.com/spine-generic/spine-generic/releases/tag/v2.6",
+      "sourceText": "https://github.com/spine-generic/spine-generic/releases/tag/v2.6"
+    },
+    {
+      "url": "https://spine-generic.rtfd.io",
+      "sourceText": "https://spine-generic.rtfd.io"
+    },
+    {
+      "url": "https://github.com/spine-generic/spine-generic/wiki",
+      "sourceText": "https://github.com/spine-generic/spine-generic/wiki"
+    },
+    {
+      "url": "https://spine-generic.rtfd.io/en/latest/data-acquisition.html#checking-acquisition-parameters",
+      "sourceText": "https://spine-generic.rtfd.io/en/latest/data-acquisition.html#checking-acquisition-parameters"
+    },
+    {
+      "url": "https://github.com/spine-generic/data-multi-subject/runs/2730553396?check_suite_focus=true",
+      "sourceText": "https://github.com/spine-generic/data-multi-subject/runs/2730553396?check_suite_focus=true"
+    },
+    {
+      "url": "https://github.com/spine-generic/data-multi-subject/labels/data-quality",
+      "sourceText": "https://github.com/spine-generic/data-multi-subject/labels/data-quality"
+    },
+    {
+      "url": "https://spine-generic.rtfd.io/en/latest/data-acquisition.html#example-of-datasets",
+      "sourceText": "https://spine-generic.rtfd.io/en/latest/data-acquisition.html#example-of-datasets"
+    },
+    {
+      "url": "https://github.com/spine-generic/data-single-subject/labels/data-quality",
+      "sourceText": "https://github.com/spine-generic/data-single-subject/labels/data-quality"
+    },
+    {
+      "url": "https://github.com/spine-generic/data-single-subject/releases/download/r20201130/results.zip",
+      "sourceText": "https://github.com/spine-generic/data-single-subject/releases/download/r20201130/results.zip"
+    },
+    {
+      "url": "https://github.com/spine-generic/data-multi-subject/releases/download/r20201130/results.zip",
+      "sourceText": "https://github.com/spine-generic/data-multi-subject/releases/download/r20201130/results.zip"
+    },
+    {
+      "url": "https://spine-generic.readthedocs.io/en/latest/analysis-pipeline.html#results",
+      "sourceText": "https://spine-generic.readthedocs.io/en/latest/analysis-pipeline.html#results"
+    },
+    {
+      "url": "https://github.com/spine-generic/data-multi-subject/issues/36",
+      "sourceText": "https://github.com/spine-generic/data-multi-subject/issues/36"
+    },
+    {
+      "url": "https://forum.spinalcordmri.org/",
+      "sourceText": "https://forum.spinalcordmri.org/"
+    },
+    {
+      "url": "https://github.com/spine-generic/spine-generic/releases/tag/v2.6",
+      "sourceText": "https://github.com/spine-generic/spine-generic/releases/tag/v2.6"
+    },
+    {
+      "url": "https://spine-generic.rtfd.io/",
+      "sourceText": "https://spine-generic.rtfd.io/"
+    },
+    {
+      "url": "https://spinalcordtoolbox.com",
+      "sourceText": "https://spinalcordtoolbox.com"
+    },
+    {
+      "url": "https://brainsprite.github.io/",
+      "sourceText": "https://brainsprite.github.io/"
+    },
+    {
+      "url": "10.5281/zenodo.3524401",
+      "sourceText": ""
+    },
+    {
+      "url": "10.5281/zenodo.4299148",
+      "sourceText": ""
+    },
+    {
+      "url": "10.5281/zenodo.4299140",
+      "sourceText": ""
+    },
+    {
+      "url": "10.5281/zenodo.3512712",
+      "sourceText": ""
+    },
+    {
+      "url": "10.5281/zenodo.3509134",
+      "sourceText": ""
+    },
+    {
+      "url": "10.5281/zenodo.3524401",
+      "sourceText": ""
+    },
+    {
+      "url": "10.5281/zenodo.4299148",
+      "sourceText": ""
+    },
+    {
+      "url": "10.5281/zenodo.4299140",
+      "sourceText": ""
+    },
+    {
+      "url": "10.5281/zenodo.3512712",
+      "sourceText": ""
+    },
+    {
+      "url": "10.5281/zenodo.3509134",
+      "sourceText": ""
+    },
+    {
+      "url": "https://github.com/spine-generic/spine-generic/releases/tag/v2.6",
+      "sourceText": "https://github.com/spine-generic/spine-generic/releases/tag/v2.6"
+    },
+    {
+      "url": "https://spine-generic.rtfd.io/",
+      "sourceText": "https://spine-generic.rtfd.io/"
+    },
+    {
+      "url": "https://spinalcordtoolbox.com",
+      "sourceText": "https://spinalcordtoolbox.com"
+    },
+    {
+      "url": "https://brainsprite.github.io/",
+      "sourceText": "https://brainsprite.github.io/"
+    }
+  ],
+  "licenseStatements": [
+    "Open Access This article is licensed under a Creative Commons Attribution 4.0 International License, which permits use, sharing, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons license, and indicate if changes were made. The images or other third party material in this article are included in the article’s Creative Commons license, unless indicated otherwise in a credit line to the material. If material is not included in the article’s Creative Commons license and your intended use is not permitted by statutory regulation or exceeds the permitted use, you will need to obtain permission directly from the copyright holder. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.The Creative Commons Public Domain Dedication waiver http://creativecommons.org/publicdomain/zero/1.0/ applies to the metadata files associated with this article."
+  ]
+}

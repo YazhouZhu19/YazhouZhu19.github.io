@@ -1,0 +1,584 @@
+{
+  "schemaVersion": 1,
+  "candidate": {
+    "id": "qsm-reconstruction",
+    "title": "QSM 重建稳健性与可重复性",
+    "scopeDescription": "定量磁化率成像中的相位掩膜、背景场去除、偶极反演及重建评估；记录 QSMxT、QSM 挑战和共识示例数据的可核查资源历史。"
+  },
+  "collectedAt": "2026-11-17T00:00:00+08:00",
+  "sources": [
+    {
+      "id": "paper-34687073",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.29048&format=json&resultType=core",
+      "publisher": "Europe PMC (publisher-supplied abstract and bibliographic record)",
+      "sourceType": "publication-metadata",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-paper-29048.json"
+    },
+    {
+      "id": "paper-28762243",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.26830&format=json&resultType=core",
+      "publisher": "Europe PMC (publisher-supplied abstract and bibliographic record)",
+      "sourceType": "publication-metadata",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-paper-26830.json"
+    },
+    {
+      "id": "paper-38247051",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.30006&format=json&resultType=core",
+      "publisher": "Europe PMC (publisher-supplied abstract and bibliographic record)",
+      "sourceType": "publication-metadata",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-paper-30006.json"
+    },
+    {
+      "id": "paper-40260740",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/hbm.70187&format=json&resultType=core",
+      "publisher": "Europe PMC (publisher-supplied abstract and bibliographic record)",
+      "sourceType": "publication-metadata",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-paper-70187.json"
+    },
+    {
+      "id": "paper-70187-fulltext",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12012649/fullTextXML",
+      "publisher": "Human Brain Mapping / PMC",
+      "sourceType": "primary-paper-fulltext",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-paper-full-70187.xml"
+    },
+    {
+      "id": "paper-33783037",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.28754&format=json&resultType=core",
+      "publisher": "Europe PMC (publisher-supplied abstract and bibliographic record)",
+      "sourceType": "publication-metadata",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-challenge-search.json"
+    },
+    {
+      "id": "paper-33638241",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.28716&format=json&resultType=core",
+      "publisher": "Europe PMC (publisher-supplied abstract and bibliographic record)",
+      "sourceType": "publication-metadata",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-challenge-search.json"
+    },
+    {
+      "id": "qsm-repo",
+      "url": "https://api.github.com/repos/QSMxT/QSMxT",
+      "publisher": "QSMxT maintainers / GitHub",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-github-history.json"
+    },
+    {
+      "id": "qsm-releases",
+      "url": "https://api.github.com/repos/QSMxT/QSMxT/releases?per_page=100",
+      "publisher": "QSMxT maintainers / GitHub",
+      "sourceType": "release-api",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-github-history.json"
+    },
+    {
+      "id": "qsm-readme",
+      "url": "https://raw.githubusercontent.com/QSMxT/QSMxT/main/README.md",
+      "publisher": "QSMxT maintainers / GitHub",
+      "sourceType": "repository-readme",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-github-history.json"
+    },
+    {
+      "id": "qsm-commit",
+      "url": "https://api.github.com/repos/QSMxT/QSMxT/commits?per_page=1",
+      "publisher": "QSMxT maintainers / GitHub",
+      "sourceType": "commit-api",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-github-history.json"
+    },
+    {
+      "id": "consensus-versions",
+      "url": "https://zenodo.org/api/records/7410455/versions",
+      "publisher": "Dataset authors / Zenodo",
+      "sourceType": "dataset-version-api",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-zenodo-versions.json"
+    },
+    {
+      "id": "consensus-changelog",
+      "url": "https://zenodo.org/api/records/7795492/files/Update_log.md/content",
+      "publisher": "Kwok-Shing Chan et al. / Zenodo",
+      "sourceType": "dataset-changelog",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-consensus-changelog.txt"
+    },
+    {
+      "id": "consensus-readme",
+      "url": "https://zenodo.org/api/records/7795492/files/README.md/content",
+      "publisher": "Kwok-Shing Chan et al. / Zenodo",
+      "sourceType": "dataset-readme",
+      "retrievedAt": "2026-11-17T00:00:00+08:00",
+      "rawSnapshotPath": "data/research-history/raw/qsm-consensus-readme.txt"
+    },
+    {
+      "id": "qsm-challenge-site",
+      "url": "https://qsm.snu.ac.kr/qsm-challenge",
+      "publisher": "QSM Challenge 2.0 organizing committee",
+      "sourceType": "official-challenge-site",
+      "retrievedAt": "2026-11-17T00:00:00+08:00"
+    },
+    {
+      "id": "consensus-paper-page",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10950544/",
+      "publisher": "ISMRM / Magnetic Resonance in Medicine",
+      "sourceType": "primary-paper-fulltext",
+      "retrievedAt": "2026-11-17T00:00:00+08:00"
+    },
+    {
+      "id": "consensus-7410455",
+      "url": "https://zenodo.org/records/7410455",
+      "publisher": "Kwok-Shing Chan et al. / Zenodo",
+      "sourceType": "dataset-record",
+      "retrievedAt": "2026-11-17T00:00:00+08:00"
+    },
+    {
+      "id": "consensus-7696711",
+      "url": "https://zenodo.org/records/7696711",
+      "publisher": "Kwok-Shing Chan et al. / Zenodo",
+      "sourceType": "dataset-record",
+      "retrievedAt": "2026-11-17T00:00:00+08:00"
+    },
+    {
+      "id": "consensus-7795492",
+      "url": "https://zenodo.org/records/7795492",
+      "publisher": "Kwok-Shing Chan et al. / Zenodo",
+      "sourceType": "dataset-record",
+      "retrievedAt": "2026-11-17T00:00:00+08:00"
+    }
+  ],
+  "papers": [
+    {
+      "id": "qsm-paper-28762243",
+      "title": "Quantitative susceptibility mapping: Report from the 2016 reconstruction challenge.",
+      "doi": "10.1002/mrm.26830",
+      "publishedAt": "2017-07-31",
+      "publicationDateBasis": "Europe PMC firstPublicationDate; online-first date where available; issue date retained separately",
+      "url": "https://doi.org/10.1002/mrm.26830",
+      "rawAbstract": "Purpose The aim of the 2016 quantitative susceptibility mapping (QSM) reconstruction challenge was to test the ability of various QSM algorithms to recover the underlying susceptibility from phase data faithfully. Methods Gradient-echo images of a healthy volunteer acquired at 3T in a single orientation with 1.06 mm isotropic resolution. A reference susceptibility map was provided, which was computed using the susceptibility tensor imaging algorithm on data acquired at 12 head orientations. Susceptibility maps calculated from the single orientation data were compared against the reference susceptibility map. Deviations were quantified using the following metrics: root mean squared error (RMSE), structure similarity index (SSIM), high-frequency error norm (HFEN), and the error in selected white and gray matter regions. Results Twenty-seven submissions were evaluated. Most of the best scoring approaches estimated the spatial frequency content in the ill-conditioned domain of the dipole kernel using compressed sensing strategies. The top 10 maps in each category had similar error metrics but substantially different visual appearance. Conclusion Because QSM algorithms were optimized to minimize error metrics, the resulting susceptibility maps suffered from over-smoothing and conspicuity loss in fine features such as vessels. As such, the challenge highlighted the need for better numerical image quality criteria. Magn Reson Med 79:1661-1673, 2018. © 2017 International Society for Magnetic Resonance in Medicine.",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.26830&format=json&resultType=core",
+      "sourceId": "paper-28762243",
+      "publicationTypes": [
+        "Research Support, Non-U.S. Gov't",
+        "research-article",
+        "Journal Article",
+        "Research Support, N.I.H., Extramural"
+      ],
+      "issueDate": "2018 Mar",
+      "methodFacts": [],
+      "explicitResourceLinks": []
+    },
+    {
+      "id": "qsm-paper-33638241",
+      "title": "QSM reconstruction challenge 2.0: A realistic in silico head phantom for MRI data simulation and evaluation of susceptibility mapping procedures.",
+      "doi": "10.1002/mrm.28716",
+      "publishedAt": "2021-02-26",
+      "publicationDateBasis": "Europe PMC firstPublicationDate; online-first date where available; issue date retained separately",
+      "url": "https://doi.org/10.1002/mrm.28716",
+      "rawAbstract": "Purpose To create a realistic in silico head phantom for the second QSM reconstruction challenge and for future evaluations of processing algorithms for QSM. Methods We created a digital whole-head tissue property phantom by segmenting and postprocessing high-resolution (0.64 mm isotropic), multiparametric MRI data acquired at 7 T from a healthy volunteer. We simulated the steady-state magnetization at 7 T using a Bloch simulator and mimicked a Cartesian sampling scheme through Fourier-based processing. Computer code for generating the phantom and performing the MR simulation was designed to facilitate flexible modifications of the phantom in the future, such as the inclusion of pathologies as well as the simulation of a wide range of acquisition protocols. Specifically, the following parameters and effects were implemented: TR and TE, voxel size, background fields, and RF phase biases. Diffusion-weighted imaging phantom data are provided, allowing future investigations of tissue-microstructure effects in phase and QSM algorithms. Results The brain part of the phantom featured realistic morphology with spatial variations in relaxation and susceptibility values similar to the in vivo setting. We demonstrated some of the phantom's properties, including the possibility of generating phase data with nonlinear evolution over TE due to partial-volume effects or complex distributions of frequency shifts within the voxel. Conclusion The presented phantom and computer programs are publicly available and may serve as a ground truth in future assessments of the faithfulness of quantitative susceptibility reconstruction algorithms.",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.28716&format=json&resultType=core",
+      "sourceId": "paper-33638241",
+      "publicationTypes": [
+        "Research Support, Non-U.S. Gov't",
+        "research-article",
+        "Journal Article"
+      ],
+      "issueDate": "2021 Jul",
+      "methodFacts": [
+        {
+          "text": "High-resolution (0.64 mm isotropic), multiparametric MRI data acquired at 7 T from a healthy volunteer.",
+          "sourceId": "paper-33638241"
+        }
+      ],
+      "explicitResourceLinks": []
+    },
+    {
+      "id": "qsm-paper-33783037",
+      "title": "QSM reconstruction challenge 2.0: Design and report of results.",
+      "doi": "10.1002/mrm.28754",
+      "publishedAt": "2021-03-30",
+      "publicationDateBasis": "Europe PMC firstPublicationDate; online-first date where available; issue date retained separately",
+      "url": "https://doi.org/10.1002/mrm.28754",
+      "rawAbstract": "Purpose The aim of the second quantitative susceptibility mapping (QSM) reconstruction challenge (Oct 2019, Seoul, Korea) was to test the accuracy of QSM dipole inversion algorithms in simulated brain data. Methods A two-stage design was chosen for this challenge. The participants were provided with datasets of multi-echo gradient echo images synthesized from two realistic in silico head phantoms using an MR simulator. At the first stage, participants optimized QSM reconstructions without ground truth data available to mimic the clinical setting. At the second stage, ground truth data were provided for parameter optimization. Submissions were evaluated using eight numerical metrics and visual ratings. Results A total of 98 reconstructions were submitted for stage 1 and 47 submissions for stage 2. Iterative methods had the best quantitative metric scores, followed by deep learning and direct inversion methods. Priors derived from magnitude data improved the metric scores. Algorithms based on iterative approaches and total variation (and its derivatives) produced the best overall results. The reported results and analysis pipelines have been made public to allow researchers to compare new methods to the current state of the art. Conclusion The synthetic data provide a consistent framework to test the accuracy and robustness of QSM algorithms in the presence of noise, calcifications and minor voxel dephasing effects. Total Variation-based algorithms produced the best results among all metrics. Future QSM challenges should assess whether this good performance with synthetic datasets translates to more realistic scenarios, where background fields and dipole-incompatible phase contributions are included.",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.28754&format=json&resultType=core",
+      "sourceId": "paper-33783037",
+      "publicationTypes": [
+        "Research Support, Non-U.S. Gov't",
+        "research-article",
+        "Journal Article",
+        "Research Support, N.I.H., Extramural"
+      ],
+      "issueDate": "2021 Sep",
+      "methodFacts": [
+        {
+          "text": "A total of 98 reconstructions were submitted for stage 1 and 47 submissions for stage 2.",
+          "sourceId": "paper-33783037"
+        }
+      ],
+      "explicitResourceLinks": []
+    },
+    {
+      "id": "qsm-paper-34687073",
+      "title": "QSMxT: Robust masking and artifact reduction for quantitative susceptibility mapping.",
+      "doi": "10.1002/mrm.29048",
+      "publishedAt": "2021-10-22",
+      "publicationDateBasis": "Europe PMC firstPublicationDate; online-first date where available; issue date retained separately",
+      "url": "https://doi.org/10.1002/mrm.29048",
+      "rawAbstract": "Purpose Quantitative susceptibility mapping (QSM) estimates the spatial distribution of tissue magnetic susceptibilities from the phase of a gradient-echo signal. QSM algorithms require a signal mask to delineate regions with reliable phase for subsequent susceptibility estimation. Existing masking techniques used in QSM have limitations that introduce artifacts, exclude anatomical detail, and rely on parameter tuning and anatomical priors that narrow their application. Here, a robust masking and reconstruction procedure is presented to overcome these limitations and enable automated QSM processing. Moreover, this method is integrated within an open-source software framework: QSMxT. Methods A robust masking technique that automatically separates reliable from less reliable phase regions was developed and combined with a two-pass reconstruction procedure that operates on the separated sources before combination, extracting more information and suppressing streaking artifacts. Results Compared with standard masking and reconstruction procedures, the two-pass inversion reduces streaking artifacts caused by unreliable phase and high dynamic ranges of susceptibility sources. It is also robust across a range of acquisitions at 3 T in volunteers and phantoms, at 7 T in tumor patients, and in an in silico head phantom, with significant artifact and error reductions, greater anatomical detail, and minimal parameter tuning. Conclusion The two-pass masking and reconstruction procedure separates reliable from less reliable phase regions, enabling a more accurate QSM reconstruction that mitigates artifacts, operates without anatomical priors, and requires minimal parameter tuning. The technique and its integration within QSMxT makes QSM processing more accessible and robust to streaking artifacts.",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.29048&format=json&resultType=core",
+      "sourceId": "paper-34687073",
+      "publicationTypes": [
+        "Research Support, Non-U.S. Gov't",
+        "research-article",
+        "Journal Article"
+      ],
+      "issueDate": "2022 Mar",
+      "methodFacts": [
+        {
+          "text": "A robust masking technique that automatically separates reliable from less reliable phase regions was developed and combined with a two-pass reconstruction procedure.",
+          "sourceId": "paper-34687073"
+        }
+      ],
+      "explicitResourceLinks": []
+    },
+    {
+      "id": "qsm-paper-38247051",
+      "title": "Recommended implementation of quantitative susceptibility mapping for clinical research in the brain: A consensus of the ISMRM electro-magnetic tissue properties study group.",
+      "doi": "10.1002/mrm.30006",
+      "publishedAt": "2024-01-21",
+      "publicationDateBasis": "Europe PMC firstPublicationDate; online-first date where available; issue date retained separately",
+      "url": "https://doi.org/10.1002/mrm.30006",
+      "rawAbstract": "This article provides recommendations for implementing QSM for clinical brain research. It is a consensus of the International Society of Magnetic Resonance in Medicine, Electro-Magnetic Tissue Properties Study Group. While QSM technical development continues to advance rapidly, the current QSM methods have been demonstrated to be repeatable and reproducible for generating quantitative tissue magnetic susceptibility maps in the brain. However, the many QSM approaches available have generated a need in the neuroimaging community for guidelines on implementation. This article outlines considerations and implementation recommendations for QSM data acquisition, processing, analysis, and publication. We recommend that data be acquired using a monopolar 3D multi-echo gradient echo (GRE) sequence and that phase images be saved and exported in Digital Imaging and Communications in Medicine (DICOM) format and unwrapped using an exact unwrapping approach. Multi-echo images should be combined before background field removal, and a brain mask created using a brain extraction tool with the incorporation of phase-quality-based masking. Background fields within the brain mask should be removed using a technique based on SHARP or PDF, and the optimization approach to dipole inversion should be employed with a sparsity-based regularization. Susceptibility values should be measured relative to a specified reference, including the common reference region of the whole brain as a region of interest in the analysis. The minimum acquisition and processing details required when reporting QSM results are also provided. These recommendations should facilitate clinical QSM research and promote harmonized data acquisition, analysis, and reporting.",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.30006&format=json&resultType=core",
+      "sourceId": "paper-38247051",
+      "publicationTypes": [
+        "Research Support, Non-U.S. Gov't",
+        "research-article",
+        "Consensus Statement",
+        "Journal Article",
+        "Research Support, N.I.H., Extramural"
+      ],
+      "issueDate": "2024 May",
+      "methodFacts": [],
+      "explicitResourceLinks": []
+    },
+    {
+      "id": "qsm-paper-40260740",
+      "title": "Sensitivity of Quantitative Susceptibility Mapping for Clinical Research in Deep Gray Matter.",
+      "doi": "10.1002/hbm.70187",
+      "publishedAt": "2025-04-22",
+      "publicationDateBasis": "Primary article JATS pub-date pub-type=epub: 2025-04-22. Collection date is 2025-04-15; Europe PMC firstPublicationDate is a month-normalized 2025-04-01 and is not used as the event date.",
+      "url": "https://doi.org/10.1002/hbm.70187",
+      "rawAbstract": "Quantitative susceptibility mapping (QSM) is an advanced MRI technique for assessing iron, calcium, and myelin tissue levels based on magnetic susceptibility. QSM consists of multiple processing steps, with various choices for each step. While QSM is increasingly applied in neurodegenerative disease research, its reproducibility and sensitivity in detecting susceptibility changes across groups or over time, which underpin the interpretation of clinical outcomes, have not been thoroughly quantified. This study aimed to evaluate how choices in background field removal (BFR), dipole inversion algorithms, and anatomical referencing impact the detection of changes in deep gray matter susceptibility. We used aging-related changes in brain iron, established in earlier foundational studies, as a surrogate model to test the sensitivity and reproducibility of 378 different QSM pipelines toward the detection of longitudinal susceptibility changes in a clinical setting. We used 10-year follow-up data and scan-rescan data of healthy adults scanned at 3T. Our results demonstrated high variability in the sensitivity of QSM pipelines toward detecting susceptibility changes. While most pipelines detected the same over-time changes, the choice of the BFR algorithm and the referencing strategy influenced reproducibility error and sensitivity substantially. Notably, pipelines using RESHARP with AMP-PE, HEIDI, or LSQR inversion showed the highest overall sensitivity. The findings suggest a strong impact of algorithmic choices in QSM processing on the ability to detect physiological changes in the brain. Careful consideration should be given to the pipeline configuration for reliable clinical outcomes.",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/hbm.70187&format=json&resultType=core",
+      "sourceId": "paper-40260740",
+      "publicationTypes": [
+        "Research Support, Non-U.S. Gov't",
+        "research-article",
+        "Journal Article",
+        "Research Support, N.I.H., Extramural"
+      ],
+      "issueDate": "2025 Apr",
+      "methodFacts": [
+        {
+          "text": "We used 10-year follow-up data and scan-rescan data of healthy adults scanned at 3T.",
+          "sourceId": "paper-40260740"
+        },
+        {
+          "text": "378 different QSM pipelines",
+          "sourceId": "paper-40260740"
+        }
+      ],
+      "explicitResourceLinks": [
+        {
+          "url": "https://doi.org/10.5281/zenodo.11077423",
+          "relation": "code-availability",
+          "sourceId": "paper-70187-fulltext"
+        },
+        {
+          "url": "https://gitlab.com/R01NS114227/pi4s",
+          "relation": "processing-job-scheduler-used",
+          "sourceId": "paper-70187-fulltext"
+        }
+      ]
+    }
+  ],
+  "datasets": [
+    {
+      "id": "qsm-consensus-example-data",
+      "title": "QSM consensus example datasets, reconstruction results and code",
+      "url": "https://zenodo.org/records/7410454",
+      "repository": "Zenodo",
+      "versions": [
+        {
+          "version": "v0.1.0",
+          "releasedAt": "2022-12-10",
+          "dateBasis": "Author Update_log.md explicit Release date; not Zenodo metadata publication_date or record.created",
+          "url": "https://zenodo.org/records/7410455",
+          "sourceId": "consensus-changelog",
+          "metadataSourceId": "consensus-7410455",
+          "changeDescription": "Initial release. README lists GRE DICOM, GRE NIfTI, protocols, SEPIA processing outputs and example code.",
+          "changeScope": "initial-package",
+          "newParticipantEvidence": false,
+          "files": [
+            {
+              "name": "QSM_Consensus_Paper_Example_DICOM_Code_v0.1.0.zip",
+              "bytes": 993889476,
+              "checksum": "md5:6cae6b10d1eec486805a0b67bd640c22"
+            },
+            {
+              "name": "QSM_Consensus_Paper_Example_Data_Result_Code_v0.1.0.zip",
+              "bytes": 4681739362,
+              "checksum": "md5:595270352faa91a097ef5e2f4bcdd059"
+            },
+            {
+              "name": "README.md",
+              "bytes": 395,
+              "checksum": "md5:71fed0f8318442500959000d97a094dd"
+            }
+          ],
+          "depositCreatedAt": "2022-12-10T15:15:22.061005+00:00"
+        },
+        {
+          "version": "v0.2.0",
+          "releasedAt": "2023-03-03",
+          "dateBasis": "Author Update_log.md explicit Release date; not Zenodo metadata publication_date or record.created",
+          "url": "https://zenodo.org/records/7696711",
+          "sourceId": "consensus-changelog",
+          "metadataSourceId": "consensus-7696711",
+          "changeDescription": "Fix potential holes inside the brain mask after background field removal due to zero frequency values with SEPIA v1.2.2.2; alternative VSHARP implementation.",
+          "changeScope": "processing-code-and-derived-reconstruction-results",
+          "newParticipantEvidence": false,
+          "files": [
+            {
+              "name": "QSM_Consensus_Paper_Example_Data_Result_Code_v0.2.0.zip",
+              "bytes": 4558729754,
+              "checksum": "md5:88cb21067b789d615605b48b832a2fa1"
+            },
+            {
+              "name": "QSM_Consensus_Paper_Example_DICOM_Code_v0.2.0.zip",
+              "bytes": 1012927307,
+              "checksum": "md5:0c01f9ba71e3bb6b6748775fe8983c04"
+            },
+            {
+              "name": "README.md",
+              "bytes": 395,
+              "checksum": "md5:71fed0f8318442500959000d97a094dd"
+            }
+          ],
+          "depositCreatedAt": "2023-03-13T14:33:18.048194+00:00"
+        },
+        {
+          "version": "v0.2.1",
+          "releasedAt": "2023-04-03",
+          "dateBasis": "Author Update_log.md explicit Release date; not Zenodo metadata publication_date or record.created",
+          "url": "https://zenodo.org/records/7795492",
+          "sourceId": "consensus-changelog",
+          "metadataSourceId": "consensus-7795492",
+          "changeDescription": "Remove iterative Tikhonov reconstruction; provide full QSM reconstruction for both FANSI and MEDI pipelines.",
+          "changeScope": "processing-code-and-derived-reconstruction-results",
+          "newParticipantEvidence": false,
+          "files": [
+            {
+              "name": "QSM_Consensus_Paper_Example_DICOM_Code_v0.2.1.zip",
+              "bytes": 1012840641,
+              "checksum": "md5:4d24caf8554af134aa53dc4d0d45f4b0"
+            },
+            {
+              "name": "QSM_Consensus_Paper_Example_Data_Result_Code_v0.2.1.zip",
+              "bytes": 6055252857,
+              "checksum": "md5:e816b677a32534ea328d5ef66518dc0b"
+            },
+            {
+              "name": "Update_log.md",
+              "bytes": 508,
+              "checksum": "md5:f7cef03a2ccae53061b733346583347e"
+            },
+            {
+              "name": "README.md",
+              "bytes": 395,
+              "checksum": "md5:71fed0f8318442500959000d97a094dd"
+            }
+          ],
+          "depositCreatedAt": "2023-04-04T09:10:35.055215+00:00"
+        }
+      ],
+      "paperLinks": [
+        {
+          "paperDoi": "10.1002/mrm.30006",
+          "url": "https://doi.org/10.1002/mrm.30006",
+          "relation": "example-data-for-paper-named-in-dataset-description",
+          "sourceId": "consensus-7410455"
+        }
+      ],
+      "notes": [
+        "Verified version updates concern processing code and derived results. The changelog does not report additional subjects or new imaging acquisitions.",
+        "The version release span is 114 days, below a 365-day accumulation criterion."
+      ]
+    },
+    {
+      "id": "qsm-reconstruction-challenge-2",
+      "title": "QSM Reconstruction Challenge 2.0 simulated brain datasets",
+      "url": "https://qsm.snu.ac.kr/qsm-challenge",
+      "repository": "QSM Challenge organizing committee",
+      "versions": [],
+      "paperLinks": [
+        {
+          "paperDoi": "10.1002/mrm.28716",
+          "url": "https://doi.org/10.1002/mrm.28716",
+          "relation": "dataset-description-paper",
+          "sourceId": "paper-33638241"
+        },
+        {
+          "paperDoi": "10.1002/mrm.28754",
+          "url": "https://doi.org/10.1002/mrm.28754",
+          "relation": "challenge-evaluation-paper",
+          "sourceId": "paper-33783037"
+        }
+      ],
+      "notes": [
+        "The official site describes two realistic simulated head datasets, with and without calcification, and a second stage providing two noise levels and ground truth.",
+        "Official submission deadlines are in July/August 2019. These are not treated as dataset release dates.",
+        "The 2016 challenge used acquired human data; the 2019 challenge uses simulated head phantoms. They are not represented here as versions of one longitudinal dataset."
+      ]
+    }
+  ],
+  "code": [
+    {
+      "repository": "QSMxT/QSMxT",
+      "url": "https://github.com/QSMxT/QSMxT",
+      "officialPaperLinks": [
+        {
+          "paperDoi": "10.1002/mrm.29048",
+          "url": "https://doi.org/10.1002/mrm.29048",
+          "relation": "citation-declared-in-official-readme",
+          "sourceId": "qsm-readme"
+        }
+      ],
+      "releases": [
+        {
+          "version": "210506",
+          "publishedAt": "2021-05-05T23:12:25Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/210506",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v1.1.9",
+          "publishedAt": "2021-12-19T07:30:45Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.9",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v1.2.0",
+          "publishedAt": "2022-12-08T02:21:58Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.2.0",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v2.0.0",
+          "publishedAt": "2023-04-14T06:47:22Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v2.0.0",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v6.3.2",
+          "publishedAt": "2023-10-30T03:44:33Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.3.2",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v6.4.0",
+          "publishedAt": "2024-02-09T07:02:21Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.4.0",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v7.2.2",
+          "publishedAt": "2024-10-29T02:28:49Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.2.2",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v8.0.0",
+          "publishedAt": "2025-03-31T06:48:22Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.0",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v8.2.0",
+          "publishedAt": "2025-12-05T00:36:59Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.2.0",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v8.3.2",
+          "publishedAt": "2026-04-21T05:01:46Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.3.2",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v9.0.0",
+          "publishedAt": "2026-06-26T05:35:56Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.0.0",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v10.0.0",
+          "publishedAt": "2026-10-14T05:28:01Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v10.0.0",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v11.0.0",
+          "publishedAt": "2026-11-06T05:27:57Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v11.0.0",
+          "sourceId": "qsm-releases"
+        },
+        {
+          "version": "v12.0.0",
+          "publishedAt": "2026-11-14T02:59:29Z",
+          "url": "https://github.com/QSMxT/QSMxT/releases/tag/v12.0.0",
+          "sourceId": "qsm-releases"
+        }
+      ],
+      "maintenanceFacts": [
+        {
+          "text": "Repository created 2020-12-21T00:24:36Z; archived=false. Creation date is not counted as a maintenance event.",
+          "sourceId": "qsm-repo"
+        },
+        {
+          "text": "QSMART: a relative Frangi C option (--qsmart-frangi-c-mode relative) (#569)",
+          "occurredAt": "2026-11-16T15:35:57Z",
+          "url": "https://github.com/QSMxT/QSMxT/commit/26ed3d101ea73641e79f8e3b4068b9185bd7d139",
+          "commitSha": "26ed3d101ea73641e79f8e3b4068b9185bd7d139",
+          "sourceId": "qsm-commit"
+        },
+        {
+          "text": "The current README states that v9 is a Rust rewrite and preserves the Python line on python-legacy / v8.3.4. Software lineage is recorded; reproducibility across versions is not presumed.",
+          "sourceId": "qsm-readme"
+        }
+      ],
+      "archived": false,
+      "createdAt": "2020-12-21T00:24:36Z",
+      "metadataSourceId": "qsm-repo"
+    }
+  ],
+  "limitations": [
+    "This is a targeted source collection, not an exhaustive estimate of field prevalence or a claim that QSM is globally niche.",
+    "The verified consensus dataset releases span only 114 days; no multi-year acquisition/participant growth is established.",
+    "The 2016 and 2019 QSM challenge datasets are different benchmark designs; calendar spacing alone must not be counted as dataset-version accumulation.",
+    "The 2025 paper studies 10-year follow-up data, but this does not establish public multi-year dataset version history. The availability statement for public participant-level data has not been verified.",
+    "QSMxT is explicitly linked to its own 2021 online-first / 2022 issue paper. Other papers in this pack address the same research problem; they are not asserted to use QSMxT merely because the topics match.",
+    "The consensus article is a guideline, not an independent empirical experiment. The 2019 challenge design paper and phantom paper share a benchmark; unique DOI does not mean an independent cohort.",
+    "Preprints and later journal versions were not counted as additional papers.",
+    "No model-generated relevance, sufficiency or confidence labels are stored in this pack. Source facts are supplied for deterministic downstream rules."
+  ]
+}

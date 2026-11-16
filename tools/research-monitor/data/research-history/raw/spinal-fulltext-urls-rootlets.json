@@ -1,0 +1,30 @@
+{
+  "sourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12272210/fullTextXML",
+  "retrievedAt": "2026-11-17",
+  "urls": [
+    {
+      "url": "https://github.com/spine-generic/data-multi-subject/tree/r20230223",
+      "context": "ets/ds004507/versions/1.0.1 , n = 10) and spine-generic multi-subject dataset ( https://github.com/spine-generic/data-multi-subject/tree/r20230223 , n = 267). Both datasets contain T2-weighted images acquired at 3T scanners wi"
+    },
+    {
+      "url": "https://github.com/spine-generic/data-single-subject/tree/r20211115",
+      "context": "irst testing dataset (test-set-1) is the spine-generic single-subject dataset ( https://github.com/spine-generic/data-single-subject/tree/r20211115 ), consisting of a single healthy subject (male, 38 y.o.) scanned across ninete"
+    },
+    {
+      "url": "https://github.com/courtois-neuromod/anat",
+      "context": "dor. The second testing dataset (test-set-2) is the Courtois-NeuroMod dataset ( https://github.com/courtois-neuromod/anat ), an open-access dataset of healthy subjects scanned at regular intervals at t"
+    },
+    {
+      "url": "https://github.com/spine-generic/data-multi-subject/tree/r20230223",
+      "context": " and can accessed at https://openneuro.org/datasets/ds004507/versions/1.0.1 and https://github.com/spine-generic/data-multi-subject/tree/r20230223 . The processing scripts used in this study are available at: https://github.co"
+    },
+    {
+      "url": "https://github.com/ivadomed/model-spinal-rootlets/tree/r20240129",
+      "context": "ct/tree/r20230223 . The processing scripts used in this study are available at: https://github.com/ivadomed/model-spinal-rootlets/tree/r20240129 . The packaged and ready-to-use segmentation model can be applied to custom dat"
+    },
+    {
+      "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/6.2",
+      "context": "g_spinal_rootlets_t2w as part of the Spinal Cord Toolbox (SCT) v6.2 and higher: https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/6.2 . The nerve rootlets segmentation in the PAM50 space is available in SCT v6.2 a"
+    }
+  ]
+}

@@ -5,23 +5,14 @@ import "@/styles/foresight.css";
 
 import { useMemo, useState } from "react";
 import type { DashboardDrill } from "@/lib/dashboard";
-import type { ForesightCard, ForesightResult } from "@/lib/foresight-types";
-import type { ResearchSignal } from "@/lib/research-signals";
-import type { MonitorData, Paper } from "@/lib/types";
+import type { ForesightResult } from "@/lib/foresight-types";
+import type { Paper } from "@/lib/types";
 import { AssessmentHistory } from "./assessment-history";
-import { AiModelSettings, AiResearchPanel } from "./ai-research-panel";
 import { useI18n } from "./locale-provider";
 
 type EvidenceActions = {
   onPaper: (paper: Paper) => void;
   onDrill: (drill: DashboardDrill) => void;
-};
-
-export type ForesightPreferences = {
-  track: string;
-  modality: string;
-  query: string;
-  horizon: ForesightCard["horizon"];
 };
 
 /** Shared by the direction and team views; every drill preserves the complete evidence set. */
@@ -247,40 +238,5 @@ export function ForesightCards({ result, onPaper, onDrill }: EvidenceActions & {
       )}
       <AssessmentHistory result={result} />
     </div>
-  );
-}
-
-export function ForesightView({
-  data,
-  signals,
-  onPaper,
-  onDrill,
-}: EvidenceActions & {
-  data: MonitorData;
-  signals?: ResearchSignal[];
-  preferences?: ForesightPreferences;
-  onPreferencesChange?: (preferences: ForesightPreferences) => void;
-}) {
-  const { locale } = useI18n();
-  return (
-    <section className="foresight-view" aria-label={locale === "en" ? "AI research outlook" : "AI 方向研判"}>
-      <AiModelSettings />
-      <div className="ai-research-windows">
-        <AiResearchPanel
-          signals={signals}
-          papers={data.papers}
-          mode="landscape"
-          onPaper={onPaper}
-          onDrill={onDrill}
-        />
-        <AiResearchPanel
-          signals={signals}
-          papers={data.papers}
-          mode="interest"
-          onPaper={onPaper}
-          onDrill={onDrill}
-        />
-      </div>
-    </section>
   );
 }

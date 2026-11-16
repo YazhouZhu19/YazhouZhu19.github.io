@@ -1,0 +1,132 @@
+[
+  {
+    "taskId": "niche-061",
+    "method": "rules",
+    "candidateId": "registration:labels:chest"
+  },
+  {
+    "taskId": "niche-062",
+    "method": "rules",
+    "candidateId": "foundation:longitudinal:abdominal"
+  },
+  {
+    "taskId": "niche-063",
+    "method": "rules",
+    "candidateId": "foundation:longitudinal:chest"
+  },
+  {
+    "taskId": "niche-064",
+    "method": "rules",
+    "candidateId": "generation:labels:brain"
+  },
+  {
+    "taskId": "niche-065",
+    "method": "rules",
+    "candidateId": "segmentation:shift:chest"
+  },
+  {
+    "taskId": "niche-066",
+    "method": "rules",
+    "candidateId": "segmentation:privacy:breast"
+  },
+  {
+    "taskId": "niche-067",
+    "method": "nmf7",
+    "candidateId": "4"
+  },
+  {
+    "taskId": "niche-068",
+    "method": "nmf7",
+    "candidateId": "3"
+  },
+  {
+    "taskId": "niche-069",
+    "method": "nmf7",
+    "candidateId": "1"
+  },
+  {
+    "taskId": "niche-070",
+    "method": "nmf7",
+    "candidateId": "2"
+  },
+  {
+    "taskId": "niche-071",
+    "method": "nmf7",
+    "candidateId": "6"
+  },
+  {
+    "taskId": "niche-072",
+    "method": "nmf7",
+    "candidateId": "5"
+  },
+  {
+    "taskId": "niche-073",
+    "method": "nmf20",
+    "candidateId": "8"
+  },
+  {
+    "taskId": "niche-074",
+    "method": "nmf20",
+    "candidateId": "17"
+  },
+  {
+    "taskId": "niche-075",
+    "method": "nmf20",
+    "candidateId": "10"
+  },
+  {
+    "taskId": "niche-076",
+    "method": "nmf20",
+    "candidateId": "4"
+  },
+  {
+    "taskId": "niche-077",
+    "method": "nmf20",
+    "candidateId": "3"
+  },
+  {
+    "taskId": "niche-078",
+    "method": "nmf20",
+    "candidateId": "18"
+  },
+  {
+    "taskId": "niche-079",
+    "method": "lda7",
+    "candidateId": "4"
+  },
+  {
+    "taskId": "niche-080",
+    "method": "lda7",
+    "candidateId": "2"
+  },
+  {
+    "taskId": "niche-081",
+    "method": "lda20",
+    "candidateId": "13"
+  },
+  {
+    "taskId": "niche-082",
+    "method": "lda20",
+    "candidateId": "17"
+  },
+  {
+    "taskId": "niche-083",
+    "method": "lda20",
+    "candidateId": "10"
+  },
+  {
+    "taskId": "niche-084",
+    "method": "lda20",
+    "candidateId": "4"
+  },
+  {
+    "taskId": "niche-085",
+    "method": "lda20",
+    "candidateId": "3"
+  },
+  {
+    "taskId": "niche-086",
+    "method": "lda20",
+    "candidateId": "18"
+  }
+]

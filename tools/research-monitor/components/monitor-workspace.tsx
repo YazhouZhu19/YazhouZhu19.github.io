@@ -30,6 +30,9 @@ import { WorkspaceNavigation } from "./workspace-navigation";
 const PaperFilters = lazy(() =>
   import("./paper-filters").then((module) => ({ default: module.PaperFilters })),
 );
+const InformationScreening = lazy(() =>
+  import("./information-screening").then((module) => ({ default: module.InformationScreening })),
+);
 const PaperLibrary = lazy(() =>
   import("./paper-library").then((module) => ({ default: module.PaperLibrary })),
 );
@@ -43,13 +46,12 @@ import { exportPaperCsv } from "@/lib/paper-export";
 import { defaultDashboardFilters, type DashboardFilters, type DashboardDrill } from "@/lib/dashboard";
 import type { Paper } from "@/lib/types";
 import type { ResearchSignal } from "@/lib/research-signals";
-import type { ForesightPreferences } from "./foresight-view";
 import type { TeamForesightPreferences } from "./team-foresight";
 import "@/styles/workspace-dashboards.css";
 export { api } from "@/lib/local-api";
 export { fmtDate, fmtTime } from "@/lib/workspace-format";
-const ForesightView = lazy(() =>
-  import("./foresight-view").then((module) => ({ default: module.ForesightView })),
+const IntegratedAnalysis = lazy(() =>
+  import("./integrated-analysis").then((module) => ({ default: module.IntegratedAnalysis })),
 );
 const TeamForesight = lazy(() =>
   import("./team-foresight").then((module) => ({ default: module.TeamForesight })),
@@ -114,15 +116,6 @@ export default function MonitorWorkspace() {
     tr,
   });
   const { collections, teams, openPaper, refreshPersonal } = personal;
-  const [directionPreferences, setDirectionPreferences] = useState<ForesightPreferences>({
-    track:
-      initialUrlState.view === "foresight" && initialUrlState.track !== "all"
-        ? initialUrlState.track
-        : "segmentation",
-    modality: initialUrlState.view === "foresight" ? (initialUrlState.modality ?? "") : "",
-    query: initialUrlState.view === "foresight" ? initialUrlState.search : "",
-    horizon: "6–12",
-  });
   const [teamPreferences, setTeamPreferences] = useState<TeamForesightPreferences>({
     ...teamPreferencesFromPublic(initialUrlState.teamDirectory ?? defaultPublicTeamState()),
     horizon: "6–12",
@@ -280,14 +273,14 @@ export default function MonitorWorkspace() {
   const urlHash = useWorkspaceUrlState(
     {
       view: workspaceView(view),
-      track: view === "foresight" ? directionPreferences.track : (activeFilters?.track ?? library.track),
+      track: view === "foresight" ? "all" : (activeFilters?.track ?? library.track),
       period: activeFilters?.days ?? library.period,
       source: activeFilters?.source ?? library.source,
       clock: activeFilters?.clock,
-      search: view === "foresight" ? directionPreferences.query : library.search,
+      search: view === "foresight" ? "" : library.search,
       scope: library.scope,
       task: library.task,
-      modality: view === "foresight" ? directionPreferences.modality : library.modality,
+      modality: view === "foresight" ? "" : library.modality,
       organ: library.organ,
       method: library.method,
       status: library.status,
@@ -324,7 +317,7 @@ export default function MonitorWorkspace() {
           ...teamPreferencesFromPublic(next.teamDirectory ?? defaultPublicTeamState()),
         }));
         library.setScope(next.scope ?? "core");
-      } else {
+      } else if (next.view !== "foresight") {
         library.restoreFilters(next);
       }
       const filters: DashboardFilters = {
@@ -335,13 +328,6 @@ export default function MonitorWorkspace() {
       };
       if (next.view === "dashboard") setDashboardFilters(filters);
       if (next.view === "analysis") setAnalysisFilters(filters);
-      if (next.view === "foresight")
-        setDirectionPreferences((current) => ({
-          ...current,
-          track: next.track === "all" ? "segmentation" : next.track,
-          modality: next.modality ?? "",
-          query: next.search,
-        }));
       setDashboardDrill(next.view === "feed" ? drill : null);
       setDrillOrigin(next.drill?.origin ?? "foresight");
     },
@@ -403,7 +389,7 @@ export default function MonitorWorkspace() {
               drillOrigin={drillOrigin}
               reset={reset}
             />
-            {displayData && ["dashboard", "analysis", "feed", "teams", "foresight"].includes(view) && (
+            {displayData && ["dashboard", "analysis", "feed", "teams"].includes(view) && (
               <PaperScopeControl
                 value={library.scope}
                 counts={scopeCounts}
@@ -416,6 +402,14 @@ export default function MonitorWorkspace() {
             {library.needsFilteredPapers && (
               <Suspense fallback={viewFallback}>
                 <PaperFilters library={library} />
+                {view === "feed" && data && !loading && library.searchReady && (
+                  <InformationScreening
+                    papers={papers}
+                    candidates={library.filtered}
+                    signals={sourceRecords}
+                    onPaper={openPaper}
+                  />
+                )}
               </Suspense>
             )}
             <Suspense fallback={viewFallback}>
@@ -476,14 +470,12 @@ export default function MonitorWorkspace() {
                   onDrill={(d) => openDrill(d, "analysis")}
                   onPaper={openPaper}
                 />
-              ) : view === "foresight" && scopedData ? (
-                <ForesightView
-                  data={scopedData}
+              ) : view === "foresight" && data ? (
+                <IntegratedAnalysis
+                  papers={papers}
                   signals={sourceRecords}
-                  preferences={directionPreferences}
-                  onPreferencesChange={setDirectionPreferences}
+                  sourceStates={signals?.sources ?? []}
                   onPaper={openPaper}
-                  onDrill={(d) => openDrill(d, "foresight")}
                 />
               ) : view === "teams" && scopedData ? (
                 <TeamForesight

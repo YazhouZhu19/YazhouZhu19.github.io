@@ -1,0 +1,549 @@
+{
+  "version": "6.9",
+  "hitCount": 1,
+  "request": {
+    "queryString": "DOI:10.1002/mrm.29048",
+    "resultType": "core",
+    "cursorMark": "*",
+    "pageSize": 25,
+    "sort": "",
+    "synonym": false
+  },
+  "resultList": {
+    "result": [
+      {
+        "id": "34687073",
+        "source": "MED",
+        "pmid": "34687073",
+        "pmcid": "PMC7612305",
+        "fullTextIdList": {
+          "fullTextId": [
+            "PMC7612305"
+          ]
+        },
+        "doi": "10.1002/mrm.29048",
+        "title": "QSMxT: Robust masking and artifact reduction for quantitative susceptibility mapping.",
+        "authorString": "Stewart AW, Robinson SD, O'Brien K, Jin J, Widhalm G, Hangel G, Walls A, Goodwin J, Eckstein K, Tourell M, Morgan C, Narayanan A, Barth M, Bollmann S.",
+        "authorList": {
+          "author": [
+            {
+              "fullName": "Stewart AW",
+              "lastName": "Stewart",
+              "firstName": "Ashley Wilton",
+              "initials": "AW",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-5951-5952"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "ARC Training Centre for Innovation in Biomedical Imaging Technology, University of Queensland, Brisbane, Queensland, Australia."
+                  },
+                  {
+                    "affiliation": "Centre for Advanced Imaging, University of Queensland, Brisbane, Australia."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Robinson SD",
+              "lastName": "Robinson",
+              "firstName": "Simon Daniel",
+              "initials": "SD",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Centre for Advanced Imaging, University of Queensland, Brisbane, Australia."
+                  },
+                  {
+                    "affiliation": "Department of Neurology, Medical University of Graz, Graz, Austria."
+                  },
+                  {
+                    "affiliation": "Karl Landsteiner Institute for Clinical Molecular MR in Musculoskeletal Imaging, Vienna, Austria."
+                  },
+                  {
+                    "affiliation": "Department of Biomedical Imaging and Image-Guided Therapy, High Field MR Center, Medical University of Vienna, Vienna, Austria."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "O'Brien K",
+              "lastName": "O'Brien",
+              "firstName": "Kieran",
+              "initials": "K",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "ARC Training Centre for Innovation in Biomedical Imaging Technology, University of Queensland, Brisbane, Queensland, Australia."
+                  },
+                  {
+                    "affiliation": "Centre for Advanced Imaging, University of Queensland, Brisbane, Australia."
+                  },
+                  {
+                    "affiliation": "Siemens Healthcare Pty Ltd, Brisbane, Queensland, Australia."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Jin J",
+              "lastName": "Jin",
+              "firstName": "Jin",
+              "initials": "J",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "ARC Training Centre for Innovation in Biomedical Imaging Technology, University of Queensland, Brisbane, Queensland, Australia."
+                  },
+                  {
+                    "affiliation": "Centre for Advanced Imaging, University of Queensland, Brisbane, Australia."
+                  },
+                  {
+                    "affiliation": "Siemens Healthcare Pty Ltd, Brisbane, Queensland, Australia."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Widhalm G",
+              "lastName": "Widhalm",
+              "firstName": "Georg",
+              "initials": "G",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-6014-0273"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Neurosurgery, Medical University of Vienna, Vienna, Austria."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Hangel G",
+              "lastName": "Hangel",
+              "firstName": "Gilbert",
+              "initials": "G",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-3986-3159"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Biomedical Imaging and Image-Guided Therapy, High Field MR Center, Medical University of Vienna, Vienna, Austria."
+                  },
+                  {
+                    "affiliation": "Department of Neurosurgery, Medical University of Vienna, Vienna, Austria."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Walls A",
+              "lastName": "Walls",
+              "firstName": "Angela",
+              "initials": "A",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Clinical & Research Imaging Centre, South Australian Health and Medical Research Institute, Adelaide, South Australia, Australia."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Goodwin J",
+              "lastName": "Goodwin",
+              "firstName": "Jonathan",
+              "initials": "J",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Radiation Oncology, Calvary Mater Hospital, Newcastle, New South Wales, Australia."
+                  },
+                  {
+                    "affiliation": "School of Mathematical and Physical Science, University of Newcastle, Newcastle, New South Wales, Australia."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Eckstein K",
+              "lastName": "Eckstein",
+              "firstName": "Korbinian",
+              "initials": "K",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Biomedical Imaging and Image-Guided Therapy, High Field MR Center, Medical University of Vienna, Vienna, Austria."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Tourell M",
+              "lastName": "Tourell",
+              "firstName": "Monique",
+              "initials": "M",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-6664-0674"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "ARC Training Centre for Innovation in Biomedical Imaging Technology, University of Queensland, Brisbane, Queensland, Australia."
+                  },
+                  {
+                    "affiliation": "Centre for Advanced Imaging, University of Queensland, Brisbane, Australia."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Morgan C",
+              "lastName": "Morgan",
+              "firstName": "Catherine",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-5837-8861"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "School of Psychology and Centre for Brain Research, The University of Auckland, Auckland, New Zealand."
+                  },
+                  {
+                    "affiliation": "Centre of Research Excellence, Brain Research New Zealand-Rangahau Roro Aotearoa, Auckland, New Zealand."
+                  },
+                  {
+                    "affiliation": "Centre for Advanced MRI, The University of Auckland, Auckland, New Zealand."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Narayanan A",
+              "lastName": "Narayanan",
+              "firstName": "Aswin",
+              "initials": "A",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-4473-7886"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Centre for Advanced Imaging, University of Queensland, Brisbane, Australia."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Barth M",
+              "lastName": "Barth",
+              "firstName": "Markus",
+              "initials": "M",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-0520-1843"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "ARC Training Centre for Innovation in Biomedical Imaging Technology, University of Queensland, Brisbane, Queensland, Australia."
+                  },
+                  {
+                    "affiliation": "Centre for Advanced Imaging, University of Queensland, Brisbane, Australia."
+                  },
+                  {
+                    "affiliation": "School of Information Technology and Electrical Engineering, The University of Queensland, Brisbane, Queensland, Australia."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Bollmann S",
+              "lastName": "Bollmann",
+              "firstName": "Steffen",
+              "initials": "S",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-2909-0906"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "ARC Training Centre for Innovation in Biomedical Imaging Technology, University of Queensland, Brisbane, Queensland, Australia."
+                  },
+                  {
+                    "affiliation": "Centre for Advanced Imaging, University of Queensland, Brisbane, Australia."
+                  },
+                  {
+                    "affiliation": "School of Information Technology and Electrical Engineering, The University of Queensland, Brisbane, Queensland, Australia."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "authorIdList": {
+          "authorId": [
+            {
+              "type": "ORCID",
+              "value": "0000-0001-6014-0273"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0001-6664-0674"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-0520-1843"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-2909-0906"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-3986-3159"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-4473-7886"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-5837-8861"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-5951-5952"
+            }
+          ]
+        },
+        "dataLinksTagsList": {
+          "dataLinkstag": [
+            "altmetrics",
+            "supporting_data"
+          ]
+        },
+        "journalInfo": {
+          "issue": "3",
+          "volume": "87",
+          "journalIssueId": 3296922,
+          "dateOfPublication": "2022 Mar",
+          "monthOfPublication": 3,
+          "yearOfPublication": 2022,
+          "journal": {
+            "medlineAbbreviation": "Magn Reson Med",
+            "title": "Magnetic resonance in medicine",
+            "essn": "1522-2594",
+            "issn": "0740-3194",
+            "nlmid": "8505245",
+            "isoabbreviation": "Magn Reson Med"
+          },
+          "printPublicationDate": "2022-03-01"
+        },
+        "pubYear": "2022",
+        "pageInfo": "1289-1300",
+        "abstractText": "<h4>Purpose</h4>Quantitative susceptibility mapping (QSM) estimates the spatial distribution of tissue magnetic susceptibilities from the phase of a gradient-echo signal. QSM algorithms require a signal mask to delineate regions with reliable phase for subsequent susceptibility estimation. Existing masking techniques used in QSM have limitations that introduce artifacts, exclude anatomical detail, and rely on parameter tuning and anatomical priors that narrow their application. Here, a robust masking and reconstruction procedure is presented to overcome these limitations and enable automated QSM processing. Moreover, this method is integrated within an open-source software framework: QSMxT.<h4>Methods</h4>A robust masking technique that automatically separates reliable from less reliable phase regions was developed and combined with a two-pass reconstruction procedure that operates on the separated sources before combination, extracting more information and suppressing streaking artifacts.<h4>Results</h4>Compared with standard masking and reconstruction procedures, the two-pass inversion reduces streaking artifacts caused by unreliable phase and high dynamic ranges of susceptibility sources. It is also robust across a range of acquisitions at 3 T in volunteers and phantoms, at 7 T in tumor patients, and in an in silico head phantom, with significant artifact and error reductions, greater anatomical detail, and minimal parameter tuning.<h4>Conclusion</h4>The two-pass masking and reconstruction procedure separates reliable from less reliable phase regions, enabling a more accurate QSM reconstruction that mitigates artifacts, operates without anatomical priors, and requires minimal parameter tuning. The technique and its integration within QSMxT makes QSM processing more accessible and robust to streaking artifacts.",
+        "affiliation": "ARC Training Centre for Innovation in Biomedical Imaging Technology, University of Queensland, Brisbane, Queensland, Australia.",
+        "publicationStatus": "ppublish",
+        "language": "eng",
+        "pubModel": "Print-Electronic",
+        "pubTypeList": {
+          "pubType": [
+            "Research Support, Non-U.S. Gov't",
+            "research-article",
+            "Journal Article"
+          ]
+        },
+        "grantsList": {
+          "grant": [
+            {
+              "agency": "Austrian Science Fund FWF",
+              "acronym": "FWF_",
+              "grantId": "P 31452",
+              "orderIn": 0
+            },
+            {
+              "agency": "Austrian Science Fund FWF",
+              "acronym": "FWF_",
+              "grantId": "KLI 646",
+              "orderIn": 0
+            },
+            {
+              "agency": "Australian Research Council",
+              "grantId": "FT140100865",
+              "orderIn": 0
+            },
+            {
+              "agency": "H2020 Marie Sk\u0142odowska-Curie Actions",
+              "grantId": "794298",
+              "orderIn": 0
+            },
+            {
+              "agency": "Austrian Science Fund FWF",
+              "grantId": "31452",
+              "orderIn": 0
+            },
+            {
+              "agency": "Australian Research Council",
+              "grantId": "IC170100035",
+              "orderIn": 0
+            },
+            {
+              "agency": "Austrian Science Fund FWF",
+              "grantId": "KLI\u2010646",
+              "orderIn": 0
+            }
+          ]
+        },
+        "meshHeadingList": {
+          "meshHeading": [
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "DG",
+                    "qualifierName": "diagnostic imaging"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Humans"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Magnetic Resonance Imaging"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Artifacts"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain Mapping"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Phantoms, Imaging"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Algorithms"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Image Processing, Computer-Assisted"
+            }
+          ]
+        },
+        "keywordList": {
+          "keyword": [
+            "Quantitative Imaging",
+            "Quantitative Susceptibility Mapping (Qsm)",
+            "Qsm Masking",
+            "Qsm Pipeline",
+            "Qsm Software"
+          ]
+        },
+        "subsetList": {
+          "subset": [
+            {
+              "code": "IM",
+              "name": "Index Medicus"
+            }
+          ]
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Subscription required",
+              "availabilityCode": "S",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/mrm.29048"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "html",
+              "site": "Europe_PMC",
+              "url": "https://europepmc.org/articles/PMC7612305"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "pdf",
+              "site": "Europe_PMC",
+              "url": "https://europepmc.org/articles/PMC7612305?pdf=render"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/mrm.29048"
+            }
+          ]
+        },
+        "commentCorrectionList": {
+          "commentCorrection": [
+            {
+              "source": "PPR",
+              "id": "PPR334851",
+              "type": "Preprint in",
+              "note": "CrossRef Pre-print loader",
+              "orderIn": 10002
+            }
+          ]
+        },
+        "isOpenAccess": "N",
+        "inEPMC": "Y",
+        "inPMC": "Y",
+        "citedByCount": 38,
+        "hasReferences": "Y",
+        "hasTextMinedTerms": "Y",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "Y",
+        "hasBook": "N",
+        "hasSuppl": "Y",
+        "hasLabsLinks": "Y",
+        "hasData": "Y",
+        "authMan": "Y",
+        "epmcAuthMan": "Y",
+        "nihAuthMan": "N",
+        "manuscriptId": "EMS140944",
+        "hasTMAccessionNumbers": "Y",
+        "tmAccessionTypeList": {
+          "accessionType": [
+            "doi"
+          ]
+        },
+        "dateOfCompletion": "2022-01-31",
+        "dateOfCreation": "2021-10-23",
+        "dateOfRevision": "2025-05-30",
+        "electronicPublicationDate": "2021-10-22",
+        "firstPublicationDate": "2021-10-22",
+        "firstIndexDate": "2021-11-24",
+        "fullTextReceivedDate": "2025-11-27",
+        "embargoDate": "2022-03-01",
+        "hasEvaluations": "N"
+      }
+    ]
+  }
+}

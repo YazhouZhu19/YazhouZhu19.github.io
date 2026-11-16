@@ -3,7 +3,7 @@ export const nav = [
   { id: "dashboard", label: "论文洞察", en: "Paper insights", icon: LayoutDashboard },
   { id: "github", label: "开源洞察", en: "Open-source insights", icon: GitBranch },
   { id: "news", label: "前沿动态", en: "Frontier updates", icon: Newspaper },
-  { id: "foresight", label: "方向研判", en: "Research outlook", icon: Focus },
+  { id: "foresight", label: "分析", en: "Analysis", icon: Focus },
   { id: "teams", label: "PI / 团队", en: "PI / Teams", icon: Users },
 ];
 export const auxiliaryNav = [

@@ -1,0 +1,820 @@
+{
+  "metadata": {
+    "name": "QSMxT/QSMxT",
+    "createdAt": "2020-12-21T00:24:36Z",
+    "pushedAt": "2026-11-16T15:53:36Z",
+    "archived": false,
+    "defaultBranch": "main"
+  },
+  "releases": [
+    {
+      "version": "v12.0.0",
+      "publishedAt": "2026-11-14T02:59:29Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v12.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "This release changes default results: χ maps from v11.0.0 are not directly comparable with this version's on data whose sidecar gives the scanner's centre frequency (most Siemens data), and TKD, TV, RTS, ROMEO, QSMART, HARPERELLA, χ-sep MEDI and LSQR results change when they are chosen. It adds whole toolbox pipelines to start from (MEDI toolbox, STI Suite, QSMART, the HEIDI package, the χ-separation toolbox, DECOMPOSE and UK Biobank), redesigns the TUI around one Reconstruction tab with Basic and Advanced settings, and exports SMWI, the magnitude and the segmentation to DICOM. Algorithms come from [QSM.rs v0.42.0](https://github.com/astewartau/QSM.rs/releases/tag/v0.42.0).\n\n## Output changes with default settings\n\n- **Phase to ppm uses the scanner's centre frequency.** When the sidecar has `ImagingFrequency`, QSMxT converts phase to ppm with it, as the MEDI and χ-separation toolboxes do; before, it used the nominal field strength. On Siemens 3 T scanners (2.89 T) results change by about 3.5 %. Data without `ImagingFrequency` are unchanged, a typed field strength still wins, and the log and methods text say which was used (#524).\n- **ROMEO unwraps in template mode**, ROMEO's own default: the template echo is unwrapped spatially and the other echoes temporally from it. Global 2π correction and re-unwrapping of uncertain voxels are off, as on ROMEO's command line. This fixes field maps that failed on some scans in individual mode with the default phase-quality mask. Individual mode stays an option (`--romeo-individual`, `--romeo-correct-global`) (#554).\n- **Combined magnitude** (`part-mag_T2starw`) is the root sum of squares of the inhomogeneity-corrected echoes. It used to be the RSS, corrected after combining. Its values change, and so do those of the steps that read it: SMWI, SynthSeg segmentation, and the magnitude-weighted inversions (NLTV, NDI, FANSI, FANSI-TGV, L1-QSM, AMP-PE, WH-QSM with a magnitude weight) (#546).\n- **BET** rounds its input to single precision, as bet2 does. BET masks move by a few thousand edge voxels on a typical 1 mm scan, and the maps made inside them follow (#530).\n- **Masks from coil-combined (MCPC-3D-S) or real/imaginary input** are made from double-precision echoes. BET masks move most (thousands of edge voxels on a 1 mm scan); threshold masks change only where a voxel sits on the threshold. Plain magnitude input is unchanged (#532).\n- **Recommendations** (applied in the TUI when you accept them, or with `--accept-recommendations`):\n  - WH-QSM: the flat data weight inside the mask (`--whqsm-weight flat-in-mask`) is recommended for all data (#555).\n  - iHARPERELLA: zeroing the whole boundary rim (`--iharperella-rim whole`) is recommended (#522).\n  - Suggested, not preselected: NDI's in-mask 99.9th-percentile weight normaliser (`--ndi-weight-norm mask-p999`) (#522).\n  - HEIDI: LSQR is offered as the authors' seed; with a regularised seed (for example MEDI), switching to LSQR is suggested, not preselected (#548).\n- Cached steps are recomputed once after updating.\n\nWhen chosen:\n\n- **TKD:** default threshold 0.25 (was 0.15). **TV:** default λ 3 × 10⁻⁴ (was 10⁻³). Both scored better (XSIM) on the 2016 QSM reconstruction challenge and on all four QSM Challenge 2.0 datasets. TSVD stays at 0.15 (#556).\n- **RTS** always runs its TV step. On some data (for example the KKI scans) it stopped after the first step, so `delta` and `mu` had no effect (#556).\n- **NLTV, FANSI nlTV and FANSI nlTGV** no longer diverge on single-echo, long-echo-time data. Their per-voxel Newton step now stays inside the interval that brackets the solution; one bright vessel near a phase residual of ±π could otherwise blow up the whole map. Results on data where they did not diverge are unchanged to float rounding (#544).\n- **HARPERELLA** zeroes the whole boundary rim of the Laplacian (`--harperella-rim sti` keeps STI Suite's 20 % rule). iHARPERELLA keeps STI Suite's rule by default (#521).\n- **iSMV** (Wen et al. 2014) centres its sphere when the header voxel size is not exact, for example 1 × 1 × 0.99999994 mm on Philips data; the sphere sat a quarter voxel off-centre there, which built into a smooth error in the background estimate (#521).\n- **QSMART's echo fit** uses QSMART v1.0's fixed threshold of 40 (it was the 99th percentile) (#524).\n- **QSMART:** Laplacian unwrapping, QSMART's echo fit and no mask erosion are recommended together (preselected): QSMART keeps the brain's edge, and with a path-based unwrapper, errors there become artefacts across the cortex. The QSMART pipeline is unchanged. QSMART's magnitude threshold of 100 is only offered with N4 and a magnitude mask input, so it can no longer empty the mask (#561).\n- **LSQR, and HEIDI after it,** weight by the root sum of squares of the echo magnitudes without inhomogeneity correction, as the HEIDI package takes it (#524), and need magnitude images (see Breaking changes) (#521).\n- **χ-sep MEDI** starts from an iLSQR QSM of the local field, as the χ-separation toolbox's script does, instead of the run's referenced QSM; the run's published χ is unchanged. Its iLSQR has its own settings (`--chi-sep-medi-qsm-*`) (#521).\n- **Multi-echo phase that does not wrap** (short echoes, phantoms, phase already processed) is no longer rescaled echo by echo. Every echo is now scaled with the same conversion, and radian phase is left alone. Real scans were not affected (#524).\n\n## New\n\n- **Toolbox pipelines.** Start from a whole original pipeline instead of setting each step: QSMxT's defaults, the MEDI toolbox, STI Suite (iLSQR or STAR-QSM), QSMART, the HEIDI package, the χ-separation toolbox (χ-sep iLSQR, χ-sep MEDI, χ-sepnet) or DECOMPOSE. Choose one on the TUI's new **Pipeline** tab, which shows what it changes before you apply it, or with `qsmxt run --pipeline <id>`; flags after it override it. The pipeline is completed on each scan (for example the χ-separation toolbox's Tukey window depends on the manufacturer), the header names the pipeline the settings follow and how many settings depart from it, and the methods text says which pipeline was followed (#514, #518, #521, #524). [QSM-CI](https://github.com/QSMxT/QSM-CI/blob/main/parity/STATUS.md) compares the MEDI toolbox, STI Suite iLSQR, QSMART, χ-sep iLSQR, χ-sep MEDI, DECOMPOSE and UK Biobank pipelines with the toolboxes' own code on an in-vivo scan. What the pipelines needed, also available on their own:\n  - Masks: STI Suite's QSM_GUI thresholding (`threshold:sti-gui`), largest component, hole filling, minimum intensity and majority filter as mask steps; BET in the stored voxel order (`--bet-orientation as-stored`); N4 on MATLAB `make_nii`'s geometry (`--n4-geometry make-nii`); STI Suite's mask polishing after V-SHARP (#530, #531, #538).\n  - Single-precision iLSQR (`--ilsqr-precision single`, also on `qsmxt qsmart`), HEIDI's ITK single-precision denoising, the QSMART offset grid as a run setting (`--qsmart-offset-grid`), DECOMPOSE's paper fit (`--decompose-fit paper`), and χ-sep MEDI's CSF R2\\* by the toolbox's NNLS (#524, #531, #534).\n- **UK Biobank pipeline** (`--pipeline uk-biobank`, or UK Biobank on the Pipeline tab): UK Biobank's QSM processing, including its trimming of unreliable-phase voxels from the mask edge (`--bf-ukb-mask-trim`) and its whole-volume Laplacian field (`--laplacian-keep-outside`). QSMxT's brain mask stands in for UK Biobank's T1-derived one, and the methods text says so. QSM-CI checks it against UK Biobank's own code (#566).\n- **MGPCG Laplacian solver** (`--laplacian-solver mgpcg`), from QSM.jl: Laplacian unwrapping with LBV background removal in one step. QSM.jl follows it with V-SHARP to remove remaining background (#563).\n- **Erode the mask before background removal:** `--bf-erode-voxels N` (default 0) (#522).\n- **Magnitude output switch:** `--no-magnitude` does not publish the combined magnitude; it is still made for a step that reads it (#546).\n- **SWI filtered phase:** `--swi-filtered-phase` also writes CLEAR-SWI's high-pass filtered phase (`desc-swi_phase`), in Hz for several echoes and radians for one (#537).\n- **DICOM export:**\n  - SMWI (paramagnetic and diamagnetic, and their minIPs) and the combined magnitude as MR series (#527, #533).\n  - The segmentation as a DICOM SEG, drawn on the magnitude series (or χ when the magnitude is not exported), so a viewer or PACS can overlay it (#528, #533).\n  - Exported series pass `dciodvfy`: ImageType, RepetitionTime, EchoTrainLength, PatientPosition and Laterality are filled from `--source-dicom` or the run's sidecar (#527).\n  - `qsmxt dicom-convert --keep-dicom-uids` keeps the study's UIDs (not the patient's identity), so a later export files its series into the original study without `--source-dicom`. Don't share such a dataset outside the site (#529).\n- **Announcements:** the TUI shows announcements from the QSMxT team, for example about a release that gives wrong results; `n` on the tab bar and `qsmxt news` list them (#512).\n- **`qsmxt update --main`** keeps its build in `~/.qsmxt/build`, so later updates rebuild only what changed (#517).\n- Unreleased builds are recorded as `rev-<commit>` in the log and provenance, and releases by their tag (`vX.Y.Z`) (#519).\n\n## TUI\n\n- **One Reconstruction tab** with a sidebar of sections: Preprocessing (Geometry, Masking, Motion), QSM (Compute QSM, Field map, Background, Inversion, COSMOS/STI, Reference, χ-separation, SMWI), Other outputs (SWI, Relaxometry, Segmentation) and Export (DICOM). Tabs: Input · Pipeline · Reconstruction · Execution · Methods (#525, #543).\n- **Compute QSM** is its own section, and says why QSM is made anyway when another output needs it (#543).\n- **Basic and Advanced settings:** Basic shows the choices (which steps run, which methods, inputs, outputs) and hides the parameters that tune a method; `A` switches. A setting that differs from the default or the chosen pipeline, or that has advice on it, is always shown (#550).\n- **Help beside the settings** on terminals at least 138 columns wide; below that it sits under a divider (#549, #551).\n- **Advice as a checklist:** every advice pop-up lists its changes as `Setting  current → new  (kind)` rows you tick, with the reason for the highlighted row in a panel underneath. Recommendations and required changes start ticked; suggestions and authors' settings start unticked (#553). Markers beside settings are short (`ⓘ MEDI: BET`), and `!` shows the details (#526, #549).\n- **The mouse:** click tabs, sections, settings, list entries and pop-up buttons; the wheel scrolls. A click outside a pop-up closes it (#516, #518, #547).\n- Every choice opens a list, mask numbers are typed (`+`/`-` nudge), `←` always returns to the sidebar, and DICOM export is a checklist of the maps the run makes (#525, #536).\n- The update check runs at every start, and a release can no longer be skipped (#512).\n- **When chosen methods' authors disagree** on a setting (for example PDF's authors use the complex fit and AMP-PE's the weighted average), the pop-up offers their values as one choice, each labelled with whose it is, with nothing ticked. QSMxT never switches such a setting on its own, including with `--accept-reference-settings`; the log says who uses what (#562).\n- Advice checklist: Enter ticks a row, `K` keeps your settings and closes, and pop-ups no longer loop between each other (#558).\n- Each piece of advice on a setting's help line is said once, under its strongest kind (#560).\n- Methods tab: Copy methods text and Open graph buttons; the mouse wheel scrolls the pane under the pointer. The Pipeline tab has an About page explaining what toolbox pipelines are (#559).\n- The MEDI toolbox pipeline notes that MEDI's own bipolar echo fit is not supported yet (#565).\n\n## Fixes\n\n- `qsmxt run --dicom-outputs chimap bids` no longer took the BIDS directory as a map name (#525).\n- The methods text cites LSQR and HEIDI as \"Schweser et al., 2010/2012\" instead of by key (#521).\n- `qsmxt run --dry` and `qsmxt recommend` no longer print rule sources and evidence; they stay in the run log (#552).\n- The Pipeline tab resets every reconstruction setting when a pipeline is applied, including ones hidden under a switched-off option (#518).\n- `qsmxt example` downloads pinned file versions, so later uploads to the example project can't break it (#557).\n- An empty brain mask now names the minimum-intensity step that emptied it and how to change it (#561).\n\n## Breaking changes\n\n- **LSQR needs magnitude images:** `qsmxt run` with LSQR (or LSQR+HEIDI) refuses a run without them, `qsmxt invert lsqr` requires `--magnitude`, and `qsmxt invert heidi` requires it unless `--seed` is given (#521).\n- **Settings files:** a full file an earlier release wrote with the earlier defaults for ROMEO, TKD or TV takes the new defaults, with a note. Hand-written files are read as written (#554, #556).\n- **ROMEO flags:** `--romeo-individual` and `--romeo-correct-global` now turn on what used to be the default (#554).\n- Workflow magnitude files written before masking are float64, twice the size (#532).\n\nOther: the settings shown in Basic mode, the advice markers and the pipelines come from the shared `qsmxt-engine` crate, so the browser version gets them too.\n"
+    },
+    {
+      "version": "v11.0.0",
+      "publishedAt": "2026-11-06T05:27:57Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v11.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "This release changes default results: χ maps and masks from v10.0.0 are not directly comparable with this version's. Most ports now match their original implementations, which changes most methods when they are chosen as well. It also removes and renames flags, changes the units of a few settings, changes how settings files from earlier releases load, and stops QSMART from choosing its own inputs (see **Breaking changes**). Algorithms come from [QSM.rs v0.41.0](https://github.com/astewartau/QSM.rs/releases/tag/v0.41.0), which includes the changes of [v0.40.0](https://github.com/astewartau/QSM.rs/releases/tag/v0.40.0).\n\n## Output changes with default settings\n\n- **Field mapping:** ROMEO and MCPC-3D-S follow ROMEO.jl and MriResearchTools step for step. This fixes ring artefacts on GE and Philips data. Phase offset removal smooths by 7 mm per axis (`--phase-offset-sigma-mm`; it was 4 voxels) (#425). Where the phase offset is undefined, the field is left out: the field mapping writes a field-valid mask (`desc-field_mask`), and background removal, inversion and the reliable-phase mask work inside it (#491).\n- **Masks:**\n  - On Philips data, voxels where the scanner wrote a fill value instead of phase are removed from every mask: 27–50 % of the mask's voxels on the audited data, mostly background (#491).\n  - makehomogeneous uses 15 segmentation boxes (`--homogeneity-nbox`, was 3). The corrected magnitude is flatter (in-brain CV 0.429 → 0.114 on a GE MR750), and masks made from it change: BET masks by at most 1.4 % in volume (#444).\n- **V-SHARP** estimates the background on a 1 mm isotropic grid (`--vsharp-grid native` restores the acquired grid; about 1.5× the memory on 1 mm data) (#430). Its smallest radius is 2 mm (was 1), stepping by `--vsharp-radius-step` (1 mm) (#425, #430), and its kernel is STI Suite's: 0.0002 % NRMSE from STI Suite on a travelling head, was 4.47 % (#447).\n- **iLSQR** pads 12 mm per side (was 16) and still runs 100 iterations (#425, #448). Its kernels now match the original: 0.0024 % / 0.017 % NRMSE on sim / in vivo, was 0.99 % / 1.78 % (#464).\n- **Oblique data resampled to axial:** the empty corners stay 0 instead of being filled with noise (#483).\n- **Methods text** gains a `## Note` before the references, listing where the run differs from each chosen method's reference pipeline. A default run lists one or two lines (#433, #443).\n- Cached steps are recomputed once after updating.\n\nWhen chosen:\n\n- **MEDI:** λ on MEDI_L1's scale (1000), MERIT, the MEDI+0 CSF term on 3 or more echoes, conversion at the echo spacing weighted by the noise map, and the dipole kernel filtered by the SMV (#410, #425, #432). Background removal stays V-SHARP unless you choose PDF (#435).\n- **TFI:** λ 1000, MERIT and the linear data term (`--tfi-merit`, `--tfi-linear`), every echo's magnitude (#425, #432).\n- **TGV:** α in radians at the echo time (`--tgv-te`, default the first) and field strength, iterations from the voxel size, no early stop (#425, #431).\n- **RTS, TV, TKD, TSVD, Tikhonov:** QSM.jl's padding and solvers (RTS's adaptive ρ, TV λ 1e-3) (#425, #448).\n- **NLTV, FANSI, L1-QSM, WH-QSM, HD-QSM, NDI:** work in radians with a magnitude weight. HD-QSM weights by every echo's magnitude (9.08 % → 0.0015 % from the original on sim) (#477). NDI runs 100 iterations (was 200) (#412).\n- **Background removal:** PDF is `PDF.m`, noise-weighted, 30 CG iterations (#425, #464). SHARP 4 mm / 0.03 (#449). iSMV follows Wen et al. 2014 (#448). RESHARP solves with CGS (#478). LBV is the authors' multigrid, with `--lbv-tol` 0.01 (#479).\n- **QSMART** detects vessels on the N4-corrected mean magnitude (`--qsmart-vessel-magnitude combined` restores the RSS) with sizes in voxels (`--qsmart-vessel-units mm` restores mm) (#415).\n- **χ-separation:** χ-sep MEDI and χ-sep iLSQR are the toolbox's methods, and χ-sep iLSQR reconstructs its own iLSQR QSM from the local field instead of using the run's (#430, #448). χ-sepnet takes the toolbox route with QSMnetME (`--chi-sepnet-route native` for the network alone) (#480). DECOMPOSE fits each stage with `lsqcurvefit`'s method, 400 iterations (#448, #450).\n- **iQSM, iQFM, iQSM+** weight echoes by (magnitude × TE)², about 3 % NRMSE from before (#467). **AutoQSM** χ is no longer sign-inverted (#407).\n- **R2\\*/T2\\*:** ARLO is `arlo.m`: no 0–500 Hz clip, no log-linear fallback, negative values set to 0, unevenly spaced echoes accepted (#425).\n- **BET** masks match bet2, and **N4** reads the image's own header geometry as ANTs does (#467, #475).\n\n## New\n\n- **Methods:**\n  - STAR-QSM: `--qsm-algorithm star`, `qsmxt invert star` (#429).\n  - QSMnetME: `--qsm-algorithm qsmnetme`, `qsmxt invert qsmnetme` (#480).\n  - PRELUDE and MEDI's region growing as unwrappers: `--unwrapping-algorithm prelude|medi-region-growing`, `qsmxt unwrap|fieldmap prelude|medi-region-growing` (#476, #485).\n  - MEDI's complex fit (`--b0-estimation complex-fit`) and QSMART's echo fit (`--b0-estimation qsmart-echofit`, `--qsmart-fit-*`), the `mirror` Laplacian solver and `--laplacian-unmasked` (#415, #432, #442).\n  - N4 inhomogeneity correction: `--inhomogeneity-method n4` and `--n4-*` (#428).\n  - MindGrab brain extraction: `--mask-preset mindgrab`, `mindgrab[:tta]` in `--mask`, `qsmxt mask mindgrab` (#327).\n- **HEIDI after any inversion** (`--heidi`): LSQR+HEIDI is `--qsm-algorithm lsqr --heidi` (`heidi` remains an alias), and in two-pass runs it runs once on the combined map. `qsmxt invert heidi --seed` runs it on another map (#471, #473, #474).\n- **Per-echo QSM** (`--qsm-per-echo`): each echo reconstructed on its own, published as `desc-echo<n>_Chimap`, with their mean as the `Chimap`; DECOMPOSE then uses the per-echo maps (#451).\n- **Method settings:**\n  - MEDI+0 (`--medi-csf*`), MEDI-mSMV (`--medi-msmv*`), `--medi-smv-shrink-mask`, `--medi-zeropad` (#425, #427, #432).\n  - Each method's echo time: `--<method>-te first|last|spacing|sum|<ms>` (#431).\n  - RTS τ/γ, NLTV ρ, WH-QSM weight, PDF `--pdf-n-cg`/`--pdf-space`/`--pdf-n-pad`, (i)HARPERELLA padding, and `--<method>-pad` for RTS, TV, TKD, TSVD, Tikhonov and NLTV (#431, #448).\n  - `--ismv-variant`, LBV's `--lbv-depth`/`-peel`/`-n1`–`-n3`/`-precision`, `--ilsqr-precision`, DECOMPOSE's `--decompose-unwrap-phase`, `--decompose-chi-bound echo-spacing` and `lsqcurvefit` flags (#448, #458, #464, #479).\n  - `--tukey-window`, the χ-separation toolbox's k-space window, with a vendor recommendation for χ-sepnet (#484).\n  - Patch sizes for χ-sepnet, SUSEP-Net and SynthSeg (`--chi-sepnet-patch`, `--chi-sepnet-frame-patch`, `--susep-net-patch`, `--synthseg-patch`) (#395, #401, #480).\n  - `--two-pass-mask-combine` for the reliable mask (#443). The deep-learning tiling setting also covers BFRnet, iQFM, iQSM and iQSM+ (#404).\n- **Recommendations from QSM.rs's pipeline rules.** Departures are logged at plan time, listed by `--dry` and noted in the methods text. Nothing changes unless asked (#433). Reasoned recommendations and original authors' settings are labelled apart, and are applied with `--accept-recommendations` and `--accept-reference-settings` respectively (`run` and `slurm`) (#486). `--dismiss-recommendation RULE=VALUE` keeps a choice (#433, #443). Where findings disagree, a reasoned one beats an authors' setting, and equal ones are left for you (#498).\n- **Multi-orientation:** `--orientation-reference` chooses each group's reference (#490). `--orientation-group runs:…` lists groups run by run (#507). COSMOS refuses directions too close to cover the magic-angle cone, for example two orientations less than about 13° apart (`--multi-orientation-force` overrides), and each group's summary gives the share left uncovered (#509).\n- **What a run did:** a `pipeline.svg` beside every `.mmd`, a run record per run, and a dataset `methods.md` and graph built from what the runs did, with differing runs in `changes/`. `qsmxt run --dry` prints the planned graph and methods (#382, #386, #387).\n- **Memory:** a per-step estimate, kept within Slurm job and container limits (#406, #487).\n- **`qsmxt dicom-convert`** is QSM-aware: scanner maps get their own names (`rec-scanner_Chimap`, …), other series go to `extra_data/`, name collisions are refused, headerless DICOMs are read, non-image files are skipped, phase sidecars carry `Units`, and `dataset_description.json`, `README` and `.bidsignore` are written (#488).\n- **Standalone commands:**\n  - `qsmxt invert iqsm|iqsm-plus`, `qsmxt bgremove iqfm`, `qsmxt r2prime --r2primenet` (#460).\n  - `qsmxt fieldmap --complex-fit-output`, `--complex-fit-noise-output`, `--field-mask-output`, and `qsmxt qsmart --intermediates DIR` (#461, #462, #466, #491).\n  - Switches that reproduce an original implementation, offered on the subcommands only: `invert tgv --reference-*`, `bgremove sharp --variant`, `bgremove vsharp --ball`, `invert tfi --kernel`/`--precision`, `qsmart --qsmart-offset-grid`, `invert iqsm --echo-weighting`, `separate chi-sep-medi --csf-mask` (#460, #465, #467, #468, #472, #478).\n- **Installing and updating:** `qsmxt update --main` builds the latest `main` from source (#482). Without root, `install.sh` installs to `~/.local/bin` with no sudo and adds it to `PATH` (`INSTALL_DIR`, `QSMXT_NO_MODIFY_PATH=1`) (#452). Unreleased builds show their commit in `--version` and the TUI (#508).\n\n## TUI\n\n- Pipeline is a sub-tab of Methods: the planned run as text, with peak memory and models; `Enter` writes the graph as SVG and opens it (#403, #443).\n- Advice: markers (⚑, ⓘ) name the method, `!` opens the details, and choosing a method whose reference pipeline differs opens a pop-up. Recommendations are preselected and authors' settings are not (#435, #486, #501, #503).\n- Methods and long lists are pickers, with `lsqr+heidi` in the inversion picker (#435, #501).\n- Orientation groups are set with ←/→ on the runs, and each run shows its group (#507).\n- Startup tips (`?`), ↑ reaches the main tab bar, sentence-case labels, and the example picker lists Download above the acquisitions (#416, #437, #503).\n- The DICOM screen shows each series' target name and warnings (#488). Editing a reliable-mask fixed threshold no longer panics (#340).\n\n## Fixes\n\n- Switching the inversion and back in one output directory gave the other method's map (in v10.0.0, 30.4 % of voxels differed) (#376).\n- Re-runs recompute exactly what reads a changed step. R2 without R2\\* kept a map fitted in the old mask (v9.13.0–v10.0.0) (#371, #506).\n- A supplied χ, R2, R2′ or segmentation on another grid is refused before the first step, and one on the acquired grid of a resampled run is resampled. Replacing a supplied file recomputes what reads it (#440, #441).\n- An empty brain mask fails the run. Motion correction is decided per run, and skipped runs are listed (#436).\n- Echo times rounded in sidecars (within 0.02 ms) are accepted (#439).\n- `qsmxt mask` combines a 4-D magnitude by RSS instead of reading echo 1 (#460).\n- Settings are range-checked on every front end, including non-finite values, before the run (#368, #426, #500).\n- Generated commands leave out settings that don't apply (#366). The methods text mentions multi-orientation and DICOM export only for runs that did them (#499, #505).\n- χ-sepnet doesn't download R2PRIMEnet when R2′ is supplied or not needed (#492, #497).\n\n## Breaking changes\n\n- **Removed or renamed flags:**\n  - `--phase-offset-sigma` is now `--phase-offset-sigma-mm`, in mm.\n  - `--ndi-phase-scale` is now `--ndi-auto-stop`, and `invert ndi --phase-scale` is `--auto-stop`.\n  - `--msmv-refine`, `--msmv-radius`, `--msmv-maxk` and `qsmxt bgremove msmv` are replaced by MEDI's `--medi-msmv*`.\n  - `--decompose-max-lm-iter` is replaced by `--decompose-max-iterations`.\n  - The χ-sep MEDI and χ-sep iLSQR settings are replaced by the toolbox's.\n  - Removed: `--fansi-phase-scale`, `--l1qsm-phase-scale`, `--whqsm-phase-scale`, `--tgv-tol`, `--linear-fit-reliability-threshold` (it never changed a run) and `--qsmart-sdf-spatial-radius` (#410, #412, #425, #442, #448).\n- **Units:** TGV α are radians at the echo time and field strength, no longer ppm. MEDI and TFI λ are on the original scale (#425).\n- **Settings files** now carry `schema_version = 2`. For an older file (#425, #430, #448):\n  - A full file an earlier release wrote takes today's default wherever it holds an earlier release's default (for example iLSQR's 16 mm padding or V-SHARP's `native` grid), with a note.\n  - Hand-written files are kept as written.\n  - A TGV α, MEDI/TFI λ or phase-offset σ in the old units is refused when its method runs.\n- **No method changes other settings.** `--qsm-algorithm qsmart` no longer switches to a BET mask. Its reference inputs (BET, Laplacian unwrapping with the `mirror` solver, the echo fit) are offered as authors' settings (`--accept-reference-settings`) (#435).\n- **Standalone commands:**\n  - Many `qsmxt invert` methods, `bgremove pdf` and `bgremove lbv` take `--field-strength` and `--echo-times`, and the magnitude-weighted ones require `--magnitude` (#425, #477, #479).\n  - `separate chi-sepnet` takes `--local-field` and `--r2prime` or `--r2star`, with `--qsm` only for `--route native` (#480).\n  - `separate chi-sep-medi` takes `--echo-times` and every echo's magnitude (#448).\n  - `qsmxt resample` fills with noise only with `--noise-fill` (#483).\n- **Now refused:**\n  - phase-only runs with NDI, NLTV, FANSI, L1-QSM, MEDI, TFI or PDF (#425)\n  - COSMOS on directions too close together, which exits 1 (#509)\n  - orientation groups that would write the same files (#507)\n  - a missing dataset or one with no runs, which exits 1 (#487)\n  - `--dismiss-recommendation` on an authors' setting (#443)\n- **`qsmxt dicom-convert` names differ:**\n  - Every run of a repeated acquisition is labelled, `run-1` included (#452).\n  - A repeat with other settings becomes `acq-<name>2`.\n  - Reconstructions use `rec-` instead of `desc-`.\n  - Non-QSM series go to `extra_data/` (#488).\n\n  Re-converted datasets need their patterns checked.\n\nOther: run logic moved into the shared `qsmxt-engine` crate for the browser version, CI runs in 8.5 min instead of 30, and docs follow every change.\n"
+    },
+    {
+      "version": "v10.0.0",
+      "publishedAt": "2026-10-14T05:28:01Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v10.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "This release changes default results: χ maps, masks and SWI from v9.22.0 are not directly comparable with this version's. It also renames several outputs and changes a few flags (see **Breaking changes**). Algorithms come from [QSM.rs v0.39.0](https://github.com/astewartau/QSM.rs/releases/tag/v0.39.0).\n\n## Output changes with default settings\n\n- **iLSQR is the default dipole inversion**, replacing RTS. It is a new implementation of the reference iLSQR algorithm, and now pads 16 mm per side (`--ilsqr-pad-mm`, new). In a 150-subject test-retest cohort iLSQR tracked age and longitudinal change better than RTS; RTS stays available (`--qsm-algorithm rts`) and is about 15× faster.\n- **V-SHARP no longer deconvolves by default** (`--vsharp-deconvolve true` restores it). This raised longitudinal sensitivity in iron-rich structures without a significant loss of test-retest reliability.\n- **SWI is CLEAR-SWI over every echo** (Eckstein et al., 2021). Every v9 release so far used the first echo only. The SWI now uses all echoes, has a sensitivity-corrected magnitude, and covers the whole head. New `--swi-unwrapping laplacian|laplacian-slice|romeo`.\n- **HD-BET runs on the whole volume**: 2–3.7× faster than the sliding window, at about twice the memory (6–8 GB). Masks are 0.5–1 % smaller, mostly at the inferior edge. `hd-bet:window` and `hd-bet:low-memory` keep the sliding window.\n- **Masks are built from every echo**: each mask section takes the RSS of the inhomogeneity-corrected echoes (or echo 1 / the last echo), so the default mask changes slightly.\n- **TGV:** multi-echo TGV χ was too small (about 4× at 3 T, TE1 = 5 ms). α are now in ppm, so one value means the same at every TE and field strength.\n- **TFI** inverts the total field instead of a V-SHARP local field.\n- **ROMEO with `--phase-offset-removal false`** now honours `--b0-estimation` and `--b0-weight-type`.\n- **χ-separation MEDI** uses the same D_r as the other methods; **R2′** is zero where R2 ≤ 0.\n- **Oblique runs:** segmentations keep valid label ids on the acquired grid, and the axial working grid is chosen differently for oblique, anisotropic acquisitions.\n- Every NIfTI output carries a qform as well as the sform.\n\n## New\n\n- **Retrospective motion correction** (`--motion-correction`) and a **motion-robust echo fit** (`--b0-estimation robust-fit`), both off by default.\n- **Multi-orientation co-registration:** COSMOS/STI orientation groups whose members don't share a grid are rigidly co-registered, and their B0 directions are recovered from the rotations.\n- **Real/imaginary input** (BIDS `part-real` / `part-imag`, as GE exports), with detection and correction of alternate-slice π chopping.\n- **V-SHARP working grid:** `--vsharp-grid finest|isotropic` estimates the background on an isotropic grid, which helps thick-slice data. The default stays `native`.\n- **Slice-gap check:** 2D acquisitions with gaps between slices are refused before processing (`--ignore-slice-gap` overrides).\n- **The total field is published** as `fmap/<run>_desc-total_fieldmap.nii` (Hz).\n- **R2′:** a coverage mask of where R2′ is measured, a sidecar recording whether it was measured, predicted or supplied, and a field-strength policy for R2PRIMEnet (trained at 3 T only).\n- **`qsmxt aggregate` and `qsmxt run --no-dataset-steps`**, for splitting a dataset across machines.\n- **Verified updates:** releases carry `SHA256SUMS`, and `qsmxt update`, `install.sh` and `install.ps1` check each archive before installing it.\n\n## TUI\n\n- New layout: tabs by processing stage, with sub-tabs (`[`/`]` or the arrow keys).\n- Every `qsmxt run` option is now reachable in the TUI, and each setting is shown only where and when it applies.\n- Checkboxes replace \"off\" values, all BET settings sit together, and the Separation tab is now \"χ-separation\".\n- A **Run** button on the Execution tab (same as `F5`), and **copy the methods text** to the clipboard from the Methods tab (`Enter`, `c` or `y`; works over SSH).\n\n## Fixes\n\n- **`qsmxt slurm` gives the same results as a local run.** COSMOS/STI groups never formed under SLURM, and jobs overwrote each other's dataset-level outputs. Each job now processes its run, and a final aggregation job does the dataset-level steps.\n- Cached steps are keyed on every setting they read. `--clean-intermediates` no longer deletes published outputs or the cache.\n- Flags that were accepted and then ignored now take effect or are refused. A requested output the data can't produce is an error before anything runs.\n- Algorithms report bad input as an error instead of panicking.\n- `--b0-direction` accepts negative components.\n- Provenance records the exact QSM.rs version.\n- The methods text names only non-default settings, and docs match the code.\n\n## Breaking changes\n\n- **Output names are valid BIDS:**\n  - STI writes one 4D `desc-sti_Chimap` and `desc-sti_evec` instead of separate component files.\n  - The SMWI minIPs are now `desc-paramagneticsmwi_minIP` / `desc-diamagneticsmwi_minIP`.\n  - Two runs differing only by suffix get it folded into `acq-`.\n  - Working-space outputs of resampled runs carry `space-axial`.\n\n  Outputs from an earlier release are recomputed once.\n- **Obliquity resampling** is turned on with `--axial-resampling`; `--obliquity-threshold` (default 10°) only sets when it applies. The old `-1` value is gone.\n- **`--b0-weight-type t-es`** is now `tes`.\n- **TGV:** `--tgv-alpha0/1` and config α are read as ppm, and `qsmxt invert tgv` takes a field in ppm with no `--echo-time` / `--field-strength`.\n- **Standalone commands:**\n  - `qsmxt swi` takes `--phase` / `--magnitude` per echo, with optional `--tes` and `--mask`.\n  - `qsmxt bgremove harperella|iharperella` reads a wrapped echo given `--te` and `--field-strength`, and writes ppm.\n  - Standalone outputs use the pipeline's names.\n- **Removed:**\n  - the `mouse-bet` mask preset (use `rs2-net`, or BET with `scale=`)\n  - `--iharperella-radius`, which never reached the algorithm\n  - `--synthseg-version v2` until its weights exist\n- **TUI:** `Enter` on the Methods tab copies instead of running; use `F5` or the Run button.\n\n\n"
+    },
+    {
+      "version": "v9.22.0",
+      "publishedAt": "2026-09-22T16:02:06Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.22.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "- **Two-pass artefact reduction is back**, absent since v8 (#218). Strong susceptibility sources leave the phase around them unrecoverable; reconstructing once on a mask whose holes are intact and once on the filled mask, then keeping the hole-preserving result wherever it is defined, keeps their streaking out of the rest of the brain. `--two-pass`, off by default — it roughly doubles background removal and inversion, and where the holes were not artefactual it can be worse than a single pass. The conventional map is kept alongside as `_desc-singlepass_Chimap.nii`, as in v8\n- The reliable-phase mask is an ordinary mask in the existing `--mask` grammar (`--two-pass-mask`), defaulting to `phase-quality,threshold:otsu`; in the TUI it is the same mask editor, so every row type and key binding applies to it unchanged (#218)\n- **Whole-brain segmentation returns** — and needs no T1w (#216). SynthSeg is trained on synthetic images of randomised contrast, so one set of weights parcellates the GRE magnitude you already have: no separate acquisition, no registration. `--do-segmentation` writes `_dseg.nii` plus its BIDS `_dseg.tsv` label table; `qsmxt segment` runs it on a single volume\n- **Per-structure susceptibility statistics** (#216): `--do-analysis` writes median, mean, SD and 5th/95th percentiles per structure. Median *and* mean because susceptibility inside a structure is skewed and carries outliers; percentiles are nearest-rank, never interpolated between voxels that exist. On a 3 T acquisition this reproduces the known iron gradient — pallidum +0.102 ppm, putamen +0.028, caudate +0.029, thalamus −0.004, cortex ~0\n- **R2′ without a spin-echo scan** (#217). R2′ = R2* − R2 is a measurement and needs MESE data; without it `--do-r2primemap` produced nothing, and every R2′-consuming χ-separation method was unavailable. `--r2prime-strategy auto` (the default) now measures where it can and predicts with R2PRIMEnet where it cannot; `mese` only ever measures; `r2primenet` always predicts. The generated methods text says which, because a measurement and an estimate support different claims\n- **SMWI** — susceptibility map-weighted imaging (#215). Weights the magnitude by a mask built from χ rather than from filtered phase, so contrast sits where the source is instead of spreading with the dipole field. `--do-smwi` writes paramagnetic and diamagnetic images with their own minIPs. The 1 ppm default threshold follows SEPIA and targets far stronger sources than brain tissue\n- **Two new dipole inversions** (#214): `--qsm-algorithm lsqr` (minimally regularised LSQR, Schweser 2010) and `heidi` (HEIDI, Schweser 2012), which seeds itself with an LSQR solve — so `--lsqr-*` applies to both. HEIDI's `--heidi-continuation-steps` is its dominant quality knob and more is not better; worth sweeping\n- **Fixed:** the SWI minIP was written under the source volume's dimensions, so its header promised more voxels than the file held — NiBabel loads such a file and then throws on `get_fdata()`, and viewers show nothing. The projected values were correct all along (#212, QSMxT#211)\n- **Fixed:** every warning emitted while validating the command line was discarded. The logger was initialised ~110 lines after the config was built, so `Ignoring invalid mask op`, `--masking-input is ignored when --mask is given`, the QSMART tight-mask advice and `Discovered N run(s)` all went nowhere; `--dry` had no logger at all, which is exactly when those warnings matter (#218)\n- **Fixed:** the TUI chose which pipeline stages and parameter rows to show by comparing the selected algorithm's *index* against hardcoded numbers, and nothing held its algorithm list against the table that turns that index back into an algorithm. Both are now symbolic, with a test pinning the two lists together — drift there ran a different algorithm than the one on screen (#214)\n- Requires QSM.rs v0.38.0\n"
+    },
+    {
+      "version": "v9.21.0",
+      "publishedAt": "2026-09-16T12:04:28Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.21.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "- **`qsmxt example` downloads a real dataset to run the pipeline on.** Someone who installs QSMxT with no data of their own now gets from install to a susceptibility map in two commands: `qsmxt example study/bids && qsmxt run study/bids`. The data is one in-vivo subject from the 2026-08-20 QSM harmonization acquisition (MGH bays 4/5), scanned on two Siemens 3T scanners (MAGNETOM Prisma Fit, MAGNETOM Cima.X) under four protocols × 3 runs and published on the public OSF project [gkemr](https://osf.io/gkemr/). QSMxT fetches the packed acquisition, splits the 4D magnitude and phase into per-echo files, and writes the BIDS sidecars — nothing had to be re-hosted. Default is `prisma-bridge-run1` (~103 MB); `qsmxt example --list` shows all 23.\n- **Several acquisitions can share one dataset.** All 23 are the *same* subject, so they materialize as a single `sub-01` distinguished by `ses-`(scanner) / `acq-`(protocol) / `run-` entities — which is what makes `qsmxt example --name prisma-bridge-run1 --name cima-bridge-run1 study/bids` produce a coherent two-run dataset rather than a collision. Pointing a later call at an existing dataset adds to it; an acquisition already present is skipped unless `--force`, and a hand-edited `dataset_description.json` or `README` is never clobbered.\n- **The TUI has an \"Example dataset\" input mode.** A fourth entry in the Input Mode selector lists the acquisitions with sizes; tick any number and press Download, and it hands off into BIDS mode pointed at the new dataset, the same way DICOM→BIDS conversion already does. The cursor opens on the Download button, so the default acquisition is a single Enter.\n\n**Notes on the data**\n\n- `MagneticFieldStrength` in the generated sidecars is the physically accurate field derived from the scanner's carrier frequency — about **2.89 T**, not the nominal 3.0 T. QSM scales ppm by this value, so the accurate one is the correct one; the sidecar records the `ImagingFrequency` it was derived from so the value explains itself.\n- Echo times were recovered from the exam-card PDFs shipped with the acquisition and, for the Pulseq consensus sequence, from [HarmonizedMRI/megre_label](https://github.com/HarmonizedMRI/megre_label). They are not the DICOM sidecar values, which carry placeholder timings for the Pulseq protocols.\n- Phase is wrapped and in radians, as the pipeline expects. No mask ships with the example — masking runs normally.\n\n**Under the hood**\n\n- Archives are SHA-256 verified against the checksums OSF publishes in its file API, streamed to disk rather than buffered (they are 96–226 MB), and cached under `~/.cache/qsmxt/examples`, overridable with `$QSMXT_EXAMPLE_CACHE`. Re-fetching an already-cached acquisition into another directory costs nothing.\n- OSF throttles bursts of anonymous downloads with a **403**, not the usual 429, so 403 is retried like a rate limit with exponential backoff and jitter — the same handling qsm-core already uses for model weights. 404 and 401 still fail fast.\n- `ureq` is depended on directly rather than through qsm-core, so this works in `--no-default-features` builds (the Windows/ARM64 binary). `zip` is the only genuinely new dependency.\n- **An example fetch can be pointed at a mirror.** `$QSMXT_EXAMPLE_BASE_URL` overrides the OSF host, so an air-gapped or bandwidth-constrained site can serve the archives locally as `<base>/<id>.zip`. Checksums are still enforced, so a mirror serving the wrong bytes is rejected exactly as a corrupted download would be.\n"
+    },
+    {
+      "version": "v9.20.1",
+      "publishedAt": "2026-09-16T01:24:39Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.20.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "- **The QSM.rs version reads `unknown` in the TUI header and in `qsmxt --version`.** `build.rs` matched the first `Cargo.toml` line mentioning `qsm-core`, which since the `dl` feature was added is `dl = [\"qsm-core/onnx\", \"qsm-core/download\"]` — no `tag = `, so the version never got read. It now matches the dependency declaration itself, and reports `local` for the path dependency used while a QSM.rs change is unreleased.\n- **`--mask-preset bet-and-phase` gave its phase-quality section no refinements**, so the phase side of the intersection was a bare Otsu threshold rather than the mask `robust-threshold` would produce from the same input. It now carries the same dilate / fill-holes / erode, so each side of the intersection is the mask its own preset would give.\n- **The TUI dropped 12 of the 15 ROMEO settings when writing a config.** Only phase gradient coherence, mag coherence and mag weight were propagated; phase linearity, mag weight 2, best-path, temporal uncertain, max seeds, merge regions, correct regions and wrap addition were editable on the pipeline screen and then silently lost. All 15 now carry through, matching the `--config` path, which was already complete."
+    },
+    {
+      "version": "v9.20.0",
+      "publishedAt": "2026-09-15T11:07:37Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.20.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "- **Oblique acquisitions are handled, and `--obliquity-threshold` is finally wired up.** The dipole kernel is built in the voxel grid, so an acquisition whose slices are tilted relative to B0 has to be handled explicitly. QSMxT did neither available thing: B0 was assumed `(0, 0, 1)` unless a sidecar said otherwise, and `--obliquity-threshold` was parsed, stored in config, shown in the TUI and emitted by the command generator, with nothing in the run pipeline ever reading it. In priority order now: a sidecar `B0_dir` wins; `--obliquity-threshold <deg>` resamples to axial when exceeded, as 8.x did; otherwise the kernel is rotated using B0 from the affine, keeping the acquired grid and interpolating nothing. The last is the default and normally the one you want. On a 256×288×48 UK Biobank SWI at 32.5° obliquity: 246 s on the acquired grid, against 459 s and a 272×339×77 grid for `--obliquity-threshold 10`.\n- **`--output-space acquired|working`.** A run resampled to axial used to leave its derivatives on the resampled grid, which is a quiet correctness problem for any caller holding a transform — a FLIRT matrix is defined in a space derived from the image's dimensions and voxel sizes, so applying one to a volume on a different grid produces a wrong registration rather than an error. `acquired` is now the default; it costs a second interpolation, so the output is slightly smoother. `working` opts out.\n- **FFT-friendly padding, on by default.** Resampling has no reason to land on a good grid — the UK Biobank case lands on 272×339×77, whose factors include 113. Padding to 280×343×80 took one FFT from 131 ms to 71 ms for 8% more voxels. Nothing is discarded, and the periodic boundary moves *away* from the object, so it cannot cost accuracy. Cropping to the mask stays opt-in: it moves χ by ~0.6% of dynamic range.\n- **Algorithms that cannot handle an oblique acquisition now say so** instead of quietly producing a wrong map. Every deep-learning inversion is axial-only and the SMV background-removal family is not applicable off-axial; the run either refuses or resamples.\n- **Mask sections can be intersected, not just unioned.** `--mask-combine or|and` sets how multiple `--mask` sections fold together, and `--mask-refine <op>` applies refinements to the *combined* mask — which is where hole-filling belongs, since filling a section's holes before an intersection is not the same as filling the intersection's. `--mask-preset bet-and-phase` is the whole recipe in one flag: BET on the magnitude intersected with a thresholded phase-quality map, then hole-filled and eroded, as recommended by the ISMRM electro-magnetic tissue properties study group consensus ([doi:10.1002/mrm.30006](https://doi.org/10.1002/mrm.30006)).\n- **TUI masking is editable rather than just selectable.** The section separator is an OR/AND toggle, there is an \"On the combined mask\" step list, and all five `signal-erode` parameters are rows you can nudge with ←/→ instead of one adjustable threshold. Generated commands now name the preset — selecting hd-bet gives `--mask-preset hd-bet`, not 75 characters of expansion.\n- **`qsmxt mask and` / `or` / `preset`.** Combine masks, or run a whole preset recipe, on files without a pipeline run. Every `qsmxt mask` subcommand is now the first link of a chain — `erode`, `dilate`, `close`, `fill-holes` and `smooth` take `--op` like the generators already did — and each op is defined once, in the same code the pipeline runs, so a mask built by hand matches what a `--mask` section produces.\n\n**Behaviour changes**\n\n- **SWI output shifts slightly.** qsm-core v0.35.0 split `laplacian_unwrap` into plain unwrapping and `laplacian_unwrap_bfr`; the name stayed on the unwrapping half, so call sites compile unchanged and get different behaviour. All three QSMxT call sites (`qsmxt unwrap laplacian`, `qsmxt swi`, the pipeline SWI stage) want plain unwrapping — the background-removal pass they used to get was redundant work before CLEAR-SWI's own high-pass filter. Dipole inversion is unaffected, since background removal there is its own stage.\n- **Bare `fill-holes` now means automatic** (holes up to 5% of the volume) rather than a 1000-voxel cap, in `--op`, in `--mask` sections and as the `qsmxt mask fill-holes` default. Every preset already spelled `fill-holes:0`; the 1000 was the one place that disagreed.\n- **`qsmxt mask percentile` ranks positive voxels only**, matching what `threshold:percentile:P` in a `--mask` section has always done. The subcommand used to rank every finite voxel, zeros included, which gave a lower threshold on zero-padded data.\n\n**Under the hood**\n\n- qsm-core [v0.35.0](https://github.com/astewartau/QSM.rs/releases/tag/v0.35.0): Laplacian unwrapping solves via DCT-II instead of even extension (1788 MB peak to none, 10.0 s to 2.3 s on a real volume, same answer to 2.5e-14), and PDF background removal no longer hardcodes B0 as `+z`, which had been projecting oblique acquisitions onto the wrong dipole basis.\n"
+    },
+    {
+      "version": "v9.19.1",
+      "publishedAt": "2026-09-14T09:06:16Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.19.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "- **HD-BET's sliding-window step is now settable.** `MaskOp::HdBet` only modelled the patch size and TTA, so qsm-core's `tile_step` was reinstated as the default at the config boundary and no surface could change it. It is the one HD-BET parameter that trades quality for time — on a 164×205×205 1 mm volume, `step=0.5` is 36 patches and `step=0.75` is 16. Available as `qsmxt mask hd-bet --tile-step`, a \"Patch Step\" row in the TUI, and `hd-bet:...:step=F` in a mask section. Note that the step now always prints, so `hd-bet:low-memory` renders as `hd-bet:128x128x64:step=0.5`."
+    },
+    {
+      "version": "v9.19.0",
+      "publishedAt": "2026-09-14T06:34:03Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.19.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "- **Uncombined receive coils are now combined with MCPC-3D-S.** Runs whose phase is exported per coil (`rec-uncombined_coil-NN`, as `qsmxt dicom-convert` writes for a Siemens \"save uncombined\" export such as UK Biobank SWI) are combined before masking instead of being read as one run with 32× the echoes. Combined output matches QSMxT 8.3.2's converter to a median 0.0006 rad, p99 0.04 rad, magnitude r = 0.999999.\n- **Behaviour change:** when a dataset holds both the scanner-combined and the per-coil version of an acquisition, the per-coil run is now used and the scanner-combined duplicate is skipped with a log line. Pass `--exclude \"*rec-uncombined*\"` to reconstruct from the scanner-combined phase as before.\n- **`--coil-combination-sigma`** (default `10 10 5` voxels, the MriResearchTools / 8.x value) sets the smoothing of the per-coil phase offsets, separately from `--phase-offset-sigma`.\n- **`qsmxt combine mcpc3ds`** runs the combination standalone on loose per-coil NIfTIs, writing `<prefix>_echo-N_part-{phase,mag}.nii` and the mask.\n- **DECOMPOSE: χ+ no longer collapses to exactly zero** past `|χ| > π / ((2/3)·γ·B0·TE_max)` — 0.090 ppm at 7 T with a 28 ms last echo, which took out the globus pallidus and nothing else. From [qsm-core v0.33.0](https://github.com/astewartau/QSM.rs/releases/tag/v0.33.0).\n- **DECOMPOSE: gets faster with threads instead of slower** — 35.1 s → 0.90 s at 8 threads, byte-identical output. `RAYON_NUM_THREADS=1` workarounds around `qsmxt separate decompose` can go.\n- Docs: the 8.x notes moved off the homepage, and the reference pages cover coil combination.\n"
+    },
+    {
+      "version": "v9.18.1",
+      "publishedAt": "2026-09-12T02:12:02Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.18.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "Dependency bump only — **no behaviour change for qsmxt**.\n\nPicks up [qsm-core v0.32.0](https://github.com/astewartau/QSM.rs/releases/tag/v0.32.0):\n\n- **`pipeline::apply_mask_ops`**, one implementation of what the mask operations mean, now public so hosts that drive masking themselves — an interactive UI applying one refinement per click — run the same code this pipeline does instead of reimplementing it. `build_mask_section` is that function starting from an all-ones mask, so masks produced here are unchanged.\n- **Multithreaded ONNX inference on WASM**, which doesn't apply to a native binary.\n\nThis tag exists mainly so QSMbly can pin `qsmxt-config` against qsm-core v0.32.0, drop its own JavaScript mask morphology, and call the same code — making signal-gated erosion behave identically in the browser and in qsmxt.\n"
+    },
+    {
+      "version": "v9.18.0",
+      "publishedAt": "2026-09-11T22:27:57Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.18.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "## HD-BET brain extraction and signal-gated erosion\n\nTwo new masking operations, from [qsm-core v0.31.0](https://github.com/astewartau/QSM.rs/releases/tag/v0.31.0).\n\n**HD-BET** (Isensee et al., 2019) is a deep-learning brain extractor — an nnU-Net v2 3D U-Net trained on 11,751 multi-sequence clinical MRIs, run natively through the existing ONNX path. Its masks agree with the genuine `hd-bet` tool at Dice ≥ 0.99998, and on the qsm-forward phantom it scores Dice 0.943 against ground truth, against 0.934 for BET. The weights (~120 MB, **CC-BY-NC-4.0** — non-commercial) download on first use, like every other deep-learning model; a build without the `dl` feature reports the usual clear error.\n\n**Signal-gated erosion** is QSM-CI's harmonization refinement, and applies to any mask. Near the sinuses and skull base, T2\\* dropout leaves mask voxels with no usable signal, and the unreliable field there leaks background-field artefact into χ. Eroding the whole mask suppresses that only by peeling healthy cortex just as hard; this instead removes only boundary voxels whose coil-debiased magnitude is below a fraction of the in-mask median, working inward through the dropout but never deeper than a depth cap, and leaving dark interior structures (veins, iron-rich nuclei) alone.\n\nWhere they appear:\n\n- `--mask-preset hd-bet` — HD-BET followed by signal-gated erosion, i.e. QSM-CI's harmonization masking. On the phantom this reaches Dice 0.965 against ground truth.\n- `--mask` sections: `hd-bet[:XxYxZ|low-memory][:tta]` as a generator, `signal-erode[:threshold[:depth_cap[:global_erosions[:bias_sigma[:min_component]]]]]` as a refinement, e.g. `--mask magnitude,hd-bet:low-memory,signal-erode`.\n- `qsmxt mask hd-bet` (`--low-memory`, `--patch XxYxZ`, `--tta`), and `--op signal-erode` on the mask subcommands whose input is a magnitude image.\n- TUI: an HD-BET preset; the mask generator cycles threshold → BET → HD-BET, its parameter row toggling the native 192×192×96 patch (about 4.5 GB peak) against the low-memory 128×128×64 one (about 1.9 GB); signal-erode is available as a refinement step.\n\n**Behaviour change:** passing a generator to `--op` (e.g. `--op bet:0.5`) is now an error rather than being silently ignored.\n\n## Multithreaded deep-learning inference\n\nqsm-core v0.31.0 upgrades its ONNX engine (tract 0.21 → 0.23) and spreads each inference across cores. Every deep-learning model benefits, with no options to change: up to ~3× faster where inference dominates (IR2QSM 33→14 s, tiled xQSM 58→18 s, an HD-BET patch 23→9 s), and less where loading and optimising the graph dominates. Outputs are bit-identical to the previous engine for every model (IR2QSM differs by ≤2e-7 of its range).\n\n## SLURM mode ran the default pipeline\n\nChoosing SLURM execution wrote a `pipeline_config.toml` built from the defaults (romeo, threshold masking, sharp, rts) instead of the options selected in the pipeline settings, so generated jobs ran with the wrong parameters. `qsmxt slurm` on the command line had no pipeline flags at all, and the command the TUI printed for SLURM mode included flags it could not parse. The pipeline options are now a shared `PipelineArgs` flattened into both `run` and `slurm`, and both paths resolve to an identical config before jobs are generated.\n\n**Downstream:** QSMbly should pin `qsmxt-config` to `v9.18.0` alongside `qsm-core` v0.31.0, so both resolve a single `qsm-core` copy. Note for that bump: on `wasm32-unknown-unknown` the `getrandom` opt-in moves from 0.2 `js` to 0.4 `wasm_js`, and an ONNX-enabled wasm module grows 13.0 → 20.2 MB raw (1.6 → 2.7 MB brotli) with tract 0.23; builds without `onnx` are unchanged, and WASM inference stays single-threaded.\n"
+    },
+    {
+      "version": "v9.17.0",
+      "publishedAt": "2026-09-08T01:39:29Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.17.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "## qsm-core → v0.30.0\r\n\r\nTwo behaviour changes come with this bump.\r\n\r\n**AMP-PE no longer diverges on in-vivo data.** AMP-PE could run away entirely, with χ growing without bound to ~1e34 — 58.7% of runs on the QSM-CI harmonization set, while every other dipole method was unaffected. This is long-standing rather than new; the MATLAB reference is unstable the same way. The magnitude-derived wavelet morphology prior destabilises the GAMP iteration, which now detects a diverging sweep, restores the last good state and damps harder, with the damping ceiling ratcheting down so it cannot climb back to a rate that already diverged. On data that does not diverge the output is bit-identical to v9.16.0.\r\n\r\n**V-SHARP default deconvolution threshold `0.05 → 0.2`.** The old default under-regularised the TSVD step and amplified field-mapping error on the estimated fields every real pipeline feeds it. Inert on a clean field, but **this changes V-SHARP output for anyone relying on the default** — callers passing an explicit `threshold` are unaffected.\r\n\r\nAlso picks up the MEDI λ radian-scale fix path already in v9.16.0, unchanged.\r\n\r\n**Downstream:** QSMbly should pin `qsmxt-config` to `v9.17.0` alongside `qsm-core` v0.30.0, so both resolve a single `qsm-core` copy. QSM-CI images built from this tag will produce different V-SHARP output than v9.16.0.\r\n"
+    },
+    {
+      "version": "v9.16.0",
+      "publishedAt": "2026-09-03T08:54:35Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.16.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "Bumps qsm-core to v0.29.0: MEDI default λ 7.5e-5→1e-3, tuned at the radian field scale `invert medi` feeds the solver. Fixes under-regularized streaking on QSM-CI's MEDI (QSM.rs) maps; matches Cornell MEDI smoothness on in-vivo data."
+    },
+    {
+      "version": "v9.15.0",
+      "publishedAt": "2026-09-01T02:48:51Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.15.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "## New: `qsmxt fieldmap` — combined multi-echo B0 field mapping\n\nAdds a standalone `qsmxt fieldmap` command (`romeo` + `laplacian`) that turns 4D multi-echo phase into a **B0 field map in ppm**, exposing qsm-core's field-mapping stage directly:\n\n- **ROMEO combined mode**: MCPC-3D-S phase-offset removal → template/temporal multi-echo unwrapping → magnitude/TE-weighted B0 estimation. (Distinct from `qsmxt unwrap`, which is a single-volume unwrapper.)\n- Echo times / field strength from `--tes`/`--b0`/`--field-strength` or a `--params` JSON sidecar (`{\"TE\":[…s], \"B0\":…}`).\n- Full ROMEO parameter surface now also available: phase-linearity, mag-weight2, best-path, temporal-uncertain-unwrapping, max-seeds, merge/correct-regions, wrap-addition — exposed on **both** `fieldmap` and `run`, plus a linear-fit estimate-offset toggle, and surfaced in the interactive TUI.\n\n```\nqsmxt fieldmap romeo phase.nii.gz -m mask.nii.gz --magnitude magnitude.nii.gz \\\n  --params params.json --b0-estimation weighted-avg -o totalfield.nii.gz\n```"
+    },
+    {
+      "version": "v9.14.0",
+      "publishedAt": "2026-08-24T13:34:20Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.14.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "## Deep-learning overlap-tiling + qsm-core v0.28.0\n\n### Tiling (opt-in; default whole-volume)\n- New `--tile-size` / `--tile-halo` on `qsmxt run` and `qsmxt invert` — run the deep-learning dipole inversions patch-by-patch to bound memory. Presence of `--tile-size` enables it; existing commands are unchanged.\n- Exposed in the TUI (Tile size / Tile halo rows for DL inversions) and reflected in the generated `qsmxt run` command + methods text.\n- Pins **qsm-core v0.28.0** — overlap-tiled inference + Hugging Face (CORS) weight hosting.\n\n### TUI\n- **Collapsible pipeline stages** — the QSM tab opens as a compact overview (one line per stage); Enter/Space or ←/→ toggles.\n- **Algorithm-selector modals** — scrollbar on overflow, deep-learning options grouped/coloured with a legend, and corrected/aligned tooltips.\n- **Fix** — relaxometry-constant field cursor position.\n\nSee #185."
+    },
+    {
+      "version": "v9.13.0",
+      "publishedAt": "2026-08-20T12:20:55Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.13.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "Adds a **download progress bar** for deep-learning model weights, plus the qsm-core weight-download retry.\n\n- When a deep-learning algorithm (xQSM/QSMnet/…/BFRnet/iQFM/iQSM/SUSEP-Net/χ-sepnet) needs its ONNX weights, QSMxT shows a progress bar (size + transfer rate) while fetching them — in the `run` pipeline and the standalone `invert` / `bgremove` / `separate` commands. Weights cache after the first download.\n- Weight downloads retry with backoff on transient OSF throttling.\n\n**Platform note:** the Windows-on-ARM (`aarch64-pc-windows-msvc`) binary is built **without** deep-learning support (the ONNX engine can't compile there) — it has all classical algorithms; selecting a deep-learning algorithm reports a clear error, and `qsmxt --version` shows the DL status. All other platforms include deep-learning.\n\nWeights cache under `$QSM_MODEL_CACHE` → `$XDG_CACHE_HOME/qsm-rs/models` → `~/.cache/qsm-rs/models` (or `$QSM_MODEL_DIR`). Updates qsm-core to v0.27.2."
+    },
+    {
+      "version": "v9.11.0",
+      "publishedAt": "2026-07-31T03:04:04Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.11.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "Add `qsmxt invert tfi` — preconditioned Total Field Inversion (Z. Liu et al., MRM 2017), a single-step (background removal + dipole inversion) method that takes the total field (in ppm, like NDI). Selectable in the CLI, TUI, and pipeline. Bumps qsm-core to v0.23.0 (which introduced TFI + the ppm convention)."
+    },
+    {
+      "version": "v9.10.0",
+      "publishedAt": "2026-07-30T06:19:16Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.10.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "## BEP028 (BIDS-Prov) provenance outputs\n\nqsmxt now writes standards-compliant BIDS-Derivatives provenance for every run.\n\n### New\n- **`dataset_description.json`**, **`.bidsignore`**, and **`README`** so the\n  `derivatives/qsmxt/` output validates cleanly as a BIDS derivative dataset\n  (0 bids-validator errors).\n- **BEP028 BIDS-Prov records** under `prov/prov-qsmxt_{base,soft,env,act,ent}.json`:\n  one Activity per pipeline stage (with the real `qsmxt run` command, stage\n  label, and parameters), an Entity per file capturing the full input→output\n  lineage, `qsmxt` and `QSM.rs` software agents, and an environment record.\n- A **`GeneratedBy` sidecar** next to each final output, including the required\n  `SkullStripped` field and forwarded `MagneticFieldStrength`/`EchoTime`.\n\n### Changed\n- Combined magnitude output renamed `_magnitude` → **`_part-mag_T2starw`**\n  (the BIDS `magnitude` suffix is reserved for fieldmap schemes).\n- The derivatives folder and tool name are now **`qsmxt`** (previously\n  `qsmxt.rs`); the reconstruction core `QSM.rs` is unchanged."
+    },
+    {
+      "version": "v8.3.4",
+      "publishedAt": "2026-07-30T03:23:41Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.3.4",
+      "draft": false,
+      "prerelease": false,
+      "body": "Legacy Python (8.x) line — reproducibility fix.\r\n\r\nRe-running an identical dataset previously produced slightly different QSM maps (dentate-nucleus quantification differing by ~2%, up to ~8%). The random phase-noise injected for constant scanner backgrounds (0 or ±π voxels, e.g. GE data) was seeded from the input file **path** in `scale_to_pi()` — and not seeded at all (system entropy) in `resample_to_axial()` — so reruns into different output folders diverged.\r\n\r\nBoth now seed from the **voxel data content**, so identical inputs produce bit-for-bit identical results regardless of output folder, while preserving the GE background handling.\r\n\r\nInstall: `pip install qsmxt==8.3.4`\r\n\r\nThe current QSMxT (v9, Rust) does not use this step and is unaffected."
+    },
+    {
+      "version": "v9.9.0",
+      "publishedAt": "2026-07-25T03:29:49Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.9.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "Adds five new dipole-inversion algorithms (six selectable configs), ported into qsm-core (v0.21.0) and validated numerically against the canonical FANSI/HD-QSM MATLAB implementations.\r\n\r\n### Added — dipole-inversion algorithms\r\n- **NDI** — Nonlinear Dipole Inversion (Polak et al., 2020)\r\n- **FANSI (nlTV)** and **FANSI (nlTGV)** — nonlinear Total Variation / Total Generalized Variation (Milovic et al., 2018)\r\n- **L1-QSM** — L1 data-fidelity / PI-QSM (Milovic et al., 2022)\r\n- **WH-QSM** — Weak-Harmonic QSM (Milovic et al., 2019)\r\n- **HD-QSM** — Hybrid two-stage L1→L2 (Lambert et al., 2022)\r\n\r\nEach is available everywhere an inversion algorithm can be chosen:\r\n- `--qsm-algorithm {ndi,fansi,fansi-tgv,l1qsm,whqsm,hdqsm}` with per-algorithm `--<algo>-*` tuning flags\r\n- standalone `qsmxt invert {ndi,fansi,fansi-tgv,l1qsm,whqsm,hdqsm}` subcommands\r\n- the **TUI** dipole-inversion menu, with editable parameter rows\r\n- config files (`algorithm = \"ndi\"`, …)\r\n- generated methods text + citations\r\n\r\n### Changed\r\n- qsm-core bumped to **v0.21.0** (exposes the new inversions through the pipeline).\r\n\r\n**Full changelog:** https://github.com/QSMxT/QSMxT/compare/v9.8.1...v9.9.0\r\n"
+    },
+    {
+      "version": "v9.8.1",
+      "publishedAt": "2026-07-24T02:03:21Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.8.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "Bugfix release for three issues in v9.8.0.\n\n### Fixed\n- **`--masking-input`** was silently ignored; it now works and composes with `--mask-preset` (e.g. `--mask-preset bet --masking-input magnitude-first`).\n- **TUI**: fixed doubled keystrokes on Windows.\n- **`qsmxt update`** now works on Windows. The fix ships in the new binary, so updating **to** v9.8.1 requires one last [reinstall](https://qsmxt.github.io/QSMxT/) — `qsmxt update` will work from then on.\n\n### Removed\n- **`--masking-algorithm`** and **`--mask-erosions`** (also silently ignored since v9) are removed — use `--mask-preset <robust-threshold|bet>` and `--mask` sections (e.g. `--mask magnitude,bet:0.5,erode:2`) instead. Passing them now errors rather than running with defaults.\n\n### Internal\n- New CI guard: any `qsmxt run` flag the pipeline doesn't consume fails the build.\n- Masking docs rewritten around `--mask-preset` / `--mask` / `--masking-input`.\n\n**Full changelog:** https://github.com/QSMxT/QSMxT/compare/v9.8.0...v9.8.1"
+    },
+    {
+      "version": "v9.8.0",
+      "publishedAt": "2026-07-20T23:40:39Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.8.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "### Changed\nUpdated the QSM.rs engine to **qsm-core v0.19.0**, which changes reconstruction output for two algorithms:\n\n- **iLSQR** (`--qsm-algorithm ilsqr`, and the QSMART pipeline, which uses iLSQR internally): fixed a premature LSQR-convergence bug — better dipole inversion. ([astewartau/QSM.rs#48](https://github.com/astewartau/QSM.rs/pull/48))\n- **TGV** (`--qsm-algorithm tgv`): default regularization is now the Langkammer reference (`alpha1` 0.0005, `alpha0` 0.0015), restoring contrast the previous defaults over-smoothed. Passing `--tgv-alpha0/--tgv-alpha1` is unaffected. ([astewartau/QSM.rs#47](https://github.com/astewartau/QSM.rs/pull/47))\n\nSee the [QSM.rs v0.19.0 release](https://github.com/astewartau/QSM.rs/releases/tag/v0.19.0) for details.\n\n### Internal\n- bgremove: moved test module to end of file (clippy `items_after_test_module`).\n\n**Full changelog:** https://github.com/QSMxT/QSMxT/compare/v9.7.0...v9.8.0\n"
+    },
+    {
+      "version": "v9.7.0",
+      "publishedAt": "2026-07-15T04:30:16Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.7.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "`bgremove harperella`/`iharperella` gain `--te`/`--field-strength`: with both set, the radian tissue-phase output is converted to a ppm local field (`ppm = phase·1e6/(2π·γ·B0·TE)`), so HARPERELLA produces the same units as every other background-removal method. Without them, output is unchanged (radians)."
+    },
+    {
+      "version": "v9.6.0",
+      "publishedAt": "2026-07-14T10:17:01Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.6.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "Adds `--use-custom-masks [TOOL]`: prefer a bring-your-own brain mask from BIDS derivatives (`derivatives/<tool>/sub-*/anat/*_mask.nii*`) when present, falling back to computed masking otherwise. Bare flag searches all derivatives tools (first alphabetically); pass a name (e.g. `bet`) to restrict. Nearest-neighbour resampled onto the working grid if needed. Settable in the TUI (Masking screen) and reflected in the methods report."
+    },
+    {
+      "version": "v9.5.0",
+      "publishedAt": "2026-07-14T09:38:08Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.5.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "TUI: expose the SMV kernel radius parameters for SHARP (--sharp-radius), V-SHARP (--vsharp-max-radius/--vsharp-min-radius) and iSMV (--ismv-radius), all in mm. These were already available on the CLI and in qsmxt-config since v9.4.0; this wires them through the interactive TUI too. No scoring/behaviour change vs v9.4.0."
+    },
+    {
+      "version": "v9.4.0",
+      "publishedAt": "2026-07-14T04:50:39Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.4.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "Track qsm-core v0.18.0: SHARP/V-SHARP/iSMV background-removal radii are now absolute mm (was voxel-relative `*_factor`), with corrected defaults (SHARP 6mm, V-SHARP 12/1mm, iSMV 5mm). CLI flags renamed: `--sharp-radius-factor`->`--sharp-radius`, `--vsharp-max/min-radius-factor`->`--vsharp-max/min-radius`, `--ismv-radius-factor`->`--ismv-radius` (mm). Includes updated qsmxt-config crate."
+    },
+    {
+      "version": "v9.3.0",
+      "publishedAt": "2026-07-09T06:13:24Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.3.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "Updates to **QSM.rs v0.16.0**, bringing opt-in **multicore parallelism** — single-subject (and multi-echo) runs now use multiple CPU cores instead of one.\r\n\r\n## ⚡ Faster\r\nPreviously most of a single subject's pipeline ran on one core regardless of `--n-procs` (only the background-field-removal FFTs parallelised). Now the **dipole inversion** (RTS/iLSQR/MEDI/TV/NLTV), **phase unwrapping** (per-echo), **masking**, and **TGV** parallelise too.\r\n\r\nOn a 14-core machine a 4-echo RTS run dropped from **~28 s → ~14 s (≈2×)**; multi-echo unwrapping scales with echo count. Nothing to configure — `--n-procs` controls the core count (runs are still also parallel across subjects).\r\n\r\n## 🔧 Internal\r\nMigrated to QSM.rs v0.16.0's cleaned-up API (`Params` structs, `io` module, `medi`/`ilsqr` renames, f64 TGV). **No CLI or behaviour changes** — outputs are unchanged.\r\n\r\n**Full changelog:** https://github.com/QSMxT/QSMxT/compare/v9.2.0...v9.3.0\r\n"
+    },
+    {
+      "version": "v9.2.0",
+      "publishedAt": "2026-07-07T16:57:18Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.2.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "Add a standalone `qsmxt qsmart` command: QSMART vessel-aware reconstruction (total field → susceptibility, NIfTI in/out), mirroring the `qsmxt run` QSMART stage. Magnitude optional. See the commit for details."
+    },
+    {
+      "version": "v9.1.0",
+      "publishedAt": "2026-07-07T06:58:04Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.1.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "## QSMxT v9.1.0\r\n\r\n### ✨ Optional DICOM export\r\n\r\nQSMxT can now optionally export its results as **DICOM** in addition to NIfTI, so QSM maps can be opened in standard DICOM viewers or pushed back into a PACS.\r\n\r\n- **`--export-dicom`** — write each run's final maps as an **MR Image Storage** series (one instance per slice) into `derivatives/qsmxt.rs/sub-X/[ses-Y/]extra_files/<basename>_<suffix>_dicoms/`. Off by default; existing runs are unchanged.\r\n- Geometry (position/orientation/spacing, RAS→LPS) is taken from each output NIfTI, and echo time / field strength from the acquisition. Floating-point values are rescaled to 16-bit with `RescaleSlope`/`RescaleIntercept` so viewers recover the true values (e.g. susceptibility in ppm).\r\n- **`--source-dicom <dir>`** — inherit patient/study identity (`PatientID`, `StudyInstanceUID`, `FrameOfReferenceUID`, patient/study fields) from a representative original DICOM, so derived series slot alongside the source study in a PACS. Without it, identity is synthesized. New Series/SOP UIDs are always generated.\r\n- **`--dicom-outputs <list>`** — restrict export to a subset: `chimap`, `swi`, `minip`, `t2starmap`, `r2starmap` (default: all produced).\r\n- **TUI**: an **Export DICOM** checkbox on the *Supplementary* tab; the command preview shows `--export-dicom` when enabled.\r\n\r\nNo new dependencies, and export runs as a best-effort post-step — a DICOM failure is logged but never fails the QSM run.\r\n\r\n```bash\r\n# Export all produced maps as DICOM\r\nqsmxt run bids/ --export-dicom\r\n\r\n# Export only the QSM map, inheriting identity from the source DICOMs\r\nqsmxt run bids/ --export-dicom --dicom-outputs chimap --source-dicom /path/to/dicoms\r\n```\r\n\r\n### 🐛 Fixes\r\n\r\n- **`qsmxt invert medi`** now produces correct results as a standalone command. It previously fed the field to MEDI in **ppm**, but MEDI treats the field as a phase and needs **radians** — the full pipeline converted, the standalone command did not. It now requires `--field-strength` / `--echo-time` and converts ppm→radians before inversion (and χ back after), mirroring `invert tgv`.\r\n- **`--smv` can now actually be disabled** for `invert medi`. The flag was a plain bool OR-ed with the qsm-core default (`true`), so SMV could never be turned off — MEDI ran its own background-field removal on an already-local field. It is now `--smv <true|false>`.\r\n- Multi-echo (4D) magnitude input to `invert medi` is guarded by taking the first echo.\r\n\r\n  On a 7T head phantom (local field, `--smv false`), MEDI correlation improves **0.50 → 0.80**, matching the QSM.rs integration test. The full pipeline and TUI were unaffected.\r\n\r\n### 📄 Project\r\n\r\n- **License changed to GPL-3.0** (QSMxT's license).\r\n- README simplified and pointed at the documentation site; install command now has per-OS tabs and a \"Try in Neurodesk\" button.\r\n\r\n---\r\n\r\n**Full changelog**: https://github.com/QSMxT/QSMxT/compare/v9.0.0...v9.1.0\r\n"
+    },
+    {
+      "version": "v9.0.0",
+      "publishedAt": "2026-06-26T05:35:56Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "## QSMxT v9 — a ground-up rewrite in Rust\r\n\r\nQSMxT has been completely reimplemented in Rust. It now ships as a single\r\nself-contained binary — no Python environment, no toolbox to assemble — covering\r\nthe QSM reconstruction pipeline, DICOM/NIfTI → BIDS conversion, and an interactive\r\nTUI.\r\n\r\n📖 Documentation: https://qsmxt.github.io/QSMxT/\r\n\r\n### Highlights\r\n- **End-to-end QSM pipeline** — masking, phase unwrapping, echo combination,\r\n  background field removal, dipole inversion, and referencing.\r\n- **10 dipole-inversion algorithms** (RTS, TV, TKD, TSVD, TGV, Tikhonov, NLTV,\r\n  MEDI, iLSQR, QSMART), 8 background-field methods, ROMEO/Laplacian unwrapping.\r\n- **Interactive TUI** — configure, run, convert DICOMs, and submit SLURM jobs; it\r\n  also generates the equivalent CLI command as you go.\r\n- **DICOM → BIDS** — automatic series classification (multi-echo, individual coils,\r\n  derived reconstructions).\r\n- **Self-contained & fast** — prebuilt binaries for Linux/macOS/Windows\r\n  (x86_64 + aarch64), disk caching, memory-aware parallelism.\r\n- **Try it in the browser** — the same algorithms run at https://qsmbly.neurodesk.org/\r\n\r\n### Install\r\n~~~sh\r\n# Linux / macOS\r\ncurl -fsSL https://raw.githubusercontent.com/QSMxT/QSMxT/main/install.sh | sh\r\n# Windows (PowerShell)\r\nirm https://raw.githubusercontent.com/QSMxT/QSMxT/main/install.ps1 | iex\r\n~~~\r\n\r\n### Migrating from QSMxT 8.x (Python)\r\nSome 8.x workflows are **not** part of v9: anatomical segmentation (FastSurfer),\r\ntemplate/group-space building (ANTs), group statistics, NextQSM, and the web UI.\r\nIf you rely on those, the Python version remains available on the\r\n[`python-legacy`](https://github.com/QSMxT/QSMxT/tree/python-legacy) branch and the\r\n[`v8.3.2`](https://github.com/QSMxT/QSMxT/releases/tag/v8.3.2) tag (and on PyPI).\r\n\r\nCommand changes: \\`qsmxt <bids>\\` → \\`qsmxt run <bids>\\`, conversion via\r\n\\`qsmxt dicom-convert\\`, and \\`qsmxt tui\\` for the interactive interface."
+    },
+    {
+      "version": "v8.3.2",
+      "publishedAt": "2026-04-21T05:01:46Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.3.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n\r\n- Replaced deprecated `pkg_resources` with `importlib.metadata` for version retrieval, fixing `ModuleNotFoundError` when `setuptools` is not installed (e.g. in conda environments)\r\n- Fixed Python version truncation in docs — YAML parsed unquoted 3.10 as float 3.1, causing HPC installation instructions to create a Python 3.1 environment instead of 3.10\r\n- Fixed boutiques descriptor race condition — concurrent CI runs could reset the container image field via `git reset --hard`; tests now use a temporary patched copy of the descriptor\r\n- Moved `qsm-forward` and `osfclient` from runtime to test dependencies — these packages are only used in tests, not in the qsmxt package itself, reducing the install footprint\r\n- Consolidated `[dev]` and `[test]` extras into a single `[test]` extra\r\n- Pinned all dependency versions with `==` for reproducibility\r\n- Added unit test for `qsmxt --version` to catch import errors early\r\n- Set `PYTHONNOUSERSITE=1` in CI to isolate the conda environment from stale user site-packages\r\n- Updated CI to Python 3.10 to match current supported version"
+    },
+    {
+      "version": "v8.3.1",
+      "publishedAt": "2026-04-19T23:14:55Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.3.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Python 3.10 / FastSurfer v2.4.2 compatibility\r\n- Remove `tensorflow==2.13.1` pin — tensorflow is now managed by avoiding version conflicts with `typing_extensions` and PyTorch\r\n- Remove `datetime==5.5` (PyPI package) — QSMxT only uses the stdlib module; the PyPI package unnecessarily required `zope.interface`\r\n- `nextqsm` from `==1.0.4` to `>=1.0.5` for Keras 3 and NumPy 2.x compatibility\r\n- Add `typing_extensions>=4.10` — required by PyTorch for TypeIs support"
+    },
+    {
+      "version": "v8.3.0",
+      "publishedAt": "2026-04-14T06:02:49Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.3.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**                                                                                                                                                                                                                                                                                                                                                            \r\n  - Fix B0 direction computation for oblique and anisotropic acquisitions -- The dynamic B0 direction calculation introduced in v8.2.2 had two bugs: (1) the NIfTI affine's 3x3 submatrix was inverted without factoring out voxel scaling, producing incorrect results for anisotropic voxels (e.g. 0.8x0.8x3mm), and (2) the direction was computed from the original oblique NIfTI rather than the axially resampled data that dipole inversion operates on. Together these caused up to 54 degrees of error in the B0 direction for oblique, anisotropic acquisitions (e.g. UK Biobank SWI), resulting in ~85% signal suppression in iron-rich structures such as the globus pallidus. Users who processed oblique or anisotropic data with v8.2.2 should reprocess with this version.\r\n  - Fix same-path move/copy errors in MCPC-3D-S -- Guard against shutil.move/shutil.copy failures in `run_mcpc3ds_on_multicoil()` when source and destination resolve to the same file path.\r\n  - Fix Julia multi-threading -- Use --threads flag instead of environment variables for Julia thread control.\r\n  - Fix Boutiques test race condition -- Prevent test failures when multiple CI runners execute concurrently.\r\n  - Bump dicompare dependency from 0.1.41 to 0.1.45\r\n\r\n**Features:**\r\n  - `--template_bet` option -- New flag for skull-stripping during template building."
+    },
+    {
+      "version": "v8.2.2",
+      "publishedAt": "2025-12-16T01:33:35Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.2.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Fixed automated magnitude selection in `dicom-convert` for ASPIRE"
+    },
+    {
+      "version": "v8.2.1",
+      "publishedAt": "2025-12-15T05:52:21Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.2.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Improvements to data parsing in `dicom-convert`, especially for multi-coil data.\r\n- Updated dicompare to v0.1.41\r\n- Bugfixes"
+    },
+    {
+      "version": "v8.2.0",
+      "publishedAt": "2025-12-05T00:36:59Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.2.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Features:**\r\n  - GPU acceleration for TGV-QSM (--gpu flag supporting CUDA, AMD, Intel oneAPI, Metal)\r\n  - Boutiques integration - full descriptor for standardized execution with Nipoppy\r\n  - B0 direction support - reads from BIDS JSON sidecars\r\n\r\n**Patches:**\r\n  - Fix crash when --do_swi used without phase files\r\n  - Fix missing part-mag label when mag/phase in same DICOM group\r\n  - Fix template workflow for non-MEGRE data (T2starw, etc.)\r\n  - Fix magnitude file matching in template workflow\r\n  - dicom-convert improvements for multi-coil data\r\n  - Template building fixes\r\n  - Better memory estimates\r\n  - CI/testing improvements"
+    },
+    {
+      "version": "v8.1.3",
+      "publishedAt": "2025-08-27T06:23:44Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.1.3",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Updated `nifti-convert` to work better with large numbers of files without crashing or showing 'window to small' errors\r\n- Fixed some keyboard input-related crashes in `nifti-convert`"
+    },
+    {
+      "version": "v8.1.2",
+      "publishedAt": "2025-08-27T03:10:01Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.1.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Updated dicompare dependency to v0.1.31, which improves support for loading NIfTI sessions via `nifti-convert`\r\n- Fixed issues when processing multi-echo T1-weighted sequences using `dicom-convert`"
+    },
+    {
+      "version": "v8.1.1",
+      "publishedAt": "2025-08-22T06:45:45Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.1.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Updated dicompare dependency to v0.1.28, which fixes some critical issues with run identification that were preventing the QSMxT notebook from running correctly\r\n- Removed some incorrect warnings"
+    },
+    {
+      "version": "v8.1.0",
+      "publishedAt": "2025-08-07T06:20:01Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.1.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Features:**\r\n- **qsmxt**:\r\n  - Exposed parameters for `--rts_tol`, `--rts_delta` and `--rts_mu`\r\n  - Added `--workflow-dir` parameter to specify custom workflow directory\r\n  - Added `--preserve_float` parameter to preserve QSM floating-point values in exported DICOMs (when `--export_dicoms` is enabled)\r\n  - Added automatic Chimap sidecar generation\r\n  - Improved copying of metadata to exported DICOMs\r\n\r\n**Patches:**\r\n  - Fixed processing for sagittally-acquired complex GE data\r\n  - Fixed bugs with `--recs` and other data-selection parameters (https://github.com/QSMxT/QSMxT/issues/163)"
+    },
+    {
+      "version": "v8.0.7",
+      "publishedAt": "2025-05-29T00:09:43Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.7",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Fixed issues with converting Philips enhanced DICOM files to BIDS\r\n- Fixed dicom-convert error https://github.com/QSMxT/QSMxT/issues/154"
+    },
+    {
+      "version": "v8.0.6",
+      "publishedAt": "2025-05-27T07:56:08Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.6",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Fixed `dicom-convert` issue causing `coil-` entity to be included in BIDS filenames even for correctly-combined data"
+    },
+    {
+      "version": "v8.0.5",
+      "publishedAt": "2025-05-27T00:57:54Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.5",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Fixed a runtime error in `dicom-convert` that occurs after conversion to BIDS, during the check for uncombined coil data, when there is no 'part' entity in a run (e.g. T1-weighted images). "
+    },
+    {
+      "version": "v8.0.4",
+      "publishedAt": "2025-05-23T10:31:16Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.4",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Fixed issues with axial resampling\r\n- Updated dicompare dependency to v0.1.24\r\n- Added support for uncombined coil images (tested with UK BioBank DICOMs)\r\n- Added MCPC-3D-S coil combination to `dicom-convert`\r\n- Fixed NaNs appearing in some scaled phase images \r\n- Fixed bug with QSMxT not recognising gzipped NIfTIs (.nii.gz)\r\n- Fixed issues with `--recs`, `--acqs`, `--invs` and `--runs` in QSMxT"
+    },
+    {
+      "version": "v8.0.3",
+      "publishedAt": "2025-04-15T10:24:01Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.3",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Updated dicompare to [v0.1.20](https://github.com/astewartau/dicompare/releases/tag/v0.1.20), which adds support for enhanced DICOMs in `dicom-convert`"
+    },
+    {
+      "version": "v8.0.2",
+      "publishedAt": "2025-04-03T00:25:30Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\n- Updated dicompare to [v0.1.19](https://github.com/astewartau/dicompare/releases/tag/v0.1.19), which resolves some run differentiation issues in `dicom-convert`"
+    },
+    {
+      "version": "v8.0.1",
+      "publishedAt": "2025-04-01T23:35:33Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Fixed file-matching issues in template-building pipeline"
+    },
+    {
+      "version": "v8.0.0",
+      "publishedAt": "2025-03-31T06:48:22Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**API-breaking updates:**\r\n- `dicom-convert`: Removed the `--qsm_protocol_patterns` and `--t1w_protocol_patterns` options in favour of fully-automated heuristics when `--auto_yes` is chosen. If you need finer control of type assignments during BIDS conversion, run `dicom-convert` interactively. \r\n\r\n**Features:**\r\n- `qsmxt`: Added `--acqs`, `--invs`, `--recs` and `--desc` options to filter BIDS entities\r\n- `dicom-convert`: Improved acquisition assignment/selection interface\r\n\r\n**Patches:**\r\n- `dicom-convert`: Fallback to `PatientName` if `PatientID` is unavailable\r\n- `qsmxt`: Improved folder naming in workflows"
+    },
+    {
+      "version": "v7.3.3",
+      "publishedAt": "2025-03-11T06:04:14Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.3.3",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Fixed bug causing nothing to be processed when no session folders were used in BIDS\r\n- Added support for `rec` BIDS entity as a run differentiator (similar to `acq`)"
+    },
+    {
+      "version": "v7.3.2",
+      "publishedAt": "2025-02-20T02:03:53Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.3.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- `qsmxt`: Fixed 'bubble' artefacts appearing in QSM that were introduced by ROMEO as described in https://github.com/QSMxT/QSMxT/discussions/135\r\n- `dicom-convert`:\r\n  - Fixed ordering of `acq-` and `run-` BIDS entities\r\n  - Fixed echo/run numbering bug\r\n- `nifti-convert`: Fixed support for compressed NIfTI"
+    },
+    {
+      "version": "v7.3.1",
+      "publishedAt": "2025-02-14T03:22:32Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.3.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Fixed bug where `--unwrapping_algorithm laplacian` sometimes produced an incorrect/unusable result"
+    },
+    {
+      "version": "v7.3.0",
+      "publishedAt": "2025-02-13T06:02:08Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.3.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Features:**\r\n- `dicom-sort` is no longer required because its functionality has been integrated in `dicom-convert`\r\n- `dicom-convert` features a new interactive curses interface\r\n- `nifti-convert` features a new interactive curses interface"
+    },
+    {
+      "version": "v7.2.2",
+      "publishedAt": "2024-10-29T02:28:49Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.2.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- `dicom-convert`\r\n  - Fixed some output messages\r\n  - Added support for selecting the appropriate series for T1w protocols with multiple series\r\n- `qsmxt`\r\n  - Fixed `--runs` param (issue https://github.com/QSMxT/QSMxT/issues/139)\r\n  - Fixed help description for `--slurm` (issue https://github.com/QSMxT/QSMxT/issues/140)\r\n- Finally froze pip dependencies in `setup.py`"
+    },
+    {
+      "version": "v7.2.1",
+      "publishedAt": "2024-10-21T20:51:07Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.2.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- `dicom-convert`: Fix crash that occurs when the `ImageType` DICOM field is missing\r\n- `qsmxt`:\r\n    - Running `--do_template` without `--do_qsm` will now use previously-existing QSM files when available\r\n    - @yexincheng fixed scale factor for NeXtQSM (`--qsm_algorithm nextqsm` and `--premade nextqsm`)\r\n"
+    },
+    {
+      "version": "v7.2.0",
+      "publishedAt": "2024-08-30T00:33:48Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.2.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Features:**\r\n- Reintroduced the output directory parameter, but as an optional parameter, making `qsmxt` backwards-compatible with the v6 API. \r\n\r\n**Patches:**\r\n- It is now possible to run segmentation and analysis steps (`--do_segmentation` and `--do_analysis`) without phase images available, which should not be required for these steps alone unless `--do_qsm` is also enabled. "
+    },
+    {
+      "version": "v7.1.0",
+      "publishedAt": "2024-08-06T06:09:51Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.1.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Features:**\r\n- `qsmxt` now has `--use_existing_segmentations` and `--use_existing_qsms` parameters to be consistent with the already-existing `--use_existing_masks` parameter. These each go along with the `--existing_segmentation_pipeline`, `--existing_qsm_pipeline`, and `--existing_masks_pipeline` options. \r\n\r\n**Patches:**\r\n - Updated interactive menu to provide interactive assistance for the options for existing imaging inputs"
+    },
+    {
+      "version": "v7.0.0",
+      "publishedAt": "2024-08-05T06:41:13Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**API-breaking changes:**\r\n - `qsmxt` no longer uses a separate output directory - outputs are automatically placed into the `bids/derivatives/qsmxt` directory and aims to conform to the BIDS specifications for derived data. The usage has been simplified to now only require a bids directory (e.g. `qsmxt bids`).\r\n\r\n**Features:**\r\n- `qsmxt` now has `--existing_seg_pipeline` and `--existing_qsm_pipeline` parameters, in addition to the pre-existing `--existing_masks_pipeline` parameter. These parameters, which accept patterns as inputs and default to '*', specify the software pipeline used to produce the respective outputs and should match the name of the relevant BIDS derivatives directory. This enables users to use existing segmentations, QSM results, or masks, allowing the QSM, segmentation, and analysis steps to run separately and independently.\r\n\r\n**Patches:**\r\n - Improved resource requirement outputs and warnings"
+    },
+    {
+      "version": "v6.4.4",
+      "publishedAt": "2024-05-14T03:32:58Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.4.4",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Added warning messages for when incompatible parameter values force a change in pipeline settings\r\n- Added error messages for when inputs have incompatible dimensions - dimensions must be 3D and match each other\r\n- Minor updates to defaults\r\n- Made `nipype_interface_romeo.py` executable"
+    },
+    {
+      "version": "v6.4.3",
+      "publishedAt": "2024-03-27T07:01:14Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.4.3",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- `nifti-convert`: Fixed a bug that caused an exception when running against paths containing '.'\r\n- Updated `qsm-forward` dependency to v0.21"
+    },
+    {
+      "version": "v6.4.2",
+      "publishedAt": "2024-03-15T04:47:00Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.4.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- `qsmxt`\r\n    - Fixed susceptibility referencing via `--qsm_reference`, which was previously not working correctly. \r\n    - Improved generation of the one-line run command, especially when interactively changing explicitly set arguments to default/implied values interactively.\r\n    - The nipype engine used on SLURM systems was changed to SLURMGraph, which allows submitting all jobs simultaneously with dependencies properly applied.\r\n    - Reduced overallocation of processors when running in parallel, thereby preventing system crashes. All nipype nodes now use up at least one processor, while previously, some used zero processors.\r\n    - Improved some error messages with more information. \r\n    - Minor updates to workflow node naming."
+    },
+    {
+      "version": "v6.4.1",
+      "publishedAt": "2024-03-05T05:20:03Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.4.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- `qsmxt`\r\n    - Improved some error outputs\r\n    - Updated `romeo_unwrapping.jl` script to use `ROMEO` Julia package rather than `RomeoApp`\r\n    - Minor display improvements (e.g. percentile-based threshold values displayed correctly as a percentage)\r\n    - Updated Julia scripts to install missing packages, where possible\r\n- `dicom-convert`\r\n    - Fixed bug causing `acq` labels to be set to `None`\r\n    - Made conversion more robust (e.g. to echo-dependent series numbers)\r\n    - Made conversion more automatic (e.g. when users are requested to describe which series are mag/phase, these selections are remembered for series with identical `SeriesDescription` values\r\n"
+    },
+    {
+      "version": "v6.4.0",
+      "publishedAt": "2024-02-09T07:02:21Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.4.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Enhancements:**\r\n- `qsmxt`\r\n  - Updated the phase-based masking quality map to include a magnitude and magnitude-coherence weighting. In particular, this reduces over-segmenting high-SNR GRE images. \r\n  - Added `--export_dicoms` option which exports DICOM images for QSM, SWI, and SWI-MIP images.\r\n\r\n**Patches:**\r\n- `qsmxt`\r\n  - Updated default parameter settings for 3D-EPI to improve robustness to low SNR.\r\n  - Added nextqsm as a pip dependency.\r\n- `dicom-convert`\r\n  - Improved warnings and errors.\r\n- `dicom-sort`\r\n  - Added default subject name of 'NA' for data without a usable subject name or patient ID.\r\n  - Sorted output directory now includes `sub-`, `ses-` and `series-` prefixes on folder names."
+    },
+    {
+      "version": "v6.3.2",
+      "publishedAt": "2023-10-30T03:44:33Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.3.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- `dicom-convert`: \r\n  - Conflicts are now avoided much better through interactive prompts\r\n- `qsmxt`:\r\n  - ROMEO now uses `--phase_offset_correction bipolar` as the default\r\n  - Fixed a bug that caused significant resource allocation problems in almost all pipelines\r\n  - Updated resource estimates for some nodes"
+    },
+    {
+      "version": "v6.3.1",
+      "publishedAt": "2023-10-20T05:45:51Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.3.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- `dicom-sort`: \r\n  - DICOM files with incomplete headers will still be read using pydicom's `force=True` option\r\n  - DICOM series with a missing StudyDate field will use a session counter instead of failing to sort\r\n  - DICOM files are now copied to the destination using `shutil.copy2(..)` rather than pydicom's `ds.save(..)`, which reportedly saved corrupt DICOM files in some cases\r\n- `qsmxt`:\r\n  - Fixed critical bug - scaled phase images were ignored after a prior refactor\r\n  - Phase images with empty backgrounds (e.g. from GE scanners) now have noise added to the background to ensure a suitable phase quality map is produced and the subsequent threshold selection algorithm produces a reasonable result\r\n  - Resampled phase images now fills new regions with noise rather than zeros - again to ensure reasonable phae quality maps and subsequent mask thresholds are produced"
+    },
+    {
+      "version": "v6.3.0",
+      "publishedAt": "2023-10-16T22:14:16Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.3.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Enhancements:**\r\n- `qsmxt`:\r\n  - Added susceptibility referencing via `--qsm_reference`; users can provide a list of segmentation values from [aseg_labels.csv](https://github.com/QSMxT/QSMxT/blob/main/qsmxt/aseg_labels.csv) e.g. `--qsm_reference 13 52`, or use the mean susceptibility value via `--qsm_reference mean` (default), or explicitly set none via `--qsm_reference none`\r\n  - Added QSM consensus paper guidelines compliance message - QSM pipelines that adhere to the QSM consensus paper guidelines will produce a 'guidelines compliant!' message, or a warning with an explanation (see guidelines at https://arxiv.org/abs/2307.02306)\r\n  - Switched from Python TGV QSM to the [Julia version](https://github.com/korbinian90/QuantitativeSusceptibilityMappingTGV.jl/)"
+    },
+    {
+      "version": "v6.2.0",
+      "publishedAt": "2023-10-12T03:08:38Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.2.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Enhancements:**\r\n- `qsmxt`\r\n  - Output QSMs are now resampled back to the input images (in canonical voxel-ordering)\r\n\r\n**Patches:**\r\n- `qsmxt`\r\n  - Analysis pipeline now uses backsampled QSM images, which avoids crashes for images requiring axial resampling\r\n  - Updated memory usage estimates for some processing steps, which avoids processes being killed in some cases\r\n  - Fixed bug in ROMEO/field mapping interface that fails to identify the output file\r\n  - Updated some text in the interactive menus for correctness"
+    },
+    {
+      "version": "v6.1.0",
+      "publishedAt": "2023-10-03T06:24:17Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.1.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Enhancements:**\r\n- `dicom-convert`: Protocols that produce multiple series appearing to be either magnitude or phase can now be processed without naming duplicate errors. When running interactively, the user will be asked to select which series should be used for QSM. When running non-interactively via `--auto_yes`, whichever series comes first will be chosen. This solution reverts the previous patch to handle Siemens WIP data since it addresses the underlying problem."
+    },
+    {
+      "version": "v6.0.0",
+      "publishedAt": "2023-10-02T23:25:12Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**API-breaking changes:**\r\n- `dicom-convert`: Renamed `--t2starw_protocol_patterns` to `--qsm_protocol_patterns` which is more correct since QSM can be derived from images with any weighting as long as there is phase contrast\r\n\r\n**Patches:**\r\n- Various updates and improvements to tests\r\n- Logger now only says 'warnings occurred' if warnings occurred\r\n- `qsmxt`:\r\n  - Improved some warnings and error messages in qsmxt\r\n  - Fixed NameError in two-pass interface\r\n  - Fixed running pipeline an extra time via MultiProc when SLURM was enabled\r\n  - Made all Julia interfaces correctly parallelize\r\n  - Fixed axial resampling when the magnitude contains large numbers (e.g. Philips data)\r\n  - Fixed bug where output was not found for some interfaces\r\n- `dicom-convert`:\r\n  - Improved dicom-convert compatibility with Siemens TGV WIP"
+    },
+    {
+      "version": "v5.1.0",
+      "publishedAt": "2023-09-05T10:36:35Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v5.1.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Enhancements:**\r\n- `nifti-convert`:\r\n  - Added `filedir` field to CSV output to separate the `filename` from the directory path, making it easier to manage some datasets that sort better by filename (e.g. UK BioBank)\r\n  - Added `desc` field from the BIDS spec to the CSV output\r\n\r\n**Patches:**\r\n- `qsmxt`:\r\n  - Fixed bug that occurred with oblique acquisitions that caused data to fall outside the field of view\r\n- `dicom-convert`:\r\n  - Added duplicate files error that prevents naming conflicts"
+    },
+    {
+      "version": "v5.0.0",
+      "publishedAt": "2023-09-04T06:30:48Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v5.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**API-breaking changes:**\r\n- Removed `--subject_pattern`, `--session_pattern`, `--phase_pattern`, `--magnitude_pattern` and `--t1w_pattern` as they are unnecessary for BIDS-conforming data (therefore, BIDS-conforming data is now enforced)\r\n- Pre-existing masks selected with `--use_existing_masks` must now be stored in the BIDS-compliant way - in the `derivatives/` BIDS subfolder, within a directory named after the mask-producing pipeline, and must use the `_mask` suffix (e.g. `bids/derivatives/qsm-forward/sub-1/anat/sub-1_mask.nii`). See https://bids-specification.readthedocs.io/en/stable/05-derivatives/01-introduction.html, https://bids-specification.readthedocs.io/en/stable/02-common-principles.html#storage-of-derived-datasets, and https://bids-specification.readthedocs.io/en/stable/05-derivatives/03-imaging.html#masks.\r\n  - Added `--existing_masks_pipeline` to select the pattern used to match the name of the mask-producing pipeline (defaults to `*`)\r\n- Updated `nifti-convert` to fully comply with BIDS anatomical data specifications; it can also now handle empty labels for optional BIDS entities\r\n\r\n**Enhancements:**\r\n- QSMxT is now compatible with more possible datasets conforming to BIDS, including subjects without sessions and images without a `run-` identifier\r\n- QSMxT version is now written to the log file like it used to be\r\n\r\n**Patches:**\r\n- Improved warning messages for some edge cases\r\n- Fixed a crash that occurred when `--use_existing_masks` was enabled, but no masks were found (NameError when trying to print warning message)\r\n- Implemented a fix for a known crash that can occur in the voxelquality Node for multi-echo magnitude images when `--combine_phase` is enabled\r\n- Fixed a bug that caused `np.inf` values in outputs when `--combine_phase` was disabled for multi-echo series\r\n- Template-building pipeline now selects a magnitude image from each acquisition-run pair, rather than from each subject"
+    },
+    {
+      "version": "v4.0.1",
+      "publishedAt": "2023-08-24T10:07:54Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v4.0.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Patches:**\r\n- Removed unnecessary scikit-sparse dependency that was causing installation problems with Miniconda"
+    },
+    {
+      "version": "v4.0.0",
+      "publishedAt": "2023-08-24T03:59:49Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v4.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**API-breaking changes:**\r\n- Consolidated `run_2_qsm.py`, `run_3_segment.py`, `run_4_template.py` and `run_5_analyse.py` into a single script `qsmxt.py` with associated workflows moved into `workflows/`\r\n- Renamed `run_0_dicomSort.py`, `run_1_dicomConvert.py` and `run_1_niftiConvert.py` to `dicom_sort.py`, `dicom_convert.py` and `nifti_convert.py`\r\n\r\n**Enhancements:**\r\n- DICOM to BIDS conversion:\r\n  - Improved identification of series runs via the `run-` BIDS entity; this now uses the `AcquisitionTime` field to differentiate runs which seems to work for the Philips images that were previously failing\r\n  - The `acq-` entity is now included in the conversion and uses the `ProtocolName` DICOM field as its content\r\n - QSMxT:\r\n   - Added SWI, R2* and T2* as outputs\r\n   - Added interactive 'desired outputs' menu when running interactively if outputs aren't specified via parameters\r\n   - The run command is now clearly displayed and updated in the interactive settings editor\r\n   - Previous settings are loaded if an output directory already exists and no parameters are specified\r\n   - Most outputs now do not have superfluous output folders due to using Nipype MapNodes - solved by introducing the `create_node` function, which uses either a Node or a MapNode depending on a condition\r\n\r\n**Patches:**\r\n- Updated all test scripts to use PyTest except for transparent singularity\r\n- Simplified README\r\n- Fixed bug in mgz2nii conversion due to a numpy update\r\n- Improved logging slightly\r\n- Deleted some unused scripts\r\n- Fixed bugs related to `--use_existing_masks` setting"
+    },
+    {
+      "version": "v3.2.1",
+      "publishedAt": "2023-07-24T06:52:10Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v3.2.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Minor patches:**\r\n- Fixed crash that occurred with `--masking_input magnitude` with `--combine_phase off`\r\n- Fixed hang that occurred with `--masking_input phase` with `--filling_algorithm bet`\r\n- Various updates and fixes to tests"
+    },
+    {
+      "version": "v3.2.0",
+      "publishedAt": "2023-07-20T01:38:06Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v3.2.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Enhancements:**\r\n\r\n- Added SWI, T2* and R2* mapping as supplementary imaging options to the QSM pipeline via `run_2_qsm.py`. These options include `--r2starmap`, `--t2starmap` and `--swi`, and they can also be selected interactively. By default, these imaging options are disabled. \r\n\r\n**Minor patches:**\r\n\r\n- Fixed duplicate generation of phase quality maps for phase-based masking in the QSM pipeline\r\n- Updates to resource estimates for some pipeline nodes; updates to tests"
+    },
+    {
+      "version": "v3.0.1",
+      "publishedAt": "2023-07-06T06:34:34Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v3.0.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Minor patches:**\r\n\r\n- Fixed a [bug](https://github.com/QSMxT/QSMxT/issues/98) that causes a crash in romeo_voxelquality when the magnitude is not present\r\n- Fixed duplicate processing of phase quality maps"
+    },
+    {
+      "version": "v3.0.0",
+      "publishedAt": "2023-06-26T06:14:02Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v3.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**API-breaking change:**\r\n\r\n- Removed `bet-firstecho` as a `--masking_algorithm` option since this option is not recommended in favour of `--combine_phase`, where the `np.linalg.norm` of the magnitude series would be used to generate a single mask\r\n\r\n**Enhancements:**\r\n\r\n- Updates to `--combine_phase`:\r\n  - Instead of taking the first-echo magnitude image for masking (when `--masking_input` was set to `magnitude` or `--masking_algorithm` was set to `bet`), the magnitude images are combined using `np.linalg.norm`\r\n    - When `--inhomogeneity_correction` is enabled, the correction is applied to the combined magnitude image\r\n  - Phase-based masking now uses the raw multi-echo phase images rather than a combined B0 map, preventing smoothly-unwrapped background voxels from being included in the mask.\r\n    - To be clear, when `--combine_phase` is disabled, phase-based masking continues to use the single-echo raw phase images without evaluating multi-echo phase matching quality (otherwise, the masks for each echo would be the same)\r\n\r\n**Minor patches:**\r\n\r\n- Fixed a bug where specifying a custom pipeline JSON file would cause a runtime error\r\n- Fixed a bug where unusual symbols in DICOM headers caused invalid file and folder names in the `run_0_dicomSort.py` step\r\n- Fixed handling of GE data, which uses opposite handedness to Siemens and was previously producing an inverted QSM result\r\n- Minor updates to the sensible defaults\r\n  - You can also now see the latest QSM pipeline results within GitHub Actions in the test summary sections (see the latest QSM results [here](https://github.com/QSMxT/QSMxT/actions/runs/5373807046))"
+    },
+    {
+      "version": "v2.1.0",
+      "publishedAt": "2023-05-09T07:46:39Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v2.1.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Enhancements**:\r\n- Added `--runs` parameter to `run_2_qsm.py` to specify runs to reconstruct (e.g. `--runs run-1 run-2`)\r\n\r\n**Minor patches**:\r\n- Reverted TGV-QSM to v1.0, since v1.1 seems to suffer from over-regularisation issues yet to be resolved\r\n- Added HD-BET interface - this is not yet used for anything except testing\r\n- Fixed bug where paths containing folders with periods (`.`) were not handled correctly"
+    },
+    {
+      "version": "v2.0.0",
+      "publishedAt": "2023-04-14T06:47:22Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v2.0.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Versioning:** v2.0.0 marks the beginning of QSMxT in following a Semantic Versioning (SemVer) system where:\r\n - The first number indicates major updates including API-breaking changes (not forwards-compatible)\r\n - The second number indicates enhancements including new features or algorithms (forwards compatible but may not be backwards-compatible)\r\n - The third number indicates minor enhancements or bug fixes to existing features (backwards and forwards compatible)\r\n\r\n**Enhancements:**\r\n - Switched `--unwrapping_algorithm laplacian` from the QSM.jl implementation to the Laplacian unwrapping algorithm available in MriResearchTools (QSM.jl includes background field removal in their `laplacianunwrapping` function); the QSM.jl version may be added back later but labelled correctly as a combined unwrapping and background field removal;\r\n - Added support for SLURM cluster systems via `--slurm`\r\n\r\n**Minor patches:**\r\n - Fixed phase scaling for `--qsm_algorithm nextqsm` - results were previously incorrect and unusable due to errors in the way phase images were scaled for NeXtQSM\r\n - Fixed a bug where incorrect inputs were given to the second masking step with `--two_pass on` and `--combine_phase on`\r\n - Force the `tgv_qsm` erosions parameter to zero for the second pass with `--two_pass on` and `--qsm_algorithm tgv`\r\n - Improved memory estimation for nodes in `run_2_qsm.py` based on the currently available memory. Instead of jobs crashing when greater memory is recommended, they are executed anyway with the memory estimate set to the currently available system memory.\r\n - Cleaned up some output messages in `run_2_qsm.py`\r\n - Fixed an incorrect warning message when sorting DICOMs"
+    },
+    {
+      "version": "v1.3.5",
+      "publishedAt": "2023-02-25T13:25:00Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.3.5",
+      "draft": false,
+      "prerelease": false,
+      "body": "- Fixed bug in template building script\r\n- Fixed bug that caused unusable results with Laplacian unwrapping\r\n- Fixed crash that occurred when processing subjects without magnitude images\r\n- Fixed scaling problem with `--combine_phase` and enabled this setting for the `fast` pipeline"
+    },
+    {
+      "version": "v1.3.4",
+      "publishedAt": "2023-02-24T01:08:32Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.3.4",
+      "draft": false,
+      "prerelease": false,
+      "body": "**QSM pipeline (`run_2_qsm.py`)**:\r\n- Fixed bug that caused a crash with `--unwrapping_algorithm laplacian`\r\n- Improved parallelization of `--bf_algorithm pdf`\r\n- Added `--list_premades` option to simply list the pipeline options and exit (useful for notebooks)\r\n- Minor updates to premade pipelines (`fast` pipeline now explicitly uses the magnitude as the masking input)\r\n\r\n**Segmentation pipeline (`run_3_segment.py`)**:\r\n- Improved parallelization of `run_3_segmentation.py` (FastSurfer and ANTS registration)\r\n\r\n**Other changes**:\r\n- More graceful script exiting\r\n- More consistent outputs; changed `details_and_citations.txt` to `references.txt`\r\n- Minor error message fixes"
+    },
+    {
+      "version": "v1.3.3",
+      "publishedAt": "2023-02-16T01:00:08Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.3.3",
+      "draft": false,
+      "prerelease": false,
+      "body": "- Renamed `--non_interactive` flag on `run_2_qsm.py` `--auto_yes` for consistency with the other pipelines\r\n- Removed the ability to run an unwrapping algorithm prior to TGV QSM, because in some cases it could not be easily disabled\r\n- Made the phase scaling interface executable"
+    },
+    {
+      "version": "v1.3.2",
+      "publishedAt": "2023-02-04T10:06:16Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.3.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "- Fixed bug in analysis pipeline\r\n- Fixed FastSurfer to v1.1.1 to avoid bug in segmentation pipeline"
+    },
+    {
+      "version": "v1.3.1",
+      "publishedAt": "2023-02-03T08:29:03Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.3.1",
+      "draft": false,
+      "prerelease": false,
+      "body": "- Updated EPI pipeline"
+    },
+    {
+      "version": "v1.3.0",
+      "publishedAt": "2023-02-03T07:20:57Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.3.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**Quality of life**\r\n\r\n- Added interactive pipeline editor to `run_2_qsm.py` with sensible defaults including `gre`, `epi`, `bet`, `fast`, `body`, and `nextqsm`, making starting QSMxT vastly easier\r\n- Premade pipelines are stored in qsm_pipelines.json, and custom pipelines can be specified by writing your own pipeline JSON file.\r\n- Added Nipype pipeline log (pypeline.log) to QSM output folder\r\n- Added diff.txt to the output folder for when any local changes have been made to QSMxT\r\n\r\n**New algorithms**\r\n\r\n- Added Projection onto Dipole Fields (PDF) as a choosable background field removal algorithm in addition to V-SHARP via `--bf_algorithm`\r\n- Added `--combine_phase` option to combine multi-echo phase images using field mapping via ROMEO instead of susceptibility-averaging\r\n\r\n**Two-pass artefact reduction**\r\n\r\n- Added the option to have different masking thresholds and erosions when two-pass artefact reduction is enabled\r\n- If the 'unfilled' mask in the two-pass algorithm is eroded, QSMxT attempts to avoid enlarging the holes necessary for the algorithm to work correctly. If BET is used in the pipeline, the BET mask will assist with this process.\r\n\r\n**Masking**\r\n\r\n- Modified voxel quality map for phase-based masking so that it ranges between 0 and 100, rather than 0 and 1. This avoids ambiguity when an absolute threshold is given by the user (which must be given as an integer), rather than a percentile of the signal histogram (which must be given as a float from 0-1)\r\n- Added step to always fill tiny holes (1-2 voxels) in threshold-based masks even in the first pass when two-pass artefact reduction is enabled. This reduces the chance of tiny holes in high-susceptibility structures deteriorating susceptibility contrast.\r\n- Removed incorrect erosion step for the second pass when two-pass artefact reduction was enabled\r\n\r\n**Computation and parallelization**\r\n- Vastly improved parallelization for QSM.jl algorithms by setting environment variables correctly\r\n- Added experimental SLURM support (needs testing)\r\n- Improved memory estimates for many nodes in the QSM pipeline\r\n- Minor improvements to pipeline efficiency\r\n\r\n- A range of bugfixes"
+    },
+    {
+      "version": "v1.2.0",
+      "publishedAt": "2022-12-08T02:21:58Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.2.0",
+      "draft": false,
+      "prerelease": false,
+      "body": "**New features**: \r\n\r\n- **QSM.jl:** Added QSM.jl to the QSMxT container, which provides Laplacian unwrapping, the V-SHARP algorithm, the RTS algorithm, and more. \r\n- **NeXtQSM:** Added NeXtQSM as a choosable algorithm via `--qsm_algorithm`.\r\n- **RTS:** Added `rts` as a choosable algorithm via `--qsm_algorithm`. \r\n- **ROMEO unwrapping:** Added ROMEO unwrapping as a choosable algorithm via `--unwrapping_algorithm`.\r\n- **Laplacian unwrapping:** Added Laplacian unwrapping as a choosable algorithm via `--unwrapping_algorithm`.\r\n- **V-SHARP background field removal:** Added V-SHARP background field removal as the default option for 'rts'. The other algorithms do not require separate background field removal steps, so no BF removal algorithm command-line argument is needed at this stage.\r\n- **First-echo BET masking:** Reintroduced `bet-firstecho` as a masking option via `--masking`, which is the default for NeXtQSM\r\n- **Use existing masks:** Added `--use_existing_masks`, which prioritises the use of existing/predefined masks in the BIDS directory (`extra_data` folder) instead of using one of the available algorithms, which are then only used as fallback with a warning.\r\n- **Axial resampling:** Images with sufficiently high 'obliquity' (based on `--obliquity_threshold`) are resampled to an axial orientation for QSM processing, before being resampled back to the original space. Also added a step to ensure the axes are ordered in the canonical RAS order. \r\n- **QSM metrics:** Added RMSE and missing volume as metrics produced in `run_5_analysis.py` (these metrics are also used in the new pytest integration tests)\r\n- **DICOM sorting:** Files without extensions or with unknown extensions can now be included in the DICOM sorting step using `--check_all_files`\r\n\r\n**Improvements:**\r\n\r\n- **Improved parallelization:** QSMxT now correctly identifies the number of available processors, and tries to estimate the memory requirements of some resource-heavy nodes to avoid the process being killed while maintaining computational efficiency\r\n- **Threshold-based masking:** Fine-tuned the threshold-based masking algorithm\r\n- **Logging:** Improved logging output to also include the current Python interpreter path\r\n- **Phase scaling:** Phase images are no longer rescaled if they are already in the correct range\r\n- **BET masking:** BET masks are no longer eroded an extra time when `bet` is the chosen masking algorithm\r\n- **TGV QSM interface:** The TGV_QSM Interface now correctly stores output images in the designated mapflow working directory\r\n- **Comand-line wrappers:** Improved some command-line wrapper interfaces such that commands invoked in the 'scripts' directory now always use the local version of the script, rather than whichever version is present in the `PATH` environment variable\r\n- **Version checking:** Getting the QSMxT version (e.g. via `qsmxt_version.py`) now also outputs the container version if it can be determined; this is also included in logging outputs and the `details_and_citations.txt` file\r\n\r\n**Bug fixes:**\r\n- **NIfTI conversion:** Corrected 'ms' to 's' in conversion spreadsheet for echo times\r\n- Other small bugfixes\r\n\r\n**Tests and code:**\r\n- Updated the QSM pipeline integration tests to use pytest instead of bash\r\n- Code cleanup and modularisation, especially of `run_2_qsm.py`\r\n- Removed some unnecessary and unused files from the repository"
+    },
+    {
+      "version": "v1.1.13",
+      "publishedAt": "2022-08-29T04:48:19Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.13",
+      "draft": false,
+      "prerelease": false,
+      "body": "- Updated `run_1_dicomConvert.py` to automatically correct T2*-weighted images acquired using GE scanners for both complex and polar formats\r\n- Updated default masking behaviour to use the `phase-based` option\r\n- Updated phase-based masking to use phase coherence voxel-weights as calculated by ROMEO\r\n- Updated hole-filling behaviour to use dilation, gaussian smoothing, and erosion\r\n- Removed `fill_strength` parameter\r\n- Fixed bug that prevented the processing of DICOM data when special characters were present in the protocol or directory name"
+    },
+    {
+      "version": "v1.1.12",
+      "publishedAt": "2022-08-18T04:20:43Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.12",
+      "draft": false,
+      "prerelease": false,
+      "body": "- Added 'gaussian'-based thresholding, which automatically selects a masking threshold for a multi-echo sequence when a threshold is not chosen\r\n- Added smoothing-based hole-filling\r\n- Added NIfTI to BIDS conversion script\r\n- Added logging functionality with several levels (INFO, WARNING, ERROR) - logs are written to file in the output directory\r\n- Separated masking functionality into `interfaces/nipype_interface_masking.py`\r\n- Added `qsmxt_version.py` to get the QSMxT version, which is now used to provide version details in the `detalis_and_citations.txt` file in the output folder\r\n- Improved BIDS compliance - test datasets now pass using the BIDS validator\r\n- Fixed a bug where no processors were used in `run_2_qsm.py` when < 6 GB was available\r\n- JSON files are now read and written using UTF-8 to avoid problems with UTF-8 characters such as umlauts\r\n- Some refactoring of the `run_2_qsm.py` script to make it more readable\r\n- Removed references to FSL since this is being removed from the QSMxT container; replaced BET with standalone 'bet2' along with a new interface\r\n- Updated relevant tests and citations\r\n- Updated support to Python 3.8"
+    },
+    {
+      "version": "v1.1.11",
+      "publishedAt": "2022-05-26T06:47:41Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.11",
+      "draft": false,
+      "prerelease": false,
+      "body": "- Each script now outputs a list of relevant citations, along with the command that was used to invoke the script, to a \"details_and_citations.txt\" file\r\n- Fixed a KeyError that occurs when DICOMs are missing the optional SeriesName field - it now uses the required ProtocolName field instead\r\n- The QSM pipeline now iterates more consistently over runs, in line with the existing iteration style for subjects and sessions\r\n- The QSM pipeline no longer fails if there are missing magnitude files, and automatically reverts to phase-based masking only for those subjects\r\n- The QSM pipeline no longer fails if there are missing phase files for one particular subject, run, or session\r\n- The QSM pipeline outputs are no longer put into superfluous run folders\r\n- The template building and segmentation pipelines now put outputs into the correct output folder, rather than in a datasink folder buried inside the workflow folder\r\n- Added bear metal installation instructions to README.md\r\n- Renamed 'composite' to 'two-pass'\r\n- Updated README.md instructions for transparent singularity installation to use scipy v1.8.0 due to an incompatibility of the latest version of networkx with scipy v1.7.0. \r\n- Updated node names with a more consistent style"
+    },
+    {
+      "version": "v1.1.10",
+      "publishedAt": "2022-03-02T00:21:03Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.10",
+      "draft": false,
+      "prerelease": false,
+      "body": "Bug fixes for sorting dicoms: \r\n\r\n- SeriesDescription does not exist anymore in newer dicoms, but ProtocolName exists in older files and new files.\r\n- bugfix now allows dots in protocol names (e.g. mp2rage_0.75_mm)"
+    },
+    {
+      "version": "v1.1.9",
+      "publishedAt": "2021-12-19T07:30:45Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.9",
+      "draft": false,
+      "prerelease": false,
+      "body": "new dicom sorting and custom bids conversion without bidscoin"
+    },
+    {
+      "version": "v1.1.8",
+      "publishedAt": "2021-12-08T01:00:37Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.8",
+      "draft": false,
+      "prerelease": false,
+      "body": "- improved error handling and reporting"
+    },
+    {
+      "version": "v1.1.7",
+      "publishedAt": "2021-10-08T00:10:59Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.7",
+      "draft": false,
+      "prerelease": false,
+      "body": "minor bug fixes:\r\n- tgv_qsm is now pre-compiled and we don't start it anymore before the pipeline starts to compile the code\r\n- should now work with phase-data only"
+    },
+    {
+      "version": "v1.1.6",
+      "publishedAt": "2021-06-23T03:41:28Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.6",
+      "draft": false,
+      "prerelease": false,
+      "body": "run_2_qsm.py --masking phase-based reported the error:\r\nRuntimeError: Command: \r\n4310phase_weights.jl /tmp/02_qsm_output/workflow_qsm/sub-170706160506std1312211075243167001/ses-1/_run_run-1/phase_scaled/mapflow/_phase_scaled0/sub-170706160506std1312211075243167001_ses-1_acq-qsmPH00_run-1_phase_scaled.nii.gz sub-170706160506std1312211075243167001_ses-1_acq-qsmPH00_run-1_phase_scaled_weights.nii \r\n4311Standard output: \r\n4312 \r\n4313Standard error: \r\n4314ERROR: LoadError: ArgumentError: Package ArgParse not found in current path: \r\n4315- Run `import Pkg; Pkg.add(\"ArgParse\")` to install the ArgParse package.\r\n\r\n-> rebuilding image with this package included"
+    },
+    {
+      "version": "v1.1.5",
+      "publishedAt": "2021-06-21T05:20:00Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.5",
+      "draft": false,
+      "prerelease": false,
+      "body": "bugfix: fastsurfer segmentation with multiple subjects was overwriting previous results"
+    },
+    {
+      "version": "v1.1.4",
+      "publishedAt": "2021-06-11T09:40:29Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.4",
+      "draft": false,
+      "prerelease": false,
+      "body": ""
+    },
+    {
+      "version": "v1.1.3",
+      "publishedAt": "2021-06-11T02:31:00Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.3",
+      "draft": false,
+      "prerelease": false,
+      "body": "ge fft shift phase and magnitude was switched"
+    },
+    {
+      "version": "v1.1.2",
+      "publishedAt": "2021-06-11T00:31:12Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.2",
+      "draft": false,
+      "prerelease": false,
+      "body": "added run_1_fixGEphaseFFTshift.py"
+    },
+    {
+      "version": "1.1.1",
+      "publishedAt": "2021-06-08T06:26:32Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/1.1.1",
+      "draft": false,
+      "prerelease": false,
+      "body": ""
+    },
+    {
+      "version": "210528",
+      "publishedAt": "2021-05-28T11:34:28Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/210528",
+      "draft": false,
+      "prerelease": false,
+      "body": ""
+    },
+    {
+      "version": "210506",
+      "publishedAt": "2021-05-05T23:12:25Z",
+      "url": "https://github.com/QSMxT/QSMxT/releases/tag/210506",
+      "draft": false,
+      "prerelease": false,
+      "body": ""
+    }
+  ],
+  "latestCommit": [
+    {
+      "sha": "26ed3d101ea73641e79f8e3b4068b9185bd7d139",
+      "url": "https://github.com/QSMxT/QSMxT/commit/26ed3d101ea73641e79f8e3b4068b9185bd7d139",
+      "date": "2026-11-16T15:35:57Z",
+      "subject": "QSMART: a relative Frangi C option (--qsmart-frangi-c-mode relative) (#569)"
+    }
+  ],
+  "readme": "# QSMxT\n\nA fast, BIDS-native Quantitative Susceptibility Mapping (QSM) pipeline and\ninteractive TUI, built in Rust. QSMxT takes you from raw scanner DICOMs to\nquantitative susceptibility maps with a single self-contained binary — no\nenvironment to manage, no toolbox sprawl.\n\n## 📖 Documentation: **<https://qsmxt.github.io/QSMxT/>**\n\nThe website has everything: installation, guides, the command reference, and\nalgorithm details. This README is just a quick pointer.\n\n## Highlights\n\n- **End-to-end pipeline** — masking, phase unwrapping, echo combination,\n  background field removal, dipole inversion, and referencing.\n- **Interactive TUI** — convert, configure, and run from the terminal; it also\n  shows the equivalent CLI command as you go.\n- **DICOM → BIDS** — built-in conversion with automatic series classification.\n- **50+ algorithms** — five masking presets, 10 background-field removers, 21\n  classical and 11 deep-learning dipole inversions, 8 χ-separation methods, and\n  multi-orientation COSMOS / STI.\n- **More than χ** — CLEAR-SWI, SMWI, T2\\* / R2\\* and R2 / R2′ maps, plus\n  SynthSeg segmentation with per-structure statistics.\n- **Methods text** — every run writes a methods paragraph with the citations\n  for exactly what ran.\n- **Built for scale** — disk caching, memory-aware parallelism, and SLURM support.\n\nAll reconstruction algorithms are provided by\n[QSM.rs](https://github.com/astewartau/QSM.rs).\n\n## Install\n\n```sh\n# Linux / macOS\ncurl -fsSL https://raw.githubusercontent.com/QSMxT/QSMxT/main/install.sh | sh\n```\n\n```powershell\n# Windows (PowerShell)\nirm https://raw.githubusercontent.com/QSMxT/QSMxT/main/install.ps1 | iex\n```\n\nNo install needed to experiment — [try it in your browser](https://qsmbly.neurodesk.org/).\nSee the [installation guide](https://qsmxt.github.io/QSMxT/getting-started/installation/)\nfor manual downloads, building from source, and details.\n\n## Quick start\n\n```sh\n# Easiest: do everything interactively (convert, configure, run)\nqsmxt tui\n\n# Or on the command line:\nqsmxt dicom-convert /path/to/dicoms study/bids   # DICOM → BIDS\nqsmxt run study/bids                             # run the pipeline\n```\n\nNo data to hand? Fetch a real in-vivo subject and reconstruct it:\n\n```sh\nqsmxt example study/bids                         # download an example dataset\nqsmxt run study/bids                             # run the pipeline\n```\n\nFull guides and the complete command reference are on the\n**[documentation site](https://qsmxt.github.io/QSMxT/)** (or run `qsmxt --help`).\n\n## Coming from QSMxT 8.x (Python)?\n\nv9 is a ground-up rewrite in Rust. Template and group-space building and the web\nUI are not part of v9 — the Python line remains available on the\n[`python-legacy`](https://github.com/QSMxT/QSMxT/tree/python-legacy) branch and the\n[`v8.3.4`](https://github.com/QSMxT/QSMxT/releases/tag/v8.3.4) release.\nSee [what changed](https://qsmxt.github.io/QSMxT/getting-started/coming-from-8x/).\n\n## Citation\n\n> Stewart AW, Robinson SD, O'Brien K, et al. \"QSMxT: Robust masking and artifact\n> reduction for quantitative susceptibility mapping.\" *Magnetic Resonance in\n> Medicine* 87.3 (2022): 1289–1300. <https://doi.org/10.1002/mrm.29048>\n\n## License\n\n[GPL-3.0-only](LICENSE).\n"
+}
