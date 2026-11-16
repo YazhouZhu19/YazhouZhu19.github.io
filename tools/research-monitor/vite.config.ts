@@ -2,10 +2,11 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath, URL } from "node:url";
 import { bundleReport } from "./scripts/bundle-report";
+import { analysisPreload } from "./scripts/analysis-preload";
 
 export default defineConfig({
   base: "/research-monitor/",
-  plugins: [react(), bundleReport()],
+  plugins: [react(), analysisPreload(), bundleReport()],
   resolve: { alias: { "@": fileURLToPath(new URL(".", import.meta.url)) } },
   server: { fs: { strict: true } },
   build: {

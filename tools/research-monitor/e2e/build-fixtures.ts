@@ -1,5 +1,7 @@
 import { createHash } from "node:crypto";
 import { createAnalysisManifest, createAnalysisSnapshot } from "../scripts/analysis-snapshot";
+import { encodeAnalysisTransport } from "../lib/analysis-transport";
+import { createAnalysisManifestV2 } from "../scripts/analysis-transport";
 import { createPaperOverview } from "../scripts/paper-overview";
 import assert from "node:assert/strict";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -217,6 +219,12 @@ await writeFile(
   JSON.stringify(createAnalysisManifest(analysis, analysisText)) + "\n",
 );
 await writeFile(resolve(".e2e-dist/analysis-bootstrap.json"), analysisText);
+const analysisV2Text = JSON.stringify(encodeAnalysisTransport(analysis)) + "\n";
+const analysisV2ManifestText = JSON.stringify(createAnalysisManifestV2(analysis, analysisV2Text)) + "\n";
+await writeFile(join(target, "analysis-summary-v2.json"), analysisV2Text);
+await writeFile(join(target, "analysis-manifest-v2.json"), analysisV2ManifestText);
+await writeFile(resolve(".e2e-dist/analysis-bootstrap-v2.json"), analysisV2Text);
+await writeFile(resolve(".e2e-dist/analysis-bootstrap-manifest-v2.json"), analysisV2ManifestText);
 for (const file of ["papers.json", "public-papers-v2.json", "public-papers-v3.json"])
   assert.equal((await readSnapshotFile(join(target, file))).papers.length, descriptions.length);
 await writeFile(

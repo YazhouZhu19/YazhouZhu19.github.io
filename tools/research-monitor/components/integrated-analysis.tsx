@@ -11,6 +11,7 @@ import type { ResearchSignal } from "@/lib/research-signals";
 import type { AnalysisState } from "@/lib/analysis-store";
 import type { Evidence, Text } from "@/lib/integrated-analysis";
 import "@/styles/integrated-analysis.css";
+import "@/styles/paper-code-links.css";
 
 export function IntegratedAnalysis({
   analysis,
@@ -27,6 +28,7 @@ export function IntegratedAnalysis({
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
   const label = (x: Text) => x[locale === "en" ? "en" : "zh"];
   const [showResult, setShowResult] = useState(false);
+  const [codeToolOpened, setCodeToolOpened] = useState(false);
   const result = showResult ? (analysis.data?.result ?? null) : null;
   const ready = !!analysis.data;
   const sourceStates = analysis.data?.sources.signals.states ?? [];
@@ -380,12 +382,24 @@ export function IntegratedAnalysis({
       )}
       <div className="integrated-tools">
         {ready && (
-          <Suspense fallback={null}>
-            <PaperCodeLinks
-              key={`${analysis.data?.sources.papers.manifestSha256}:${analysis.data?.sources.signals.manifestSha256}:${analysis.data?.result.asOf}`}
-              loadInputs={loadCodeInputs}
-            />
-          </Suspense>
+          <details
+            className="paper-code-links"
+            onToggle={(event) => {
+              if (event.currentTarget.open) setCodeToolOpened(true);
+            }}
+          >
+            <summary>
+              {t("论文与代码关联 · TF-IDF / BM25", "Paper–code associations · TF-IDF / BM25")}
+            </summary>
+            {codeToolOpened && (
+              <Suspense fallback={<p role="status">{t("正在载入检索工具…", "Loading retrieval tools…")}</p>}>
+                <PaperCodeLinks
+                  key={`${analysis.data?.sources.papers.manifestSha256}:${analysis.data?.sources.signals.manifestSha256}:${analysis.data?.result.asOf}`}
+                  loadInputs={loadCodeInputs}
+                />
+              </Suspense>
+            )}
+          </details>
         )}
         <details className="integrated-rules">
           <summary>{t("查看算法与筛选口径", "Rules and inclusion criteria")}</summary>
