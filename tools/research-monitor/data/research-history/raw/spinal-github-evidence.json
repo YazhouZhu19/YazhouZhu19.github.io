@@ -1,0 +1,1609 @@
+{
+  "retrievedAt": "2026-11-17",
+  "datasetReleases": {
+    "sourceUrl": "https://api.github.com/repos/spine-generic/data-multi-subject/releases?per_page=30",
+    "records": [
+      {
+        "tag": "r20250314",
+        "publishedAt": "2025-03-14T20:25:35Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20250314",
+        "changeDescription": "Update spinal cord seg of T2w with contrast-agnostic v3.1"
+      },
+      {
+        "tag": "r20250310",
+        "publishedAt": "2025-03-10T18:56:41Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20250310",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20231212",
+        "publishedAt": "2023-12-12T21:49:44Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20231212",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20230223",
+        "publishedAt": "2023-02-23T20:05:10Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20230223",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20220125",
+        "publishedAt": "2022-01-25T23:27:22Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20220125",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20211125",
+        "publishedAt": "2021-11-25T16:25:46Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20211125",
+        "changeDescription": "add site data ucdavis"
+      },
+      {
+        "tag": "r20201130",
+        "publishedAt": "2020-11-30T21:40:06Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20201130",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20201001",
+        "publishedAt": "2020-10-02T01:15:47Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20201001",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20200917",
+        "publishedAt": "2020-09-17T19:47:18Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20200917",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20200907",
+        "publishedAt": "2020-09-08T00:52:10Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20200907",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20200904",
+        "publishedAt": "2020-09-04T16:31:51Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20200904",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20200830",
+        "publishedAt": "2020-08-31T13:09:40Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20200830",
+        "changeDescription": null
+      },
+      {
+        "tag": "r20200826",
+        "publishedAt": "2020-08-26T15:19:19Z",
+        "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20200826",
+        "changeDescription": "First release"
+      }
+    ]
+  },
+  "codeReleases": {
+    "sourceUrl": "https://api.github.com/repos/spinalcordtoolbox/spinalcordtoolbox/releases?per_page=30",
+    "records": [
+      {
+        "version": "7.3",
+        "publishedAt": "2026-05-09T00:25:10Z",
+        "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/7.3"
+      },
+      {
+        "version": "7.1",
+        "publishedAt": "2025-08-19T15:37:25Z",
+        "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/7.1"
+      },
+      {
+        "version": "5.0.0",
+        "publishedAt": "2020-11-08T01:15:22Z",
+        "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/5.0.0"
+      },
+      {
+        "version": "4.1.1",
+        "publishedAt": "2019-11-28T20:48:03Z",
+        "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/4.1.1"
+      }
+    ]
+  },
+  "recentCommits": {
+    "sourceUrl": "https://api.github.com/repos/spinalcordtoolbox/spinalcordtoolbox/commits?per_page=3",
+    "records": [
+      {
+        "sha": "50643b61a5ad8dda99a9e251983e13c94354eab2",
+        "date": "2026-11-16T16:15:16Z",
+        "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/50643b61a5ad8dda99a9e251983e13c94354eab2",
+        "subject": "Replace retired `macos-14` runner and pin `-latest` runners to fixed versions (#5356)"
+      },
+      {
+        "sha": "63ce8a80f18df91eb1fc532a5a0f2031123b620a",
+        "date": "2026-11-12T14:53:42Z",
+        "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/63ce8a80f18df91eb1fc532a5a0f2031123b620a",
+        "subject": "Add new `brachial_plexus` task for BP and DRG labeling (with coronal mosaic QC report) (#5327)"
+      },
+      {
+        "sha": "017d797f37009568479888a528081df726cbe692",
+        "date": "2026-11-11T14:05:10Z",
+        "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/017d797f37009568479888a528081df726cbe692",
+        "subject": "Add `-p sct_deepseg` to `sct_qc` (#5319)"
+      }
+    ]
+  },
+  "participantVersions": [
+    {
+      "version": "r20200826",
+      "sourceUrl": "https://raw.githubusercontent.com/spine-generic/data-multi-subject/r20200826/participants.tsv",
+      "participantRows": 260,
+      "uniqueParticipantIds": 260,
+      "participantIds": [
+        "sub-amu01",
+        "sub-amu02",
+        "sub-amu03",
+        "sub-amu04",
+        "sub-amu05",
+        "sub-balgrist01",
+        "sub-balgrist02",
+        "sub-balgrist03",
+        "sub-balgrist04",
+        "sub-balgrist05",
+        "sub-balgrist06",
+        "sub-barcelona01",
+        "sub-barcelona02",
+        "sub-barcelona03",
+        "sub-barcelona04",
+        "sub-barcelona05",
+        "sub-barcelona06",
+        "sub-beijingGE01",
+        "sub-beijingGE02",
+        "sub-beijingGE03",
+        "sub-beijingGE04",
+        "sub-beijingPrisma01",
+        "sub-beijingPrisma02",
+        "sub-beijingPrisma03",
+        "sub-beijingPrisma04",
+        "sub-beijingPrisma05",
+        "sub-beijingVerio01",
+        "sub-beijingVerio02",
+        "sub-beijingVerio03",
+        "sub-beijingVerio04",
+        "sub-brnoCeitec01",
+        "sub-brnoCeitec02",
+        "sub-brnoCeitec03",
+        "sub-brnoCeitec04",
+        "sub-brnoCeitec05",
+        "sub-brnoCeitec06",
+        "sub-brnoUhb01",
+        "sub-brnoUhb02",
+        "sub-brnoUhb03",
+        "sub-brnoUhb04",
+        "sub-brnoUhb05",
+        "sub-brnoUhb06",
+        "sub-brnoUhb07",
+        "sub-brnoUhb08",
+        "sub-cardiff01",
+        "sub-cardiff02",
+        "sub-cardiff03",
+        "sub-cardiff04",
+        "sub-cardiff05",
+        "sub-cardiff06",
+        "sub-cmrra01",
+        "sub-cmrra02",
+        "sub-cmrra03",
+        "sub-cmrra04",
+        "sub-cmrra05",
+        "sub-cmrra06",
+        "sub-cmrrb01",
+        "sub-cmrrb02",
+        "sub-cmrrb03",
+        "sub-cmrrb04",
+        "sub-cmrrb05",
+        "sub-cmrrb06",
+        "sub-cmrrb07",
+        "sub-dresden01",
+        "sub-dresden02",
+        "sub-fslAchieva01",
+        "sub-fslAchieva02",
+        "sub-fslAchieva03",
+        "sub-fslAchieva04",
+        "sub-fslAchieva05",
+        "sub-fslAchieva06",
+        "sub-fslPrisma01",
+        "sub-fslPrisma02",
+        "sub-fslPrisma03",
+        "sub-fslPrisma04",
+        "sub-fslPrisma05",
+        "sub-fslPrisma06",
+        "sub-geneva01",
+        "sub-geneva02",
+        "sub-geneva03",
+        "sub-geneva04",
+        "sub-geneva05",
+        "sub-geneva06",
+        "sub-hamburg01",
+        "sub-hamburg02",
+        "sub-hamburg03",
+        "sub-hamburg04",
+        "sub-hamburg05",
+        "sub-hamburg06",
+        "sub-juntendo750w01",
+        "sub-juntendo750w02",
+        "sub-juntendo750w03",
+        "sub-juntendo750w04",
+        "sub-juntendo750w05",
+        "sub-juntendo750w06",
+        "sub-mgh01",
+        "sub-mgh02",
+        "sub-mgh03",
+        "sub-mgh04",
+        "sub-mgh05",
+        "sub-mgh06",
+        "sub-milan01",
+        "sub-milan02",
+        "sub-milan03",
+        "sub-milan04",
+        "sub-milan05",
+        "sub-milan06",
+        "sub-milan07",
+        "sub-mniPilot1",
+        "sub-mniS01",
+        "sub-mniS02",
+        "sub-mniS03",
+        "sub-mniS04",
+        "sub-mniS05",
+        "sub-mniS06",
+        "sub-mniS07",
+        "sub-mniS08",
+        "sub-mniS09",
+        "sub-mountSinai01",
+        "sub-mountSinai02",
+        "sub-mountSinai03",
+        "sub-mountSinai04",
+        "sub-mountSinai05",
+        "sub-mountSinai06",
+        "sub-mpicbs01",
+        "sub-mpicbs02",
+        "sub-mpicbs03",
+        "sub-mpicbs05",
+        "sub-mpicbs06",
+        "sub-mpicbs07",
+        "sub-nottwil01",
+        "sub-nottwil02",
+        "sub-nottwil03",
+        "sub-nottwil04",
+        "sub-nottwil05",
+        "sub-nottwil06",
+        "sub-nwu01",
+        "sub-nwu02",
+        "sub-nwu03",
+        "sub-nwu04",
+        "sub-nwu05",
+        "sub-nwu06",
+        "sub-oxfordFmrib01",
+        "sub-oxfordFmrib02",
+        "sub-oxfordFmrib03",
+        "sub-oxfordFmrib04",
+        "sub-oxfordFmrib05",
+        "sub-oxfordFmrib06",
+        "sub-oxfordFmrib07",
+        "sub-oxfordFmrib08",
+        "sub-oxfordFmrib09",
+        "sub-oxfordFmrib10",
+        "sub-oxfordFmrib11",
+        "sub-oxfordOhba01",
+        "sub-oxfordOhba02",
+        "sub-oxfordOhba03",
+        "sub-oxfordOhba04",
+        "sub-oxfordOhba05",
+        "sub-pavia01",
+        "sub-pavia02",
+        "sub-pavia03",
+        "sub-pavia04",
+        "sub-pavia05",
+        "sub-pavia06",
+        "sub-perform01",
+        "sub-perform02",
+        "sub-perform03",
+        "sub-perform04",
+        "sub-perform05",
+        "sub-perform06",
+        "sub-queensland01",
+        "sub-queensland02",
+        "sub-queensland03",
+        "sub-queensland04",
+        "sub-queensland05",
+        "sub-queensland06",
+        "sub-sherbrooke01",
+        "sub-sherbrooke02",
+        "sub-sherbrooke03",
+        "sub-sherbrooke04",
+        "sub-sherbrooke05",
+        "sub-sherbrooke06",
+        "sub-sherbrooke07",
+        "sub-stanford01",
+        "sub-stanford02",
+        "sub-stanford03",
+        "sub-stanford04",
+        "sub-stanford05",
+        "sub-stanford06",
+        "sub-strasbourg01",
+        "sub-strasbourg02",
+        "sub-strasbourg03",
+        "sub-strasbourg04",
+        "sub-strasbourg05",
+        "sub-strasbourg06",
+        "sub-tehranS01",
+        "sub-tehranS02",
+        "sub-tehranS03",
+        "sub-tehranS04",
+        "sub-tehranS05",
+        "sub-tehranS06",
+        "sub-tokyo750w01",
+        "sub-tokyo750w02",
+        "sub-tokyo750w03",
+        "sub-tokyo750w04",
+        "sub-tokyo750w05",
+        "sub-tokyo750w06",
+        "sub-tokyo750w07",
+        "sub-tokyoIngenia01",
+        "sub-tokyoIngenia02",
+        "sub-tokyoIngenia03",
+        "sub-tokyoIngenia04",
+        "sub-tokyoIngenia05",
+        "sub-tokyoIngenia06",
+        "sub-tokyoIngenia07",
+        "sub-tokyoSkyra01",
+        "sub-tokyoSkyra02",
+        "sub-tokyoSkyra03",
+        "sub-tokyoSkyra04",
+        "sub-tokyoSkyra05",
+        "sub-tokyoSkyra06",
+        "sub-tokyoSkyra07",
+        "sub-ubc01",
+        "sub-ubc02",
+        "sub-ubc03",
+        "sub-ubc04",
+        "sub-ubc05",
+        "sub-ubc06",
+        "sub-ucl01",
+        "sub-ucl02",
+        "sub-ucl03",
+        "sub-ucl04",
+        "sub-ucl05",
+        "sub-ucl06",
+        "sub-unf01",
+        "sub-unf02",
+        "sub-unf03",
+        "sub-unf04",
+        "sub-unf05",
+        "sub-unf06",
+        "sub-unf07",
+        "sub-vallHebron01",
+        "sub-vallHebron02",
+        "sub-vallHebron03",
+        "sub-vallHebron04",
+        "sub-vallHebron05",
+        "sub-vallHebron06",
+        "sub-vallHebron07",
+        "sub-vuiisAchieva01",
+        "sub-vuiisAchieva02",
+        "sub-vuiisAchieva03",
+        "sub-vuiisAchieva04",
+        "sub-vuiisAchieva05",
+        "sub-vuiisAchieva06",
+        "sub-vuiisIngenia01",
+        "sub-vuiisIngenia02",
+        "sub-vuiisIngenia03",
+        "sub-vuiisIngenia04",
+        "sub-vuiisIngenia05",
+        "sub-vuiisIngenia06"
+      ]
+    },
+    {
+      "version": "r20211125",
+      "sourceUrl": "https://raw.githubusercontent.com/spine-generic/data-multi-subject/r20211125/participants.tsv",
+      "participantRows": 267,
+      "uniqueParticipantIds": 267,
+      "participantIds": [
+        "sub-amu01",
+        "sub-amu02",
+        "sub-amu03",
+        "sub-amu04",
+        "sub-amu05",
+        "sub-balgrist01",
+        "sub-balgrist02",
+        "sub-balgrist03",
+        "sub-balgrist04",
+        "sub-balgrist05",
+        "sub-balgrist06",
+        "sub-barcelona01",
+        "sub-barcelona02",
+        "sub-barcelona03",
+        "sub-barcelona04",
+        "sub-barcelona05",
+        "sub-barcelona06",
+        "sub-beijingGE01",
+        "sub-beijingGE02",
+        "sub-beijingGE03",
+        "sub-beijingGE04",
+        "sub-beijingPrisma01",
+        "sub-beijingPrisma02",
+        "sub-beijingPrisma03",
+        "sub-beijingPrisma04",
+        "sub-beijingPrisma05",
+        "sub-beijingVerio01",
+        "sub-beijingVerio02",
+        "sub-beijingVerio03",
+        "sub-beijingVerio04",
+        "sub-brnoCeitec01",
+        "sub-brnoCeitec02",
+        "sub-brnoCeitec03",
+        "sub-brnoCeitec04",
+        "sub-brnoCeitec05",
+        "sub-brnoCeitec06",
+        "sub-brnoUhb01",
+        "sub-brnoUhb02",
+        "sub-brnoUhb03",
+        "sub-brnoUhb04",
+        "sub-brnoUhb05",
+        "sub-brnoUhb06",
+        "sub-brnoUhb07",
+        "sub-brnoUhb08",
+        "sub-cardiff01",
+        "sub-cardiff02",
+        "sub-cardiff03",
+        "sub-cardiff04",
+        "sub-cardiff05",
+        "sub-cardiff06",
+        "sub-cmrra01",
+        "sub-cmrra02",
+        "sub-cmrra03",
+        "sub-cmrra04",
+        "sub-cmrra05",
+        "sub-cmrra06",
+        "sub-cmrrb01",
+        "sub-cmrrb02",
+        "sub-cmrrb03",
+        "sub-cmrrb04",
+        "sub-cmrrb05",
+        "sub-cmrrb06",
+        "sub-cmrrb07",
+        "sub-dresden01",
+        "sub-dresden02",
+        "sub-fslAchieva01",
+        "sub-fslAchieva02",
+        "sub-fslAchieva03",
+        "sub-fslAchieva04",
+        "sub-fslAchieva05",
+        "sub-fslAchieva06",
+        "sub-fslPrisma01",
+        "sub-fslPrisma02",
+        "sub-fslPrisma03",
+        "sub-fslPrisma04",
+        "sub-fslPrisma05",
+        "sub-fslPrisma06",
+        "sub-geneva01",
+        "sub-geneva02",
+        "sub-geneva03",
+        "sub-geneva04",
+        "sub-geneva05",
+        "sub-geneva06",
+        "sub-hamburg01",
+        "sub-hamburg02",
+        "sub-hamburg03",
+        "sub-hamburg04",
+        "sub-hamburg05",
+        "sub-hamburg06",
+        "sub-juntendo750w01",
+        "sub-juntendo750w02",
+        "sub-juntendo750w03",
+        "sub-juntendo750w04",
+        "sub-juntendo750w05",
+        "sub-juntendo750w06",
+        "sub-mgh01",
+        "sub-mgh02",
+        "sub-mgh03",
+        "sub-mgh04",
+        "sub-mgh05",
+        "sub-mgh06",
+        "sub-milan01",
+        "sub-milan02",
+        "sub-milan03",
+        "sub-milan04",
+        "sub-milan05",
+        "sub-milan06",
+        "sub-milan07",
+        "sub-mniPilot1",
+        "sub-mniS01",
+        "sub-mniS02",
+        "sub-mniS03",
+        "sub-mniS04",
+        "sub-mniS05",
+        "sub-mniS06",
+        "sub-mniS07",
+        "sub-mniS08",
+        "sub-mniS09",
+        "sub-mountSinai01",
+        "sub-mountSinai02",
+        "sub-mountSinai03",
+        "sub-mountSinai04",
+        "sub-mountSinai05",
+        "sub-mountSinai06",
+        "sub-mpicbs01",
+        "sub-mpicbs02",
+        "sub-mpicbs03",
+        "sub-mpicbs05",
+        "sub-mpicbs06",
+        "sub-mpicbs07",
+        "sub-nottwil01",
+        "sub-nottwil02",
+        "sub-nottwil03",
+        "sub-nottwil04",
+        "sub-nottwil05",
+        "sub-nottwil06",
+        "sub-nwu01",
+        "sub-nwu02",
+        "sub-nwu03",
+        "sub-nwu04",
+        "sub-nwu05",
+        "sub-nwu06",
+        "sub-oxfordFmrib01",
+        "sub-oxfordFmrib02",
+        "sub-oxfordFmrib03",
+        "sub-oxfordFmrib04",
+        "sub-oxfordFmrib05",
+        "sub-oxfordFmrib06",
+        "sub-oxfordFmrib07",
+        "sub-oxfordFmrib08",
+        "sub-oxfordFmrib09",
+        "sub-oxfordFmrib10",
+        "sub-oxfordFmrib11",
+        "sub-oxfordOhba01",
+        "sub-oxfordOhba02",
+        "sub-oxfordOhba03",
+        "sub-oxfordOhba04",
+        "sub-oxfordOhba05",
+        "sub-pavia01",
+        "sub-pavia02",
+        "sub-pavia03",
+        "sub-pavia04",
+        "sub-pavia05",
+        "sub-pavia06",
+        "sub-perform01",
+        "sub-perform02",
+        "sub-perform03",
+        "sub-perform04",
+        "sub-perform05",
+        "sub-perform06",
+        "sub-queensland01",
+        "sub-queensland02",
+        "sub-queensland03",
+        "sub-queensland04",
+        "sub-queensland05",
+        "sub-queensland06",
+        "sub-sherbrooke01",
+        "sub-sherbrooke02",
+        "sub-sherbrooke03",
+        "sub-sherbrooke04",
+        "sub-sherbrooke05",
+        "sub-sherbrooke06",
+        "sub-sherbrooke07",
+        "sub-stanford01",
+        "sub-stanford02",
+        "sub-stanford03",
+        "sub-stanford04",
+        "sub-stanford05",
+        "sub-stanford06",
+        "sub-strasbourg01",
+        "sub-strasbourg02",
+        "sub-strasbourg03",
+        "sub-strasbourg04",
+        "sub-strasbourg05",
+        "sub-strasbourg06",
+        "sub-tehranS01",
+        "sub-tehranS02",
+        "sub-tehranS03",
+        "sub-tehranS04",
+        "sub-tehranS05",
+        "sub-tehranS06",
+        "sub-tokyo750w01",
+        "sub-tokyo750w02",
+        "sub-tokyo750w03",
+        "sub-tokyo750w04",
+        "sub-tokyo750w05",
+        "sub-tokyo750w06",
+        "sub-tokyo750w07",
+        "sub-tokyoIngenia01",
+        "sub-tokyoIngenia02",
+        "sub-tokyoIngenia03",
+        "sub-tokyoIngenia04",
+        "sub-tokyoIngenia05",
+        "sub-tokyoIngenia06",
+        "sub-tokyoIngenia07",
+        "sub-tokyoSkyra01",
+        "sub-tokyoSkyra02",
+        "sub-tokyoSkyra03",
+        "sub-tokyoSkyra04",
+        "sub-tokyoSkyra05",
+        "sub-tokyoSkyra06",
+        "sub-tokyoSkyra07",
+        "sub-ubc01",
+        "sub-ubc02",
+        "sub-ubc03",
+        "sub-ubc04",
+        "sub-ubc05",
+        "sub-ubc06",
+        "sub-ucdavis01",
+        "sub-ucdavis02",
+        "sub-ucdavis03",
+        "sub-ucdavis04",
+        "sub-ucdavis05",
+        "sub-ucdavis06",
+        "sub-ucdavis07",
+        "sub-ucl01",
+        "sub-ucl02",
+        "sub-ucl03",
+        "sub-ucl04",
+        "sub-ucl05",
+        "sub-ucl06",
+        "sub-unf01",
+        "sub-unf02",
+        "sub-unf03",
+        "sub-unf04",
+        "sub-unf05",
+        "sub-unf06",
+        "sub-unf07",
+        "sub-vallHebron01",
+        "sub-vallHebron02",
+        "sub-vallHebron03",
+        "sub-vallHebron04",
+        "sub-vallHebron05",
+        "sub-vallHebron06",
+        "sub-vallHebron07",
+        "sub-vuiisAchieva01",
+        "sub-vuiisAchieva02",
+        "sub-vuiisAchieva03",
+        "sub-vuiisAchieva04",
+        "sub-vuiisAchieva05",
+        "sub-vuiisAchieva06",
+        "sub-vuiisIngenia01",
+        "sub-vuiisIngenia02",
+        "sub-vuiisIngenia03",
+        "sub-vuiisIngenia04",
+        "sub-vuiisIngenia05",
+        "sub-vuiisIngenia06"
+      ]
+    },
+    {
+      "version": "r20250314",
+      "sourceUrl": "https://raw.githubusercontent.com/spine-generic/data-multi-subject/r20250314/participants.tsv",
+      "participantRows": 267,
+      "uniqueParticipantIds": 267,
+      "participantIds": [
+        "sub-amu01",
+        "sub-amu02",
+        "sub-amu03",
+        "sub-amu04",
+        "sub-amu05",
+        "sub-balgrist01",
+        "sub-balgrist02",
+        "sub-balgrist03",
+        "sub-balgrist04",
+        "sub-balgrist05",
+        "sub-balgrist06",
+        "sub-barcelona01",
+        "sub-barcelona02",
+        "sub-barcelona03",
+        "sub-barcelona04",
+        "sub-barcelona05",
+        "sub-barcelona06",
+        "sub-beijingGE01",
+        "sub-beijingGE02",
+        "sub-beijingGE03",
+        "sub-beijingGE04",
+        "sub-beijingPrisma01",
+        "sub-beijingPrisma02",
+        "sub-beijingPrisma03",
+        "sub-beijingPrisma04",
+        "sub-beijingPrisma05",
+        "sub-beijingVerio01",
+        "sub-beijingVerio02",
+        "sub-beijingVerio03",
+        "sub-beijingVerio04",
+        "sub-brnoCeitec01",
+        "sub-brnoCeitec02",
+        "sub-brnoCeitec03",
+        "sub-brnoCeitec04",
+        "sub-brnoCeitec05",
+        "sub-brnoCeitec06",
+        "sub-brnoUhb01",
+        "sub-brnoUhb02",
+        "sub-brnoUhb03",
+        "sub-brnoUhb04",
+        "sub-brnoUhb05",
+        "sub-brnoUhb06",
+        "sub-brnoUhb07",
+        "sub-brnoUhb08",
+        "sub-cardiff01",
+        "sub-cardiff02",
+        "sub-cardiff03",
+        "sub-cardiff04",
+        "sub-cardiff05",
+        "sub-cardiff06",
+        "sub-cmrra01",
+        "sub-cmrra02",
+        "sub-cmrra03",
+        "sub-cmrra04",
+        "sub-cmrra05",
+        "sub-cmrra06",
+        "sub-cmrrb01",
+        "sub-cmrrb02",
+        "sub-cmrrb03",
+        "sub-cmrrb04",
+        "sub-cmrrb05",
+        "sub-cmrrb06",
+        "sub-cmrrb07",
+        "sub-dresden01",
+        "sub-dresden02",
+        "sub-fslAchieva01",
+        "sub-fslAchieva02",
+        "sub-fslAchieva03",
+        "sub-fslAchieva04",
+        "sub-fslAchieva05",
+        "sub-fslAchieva06",
+        "sub-fslPrisma01",
+        "sub-fslPrisma02",
+        "sub-fslPrisma03",
+        "sub-fslPrisma04",
+        "sub-fslPrisma05",
+        "sub-fslPrisma06",
+        "sub-geneva01",
+        "sub-geneva02",
+        "sub-geneva03",
+        "sub-geneva04",
+        "sub-geneva05",
+        "sub-geneva06",
+        "sub-hamburg01",
+        "sub-hamburg02",
+        "sub-hamburg03",
+        "sub-hamburg04",
+        "sub-hamburg05",
+        "sub-hamburg06",
+        "sub-juntendo750w01",
+        "sub-juntendo750w02",
+        "sub-juntendo750w03",
+        "sub-juntendo750w04",
+        "sub-juntendo750w05",
+        "sub-juntendo750w06",
+        "sub-mgh01",
+        "sub-mgh02",
+        "sub-mgh03",
+        "sub-mgh04",
+        "sub-mgh05",
+        "sub-mgh06",
+        "sub-milan01",
+        "sub-milan02",
+        "sub-milan03",
+        "sub-milan04",
+        "sub-milan05",
+        "sub-milan06",
+        "sub-milan07",
+        "sub-mniPilot1",
+        "sub-mniS01",
+        "sub-mniS02",
+        "sub-mniS03",
+        "sub-mniS04",
+        "sub-mniS05",
+        "sub-mniS06",
+        "sub-mniS07",
+        "sub-mniS08",
+        "sub-mniS09",
+        "sub-mountSinai01",
+        "sub-mountSinai02",
+        "sub-mountSinai03",
+        "sub-mountSinai04",
+        "sub-mountSinai05",
+        "sub-mountSinai06",
+        "sub-mpicbs01",
+        "sub-mpicbs02",
+        "sub-mpicbs03",
+        "sub-mpicbs05",
+        "sub-mpicbs06",
+        "sub-mpicbs07",
+        "sub-nottwil01",
+        "sub-nottwil02",
+        "sub-nottwil03",
+        "sub-nottwil04",
+        "sub-nottwil05",
+        "sub-nottwil06",
+        "sub-nwu01",
+        "sub-nwu02",
+        "sub-nwu03",
+        "sub-nwu04",
+        "sub-nwu05",
+        "sub-nwu06",
+        "sub-oxfordFmrib01",
+        "sub-oxfordFmrib02",
+        "sub-oxfordFmrib03",
+        "sub-oxfordFmrib04",
+        "sub-oxfordFmrib05",
+        "sub-oxfordFmrib06",
+        "sub-oxfordFmrib07",
+        "sub-oxfordFmrib08",
+        "sub-oxfordFmrib09",
+        "sub-oxfordFmrib10",
+        "sub-oxfordFmrib11",
+        "sub-oxfordOhba01",
+        "sub-oxfordOhba02",
+        "sub-oxfordOhba03",
+        "sub-oxfordOhba04",
+        "sub-oxfordOhba05",
+        "sub-pavia01",
+        "sub-pavia02",
+        "sub-pavia03",
+        "sub-pavia04",
+        "sub-pavia05",
+        "sub-pavia06",
+        "sub-perform01",
+        "sub-perform02",
+        "sub-perform03",
+        "sub-perform04",
+        "sub-perform05",
+        "sub-perform06",
+        "sub-queensland01",
+        "sub-queensland02",
+        "sub-queensland03",
+        "sub-queensland04",
+        "sub-queensland05",
+        "sub-queensland06",
+        "sub-sherbrooke01",
+        "sub-sherbrooke02",
+        "sub-sherbrooke03",
+        "sub-sherbrooke04",
+        "sub-sherbrooke05",
+        "sub-sherbrooke06",
+        "sub-sherbrooke07",
+        "sub-stanford01",
+        "sub-stanford02",
+        "sub-stanford03",
+        "sub-stanford04",
+        "sub-stanford05",
+        "sub-stanford06",
+        "sub-strasbourg01",
+        "sub-strasbourg02",
+        "sub-strasbourg03",
+        "sub-strasbourg04",
+        "sub-strasbourg05",
+        "sub-strasbourg06",
+        "sub-tehranS01",
+        "sub-tehranS02",
+        "sub-tehranS03",
+        "sub-tehranS04",
+        "sub-tehranS05",
+        "sub-tehranS06",
+        "sub-tokyo750w01",
+        "sub-tokyo750w02",
+        "sub-tokyo750w03",
+        "sub-tokyo750w04",
+        "sub-tokyo750w05",
+        "sub-tokyo750w06",
+        "sub-tokyo750w07",
+        "sub-tokyoIngenia01",
+        "sub-tokyoIngenia02",
+        "sub-tokyoIngenia03",
+        "sub-tokyoIngenia04",
+        "sub-tokyoIngenia05",
+        "sub-tokyoIngenia06",
+        "sub-tokyoIngenia07",
+        "sub-tokyoSkyra01",
+        "sub-tokyoSkyra02",
+        "sub-tokyoSkyra03",
+        "sub-tokyoSkyra04",
+        "sub-tokyoSkyra05",
+        "sub-tokyoSkyra06",
+        "sub-tokyoSkyra07",
+        "sub-ubc01",
+        "sub-ubc02",
+        "sub-ubc03",
+        "sub-ubc04",
+        "sub-ubc05",
+        "sub-ubc06",
+        "sub-ucdavis01",
+        "sub-ucdavis02",
+        "sub-ucdavis03",
+        "sub-ucdavis04",
+        "sub-ucdavis05",
+        "sub-ucdavis06",
+        "sub-ucdavis07",
+        "sub-ucl01",
+        "sub-ucl02",
+        "sub-ucl03",
+        "sub-ucl04",
+        "sub-ucl05",
+        "sub-ucl06",
+        "sub-unf01",
+        "sub-unf02",
+        "sub-unf03",
+        "sub-unf04",
+        "sub-unf05",
+        "sub-unf06",
+        "sub-unf07",
+        "sub-vallHebron01",
+        "sub-vallHebron02",
+        "sub-vallHebron03",
+        "sub-vallHebron04",
+        "sub-vallHebron05",
+        "sub-vallHebron06",
+        "sub-vallHebron07",
+        "sub-vuiisAchieva01",
+        "sub-vuiisAchieva02",
+        "sub-vuiisAchieva03",
+        "sub-vuiisAchieva04",
+        "sub-vuiisAchieva05",
+        "sub-vuiisAchieva06",
+        "sub-vuiisIngenia01",
+        "sub-vuiisIngenia02",
+        "sub-vuiisIngenia03",
+        "sub-vuiisIngenia04",
+        "sub-vuiisIngenia05",
+        "sub-vuiisIngenia06"
+      ]
+    }
+  ],
+  "addedData": {
+    "sourceUrls": [
+      "https://api.github.com/repos/spine-generic/data-multi-subject/pulls/77",
+      "https://api.github.com/repos/spine-generic/data-multi-subject/pulls/77/files?per_page=100",
+      "https://api.github.com/repos/spine-generic/data-multi-subject/pulls/77/files?per_page=100&page=2"
+    ],
+    "mergedAt": "2021-04-16T19:02:43Z",
+    "files": [
+      {
+        "filename": "participants.tsv",
+        "status": "modified",
+        "sha": "071e824114ac5c26af76461541f27b255438bd88"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_T1w.json",
+        "status": "added",
+        "sha": "f17c105963dfcf22d2e24fcc0b312f4462131e41"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_T1w.nii.gz",
+        "status": "added",
+        "sha": "8c24400f0019041ed1c0ae7be8eaff19c732b699"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_T2star.json",
+        "status": "added",
+        "sha": "b837df713fec646edbe237e04b75a7b1ef5cf97b"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_T2star.nii.gz",
+        "status": "added",
+        "sha": "ca80eb2a15c75a7b84cafcb011dce0bedf9c6358"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_T2w.json",
+        "status": "added",
+        "sha": "77d081b71daa5722377f60d37852d0c093ef0a8d"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_T2w.nii.gz",
+        "status": "added",
+        "sha": "919999c5242e9372937761f89f06a375cc20e829"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_acq-MToff_MTS.json",
+        "status": "added",
+        "sha": "8a8364d7ddc2150935288870c5cc85667ba410d7"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_acq-MToff_MTS.nii.gz",
+        "status": "added",
+        "sha": "1340ba7d1d07b6efa4b7fed9d66ef11cf8eca67e"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_acq-MTon_MTS.json",
+        "status": "added",
+        "sha": "79c904df3df1d80851c9c172f2ca6657e350716c"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_acq-MTon_MTS.nii.gz",
+        "status": "added",
+        "sha": "031ebc6c99b5027b2e732c488b54751a7476eafa"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_acq-T1w_MTS.json",
+        "status": "added",
+        "sha": "200b103201da124f46cc1a905f3795845fe2c9db"
+      },
+      {
+        "filename": "sub-ucdavis01/anat/sub-ucdavis01_acq-T1w_MTS.nii.gz",
+        "status": "added",
+        "sha": "64456fd43199e058d7cacf0ad1b8375276e15549"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-01_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-01_dwi.bvec",
+        "status": "added",
+        "sha": "35f2a70c9a86cbc13a8455c6baca2b765113ec11"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-01_dwi.json",
+        "status": "added",
+        "sha": "f53c0b67ae565d8c8677dfea3d3a53adf5c080f5"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-01_dwi.nii.gz",
+        "status": "added",
+        "sha": "d574a0e437196db9a478b7473898ce964958f477"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-02_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-02_dwi.bvec",
+        "status": "added",
+        "sha": "35f2a70c9a86cbc13a8455c6baca2b765113ec11"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-02_dwi.json",
+        "status": "added",
+        "sha": "527a5c2ba4e6c489610f0cd80b3b8636bc44876f"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-02_dwi.nii.gz",
+        "status": "added",
+        "sha": "7d66c12455673db3e78f18508a7d927d487d53d8"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-03_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-03_dwi.bvec",
+        "status": "added",
+        "sha": "35f2a70c9a86cbc13a8455c6baca2b765113ec11"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-03_dwi.json",
+        "status": "added",
+        "sha": "fea0bb0da96eeae506e2875cec3e05c6b4ecc8b6"
+      },
+      {
+        "filename": "sub-ucdavis01/dwi/sub-ucdavis01_run-03_dwi.nii.gz",
+        "status": "added",
+        "sha": "f63599ed4f50fed92fcef0b1ca1f1e1bbd02749f"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_T1w.json",
+        "status": "added",
+        "sha": "d07e126eb0306be232804320a7c1260df52a56af"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_T1w.nii.gz",
+        "status": "added",
+        "sha": "5be5992e7693dfbe424ff51dfd3c3fc3bae21447"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_T2star.json",
+        "status": "added",
+        "sha": "21d6072cd2c10a22e5ddbb0065e384c1394a01aa"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_T2star.nii.gz",
+        "status": "added",
+        "sha": "d22b26744a5da0ab11cf0d92e3387fd08a99a11f"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_T2w.json",
+        "status": "added",
+        "sha": "2e2dae8620f326b02eda43d90e35aa2be3ce4b07"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_T2w.nii.gz",
+        "status": "added",
+        "sha": "7f4f1e2b83f6e8400482c911d40d3c1585d3d5f7"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_acq-MToff_MTS.json",
+        "status": "added",
+        "sha": "5401201f10eff411816f477fc801648b966185ae"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_acq-MToff_MTS.nii.gz",
+        "status": "added",
+        "sha": "07ed18f2b0df954fef3790cfcf1e72419484e356"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_acq-MTon_MTS.json",
+        "status": "added",
+        "sha": "d100dc3527741b9da20b61d6e15792206e17ee47"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_acq-MTon_MTS.nii.gz",
+        "status": "added",
+        "sha": "e26663397270a6b368f837975cdc6015c4a1a29a"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_acq-T1w_MTS.json",
+        "status": "added",
+        "sha": "1236fa8d648a5cb550854ae25eeb7b004fdc8cd8"
+      },
+      {
+        "filename": "sub-ucdavis02/anat/sub-ucdavis02_acq-T1w_MTS.nii.gz",
+        "status": "added",
+        "sha": "9a4b8c36ca8f93ef727223a51de1c4186955512d"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-01_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-01_dwi.bvec",
+        "status": "added",
+        "sha": "04085be8ea56fd584f2db9114cb296dc5f6648ee"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-01_dwi.json",
+        "status": "added",
+        "sha": "13ba8f4ebbdcbefec27dc60c6e3b2bdde688c02f"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-01_dwi.nii.gz",
+        "status": "added",
+        "sha": "c73c27e2fd93a1a849abcf2b2356dbc066bb5937"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-02_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-02_dwi.bvec",
+        "status": "added",
+        "sha": "04085be8ea56fd584f2db9114cb296dc5f6648ee"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-02_dwi.json",
+        "status": "added",
+        "sha": "e1d25039cdf4ec813503e43f8c2a9ea17de64e8c"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-02_dwi.nii.gz",
+        "status": "added",
+        "sha": "caa21b79f67087c108a72a24854606190e44127f"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-03_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-03_dwi.bvec",
+        "status": "added",
+        "sha": "04085be8ea56fd584f2db9114cb296dc5f6648ee"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-03_dwi.json",
+        "status": "added",
+        "sha": "842c7337cace789e07b72f2ec154fec50f5836a5"
+      },
+      {
+        "filename": "sub-ucdavis02/dwi/sub-ucdavis02_run-03_dwi.nii.gz",
+        "status": "added",
+        "sha": "cd12815f4eaf3ab70d9674a22ec7087991ae09cc"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_T1w.json",
+        "status": "added",
+        "sha": "09f7c13b50763eaab4c2ad2be337d294ce99ac5f"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_T1w.nii.gz",
+        "status": "added",
+        "sha": "2ede8036beaef57c3532318c729d2c4ec1b39f9f"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_T2star.json",
+        "status": "added",
+        "sha": "e621c7e3add1adb301e8d07e6beac13c43f3e35a"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_T2star.nii.gz",
+        "status": "added",
+        "sha": "96fa77bb7b87cfc90ad1f67ca14c29d7306b1b10"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_T2w.json",
+        "status": "added",
+        "sha": "81c777191bb6912e3f53337166c5aa6297f61d47"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_T2w.nii.gz",
+        "status": "added",
+        "sha": "f02f6ffdcca12289ec87594a18af6640a570d830"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_acq-MToff_MTS.json",
+        "status": "added",
+        "sha": "0d5f3262dbf771304793c2df1b49ab5dc22e3355"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_acq-MToff_MTS.nii.gz",
+        "status": "added",
+        "sha": "c5d569d4710d522a09df593ad1992277f62be774"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_acq-MTon_MTS.json",
+        "status": "added",
+        "sha": "72c242a07646c62e45c99178a33a5dbf10e87841"
+      },
+      {
+        "filename": "sub-ucdavis03/anat/sub-ucdavis03_acq-MTon_MTS.nii.gz",
+        "status": "added",
+        "sha": "95c983f86252767d5003da34ca9ecd02715275f5"
+      },
+      {
+        "filename": "sub-ucdavis03/dwi/sub-ucdavis03_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis03/dwi/sub-ucdavis03_dwi.bvec",
+        "status": "added",
+        "sha": "e1ee9d353f2f8be2033ce9c9713974923d7a9b8e"
+      },
+      {
+        "filename": "sub-ucdavis03/dwi/sub-ucdavis03_dwi.json",
+        "status": "added",
+        "sha": "159717840c68a01be88d4ee229bd40cea6cd7a6d"
+      },
+      {
+        "filename": "sub-ucdavis03/dwi/sub-ucdavis03_dwi.nii.gz",
+        "status": "added",
+        "sha": "f14c1d00a33876544a19b286d21b8a16ae7c6b7e"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_T1w.json",
+        "status": "added",
+        "sha": "52558720cc95069f7bd2e3cf0ac5010d27bf856f"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_T1w.nii.gz",
+        "status": "added",
+        "sha": "eab3be2624194ac7b24e8eaa4d16bb004ee69a88"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_T2star.json",
+        "status": "added",
+        "sha": "d659f82654ad2c17d823b91ef8f933d7ed4ba148"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_T2star.nii.gz",
+        "status": "added",
+        "sha": "8264c8ef21d8b8e78ef65a84bcb7ac172ec6ab52"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_T2w.json",
+        "status": "added",
+        "sha": "6ccb48876f3e9edf7f457436470cb5fb686af9cd"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_T2w.nii.gz",
+        "status": "added",
+        "sha": "3ea1dfa3c40bef6d5c25c7c024e527b6361ac97a"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_acq-MToff_MTS.json",
+        "status": "added",
+        "sha": "060bef76757fb5f0496a974bc5d25da110868ed9"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_acq-MToff_MTS.nii.gz",
+        "status": "added",
+        "sha": "8d77040a721ca31e48acf447a5f04a6464d5e59d"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_acq-MTon_MTS.json",
+        "status": "added",
+        "sha": "ac71f1693d41846671b4648a87a927f13230402d"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_acq-MTon_MTS.nii.gz",
+        "status": "added",
+        "sha": "95652747bc9d89c9958b2ed8b21e834d5c4bf612"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_acq-T1w_MTS.json",
+        "status": "added",
+        "sha": "7ed7195e84ce58f6cc72fe78f15fa2580c4fca92"
+      },
+      {
+        "filename": "sub-ucdavis04/anat/sub-ucdavis04_acq-T1w_MTS.nii.gz",
+        "status": "added",
+        "sha": "f1718ac95d5490e26e7ce042f98eb738200462bf"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-01_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-01_dwi.bvec",
+        "status": "added",
+        "sha": "ad81dca2b6046fd83679de853b60417b8ae11f30"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-01_dwi.json",
+        "status": "added",
+        "sha": "247a502979b246c1780be74be67254a3ec223296"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-01_dwi.nii.gz",
+        "status": "added",
+        "sha": "d614b475d9845a08871d453b5fbf7a4f31446ba5"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-02_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-02_dwi.bvec",
+        "status": "added",
+        "sha": "ad81dca2b6046fd83679de853b60417b8ae11f30"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-02_dwi.json",
+        "status": "added",
+        "sha": "c9d8ab3dca6d555d319918a850588fa364163455"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-02_dwi.nii.gz",
+        "status": "added",
+        "sha": "2cf7c5f69403a153446114e7113fe584586405cf"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-03_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-03_dwi.bvec",
+        "status": "added",
+        "sha": "ad81dca2b6046fd83679de853b60417b8ae11f30"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-03_dwi.json",
+        "status": "added",
+        "sha": "491c8bf2b3ea6ed0382580cad3fc9b9661598215"
+      },
+      {
+        "filename": "sub-ucdavis04/dwi/sub-ucdavis04_run-03_dwi.nii.gz",
+        "status": "added",
+        "sha": "f93dc4eb5607719fdcced2f9c6ccefd7d4d71452"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_T1w.json",
+        "status": "added",
+        "sha": "1398b41eb8c5e6aa96db8e3cf7d70df1569fcc09"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_T1w.nii.gz",
+        "status": "added",
+        "sha": "b278f7c028c4508b01cd171732c5b4dbbf0b03fb"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_T2star.json",
+        "status": "added",
+        "sha": "b002dfdbe13fb9acf65b668bcdcfa2d0625e083a"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_T2star.nii.gz",
+        "status": "added",
+        "sha": "c796234fee974a68e3ed931d594c251776fad984"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_T2w.json",
+        "status": "added",
+        "sha": "9efc4ab68c59db3605c319828ff4dd78bb9d3611"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_T2w.nii.gz",
+        "status": "added",
+        "sha": "7e8f4820d9a951472406964bddb4febabad15010"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_acq-MToff_MTS.json",
+        "status": "added",
+        "sha": "6ec9c9ddb8bd7072524d2aa7af3666ae3a33f8cd"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_acq-MToff_MTS.nii.gz",
+        "status": "added",
+        "sha": "57df9ea99f39581610efe4f95fcb175d07fc1c3f"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_acq-MTon_MTS.json",
+        "status": "added",
+        "sha": "fb958992bd0971f5ffb10f231bd933e5fe94e3d8"
+      },
+      {
+        "filename": "sub-ucdavis05/anat/sub-ucdavis05_acq-MTon_MTS.nii.gz",
+        "status": "added",
+        "sha": "d9313e892f1070d5455faf72d53cc0cf847f30a1"
+      },
+      {
+        "filename": "sub-ucdavis05/dwi/sub-ucdavis05_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis05/dwi/sub-ucdavis05_dwi.bvec",
+        "status": "added",
+        "sha": "7aec33b9971d361377a02bda14c3c89e7b67f33d"
+      },
+      {
+        "filename": "sub-ucdavis05/dwi/sub-ucdavis05_dwi.json",
+        "status": "added",
+        "sha": "55369353c06b361a788538b28adaafc7f244ef9a"
+      },
+      {
+        "filename": "sub-ucdavis05/dwi/sub-ucdavis05_dwi.nii.gz",
+        "status": "added",
+        "sha": "c434bfe1583b7dd736a93fd7c9bea3b5e804443b"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_T1w.json",
+        "status": "added",
+        "sha": "efb48f7aa265b165a8c1ad6f6807ac0f1e9556f6"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_T1w.nii.gz",
+        "status": "added",
+        "sha": "892a7d13ce574378016e89f4d95abb8074946498"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_T2star.json",
+        "status": "added",
+        "sha": "3afff41d6cf6263a3deeac5274ad778cb3982e4b"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_T2star.nii.gz",
+        "status": "added",
+        "sha": "2e0dc5d444a25a168475df84b6df467248ba7493"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_T2w.json",
+        "status": "added",
+        "sha": "5f403396402f09a2224159e7cb8700c0687de5df"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_T2w.nii.gz",
+        "status": "added",
+        "sha": "51b616e134ad88d1003eb292c126252b7f5a9bda"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_acq-MToff_MTS.json",
+        "status": "added",
+        "sha": "3cafaca4ab14d0bf903ac1277e558105ceef9eff"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_acq-MToff_MTS.nii.gz",
+        "status": "added",
+        "sha": "edc1b1357f48ae5c768f4ff79ff70e9b0cdd8639"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_acq-MTon_MTS.json",
+        "status": "added",
+        "sha": "dc8938237180ff4c7ea4d210003e94bd9425ac12"
+      },
+      {
+        "filename": "sub-ucdavis06/anat/sub-ucdavis06_acq-MTon_MTS.nii.gz",
+        "status": "added",
+        "sha": "a318141f0c649c60ffe15eb22ccd66daa4e7485f"
+      },
+      {
+        "filename": "sub-ucdavis06/dwi/sub-ucdavis06_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis06/dwi/sub-ucdavis06_dwi.bvec",
+        "status": "added",
+        "sha": "ff80dcbf7f898e82ebe4c08dd5ccdd991e1d7eba"
+      },
+      {
+        "filename": "sub-ucdavis06/dwi/sub-ucdavis06_dwi.json",
+        "status": "added",
+        "sha": "19e838b86c85193c78a602b316763e8f9a82b9d4"
+      },
+      {
+        "filename": "sub-ucdavis06/dwi/sub-ucdavis06_dwi.nii.gz",
+        "status": "added",
+        "sha": "77c1bb8dfbbb617ef39e21d2549f11c580bae210"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_T1w.json",
+        "status": "added",
+        "sha": "62e3458d54ddeff9a9f004e2c5e5af7a908e4be0"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_T1w.nii.gz",
+        "status": "added",
+        "sha": "41f069388c1037ad3b8183a2713980d01d277b18"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_T2star.json",
+        "status": "added",
+        "sha": "2bca9cbca3500c30f7170209d6c1c46e113295b9"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_T2star.nii.gz",
+        "status": "added",
+        "sha": "2a127aebb36599f201ce8033cdd089b1359f9d75"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_T2w.json",
+        "status": "added",
+        "sha": "3e848ecc82f6145ccd4b83ff40af58568fefcc41"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_T2w.nii.gz",
+        "status": "added",
+        "sha": "7895565b9e65564db9b45f6fd3d4bad0651a35ee"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_acq-MToff_MTS.json",
+        "status": "added",
+        "sha": "994b8a282cf49f9f8e3ff90d376c9a3cb6fe4965"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_acq-MToff_MTS.nii.gz",
+        "status": "added",
+        "sha": "a8f14438396af49f00f1b9bac559a69515943d58"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_acq-MTon_MTS.json",
+        "status": "added",
+        "sha": "e01b41fbb1aac5997ec1c59be4c5003e41e135f8"
+      },
+      {
+        "filename": "sub-ucdavis07/anat/sub-ucdavis07_acq-MTon_MTS.nii.gz",
+        "status": "added",
+        "sha": "2790a3f594704f91fa7cd28b4f1cec0a6e727776"
+      },
+      {
+        "filename": "sub-ucdavis07/dwi/sub-ucdavis07_dwi.bval",
+        "status": "added",
+        "sha": "cce7a61e73df99b75040dc4d94e1c58b80c18b38"
+      },
+      {
+        "filename": "sub-ucdavis07/dwi/sub-ucdavis07_dwi.bvec",
+        "status": "added",
+        "sha": "cc042b8e058dbf4d2b11e36c7923408760280c3d"
+      },
+      {
+        "filename": "sub-ucdavis07/dwi/sub-ucdavis07_dwi.json",
+        "status": "added",
+        "sha": "db31fb0c14d3ae8e47ca0a6b8d61eeebae3d77f8"
+      },
+      {
+        "filename": "sub-ucdavis07/dwi/sub-ucdavis07_dwi.nii.gz",
+        "status": "added",
+        "sha": "b9e8589af0d941b7319a74096f2951fbd66cf573"
+      }
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "sourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A10.1162/imag_a_00218&format=json&resultType=core",
+  "retrievedAt": "2026-11-17",
+  "records": [
+    {
+      "id": "40800300",
+      "source": "MED",
+      "pmcid": "PMC12272210",
+      "doi": "10.1162/imag_a_00218",
+      "title": "Automatic segmentation of the spinal cord nerve rootlets.",
+      "journalInfo": {
+        "volume": "2",
+        "journalIssueId": 3796905,
+        "dateOfPublication": "2024 ",
+        "monthOfPublication": 0,
+        "yearOfPublication": 2024,
+        "journal": {
+          "medlineAbbreviation": "Imaging Neurosci (Camb)",
+          "title": "Imaging neuroscience (Cambridge, Mass.)",
+          "essn": "2837-6056",
+          "issn": "2837-6056",
+          "nlmid": "9918663686606676",
+          "isoabbreviation": "Imaging Neurosci (Camb)"
+        },
+        "printPublicationDate": "2024-01-01"
+      },
+      "pubYear": "2024",
+      "abstractText": "Precise identification of spinal nerve rootlets is relevant to delineate spinal levels for the study of functional activity in the spinal cord. The goal of this study was to develop an automatic method for the semantic segmentation of spinal nerve rootlets from T2-weighted magnetic resonance imaging (MRI) scans. Images from two open-access 3T MRI datasets were used to train a 3D multi-class convolutional neural network using an active learning approach to segment C2-C8 dorsal nerve rootlets. Each output class corresponds to a spinal level. The method was tested on 3T T2-weighted images from three datasets unseen during training to assess inter-site, inter-session, and inter-resolution variability. The test Dice score was 0.67 ± 0.16 (mean ± standard deviation across testing images and rootlets levels), suggesting a good performance. The method also demonstrated low inter-vendor and inter-site variability (coefficient of variation ≤ 1.41%), as well as low inter-session variability (coefficient of variation ≤ 1.30%), indicating stable predictions across different MRI vendors, sites, and sessions. The proposed methodology is open-source and readily available in the Spinal Cord Toolbox (SCT) v6.2 and higher.",
+      "fullTextUrlList": {
+        "fullTextUrl": [
+          {
+            "availability": "Subscription required",
+            "availabilityCode": "S",
+            "documentStyle": "doi",
+            "site": "DOI",
+            "url": "https://doi.org/10.1162/imag_a_00218"
+          },
+          {
+            "availability": "Open access",
+            "availabilityCode": "OA",
+            "documentStyle": "html",
+            "site": "Europe_PMC",
+            "url": "https://europepmc.org/articles/PMC12272210"
+          },
+          {
+            "availability": "Open access",
+            "availabilityCode": "OA",
+            "documentStyle": "pdf",
+            "site": "Europe_PMC",
+            "url": "https://europepmc.org/articles/PMC12272210?pdf=render"
+          }
+        ]
+      },
+      "isOpenAccess": "Y",
+      "firstPublicationDate": "2024-07-02"
+    }
+  ]
+}

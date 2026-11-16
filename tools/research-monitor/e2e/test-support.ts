@@ -38,8 +38,8 @@ export async function openLibrary(page: Page, en: boolean) {
 }
 export const navLabels = (en: boolean) =>
   en
-    ? ["Paper insights", "Open-source insights", "Frontier updates", "Research outlook", "PI / Teams"]
-    : ["论文洞察", "开源洞察", "前沿动态", "方向研判", "PI / 团队"];
+    ? ["Paper insights", "Open-source insights", "Frontier updates", "Analysis", "PI / Teams"]
+    : ["论文洞察", "开源洞察", "前沿动态", "分析", "PI / 团队"];
 
 export async function mainView(page: Page, en: boolean, index: number) {
   await page
@@ -50,7 +50,7 @@ export async function mainView(page: Page, en: boolean, index: number) {
     ".research-dashboard",
     ".github-dashboard-summary",
     ".news-dashboard-summary",
-    ".foresight-view",
+    ".integrated-analysis",
     ".team-foresight",
   ];
   await expect(page.locator(markers[index])).toBeVisible();

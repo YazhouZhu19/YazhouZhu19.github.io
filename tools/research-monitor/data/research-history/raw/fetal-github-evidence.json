@@ -1,0 +1,387 @@
+{
+  "retrievedAt": "2026-11-16T16:20:22Z",
+  "notes": "Selected unmodified public GitHub API fields. Personal author/committer names and emails omitted. README is stored as unmodified repository text; JSON wrapper is an acquisition manifest.",
+  "repositories": [
+    {
+      "sourceUrl": "https://api.github.com/repos/SVRTK/auto-proc-svrtk",
+      "data": {
+        "id": 689251702,
+        "full_name": "SVRTK/auto-proc-svrtk",
+        "created_at": "2023-09-09T08:19:29Z",
+        "pushed_at": "2026-07-20T14:27:05Z",
+        "archived": false,
+        "default_branch": "main"
+      }
+    }
+  ],
+  "commits": [
+    {
+      "sourceUrl": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits/2cec7c43325ed95da210953ff7d907d5faad384a",
+      "data": {
+        "sha": "2cec7c43325ed95da210953ff7d907d5faad384a",
+        "commit": {
+          "author": {
+            "date": "2023-12-10T13:47:23Z"
+          },
+          "committer": {
+            "date": "2023-12-10T13:47:23Z"
+          },
+          "message": "additional scripts"
+        },
+        "html_url": "https://github.com/SVRTK/auto-proc-svrtk/commit/2cec7c43325ed95da210953ff7d907d5faad384a",
+        "files": [
+          {
+            "filename": "scripts/auto-body-055t-reconstruction.sh",
+            "status": "added",
+            "additions": 962,
+            "deletions": 0
+          },
+          {
+            "filename": "scripts/auto-body-organ-segmentation.sh",
+            "status": "added",
+            "additions": 386,
+            "deletions": 0
+          },
+          {
+            "filename": "scripts/auto-body-reconstruction.sh",
+            "status": "added",
+            "additions": 819,
+            "deletions": 0
+          },
+          {
+            "filename": "scripts/auto-body-reorientation.sh",
+            "status": "added",
+            "additions": 425,
+            "deletions": 0
+          },
+          {
+            "filename": "scripts/auto-brain-055t-reconstruction.sh",
+            "status": "added",
+            "additions": 907,
+            "deletions": 0
+          },
+          {
+            "filename": "scripts/auto-brain-bet-segmentation-fetal.sh",
+            "status": "added",
+            "additions": 345,
+            "deletions": 0
+          },
+          {
+            "filename": "scripts/auto-brain-bounti-segmentation-fetal.sh",
+            "status": "added",
+            "additions": 390,
+            "deletions": 0
+          },
+          {
+            "filename": "scripts/auto-brain-reconstruction.sh",
+            "status": "modified",
+            "additions": 6,
+            "deletions": 6
+          },
+          {
+            "filename": "scripts/auto-brain-reorientation.sh",
+            "status": "added",
+            "additions": 417,
+            "deletions": 0
+          },
+          {
+            "filename": "scripts/auto-head-055t-reconstruction.sh",
+            "status": "added",
+            "additions": 1039,
+            "deletions": 0
+          },
+          {
+            "filename": "scripts/auto-thorax-reconstruction.sh",
+            "status": "modified",
+            "additions": 19,
+            "deletions": 16
+          },
+          {
+            "filename": "scripts/auto-thorax-reorientation.sh",
+            "status": "added",
+            "additions": 425,
+            "deletions": 0
+          }
+        ]
+      }
+    },
+    {
+      "sourceUrl": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits/0571fe4fb0522774b0de928e4bfdd36877dabccc",
+      "data": {
+        "sha": "0571fe4fb0522774b0de928e4bfdd36877dabccc",
+        "commit": {
+          "author": {
+            "date": "2024-12-23T09:09:02Z"
+          },
+          "committer": {
+            "date": "2024-12-23T09:09:02Z"
+          },
+          "message": "Update auto-brain-reconstruction-northh.sh"
+        },
+        "html_url": "https://github.com/SVRTK/auto-proc-svrtk/commit/0571fe4fb0522774b0de928e4bfdd36877dabccc",
+        "files": [
+          {
+            "filename": "scripts/auto-brain-reconstruction-northh.sh",
+            "status": "modified",
+            "additions": 135,
+            "deletions": 66
+          }
+        ]
+      }
+    },
+    {
+      "sourceUrl": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits/b83bf870ebb9a2e188ce41868eb81c26c38d79eb",
+      "data": {
+        "sha": "b83bf870ebb9a2e188ce41868eb81c26c38d79eb",
+        "commit": {
+          "author": {
+            "date": "2026-06-23T11:47:10Z"
+          },
+          "committer": {
+            "date": "2026-06-23T11:47:10Z"
+          },
+          "message": "recon updates"
+        },
+        "html_url": "https://github.com/SVRTK/auto-proc-svrtk/commit/b83bf870ebb9a2e188ce41868eb81c26c38d79eb",
+        "files": [
+          {
+            "filename": "scripts/auto-brain-055t-reconstruction-2026.sh",
+            "status": "modified",
+            "additions": 28,
+            "deletions": 7
+          },
+          {
+            "filename": "scripts/auto-brain-reconstruction-2026.sh",
+            "status": "modified",
+            "additions": 19,
+            "deletions": 3
+          }
+        ]
+      }
+    }
+  ],
+  "queries": [
+    {
+      "sourceUrl": "https://api.github.com/repos/gift-surg/NiftyMIC/commits?per_page=3",
+      "data": [
+        {
+          "sha": "553bce0824e7b40cd221897b683142d9aeee77d8",
+          "commit": {
+            "author": {
+              "date": "2022-02-15T12:58:45Z"
+            },
+            "committer": {
+              "date": "2022-02-15T12:58:45Z"
+            },
+            "message": "DOC: Update README"
+          },
+          "html_url": "https://github.com/gift-surg/NiftyMIC/commit/553bce0824e7b40cd221897b683142d9aeee77d8"
+        },
+        {
+          "sha": "66a9eb1d978630307c981f19df2b391235450e50",
+          "commit": {
+            "author": {
+              "date": "2022-02-13T16:39:35Z"
+            },
+            "committer": {
+              "date": "2022-02-13T16:39:35Z"
+            },
+            "message": "DOC: Update README"
+          },
+          "html_url": "https://github.com/gift-surg/NiftyMIC/commit/66a9eb1d978630307c981f19df2b391235450e50"
+        },
+        {
+          "sha": "72a2b2cbbabddd333f10bf3f015ef6cd57afd89a",
+          "commit": {
+            "author": {
+              "date": "2022-02-13T16:38:06Z"
+            },
+            "committer": {
+              "date": "2022-02-13T16:38:06Z"
+            },
+            "message": "DOC: Update README"
+          },
+          "html_url": "https://github.com/gift-surg/NiftyMIC/commit/72a2b2cbbabddd333f10bf3f015ef6cd57afd89a"
+        }
+      ]
+    },
+    {
+      "sourceUrl": "https://api.github.com/repos/gift-surg/NiftyMIC/commits?until=2020-12-31T23%3A59%3A59Z&per_page=1",
+      "data": [
+        {
+          "sha": "f4432f18f02de55f1f61265d83219566dccf655c",
+          "commit": {
+            "author": {
+              "date": "2020-11-26T17:47:32Z"
+            },
+            "committer": {
+              "date": "2020-11-26T17:47:32Z"
+            },
+            "message": "Merge pull request #12 from martaranzini/monai-segmentation\n\nMONAIfbs for fetal brain segmentation"
+          },
+          "html_url": "https://github.com/gift-surg/NiftyMIC/commit/f4432f18f02de55f1f61265d83219566dccf655c"
+        }
+      ]
+    },
+    {
+      "sourceUrl": "https://api.github.com/repos/SVRTK/SVRTK/commits?per_page=3",
+      "data": [
+        {
+          "sha": "426963ba6a4b159fae2f20975bfa19107892662c",
+          "commit": {
+            "author": {
+              "date": "2025-04-07T16:36:32Z"
+            },
+            "committer": {
+              "date": "2025-04-07T16:36:32Z"
+            },
+            "message": "Merge pull request #25 from SVRTK/n_dev\n\nParallelisation bug fix."
+          },
+          "html_url": "https://github.com/SVRTK/SVRTK/commit/426963ba6a4b159fae2f20975bfa19107892662c"
+        },
+        {
+          "sha": "3e19f2614bbbca6752a59ea296b1870f488ac3db",
+          "commit": {
+            "author": {
+              "date": "2025-04-07T16:15:57Z"
+            },
+            "committer": {
+              "date": "2025-04-07T16:15:57Z"
+            },
+            "message": "Parallelisation bug fix. Array<bool>, i.e. vector<bool>, is not thread-safe. Changing this to use deque<bool> instead for thread-safety."
+          },
+          "html_url": "https://github.com/SVRTK/SVRTK/commit/3e19f2614bbbca6752a59ea296b1870f488ac3db"
+        },
+        {
+          "sha": "d22736835ee5b6d6aabd42121e2e987e088e840b",
+          "commit": {
+            "author": {
+              "date": "2024-09-26T08:53:53Z"
+            },
+            "committer": {
+              "date": "2024-09-26T08:53:53Z"
+            },
+            "message": "Update README.md"
+          },
+          "html_url": "https://github.com/SVRTK/SVRTK/commit/d22736835ee5b6d6aabd42121e2e987e088e840b"
+        }
+      ]
+    },
+    {
+      "sourceUrl": "https://api.github.com/repos/SVRTK/SVRTK/commits?until=2020-12-31T23%3A59%3A59Z&per_page=1",
+      "data": [
+        {
+          "sha": "04291ba37d948c7ff238c5bdf7a1101091d836b4",
+          "commit": {
+            "author": {
+              "date": "2020-12-23T20:48:42Z"
+            },
+            "committer": {
+              "date": "2020-12-23T20:48:42Z"
+            },
+            "message": "v2.7"
+          },
+          "html_url": "https://github.com/SVRTK/SVRTK/commit/04291ba37d948c7ff238c5bdf7a1101091d836b4"
+        }
+      ]
+    },
+    {
+      "sourceUrl": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits?per_page=3",
+      "data": [
+        {
+          "sha": "7d75fa96162245326f7046bb4df0a41cdeaf7f5c",
+          "commit": {
+            "author": {
+              "date": "2026-07-20T14:27:04Z"
+            },
+            "committer": {
+              "date": "2026-07-20T14:27:04Z"
+            },
+            "message": "Update README.md"
+          },
+          "html_url": "https://github.com/SVRTK/auto-proc-svrtk/commit/7d75fa96162245326f7046bb4df0a41cdeaf7f5c"
+        },
+        {
+          "sha": "2c581c3a088b9ed009fe3a55675be7ed1208c6ad",
+          "commit": {
+            "author": {
+              "date": "2026-06-26T06:44:40Z"
+            },
+            "committer": {
+              "date": "2026-06-26T06:44:40Z"
+            },
+            "message": "body recon updates"
+          },
+          "html_url": "https://github.com/SVRTK/auto-proc-svrtk/commit/2c581c3a088b9ed009fe3a55675be7ed1208c6ad"
+        },
+        {
+          "sha": "b83bf870ebb9a2e188ce41868eb81c26c38d79eb",
+          "commit": {
+            "author": {
+              "date": "2026-06-23T11:47:10Z"
+            },
+            "committer": {
+              "date": "2026-06-23T11:47:10Z"
+            },
+            "message": "recon updates"
+          },
+          "html_url": "https://github.com/SVRTK/auto-proc-svrtk/commit/b83bf870ebb9a2e188ce41868eb81c26c38d79eb"
+        }
+      ]
+    }
+  ],
+  "releases": [
+    {
+      "sourceUrl": "https://api.github.com/repos/gift-surg/NiftyMIC/releases?per_page=5",
+      "data": [
+        {
+          "tag_name": "v0.6",
+          "published_at": "2019-02-06T19:31:03Z",
+          "html_url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.6",
+          "name": "Spatio-temporal Fetal Brain MRI Atlas embedded (Gholipour et al., 2017)",
+          "body": ""
+        },
+        {
+          "tag_name": "v0.5.2",
+          "published_at": "2019-02-06T19:36:56Z",
+          "html_url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.5.2",
+          "name": "Minor change in default parameters (run_reconstruction_pipeline)",
+          "body": "run_reconstruction_pipeline uses mask-constrained bias field correction by default to speed-up preprocessing steps"
+        },
+        {
+          "tag_name": "v0.5.1",
+          "published_at": "2019-02-06T19:29:30Z",
+          "html_url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.5.1",
+          "name": "NiftyMIC version export to JSON config file",
+          "body": "Each script execution exports the respective parameter configuration into a JSON configuration file.\r\nSince this release, the used NiftyMIC version gets exported too.\r\n"
+        },
+        {
+          "tag_name": "v0.5",
+          "published_at": "2019-01-31T01:37:46Z",
+          "html_url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.5",
+          "name": "SDA/SRR for motion-corrected mask recon",
+          "body": "* SDA/SRR mask reconstruction from motion corrected slices\r\n* SDA reconstructions possible to speed up test computations\r\n* nifti2dicom/multiply/run_reconstruction_pipeline executables added\r\n* various bug fixes\r\n\r\n"
+        },
+        {
+          "tag_name": "v0.4",
+          "published_at": "2019-01-31T01:40:03Z",
+          "html_url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.4",
+          "name": "Slice thickness of stack acquisitions can be specified",
+          "body": "* Slice thickness of image stack acquisitions can be manually specified\r\n* Choice between FLIRT/RegAladin for volume-to-volume registration"
+        }
+      ]
+    },
+    {
+      "sourceUrl": "https://api.github.com/repos/SVRTK/SVRTK/releases?per_page=5",
+      "data": []
+    },
+    {
+      "sourceUrl": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/releases",
+      "data": []
+    }
+  ],
+  "readme": {
+    "sourceUrl": "https://github.com/SVRTK/auto-proc-svrtk/blob/main/README.md",
+    "content": "Scripts for automated SVRTK processing dockers \n====================\n\nThis repository contains the pipelines for [MONAI](https://github.com/Project-MONAI/MONAI)-based automated fetal MRI analysis [SVRTK dockers](https://hub.docker.com/r/fetalsvrtk/svrtk).\n\n\n\n- The repository and code for automation of [SVR](https://github.com/SVRTK/SVRTK) reconstruction and deep learning segmentation were designed and created by [Alena Uus](https://github.com/alenauus), Kings' College London.\n\n- Please email alena.uus (at) kcl.ac.uk if in case of any questions.\n\n\n\n<img src=\"info/auto-svrtk-072025.jpg\" alt=\"AUTOSVRTKEXAMPLE\" height=\"700\" align =\"center\" />\n\n\n**The auto pipelines are used in:**\n\n- Scanner integration via AIDE led by [Tom Roberts](https://github.com/tomaroberts): https://github.com/SVRTK/aide-svrtk\n\n- Scanner integration via Gadgetron led by [Sara Neves Silva](https://github.com/saranevessilva): https://github.com/SVRTK/gadgetron-svrtk-integration\n  \n- FetPype framework for reconstruction, segmentation and surface generation: https://github.com/fetpype/fetpype\n\n\n\n**NOTE: for Multi-BOUNTI segmentation please go to this repository:** [https://github.com/SVRTK/perinatal-brain-mri-analysis](https://github.com/SVRTK/perinatal-brain-mri-analysis).\n\n\n\nDevelopment of SVRTK was supported by projects led by Prof Mary Rutherford, Dr Lisa Story, Dr Maria Deprez, Dr Jana Hutter and Prof Jo Hajnal.\n\nOptimisation of the docker environment is supported by [Joshua van Amerom](https://github.com/jfpva). \n\n\n\n\n\n\n\nAuto processing \n---------------\n\n\n**The automated SVRTK docker tags are _fetalsvrtk/svrtk:general_auto_amd_ OR _fetalsvrtk/svrtk:general_auto_arm_ (M1 chip)**\n\n\n**AUTOMATED 3D T2w BRAIN / BODY RECONSTRUCTION:**\n\n*Input data requirements:*\n- more than 5-6 stacks\n- full ROI coverage in all stacks\n- 21-40 weeks GA\n- no extreme shading artifacts\n- singleton pregnancy\n- 0.55 / 1.5 / 3T\n- 80 – 180ms TE\n- sufficient SNR and image quality\n- suggestion: preselecting only good quality stacks will improve performance\n\n*Output:*\n- 0.8mm resolution (or as specified)\n- Standard radiological space\n\n```bash\n\ndocker pull fetalsvrtk/svrtk:general_auto_amd\n\n#auto brain reconstruction\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-brain-reconstruction-2026.sh /home/data/folder-with-files /home/data/out-brain-recon-results 1 3.0 0.8 1 ; ' \n\n#auto body reconstruction\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-body-reconstruction-2026.sh /home/data/folder-with-files /home/data/out-body-recon-results 1 3.0 0.8 1 ; '\n\n#auto thorax reconstruction\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-thorax-reconstruction-2026.sh /home/data/folder-with-files /home/data/out-thorax-recon-results 1 3.0 0.8 1 ; '\n\n#auto body reconstruction for CDH\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-body-reconstruction-cdh.sh /home/data/folder-with-files /home/data/out-body-recon-results 0 3.0 0.8 1 ; '\n\n#auto head reconstruction\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-head-reconstruction.sh /home/data/folder-with-files /home/data/out-head-recon-results 0 3.0 0.8 1 ; '\n\n```\n\n**0.55T low field reconstruction options:**\n\n```bash\n\n#0.55T auto brain reconstruction\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-brain-055t-reconstruction-2026.sh /home/data/folder-with-files /home/data/out-brain-recon-results 1 4.5 1.0 1 ; ' \n\n#0.55T auto body reconstruction\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-body-055t-reconstruction.sh /home/data/folder-with-files /home/data/out-body-recon-results 1 4.5 1.0 1 ; '\n\n```\n\n\n**Semi-automated reconstruction options (with manual mask & template initialisation):**\n\n```bash\n\n#semi-manual brain reconstruction\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/semi-manual-brain-reconstruction.sh /home/data/folder-with-files /home/data/out-brain-recon-results /home/data/template-stack.nii.gz /home/data/template-mask.nii.gz  1 4.5 1.0 1 ; ' \n\n#semi-manual body reconstruction\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/semi-manual-body-reconstruction.sh /home/data/folder-with-files /home/data/out-body-recon-results  /home/data/template-stack.nii.gz /home/data/template-mask.nii.gz  1 4.5 1.0 1 ; '\n\n```\n\n\n\n\n**AUTOMATED 3D T2w BRAIN / BODY / ... SEGMENTATION:**\n\n\n<img src=\"info/svrtk-labels.jpg\" alt=\"AUTOSVRTKEXAMPLE\" height=\"200\" align =\"center\" />\n\n*Input data requirements:*\n- sufficient SNR and image quality\n- full ROI coverage\n- good quality 3D SVR / DSVR reconsruction\n- reorientation to the standard radiological atlas space\n- 20-38 weeks GA\n- no extreme shading artifacts\n- no extreme structural anomalies\n- 0.55 / 1.5 / 3T\n- 80 – 250ms TE\n\n_Note: please use general_auto_arm tag for M1 Mac computers._\n\n\n**NOTE: for Multi-BOUNTI segmentation please go to this repository:** [https://github.com/SVRTK/perinatal-brain-mri-analysis](https://github.com/SVRTK/perinatal-brain-mri-analysis).\n\n\n\n```bash\n\ndocker pull fetalsvrtk/svrtk:general_auto_amd\n\n#auto brain tissue segmentation\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-brain-bounti-segmentation-fetal.sh /home/data/your_folder_with_brain_svr_t2_files  /home/data/output_folder_for_segmentations ; '\n\n#auto brain extraction\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-brain-bet-segmentation-fetal.sh /home/data/your_folder_with_brain_svr_t2_files  /home/data/output_folder_for_segmentations ; '\n\n#auto body organ segmentation\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-body-organ-segmentation.sh /home/data/your_folder_with_body_dsvr_t2_files  /home/data/output_folder_for_segmentations ; '\n\n#auto lung segmentation (normal and CDH)\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-lung-segmentation.sh /home/data/your_folder_with_body_dsvr_t2_files  /home/data/output_folder_for_segmentations ; ' \n\n#auto face/head segmentation\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-face-segmentation-fetal.sh /home/data/your_folder_with_head_svr_t2_files  /home/data/output_folder_for_segmentations ; '\n\n```\n\n\n\n**AUTOMATED BTFE / ... SEGMENTATION:**\n\n*Input data requirements:*\n- sufficient SNR and image quality\n- full ROI coverage\n- no extreme shading artifacts\n- no extreme structural anomalies\n- 0.55 / 1.5 / 3T\n\n_Note: please use general_auto_arm tag for M1 Mac computers._\n\n```bash\n\ndocker pull fetalsvrtk/svrtk:general_auto_amd\n\n#auto internal uterus segmentation for BTFE stacks (fetus, cord, amniotic fluid, placenta)\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-uterus-internal-segmentation-btfe.sh /home/data/your_folder_with_btfe_uterus_files  /home/data/output_folder_for_segmentations ; '\n\n\n```\n\n\n\n**AUTOMATED REORIENTATION OF 3D T2w BRAIN / BODY / THORAX RECONS TO STANDARD SPACE:**\n\n\n*Input data requirements:*\n- sufficient SNR and image quality\n- full ROI coverage\n- no extreme shading artifacts\n- no extreme structural anomalies\n- 0.55 / 1.5 / 3T\n- 80 – 250ms TE\n\n_Note: please use general_auto_arm tag for M1 Mac computers._\n\n```bash\n\ndocker pull fetalsvrtk/svrtk:general_auto_amd\n\n#auto brain reorientation to the standard space \ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-brain-reorientation.sh /home/data/your_folder_with_brain_svr_t2_files  /home/data/output_folder_for_reoriented_images 0.5 1 0; '\n\n#auto body reorientation to the standard space \ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-body-reorientation.sh /home/data/your_folder_with_body_dsvr_t2_files  /home/data/output_folder_for_reoriented_images 0.5 1 0; '\n\n#auto thorax reorientation to the standard space \ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-thorax-reorientation.sh /home/data/your_folder_with_thorax_dsvr_t2_files  /home/data/output_folder_for_reoriented_images 0.5 1 0; '\n\n#auto body reorientation for CDH cases to the standard space \ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-body-reorientation-cdh.sh /home/data/your_folder_with_body_cdh_dsvr_t2_files  /home/data/output_folder_for_reoriented_images 0.5 1 0; '\n\n```\n\n\n**AUTOMATED VOLUMETRY REPORTING FOR 3D T2w BRAIN / LUNGS / ... SEGMENTATIONS:**\n\n\n*Input data requirements:*\n- reconstructed 3D body / brain images (after QC)\n- corresponding segmentations (after QC)\n- case GA\n\n- _Note: please use general_auto_arm tag for M1 Mac computers._\n\n<img src=\"info/html-report.jpg\" alt=\"AUTOSVRTKEXAMPLE\" height=\"180\" align =\"center\" />\n\n```bash\n\ndocker pull fetalsvrtk/svrtk:general_auto_amd\n\n#brain tissue volumetry reporting \ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' python3 /home/auto-proc-svrtk/scripts/auto-reporting-brain-volumetry-html.py CASE_ID 28.14 DATE /home/data/vol-test/brain-svr-file.nii.gz /home/data/brain-tissue-segmenation-file.nii.gz /home/data/name-for-volumetry-report.html ; chmod 777 /home/data/name-for-volumetry-report.html  '\n\n#lung volumetry reporting \ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' python3 /home/auto-proc-svrtk/scripts/auto-reporting-lung-volumetry-html.py CASE_ID 28.14 DATE /home/data/vol-test/body-svr-file.nii.gz /home/data/lung-lobe-segmenation-file.nii.gz /home/data/name-for-volumetry-report.html ; chmod 777 /home/data/name-for-volumetry-report.html  '\n\n\n```\n\n\n**AUTOMATED BIOMETRY REPORTING FOR 3D T2w BRAIN RECONSTRUCTIONS:**\n\n\n*Input data requirements:*\n- 20-40 weeks GA\n- no extreme structural anomalies\n- reconstructed 3D brain image (after QC)\n- corresponding brain BOUNTI tissue segmentation (after QC)\n- sufficient image quality\n\n- case GA\n\n- _Note: please use general_auto_arm tag for M1 Mac computers._\n\n<img src=\"info/bio-github.jpg\" alt=\"AUTOSVRTKEXAMPLE\" height=\"150\" align =\"center\" />\n\n```bash\n\ndocker pull fetalsvrtk/svrtk:general_auto_amd\n\n#brain biometry\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' bash /home/auto-proc-svrtk/scripts/auto-brain-biometry-fix.sh CASE_ID CASE_GA(e.g., 30.14) /home/data/test-bio/org-t2w-svr.nii.gz /home/data/test-bio/bounti-label-for-t2w-svr.nii.gz /home/data/test-bio/out-res-reo-t2w-svr.nii.gz /home/data/test-bio/out-res-reo-bounti-label.nii.gz /home/data/test-bio/out-reo-transform.dof /home/data/test-bio/out-res-reo-bio-lab.nii.gz /home/data/test-bio/out-bio.csv /home/data/test-bio/out-bio-report.html ; '\n\n#additional brain biometry reporting of precomputed biometry outputs\ndocker run --rm  --mount type=bind,source=LOCATION_ON_YOUR_MACHINE,target=/home/data  fetalsvrtk/svrtk:general_auto_amd sh -c ' python3 /home/auto-proc-svrtk/scripts/auto-reporting-brain-biometry.py CASE_ID 28.14 DATE /home/data/test-bio/out-res-reo-t2w-svr.nii.gz /home/data/test-bio/out-res-reo-bio-lab.nii.gz  /home/data/test-bio/out-bio-report.html ; chmod 777 /home/data/test-bio/out-bio-report.html ;  '\n\n\n```\n\n\n\nLicense\n-------\n\nThe auto SVRTK code and all scripts are distributed under the terms of the\n[GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html). This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3 of the License. \n\nThis software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\n\nCitation and acknowledgements\n-----------------------------\n\nIn case you found auto SVRTK useful please give appropriate credit to the software and [SVRTK dockers](https://hub.docker.com/r/fetalsvrtk/svrtk).\n\n**Auto brain reconstruction (please include both citations):**\n> Uus, A., Neves Silva, S., Aviles Verdera, J., Payette, K., Hall, M., Colford, K., Luis, A., Sousa, H., Ning, Z., Roberts, T., McElroy, S., Deprez, M., Hajnal, J., Rutherford, M., Story, L., & Hutter, J. (2025). Scanner-based real-time three-dimensional brain + body slice-to-volume reconstruction for T2-weighted 0.55-T low-field fetal magnetic resonance imaging. Pediatric Radiology, 55(3), 556–569. https://doi.org/10.1007/s00247-025-06165-x\n\n> Kuklisova-Murgasova, M., Quaghebeur, G., Rutherford, M. A., Hajnal, J. V., & Schnabel, J. A. (2012). Reconstruction of fetal brain MRI with intensity matching and complete outlier removal. Medical Image Analysis, 16(8), 1550–1564.: https://doi.org/10.1016/j.media.2012.07.004\n\n**Auto thorax/body reconstruction (please include both citations):**\n> Uus, A., Neves Silva, S., Aviles Verdera, J., Payette, K., Hall, M., Colford, K., Luis, A., Sousa, H., Ning, Z., Roberts, T., McElroy, S., Deprez, M., Hajnal, J., Rutherford, M., Story, L., & Hutter, J. (2025). Scanner-based real-time three-dimensional brain + body slice-to-volume reconstruction for T2-weighted 0.55-T low-field fetal magnetic resonance imaging. Pediatric Radiology, 55(3), 556–569. https://doi.org/10.1007/s00247-025-06165-x\n\n> Uus, A., Zhang, T., Jackson, L., Roberts, T., Rutherford, M., Hajnal, J.V., Deprez, M. (2020). Deformable Slice-to-Volume Registration for Motion Correction in Fetal Body MRI and Placenta. IEEE Transactions on Medical Imaging, 39(9), 2750-2759: http://dx.doi.org/10.1109/TMI.2020.2974844\n\n**Brain tissue segmentation:**\n> Uus, A. U., Kyriakopoulou, V., Makropoulos, A., Fukami-Gartner, A., Cromb, D., Davidson, A., Cordero-Grande, L., Price, A. N., Grigorescu, I., Williams, L. Z. J., Robinson, E. C., Lloyd, D., Pushparajah, K., Story, L., Hutter, J., Counsell, S. J., Edwards, A. D., Rutherford, M. A., Hajnal, J. V., Deprez, M. (2023) BOUNTI: Brain vOlumetry and aUtomated parcellatioN for 3D feTal MRI. eLife 12:RP88818; doi: https://doi.org/10.7554/eLife.88818.1\n\n**Body organ segmentation:**\n> Uus, A. U., Hall, M., Grigorescu, I., Avena Zampieri, C., Egloff Collado, A., Payette, K., Matthew, J., Kyriakopoulou, V., Hajnal, J. V., Hutter, J., Rutherford, M. A., Deprez, M., Story, L. (2024) Automated body organ segmentation, volumetry and population-averaged atlas for 3D motion-corrected T2-weighted fetal body MRI. Sci Rep 14, 6637; doi: https://doi.org/10.1038/s41598-024-57087-x\n\n**Lung segmentation:**\n> Uus, A., Avena Zampieri, C., Downes, F., Egloff Collado, A., Hall, M., Davidson, J. R., Payette, K., Aviles Verdera, J., Grigorescu, I., Hajnal, J., Deprez, M., Aertsen, M., Hutter, J., Rutherford, M., Deprest, J. & Story, L., (2024). Towards automated multi-regional lung parcellation for 0.55-3T 3D T2w fetal MRI. PIPPI MICCAI Workshop 2024. LNCS vol 14747. https://doi.org/10.1007/978-3-031-73260-7_11\n\n**Face segmentation:**\n> Matthew, J., Uus, A., de Souza, L., Wright, R., Fukami-Gartner, A., Priego, G., Saija, C., Deprez, M., Collado, A. E., Hutter, J., Story, L., Malamateniou, C., Rhode, K., Hajnal, J., & Rutherford, M. A. (2024). Craniofacial phenotyping with fetal MRI: a feasibility study of 3D visualisation, segmentation, surface-rendered and physical models. BMC Medical Imaging, 24(1), 52. https://doi.org/10.1186/s12880-024-01230-7\n\n**Uterus BTFE segmentation:**\n> Neves Silva, S., Uus, A., Waheed, H., Bansal, S., St Clair, K., Norman, W., Aviles Verdera, J., Cromb, D., Woodgate, T., van Poppel, M., Steinweg, J. K., Matthew, J., Pushparajah, K., Lloyd, D., Kyriakopoulou, V., Siassakos, D., David, A., Hajnal, J. v, Story, L., … Hutter, J. (2026). Scanner-based real-time automated volumetry reporting of the fetus, amniotic fluid, placenta, and umbilical cord for fetal MRI at 0.55T. Magnetic Resonance in Medicine, 95(2), 975–986. https://doi.org/10.1002/mrm.70097\n\n**Brain biometry:**\n> Luis, A., Uus, A., Matthew, J., Arulkumaran, S., Collado, A. E., Kyriakopoulou, V., Silva, S. N., Verdera, J. A., Hall, M., Bansal, S., McElroy, S., Colford, K., Hajnal, J. v, Hutter, J., Story, L., & Rutherford, M. (2025). Towards automated fetal brain biometry reporting for 3-dimensional T2-weighted 0.55-3T magnetic resonance imaging at 20-40 weeks gestational age range. MedRxiv, 2025.02.06.25321808. https://doi.org/10.1101/2025.02.06.25321808\n\n**Auto brain reorientation:**\n> Uus, A. U., Hall, M., Payette, K., Hajnal, J. V., Deprez, M., Hutter, J., Rutherford, M. A., Story, L. (2023) Combined quantitative T2* map and structural T2- weighted tissue-specific analysis for fetal brain MRI: pilot automated pipeline. PIPPI MICCAI 2023 workshop, LNCS 14246.: https://doi.org/10.1007/978-3-031-45544-5_3\n\n**Auto thorax/body reorientation:**\n> Uus, A., Grigorescu, I., van Poppel, M., Steinweg, J. K., Roberts, T., Rutherford, M., Hajnal, J., Lloyd, D., Pushparajah, K. & Deprez, M. (2022) Automated 3D reconstruction of the fetal thorax in the standard atlas space from motion-corrupted MRI stacks for 21-36 weeks GA range. Medical Image Analysis, 80 (August 2022).: https://doi.org/10.1016/j.media.2022.102484\n\n\nDisclaimer\n-------\n\nThis software has been developed for research purposes only, and hence should not be used as a diagnostic tool. In no event shall the authors or distributors be liable to any direct, indirect, special, incidental, or consequential damages arising of the use of this software, its documentation, or any derivatives thereof, even if the authors have been advised of the possibility of such damage.\n\n"
+  }
+}

@@ -1,0 +1,478 @@
+{
+  "schemaVersion": 1,
+  "candidate": {
+    "id": "spinal-cord-mri",
+    "title": "脊髓 MRI 分割与定量分析",
+    "scopeDescription": "Spinal cord MRI segmentation, cross-site quantitative measurements and reproducible processing; MRI vertebral/bone studies are outside this stated scope."
+  },
+  "collectedAt": "2026-11-17",
+  "sources": [
+    {
+      "id": "dataset-releases",
+      "url": "https://api.github.com/repos/spine-generic/data-multi-subject/releases?per_page=30",
+      "sourceType": "official-github-api",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "sct-releases",
+      "url": "https://api.github.com/repos/spinalcordtoolbox/spinalcordtoolbox/releases?per_page=30",
+      "sourceType": "official-github-api",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "sct-commits",
+      "url": "https://api.github.com/repos/spinalcordtoolbox/spinalcordtoolbox/commits?per_page=3",
+      "sourceType": "official-github-api",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "sct-repo",
+      "url": "https://api.github.com/repos/spinalcordtoolbox/spinalcordtoolbox",
+      "sourceType": "official-github-api",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "dataset-growth-pr",
+      "url": "https://github.com/spine-generic/data-multi-subject/pull/77",
+      "sourceType": "official-dataset-pull-request",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "spine-docs",
+      "url": "https://spine-generic.readthedocs.io/",
+      "sourceType": "official-project-documentation",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "dataset-readme",
+      "url": "https://github.com/spine-generic/data-multi-subject",
+      "sourceType": "official-dataset-repository",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "sct-readme",
+      "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox",
+      "sourceType": "official-code-repository",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "rootlets-arxiv",
+      "url": "https://arxiv.org/abs/2402.00724",
+      "sourceType": "author-preprint",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "paper-27720818",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:27720818&format=json&resultType=core",
+      "sourceType": "Europe-PMC-publication-metadata",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "paper-30300751",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:30300751&format=json&resultType=core",
+      "sourceType": "Europe-PMC-publication-metadata",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "paper-34400655",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:34400655&format=json&resultType=core",
+      "sourceType": "Europe-PMC-publication-metadata",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "paper-rootlets",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A10.1162/imag_a_00218&format=json&resultType=core",
+      "sourceType": "Europe-PMC-publication-metadata",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "participants-r20200826",
+      "url": "https://raw.githubusercontent.com/spine-generic/data-multi-subject/r20200826/participants.tsv",
+      "sourceType": "versioned-dataset-file",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "participants-r20211125",
+      "url": "https://raw.githubusercontent.com/spine-generic/data-multi-subject/r20211125/participants.tsv",
+      "sourceType": "versioned-dataset-file",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "participants-r20250314",
+      "url": "https://raw.githubusercontent.com/spine-generic/data-multi-subject/r20250314/participants.tsv",
+      "sourceType": "versioned-dataset-file",
+      "retrievedAt": "2026-11-17"
+    },
+    {
+      "id": "rootlets-fulltext",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12272210/fullTextXML",
+      "sourceType": "original-article-open-fulltext",
+      "retrievedAt": "2026-11-17",
+      "license": "CC BY 4.0",
+      "rawFile": "raw/spinal-fulltext-urls-rootlets.json"
+    },
+    {
+      "id": "spine-data-fulltext",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8368310/fullTextXML",
+      "sourceType": "original-article-open-fulltext",
+      "retrievedAt": "2026-11-17",
+      "license": "CC BY 4.0",
+      "rawFile": "raw/spinal-fulltext-links-PMC8368310.json"
+    }
+  ],
+  "papers": [
+    {
+      "id": "doi:10.1016/j.neuroimage.2016.10.009",
+      "title": "SCT: Spinal Cord Toolbox, an open-source software for processing spinal cord MRI data.",
+      "doi": "10.1016/j.neuroimage.2016.10.009",
+      "pmid": "27720818",
+      "publishedAt": "2016-10-05",
+      "publicationDateBasis": "Europe PMC firstPublicationDate for this journal record; online publication may precede print issue",
+      "url": "https://doi.org/10.1016/j.neuroimage.2016.10.009",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:27720818&format=json&resultType=core",
+      "rawAbstract": "For the past 25 years, the field of neuroimaging has witnessed the development of several software packages for processing multi-parametric magnetic resonance imaging (mpMRI) to study the brain. These software packages are now routinely used by researchers and clinicians, and have contributed to important breakthroughs for the understanding of brain anatomy and function. However, no software package exists to process mpMRI data of the spinal cord. Despite the numerous clinical needs for such advanced mpMRI protocols (multiple sclerosis, spinal cord injury, cervical spondylotic myelopathy, etc.), researchers have been developing specific tools that, while necessary, do not provide an integrative framework that is compatible with most usages and that is capable of reaching the community at large. This hinders cross-validation and the possibility to perform multi-center studies. In this study we introduce the Spinal Cord Toolbox (SCT), a comprehensive software dedicated to the processing of spinal cord MRI data. SCT builds on previously-validated methods and includes state-of-the-art MRI templates and atlases of the spinal cord, algorithms to segment and register new data to the templates, and motion correction methods for diffusion and functional time series. SCT is tailored towards standardization and automation of the processing pipeline, versatility, modularity, and it follows guidelines of software development and distribution. Preliminary applications of SCT cover a variety of studies, from cross-sectional area measures in large databases of patients, to the precise quantification of mpMRI metrics in specific spinal pathways. We anticipate that SCT will bring together the spinal cord neuroimaging community by establishing standard templates and analysis procedures.",
+      "rawAbstractFormat": "source HTML/text, unmodified",
+      "sourceIds": [
+        "paper-27720818"
+      ],
+      "rawFile": "raw/spinal-paper-27720818.json",
+      "explicitResourceLinks": [
+        {
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox",
+          "relation": "abstract explicitly names Spinal Cord Toolbox; official repository identifies that software",
+          "sourceIds": [
+            "paper-27720818",
+            "sct-readme"
+          ],
+          "urlLiteralInAbstract": false
+        }
+      ]
+    },
+    {
+      "id": "doi:10.1016/j.neuroimage.2018.09.081",
+      "title": "Automatic segmentation of the spinal cord and intramedullary multiple sclerosis lesions with convolutional neural networks.",
+      "doi": "10.1016/j.neuroimage.2018.09.081",
+      "pmid": "30300751",
+      "publishedAt": "2018-10-06",
+      "publicationDateBasis": "Europe PMC firstPublicationDate for this journal record; online publication may precede print issue",
+      "url": "https://doi.org/10.1016/j.neuroimage.2018.09.081",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:30300751&format=json&resultType=core",
+      "rawAbstract": "The spinal cord is frequently affected by atrophy and/or lesions in multiple sclerosis (MS) patients. Segmentation of the spinal cord and lesions from MRI data provides measures of damage, which are key criteria for the diagnosis, prognosis, and longitudinal monitoring in MS. Automating this operation eliminates inter-rater variability and increases the efficiency of large-throughput analysis pipelines. Robust and reliable segmentation across multi-site spinal cord data is challenging because of the large variability related to acquisition parameters and image artifacts. In particular, a precise delineation of lesions is hindered by a broad heterogeneity of lesion contrast, size, location, and shape. The goal of this study was to develop a fully-automatic framework - robust to variability in both image parameters and clinical condition - for segmentation of the spinal cord and intramedullary MS lesions from conventional MRI data of MS and non-MS cases. Scans of 1042 subjects (459 healthy controls, 471 MS patients, and 112 with other spinal pathologies) were included in this multi-site study (n = 30). Data spanned three contrasts (T<sub>1</sub>-, T<sub>2</sub>-, and T<sub>2</sub><sup>∗</sup>-weighted) for a total of 1943 vol and featured large heterogeneity in terms of resolution, orientation, coverage, and clinical conditions. The proposed cord and lesion automatic segmentation approach is based on a sequence of two Convolutional Neural Networks (CNNs). To deal with the very small proportion of spinal cord and/or lesion voxels compared to the rest of the volume, a first CNN with 2D dilated convolutions detects the spinal cord centerline, followed by a second CNN with 3D convolutions that segments the spinal cord and/or lesions. CNNs were trained independently with the Dice loss. When compared against manual segmentation, our CNN-based approach showed a median Dice of 95% vs. 88% for PropSeg (p ≤ 0.05), a state-of-the-art spinal cord segmentation method. Regarding lesion segmentation on MS data, our framework provided a Dice of 60%, a relative volume difference of -15%, and a lesion-wise detection sensitivity and precision of 83% and 77%, respectively. In this study, we introduce a robust method to segment the spinal cord and intramedullary MS lesions on a variety of MRI contrasts. The proposed framework is open-source and readily available in the Spinal Cord Toolbox.",
+      "rawAbstractFormat": "source HTML/text, unmodified",
+      "sourceIds": [
+        "paper-30300751"
+      ],
+      "rawFile": "raw/spinal-paper-30300751.json",
+      "explicitResourceLinks": [
+        {
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox",
+          "relation": "abstract explicitly names Spinal Cord Toolbox; official repository identifies that software",
+          "sourceIds": [
+            "paper-30300751",
+            "sct-readme"
+          ],
+          "urlLiteralInAbstract": false
+        }
+      ],
+      "arxivId": "1805.06349"
+    },
+    {
+      "id": "doi:10.1038/s41597-021-00941-8",
+      "title": "Open-access quantitative MRI data of the spinal cord and reproducibility across participants, sites and manufacturers.",
+      "doi": "10.1038/s41597-021-00941-8",
+      "pmid": "34400655",
+      "publishedAt": "2021-08-16",
+      "publicationDateBasis": "Europe PMC firstPublicationDate for this journal record; online publication may precede print issue",
+      "url": "https://doi.org/10.1038/s41597-021-00941-8",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:34400655&format=json&resultType=core",
+      "rawAbstract": "In a companion paper by Cohen-Adad et al. we introduce the spine generic quantitative MRI protocol that provides valuable metrics for assessing spinal cord macrostructural and microstructural integrity. This protocol was used to acquire a single subject dataset across 19 centers and a multi-subject dataset across 42 centers (for a total of 260 participants), spanning the three main MRI manufacturers: GE, Philips and Siemens. Both datasets are publicly available via git-annex. Data were analysed using the Spinal Cord Toolbox to produce normative values as well as inter/intra-site and inter/intra-manufacturer statistics. Reproducibility for the spine generic protocol was high across sites and manufacturers, with an average inter-site coefficient of variation of less than 5% for all the metrics. Full documentation and results can be found at https://spine-generic.rtfd.io/ . The datasets and analysis pipeline will help pave the way towards accessible and reproducible quantitative MRI in the spinal cord.",
+      "rawAbstractFormat": "source HTML/text, unmodified",
+      "sourceIds": [
+        "paper-34400655"
+      ],
+      "rawFile": "raw/spinal-paper-34400655.json",
+      "explicitResourceLinks": [
+        {
+          "url": "https://spine-generic.rtfd.io/",
+          "relation": "documentation URL stated in abstract",
+          "sourceIds": [
+            "paper-34400655"
+          ],
+          "urlLiteralInAbstract": true
+        },
+        {
+          "url": "https://github.com/spine-generic/data-multi-subject",
+          "relation": "dataset linked by project documentation and dataset README",
+          "sourceIds": [
+            "spine-docs",
+            "dataset-readme"
+          ],
+          "urlLiteralInAbstract": false
+        },
+        {
+          "url": "https://github.com/spine-generic/data-multi-subject/blob/r20201130/participants.tsv",
+          "relation": "versioned participant metadata linked in original full text",
+          "sourceIds": [
+            "spine-data-fulltext"
+          ],
+          "urlLiteralInFullText": true
+        },
+        {
+          "url": "https://github.com/spine-generic/spine-generic/releases/tag/v2.6",
+          "relation": "analysis code explicitly linked in original full text",
+          "sourceIds": [
+            "spine-data-fulltext"
+          ],
+          "urlLiteralInFullText": true
+        }
+      ]
+    },
+    {
+      "id": "doi:10.1162/imag_a_00218",
+      "title": "Automatic segmentation of the spinal cord nerve rootlets.",
+      "doi": "10.1162/imag_a_00218",
+      "pmid": "40800300",
+      "publishedAt": "2024-07-02",
+      "publicationDateBasis": "Europe PMC firstPublicationDate for this journal record; online publication may precede print issue",
+      "url": "https://doi.org/10.1162/imag_a_00218",
+      "abstractSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A10.1162/imag_a_00218&format=json&resultType=core",
+      "rawAbstract": "Precise identification of spinal nerve rootlets is relevant to delineate spinal levels for the study of functional activity in the spinal cord. The goal of this study was to develop an automatic method for the semantic segmentation of spinal nerve rootlets from T2-weighted magnetic resonance imaging (MRI) scans. Images from two open-access 3T MRI datasets were used to train a 3D multi-class convolutional neural network using an active learning approach to segment C2-C8 dorsal nerve rootlets. Each output class corresponds to a spinal level. The method was tested on 3T T2-weighted images from three datasets unseen during training to assess inter-site, inter-session, and inter-resolution variability. The test Dice score was 0.67 ± 0.16 (mean ± standard deviation across testing images and rootlets levels), suggesting a good performance. The method also demonstrated low inter-vendor and inter-site variability (coefficient of variation ≤ 1.41%), as well as low inter-session variability (coefficient of variation ≤ 1.30%), indicating stable predictions across different MRI vendors, sites, and sessions. The proposed methodology is open-source and readily available in the Spinal Cord Toolbox (SCT) v6.2 and higher.",
+      "rawAbstractFormat": "source HTML/text, unmodified",
+      "sourceIds": [
+        "paper-rootlets"
+      ],
+      "rawFile": "raw/spinal-paper-rootlets.json",
+      "explicitResourceLinks": [
+        {
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/6.2",
+          "canonicalRepository": "https://github.com/spinalcordtoolbox/spinalcordtoolbox",
+          "relation": "full text names packaged segmentation model as available in SCT v6.2+ and prints this repository version URL",
+          "sourceIds": [
+            "rootlets-fulltext"
+          ],
+          "urlLiteralInAbstract": false,
+          "urlLiteralInFullText": true
+        },
+        {
+          "url": "https://github.com/spine-generic/data-multi-subject/tree/r20230223",
+          "relation": "full text identifies training dataset and data availability URL",
+          "sourceIds": [
+            "rootlets-fulltext"
+          ],
+          "urlLiteralInFullText": true
+        },
+        {
+          "url": "https://github.com/ivadomed/model-spinal-rootlets/tree/r20240129",
+          "relation": "processing scripts explicitly linked by original full text",
+          "sourceIds": [
+            "rootlets-fulltext"
+          ],
+          "urlLiteralInFullText": true
+        }
+      ],
+      "arxivId": "2402.00724",
+      "preprintPublishedAt": "2024-02-01",
+      "preprintDateBasis": "arXiv v1 submission history",
+      "preprintSourceUrl": "https://arxiv.org/abs/2402.00724"
+    }
+  ],
+  "datasets": [
+    {
+      "id": "spine-generic-multi-subject",
+      "title": "Spine Generic Public Database (Multi-Subject)",
+      "url": "https://github.com/spine-generic/data-multi-subject",
+      "doi": "10.5281/zenodo.4299140",
+      "doiSourceId": "dataset-readme",
+      "repository": "spine-generic/data-multi-subject",
+      "versions": [
+        {
+          "version": "r20200826",
+          "releasedAt": "2020-08-26T15:19:19Z",
+          "dateBasis": "GitHub release published_at, not tag-name-derived date",
+          "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20200826",
+          "sourceIds": [
+            "dataset-releases",
+            "participants-r20200826"
+          ],
+          "changeDescription": "First release",
+          "participantCountObserved": 260,
+          "participantCountBasis": "nonempty data rows of versioned participants.tsv, excluding header; unique IDs cross-checked",
+          "changedDataFilesCount": null,
+          "changedDataFilesBasis": null,
+          "changeType": "initial-release"
+        },
+        {
+          "version": "r20211125",
+          "releasedAt": "2021-11-25T16:25:46Z",
+          "dateBasis": "GitHub release published_at, not tag-name-derived date",
+          "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20211125",
+          "sourceIds": [
+            "dataset-releases",
+            "participants-r20211125"
+          ],
+          "changeDescription": "add site data ucdavis",
+          "participantCountObserved": 267,
+          "participantCountBasis": "nonempty data rows of versioned participants.tsv, excluding header; unique IDs cross-checked",
+          "changedDataFilesCount": 51,
+          "changedDataFilesBasis": "all 129 PR 77 files inspected across two API pages; 51 added .nii/.nii.gz paths (git-annex pointers), not the complete diff between release versions",
+          "changeType": "cohort-growth"
+        },
+        {
+          "version": "r20250314",
+          "releasedAt": "2025-03-14T20:25:35Z",
+          "dateBasis": "GitHub release published_at, not tag-name-derived date",
+          "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20250314",
+          "sourceIds": [
+            "dataset-releases",
+            "participants-r20250314"
+          ],
+          "changeDescription": "Update spinal cord seg of T2w with contrast-agnostic v3.1",
+          "participantCountObserved": 267,
+          "participantCountBasis": "nonempty data rows of versioned participants.tsv, excluding header; unique IDs cross-checked",
+          "changedDataFilesCount": null,
+          "changedDataFilesBasis": null,
+          "changeType": "derived-segmentation-update"
+        }
+      ],
+      "growthEvidence": {
+        "fromVersion": "r20200826",
+        "toVersion": "r20211125",
+        "participantRowsBefore": 260,
+        "participantRowsAfter": 267,
+        "addedParticipantRows": 7,
+        "removedParticipantRows": 0,
+        "newSite": "ucdavis",
+        "sourceIds": [
+          "participants-r20200826",
+          "participants-r20211125",
+          "dataset-growth-pr"
+        ],
+        "mergedAt": "2021-04-16T19:02:43Z",
+        "mergeDateBasis": "PR merged_at; distinct from later release publication date",
+        "addedImagingFilePaths": 51,
+        "completePullRequestFileCount": 129,
+        "fullFileList": "raw/spinal-github-evidence.json"
+      },
+      "paperLinks": [
+        {
+          "doi": "10.1038/s41597-021-00941-8",
+          "sourceIds": [
+            "paper-34400655",
+            "spine-docs"
+          ],
+          "relation": "project data descriptor (original DOI)"
+        },
+        {
+          "doi": "10.1162/imag_a_00218",
+          "sourceIds": [
+            "rootlets-fulltext"
+          ],
+          "relation": "training dataset literal version URL r20230223 in original article"
+        }
+      ]
+    }
+  ],
+  "code": [
+    {
+      "repository": "spinalcordtoolbox/spinalcordtoolbox",
+      "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox",
+      "archived": false,
+      "createdAt": "2014-05-31T18:01:05Z",
+      "latestCommitAt": "2026-11-16T16:15:16Z",
+      "latestCommitUrl": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/50643b61a5ad8dda99a9e251983e13c94354eab2",
+      "sourceIds": [
+        "sct-repo",
+        "sct-commits",
+        "sct-releases"
+      ],
+      "releases": [
+        {
+          "version": "7.3",
+          "publishedAt": "2026-05-09T00:25:10Z",
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/7.3",
+          "sourceId": "sct-releases",
+          "dateBasis": "GitHub release published_at"
+        },
+        {
+          "version": "7.1",
+          "publishedAt": "2025-08-19T15:37:25Z",
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/7.1",
+          "sourceId": "sct-releases",
+          "dateBasis": "GitHub release published_at"
+        },
+        {
+          "version": "5.0.0",
+          "publishedAt": "2020-11-08T01:15:22Z",
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/5.0.0",
+          "sourceId": "sct-releases",
+          "dateBasis": "GitHub release published_at"
+        },
+        {
+          "version": "4.1.1",
+          "publishedAt": "2019-11-28T20:48:03Z",
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/4.1.1",
+          "sourceId": "sct-releases",
+          "dateBasis": "GitHub release published_at"
+        }
+      ],
+      "commits": [
+        {
+          "sha": "50643b61a5ad8dda99a9e251983e13c94354eab2",
+          "date": "2026-11-16T16:15:16Z",
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/50643b61a5ad8dda99a9e251983e13c94354eab2",
+          "subject": "Replace retired `macos-14` runner and pin `-latest` runners to fixed versions (#5356)"
+        },
+        {
+          "sha": "63ce8a80f18df91eb1fc532a5a0f2031123b620a",
+          "date": "2026-11-12T14:53:42Z",
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/63ce8a80f18df91eb1fc532a5a0f2031123b620a",
+          "subject": "Add new `brachial_plexus` task for BP and DRG labeling (with coronal mosaic QC report) (#5327)"
+        },
+        {
+          "sha": "017d797f37009568479888a528081df726cbe692",
+          "date": "2026-11-11T14:05:10Z",
+          "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/017d797f37009568479888a528081df726cbe692",
+          "subject": "Add `-p sct_deepseg` to `sct_qc` (#5319)"
+        }
+      ],
+      "officialPaperLinks": [
+        {
+          "doi": "10.2463/mrms.rev.2023-0159",
+          "url": "https://doi.org/10.2463/mrms.rev.2023-0159",
+          "sourceId": "sct-readme",
+          "relation": "review linked in official README"
+        }
+      ],
+      "linkedPaperEvidence": [
+        {
+          "paperDoi": "10.1162/imag_a_00218",
+          "paperSourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12272210/fullTextXML",
+          "literalRepositoryUrl": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/6.2",
+          "canonicalRepository": "https://github.com/spinalcordtoolbox/spinalcordtoolbox",
+          "sourceId": "rootlets-fulltext",
+          "relationship": "packaged model implementation in SCT"
+        }
+      ]
+    }
+  ],
+  "archiveObservation": {
+    "sourceFile": "/private/tmp/oevryn-analysis-corpus.json",
+    "matchingField": "title",
+    "predicate": "lowercase title contains spinal cord or spinalcord",
+    "matchedCoreRecords": 7,
+    "matchedPublicationYears": [
+      2026
+    ],
+    "note": "Title-only observation, not a scientific membership label; three foundational 2016/2018/2021 works absent from this core corpus."
+  },
+  "limitations": [
+    "No resource downloads, model training or human scientific validation were performed.",
+    "Named-software links are explicitly marked separately from literal URLs in abstracts. Do not silently treat named software mentions as literal DOI-to-repository evidence.",
+    "Dataset participant growth was merged on 2021-04-16 and published in release r20211125 on 2021-11-25; release span is not continuous data-acquisition duration.",
+    "r20250314 changes derived spinal-cord segmentations, not participant count.",
+    "GitHub release publication timestamps can reflect re-publication/backports; selected SCT release dates are reported as API published_at, not claimed to be every original release date.",
+    "Some official Spine Generic documentation prints DOI 10.1038/s41597-021-01026-2 while linking the PDF for 10.1038/s41597-021-00941-8. This pack uses the original data-descriptor DOI verified through Europe PMC.",
+    "Existing status sufficient/pending is intentionally not assigned by this evidence pack."
+  ],
+  "collectedDateTimezone": "Asia/Shanghai"
+}

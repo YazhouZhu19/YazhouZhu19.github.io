@@ -5,12 +5,16 @@
     "sourceRevision": "1a2c0da37dd8a2d7a7a7e6abe8bd505c05a242f5",
     "notes": [
       "Task P0.1, measured 2026-10-21 Asia/Shanghai; gzip level 9, each resource independently.",
+      "2026-11-13 information screening adds optional UI (9343 raw / 4154 gzip), worker (99220 / 31913) and CSS (2222 / 712) bytes. Explicit new limits total 112640 / 38912 JS and 3072 / 1024 CSS; only optional totals grow by these allowances. Existing startup, data and asset ceilings are unchanged.",
       "Papers collected 2026-10-20T14:35:21.416Z: 8326 records, v2 manifest plus 16 shards, 68812492 raw / 11215528 gzip bytes.",
       "Signals generated 2026-10-20T14:35:32.144Z: 50790 records, 48640306 raw / 7847487 gzip bytes.",
       "Initial JS 571063 raw / 176919 gzip; initial CSS 263903 raw / 43892 gzip bytes.",
       "Limits allow 2% for code assets and 5% for naturally growing data, rounded up to 1 KiB; paper files retain the existing 4 MiB cap.",
       "These are temporary regression ceilings, not performance targets. Tighten after each optimization; never auto-update limits during builds.",
-      "assets/lib.js is the optional WebLLM runtime; assets/ai-worker.js is the optional AI worker. Neither is loaded by the default page."
+      "assets/lib.js is the optional WebLLM runtime; assets/ai-worker.js is the optional AI worker. Neither is loaded by the default page.",
+      "2026-11-16 integrated rule analysis replaces the direction page. Initial measured optional UI 11285/5005 raw/gzip, worker 23887/10510, CSS 2294/738. Explicit feature caps 14336/6144, 28672/12288 and 3072/1024; existing startup and aggregate limits remain unchanged. No model runtime is needed by this view.",
+      "2026-11-16 paper-code lexical retrieval adds lazy optional UI 6646/3087 raw/gzip, worker 18694/8303 and CSS 865/369 bytes. New caps are 8192/4096, 20480/9216 and 1024/512 respectively. Optional totals grow only by these new caps; all startup, dataset and existing per-asset limits stay unchanged. Niche status UI stays within its existing cap.",
+      "2026-11-17 native Analysis integrates the approved 14-work history snapshot in a lazy optional panel (initial measurement 48370/13070 raw/gzip JS, 8570/1640 CSS). Caps 50176/14336 JS and 9216/2048 CSS. Parent view gains snapshot filters, native theme tokens and separated live/snapshot sections; caps become 18432/7680 JS and 9216/2048 CSS. Optional totals grow only by these explicit feature allowances; all startup, data, worker and other asset ceilings remain unchanged. The newly shared chevron-down icon has a 512/512 raw/gzip per-asset cap within the same aggregate allowances."
     ]
   },
   "initialData": [
@@ -22,6 +26,18 @@
   ],
   "limits": {
     "assets": {
+      "assets/information-screening.js": {
+        "rawBytes": 10240,
+        "gzipBytes": 5120
+      },
+      "assets/information-screening-worker.js": {
+        "rawBytes": 102400,
+        "gzipBytes": 33792
+      },
+      "assets/information-screening.css": {
+        "rawBytes": 3072,
+        "gzipBytes": 1024
+      },
       "assets/ai-research-panel.js": {
         "rawBytes": 46080,
         "gzipBytes": 18432
@@ -249,6 +265,42 @@
       "assets/snapshot-v3.js": {
         "rawBytes": 4096,
         "gzipBytes": 2048
+      },
+      "assets/integrated-analysis.js": {
+        "rawBytes": 18432,
+        "gzipBytes": 7680
+      },
+      "assets/integrated-analysis-worker.js": {
+        "rawBytes": 28672,
+        "gzipBytes": 12288
+      },
+      "assets/integrated-analysis.css": {
+        "rawBytes": 9216,
+        "gzipBytes": 2048
+      },
+      "assets/paper-code-links.js": {
+        "rawBytes": 8192,
+        "gzipBytes": 4096
+      },
+      "assets/paper-code-links-worker.js": {
+        "rawBytes": 20480,
+        "gzipBytes": 9216
+      },
+      "assets/paper-code-links.css": {
+        "rawBytes": 1024,
+        "gzipBytes": 512
+      },
+      "assets/analysis-history-panel.js": {
+        "rawBytes": 50176,
+        "gzipBytes": 14336
+      },
+      "assets/analysis-history-panel.css": {
+        "rawBytes": 9216,
+        "gzipBytes": 2048
+      },
+      "assets/chevron-down.js": {
+        "rawBytes": 512,
+        "gzipBytes": 512
       }
     },
     "totals": {
@@ -261,12 +313,12 @@
         "gzipBytes": 22000
       },
       "optionalJs": {
-        "rawBytes": 12558336,
-        "gzipBytes": 4457472
+        "rawBytes": 12753920,
+        "gzipBytes": 4525568
       },
       "optionalCss": {
-        "rawBytes": 141312,
-        "gzipBytes": 26624
+        "rawBytes": 160768,
+        "gzipBytes": 31232
       },
       "initialData": {
         "rawBytes": 14680064,
@@ -335,5 +387,7 @@
       "path": "data/public-papers-v3.json"
     }
   ],
-  "initialDynamicEntries": ["lib/paper-overview.ts"]
+  "initialDynamicEntries": [
+    "lib/paper-overview.ts"
+  ]
 }

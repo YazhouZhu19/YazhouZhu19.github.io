@@ -1,0 +1,66 @@
+{
+  "sourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:30300751&format=json&resultType=core",
+  "retrievedAt": "2026-11-17",
+  "records": [
+    {
+      "id": "30300751",
+      "source": "MED",
+      "pmcid": "PMC6759925",
+      "doi": "10.1016/j.neuroimage.2018.09.081",
+      "title": "Automatic segmentation of the spinal cord and intramedullary multiple sclerosis lesions with convolutional neural networks.",
+      "journalInfo": {
+        "volume": "184",
+        "journalIssueId": 2748312,
+        "dateOfPublication": "2019 Jan",
+        "monthOfPublication": 1,
+        "yearOfPublication": 2019,
+        "journal": {
+          "medlineAbbreviation": "Neuroimage",
+          "title": "NeuroImage",
+          "essn": "1095-9572",
+          "issn": "1053-8119",
+          "isoabbreviation": "Neuroimage",
+          "nlmid": "9215515"
+        },
+        "printPublicationDate": "2019-01-01"
+      },
+      "pubYear": "2019",
+      "abstractText": "The spinal cord is frequently affected by atrophy and/or lesions in multiple sclerosis (MS) patients. Segmentation of the spinal cord and lesions from MRI data provides measures of damage, which are key criteria for the diagnosis, prognosis, and longitudinal monitoring in MS. Automating this operation eliminates inter-rater variability and increases the efficiency of large-throughput analysis pipelines. Robust and reliable segmentation across multi-site spinal cord data is challenging because of the large variability related to acquisition parameters and image artifacts. In particular, a precise delineation of lesions is hindered by a broad heterogeneity of lesion contrast, size, location, and shape. The goal of this study was to develop a fully-automatic framework - robust to variability in both image parameters and clinical condition - for segmentation of the spinal cord and intramedullary MS lesions from conventional MRI data of MS and non-MS cases. Scans of 1042 subjects (459 healthy controls, 471 MS patients, and 112 with other spinal pathologies) were included in this multi-site study (n = 30). Data spanned three contrasts (T<sub>1</sub>-, T<sub>2</sub>-, and T<sub>2</sub><sup>∗</sup>-weighted) for a total of 1943 vol and featured large heterogeneity in terms of resolution, orientation, coverage, and clinical conditions. The proposed cord and lesion automatic segmentation approach is based on a sequence of two Convolutional Neural Networks (CNNs). To deal with the very small proportion of spinal cord and/or lesion voxels compared to the rest of the volume, a first CNN with 2D dilated convolutions detects the spinal cord centerline, followed by a second CNN with 3D convolutions that segments the spinal cord and/or lesions. CNNs were trained independently with the Dice loss. When compared against manual segmentation, our CNN-based approach showed a median Dice of 95% vs. 88% for PropSeg (p ≤ 0.05), a state-of-the-art spinal cord segmentation method. Regarding lesion segmentation on MS data, our framework provided a Dice of 60%, a relative volume difference of -15%, and a lesion-wise detection sensitivity and precision of 83% and 77%, respectively. In this study, we introduce a robust method to segment the spinal cord and intramedullary MS lesions on a variety of MRI contrasts. The proposed framework is open-source and readily available in the Spinal Cord Toolbox.",
+      "fullTextUrlList": {
+        "fullTextUrl": [
+          {
+            "availability": "Subscription required",
+            "availabilityCode": "S",
+            "documentStyle": "doi",
+            "site": "DOI",
+            "url": "https://doi.org/10.1016/j.neuroimage.2018.09.081"
+          },
+          {
+            "availability": "Free",
+            "availabilityCode": "F",
+            "documentStyle": "html",
+            "site": "Europe_PMC",
+            "url": "https://europepmc.org/articles/PMC6759925"
+          },
+          {
+            "availability": "Free",
+            "availabilityCode": "F",
+            "documentStyle": "pdf",
+            "site": "Europe_PMC",
+            "url": "https://europepmc.org/articles/PMC6759925?pdf=render"
+          },
+          {
+            "availability": "Free",
+            "availabilityCode": "F",
+            "documentStyle": "doi",
+            "site": "DOI",
+            "url": "https://doi.org/10.1016/j.neuroimage.2018.09.081"
+          }
+        ]
+      },
+      "isOpenAccess": "N",
+      "firstPublicationDate": "2018-10-06",
+      "firstIndexDate": "2018-10-10"
+    }
+  ]
+}

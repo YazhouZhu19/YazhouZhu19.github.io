@@ -1687,8 +1687,8 @@ export function ResearchSignalsView({
             </div>
             <p className="signals-analysis-description">
               {t(
-                "筛选结果中的高相关记录用于分析，再在下方选择时间范围；待复核线索不进入研判。勾选论文可联合论文库，方向研判页可选择三个来源。",
-                "Only directly relevant filtered records enter this assessment; review candidates are excluded. Choose a date range below. Include papers to connect with the paper library, or use all three sources on the Research outlook page.",
+                "筛选结果中的高相关记录用于分析，再在下方选择时间范围；待复核线索不进入研判。勾选论文可联合论文库，“分析”页提供三类来源的规则综合分析。",
+                "Only directly relevant filtered records enter this assessment; review candidates are excluded. Choose a date range below. Include papers to connect with the paper library, or inspect rule-based results across all three sources on the Analysis page.",
               )}
             </p>
             <Suspense fallback={viewLoading}>

@@ -155,7 +155,7 @@ export function WorkspaceHeader({
             {paperDashboardView
               ? ui("论文洞察", "Paper insights")
               : view === "foresight"
-                ? ui("下一步，值得研究什么？", "What is worth researching next?")
+                ? ui("分析", "Analysis")
                 : view === "teams"
                   ? ui("理解积累，研判下一步", "Follow the work. Consider what comes next.")
                   : view === "github"
@@ -174,8 +174,8 @@ export function WorkspaceHeader({
                 )
               : view === "foresight"
                 ? ui(
-                    "从持续出现的研究线索中，形成可检验的技术、数据与应用判断。",
-                    "Turn recurring research signals into testable hypotheses about methods, data and applications.",
+                    "结合论文、开源与动态，通过规则算法梳理主流方向和小众研究积累。",
+                    "Combine papers, code and news to examine mainstream directions and niche research trajectories using explicit rules.",
                   )
                 : view === "teams"
                   ? ui(

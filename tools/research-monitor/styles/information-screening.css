@@ -1,0 +1,157 @@
+.information-screening {
+  margin: 0 0 20px;
+}
+#information-screening-content {
+  margin-top: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--foreground);
+}
+#information-screening-content h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 650;
+}
+#information-screening-content p {
+  margin: 10px 0;
+  max-width: 85ch;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.screening-controls,
+.screening-sources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 16px 0;
+}
+.screening-controls label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  max-width: 100%;
+}
+.screening-controls input,
+.screening-controls select {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  min-height: 38px;
+  max-width: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+}
+.screening-note,
+.screening-sources {
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+.screening-result {
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+}
+.screening-paper-title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.screening-paper-title:hover,
+.screening-reference a:hover,
+.screening-reference button:hover {
+  text-decoration: underline;
+}
+.screening-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 8px 0 12px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.screening-result summary {
+  cursor: pointer;
+  font-size: 13px;
+  width: fit-content;
+}
+.screening-evidence {
+  padding: 12px 0 4px;
+}
+.screening-evidence h3 {
+  font-size: 14px;
+  font-weight: 650;
+}
+.screening-evidence p {
+  font-size: 13px;
+}
+.screening-finding-kind {
+  margin-right: 8px;
+  font-weight: 600;
+}
+.screening-evidence blockquote {
+  border-left: 3px solid var(--border);
+  padding: 5px 12px;
+  margin: 8px 0;
+  max-width: 85ch;
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  color: var(--muted-foreground);
+}
+.screening-reference {
+  display: grid;
+  gap: 4px;
+}
+.screening-reference a,
+.screening-reference button {
+  font-weight: 550;
+  text-align: left;
+}
+.screening-reference span {
+  color: var(--muted-foreground);
+}
+.information-screening :is(button, a, input, select, summary):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+@media (max-width: 640px) {
+  #information-screening-content {
+    padding: 14px;
+  }
+  .screening-controls label {
+    width: 100%;
+  }
+  .screening-controls input,
+  .screening-controls select {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.screening-chain {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0 18px;
+}
+.screening-chain > section {
+  min-width: 0;
+  padding: 12px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.screening-chain h4 {
+  font-size: 13px;
+  font-weight: 600;
+}
+@media (max-width: 640px) {
+  .screening-chain {
+    grid-template-columns: 1fr;
+  }
+}

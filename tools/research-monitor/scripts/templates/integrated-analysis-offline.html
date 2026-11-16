@@ -1,0 +1,1414 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="OEVRYN 分析：真实数据下的主流研究、小众积累证据与 TF-IDF/BM25 论文代码关联，可直接离线查看。"
+    />
+    <title>OEVRYN · 分析与论文代码关联 · 离线版</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f3f6f7;
+        --paper: #fff;
+        --ink: #1c3440;
+        --muted: #526b77;
+        --line: #d9e4e8;
+        --brand: #087b69;
+        --soft: #e8f4ef;
+        --warning: #80561d;
+        --warn-bg: #fff5e5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.65 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      a {
+        color: var(--brand);
+        text-underline-offset: 3px;
+      }
+      button,
+      a,
+      input,
+      select,
+      summary {
+        outline-offset: 4px;
+      }
+      button,
+      summary {
+        cursor: pointer;
+      }
+      button {
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        padding: 10px 16px;
+        background: var(--paper);
+        color: var(--ink);
+        min-height: 44px;
+      }
+      button[aria-pressed="true"],
+      .primary {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+      button:hover {
+        filter: brightness(0.96);
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .shell {
+        max-width: 1260px;
+        margin: auto;
+        padding: 32px 28px 60px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--brand);
+        font-weight: 650;
+        letter-spacing: 0.03em;
+      }
+      .brand span:last-child {
+        font-size: 12px;
+        font-weight: 450;
+        letter-spacing: 0;
+      }
+      .hero {
+        margin: 30px 0 24px;
+      }
+      .eyebrow {
+        font-size: 12px;
+        color: var(--brand);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-size: 38px;
+        line-height: 1.2;
+        margin: 10px 0 16px;
+        letter-spacing: -0.025em;
+      }
+      h2 {
+        font-size: 23px;
+        line-height: 1.4;
+        margin: 0 0 8px;
+      }
+      h3 {
+        font-size: 20px;
+        line-height: 1.5;
+        margin: 0;
+      }
+      h4 {
+        font-size: 15px;
+        margin: 0 0 10px;
+      }
+      p {
+        margin: 8px 0 12px;
+      }
+      .intro {
+        max-width: 85ch;
+        color: var(--muted);
+      }
+      .meta {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 24px 0;
+      }
+      .tabs button {
+        font-weight: 600;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin: 20px 0;
+      }
+      .metric {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px 20px;
+      }
+      .metric strong {
+        font-size: 31px;
+        font-variant-numeric: tabular-nums;
+        display: block;
+        line-height: 1.3;
+      }
+      .metric span {
+        color: var(--muted);
+      }
+      .note {
+        background: var(--soft);
+        padding: 15px 18px;
+        border-radius: 10px;
+        color: var(--ink);
+        margin: 16px 0;
+      }
+      .note.warning {
+        background: var(--warn-bg);
+        color: var(--warning);
+      }
+      .toolbar {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 18px 0;
+      }
+      .toolbar label {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        min-height: 44px;
+      }
+      .toolbar .search {
+        flex: 1;
+        min-width: 220px;
+      }
+      .toolbar .search > span {
+        flex: none;
+        white-space: nowrap;
+      }
+      .toolbar input[type="search"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--paper);
+        color: var(--ink);
+      }
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--brand);
+      }
+      select {
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .cards {
+        display: grid;
+        gap: 18px;
+      }
+      .card {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 25px;
+      }
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 15px;
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
+        background: var(--soft);
+        color: var(--brand);
+        font-size: 12px;
+      }
+      .badge.pending {
+        color: var(--warning);
+        background: var(--warn-bg);
+      }
+      .score {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin: 16px 0;
+      }
+      .score strong {
+        font-size: 28px;
+        color: var(--brand);
+        font-variant-numeric: tabular-nums;
+      }
+      .score span,
+      .subtle {
+        color: var(--muted);
+      }
+      .sources {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        margin: 12px 0 22px;
+      }
+      .source-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 13px;
+      }
+      .track {
+        height: 6px;
+        border-radius: 3px;
+        background: var(--bg);
+        margin-top: 8px;
+        overflow: hidden;
+      }
+      .fill {
+        height: 100%;
+        background: var(--brand);
+      }
+      .facets {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+      }
+      .facets section {
+        min-width: 0;
+      }
+      .facet {
+        margin-bottom: 10px;
+      }
+      .facet summary {
+        font-size: 14px;
+      }
+      .counts {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .evidence {
+        list-style: none;
+        margin: 10px 0 0;
+        padding: 0;
+      }
+      .evidence li {
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        overflow-wrap: anywhere;
+      }
+      .evidence small {
+        display: block;
+        color: var(--muted);
+        margin-bottom: 3px;
+      }
+      .evidence blockquote {
+        margin: 8px 0 0;
+        border-left: 2px solid var(--line);
+        padding-left: 12px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.7;
+        white-space: pre-line;
+      }
+      .evidence a {
+        font-weight: 550;
+      }
+      .details {
+        margin-top: 18px;
+      }
+      .details > summary {
+        color: var(--brand);
+      }
+      .niche-stats {
+        display: flex;
+        gap: 8px 20px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        margin: 12px 0;
+        font-size: 13px;
+      }
+      .gap-list {
+        padding-left: 20px;
+        color: var(--warning);
+        font-size: 14px;
+      }
+      .gap-list li {
+        margin: 4px 0;
+      }
+      .evidence-sections {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 20px;
+      }
+      .history-checks {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 20px 0;
+      }
+      .history-checks li {
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow-wrap: anywhere;
+      }
+      .history-checks strong {
+        color: var(--brand);
+        font-size: 14px;
+      }
+      .history-checks .pending strong {
+        color: var(--warning);
+      }
+      .history-checks small {
+        display: block;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+      .history-card h3,
+      .history-resources {
+        overflow-wrap: anywhere;
+      }
+      .history-resources h4 {
+        margin: 20px 0 8px;
+      }
+      .history-timeline {
+        list-style: none;
+        margin: 12px 0 20px 6px;
+        padding-left: 18px;
+        border-left: 2px solid var(--line);
+      }
+      .history-timeline li {
+        padding: 6px 0 14px;
+      }
+      .history-timeline time {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .history-timeline p {
+        margin: 5px 0;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .history-source-list {
+        padding-left: 20px;
+        font-size: 12px;
+      }
+      .history-source-list li {
+        margin: 8px 0;
+      }
+      #history-update {
+        margin-top: 20px;
+      }
+      #history-update a {
+        font-weight: 600;
+      }
+      #lexical-section {
+        margin-top: 32px;
+      }
+      .link-metrics {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .association-card h3 {
+        font-size: 18px;
+        overflow-wrap: anywhere;
+      }
+      .association-card .candidate {
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+        overflow-wrap: anywhere;
+      }
+      .association-card .candidate:first-child {
+        border-top: 0;
+      }
+      .association-card .candidate a {
+        font-weight: 600;
+      }
+      .association-card .candidate p {
+        margin: 7px 0;
+      }
+      .association-card .score-details {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .association-heading {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .association-help {
+        max-width: 90ch;
+      }
+      .rules {
+        margin: 22px 0;
+        border-top: 1px solid var(--line);
+        padding-top: 18px;
+      }
+      .rules p,
+      .rules li {
+        color: var(--muted);
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;
+      }
+      th,
+      td {
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      .empty {
+        padding: 24px;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        color: var(--muted);
+      }
+      .more {
+        margin: 22px auto;
+        display: block;
+      }
+      footer {
+        margin-top: 35px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+      .hidden-status {
+        min-height: 24px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .pill {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        padding: 3px 8px;
+        border-radius: 6px;
+      }
+      #runtime-error {
+        margin: 20px;
+        background: var(--warn-bg);
+        padding: 20px;
+        color: var(--warning);
+      }
+      @media (max-width: 850px) {
+        .facets {
+          grid-template-columns: 1fr;
+        }
+        .sources {
+          gap: 12px;
+        }
+        .evidence-sections,
+        .history-checks {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 560px) {
+        .shell {
+          padding: 20px 16px 40px;
+        }
+        h1 {
+          font-size: 29px;
+        }
+        .metrics {
+          grid-template-columns: 1fr;
+        }
+        .metric {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .metric strong {
+          font-size: 27px;
+        }
+        .card {
+          padding: 18px;
+        }
+        .card-head {
+          display: block;
+        }
+        .badge {
+          margin-top: 9px;
+        }
+        .sources {
+          grid-template-columns: 1fr;
+        }
+        .toolbar {
+          align-items: stretch;
+        }
+        .toolbar .search {
+          min-width: 0;
+          width: 100%;
+          flex-basis: 100%;
+        }
+        .brand {
+          align-items: flex-start;
+        }
+        .brand span:last-child {
+          max-width: 150px;
+          text-align: right;
+        }
+      }
+      @media print {
+        body {
+          background: #fff;
+        }
+        .shell {
+          max-width: none;
+          padding: 0;
+        }
+        .tabs,
+        .toolbar,
+        .more {
+          display: none;
+        }
+        .card {
+          break-inside: avoid;
+        }
+        .track {
+          print-color-adjust: exact;
+        }
+        a {
+          color: inherit;
+        }
+        .brand span:last-child:after {
+          content: " · 打印当前筛选与已显示记录";
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="runtime-error" hidden role="alert"></div>
+    <div class="shell" id="oevryn-offline">
+      <header class="brand"><span>OEVRYN ENGINE</span><span>真实数据快照 · 可离线交互</span></header>
+      <div class="hero">
+        <div class="eyebrow">Papers × Open Source × News</div>
+        <h1>分析</h1>
+        <p class="intro">
+          从主流研究方向，到有积累线索的小众主题。论文、开源和动态经规则算法去重、归类与比对，每条概括都可以追溯到原始资料。
+        </p>
+        <p class="meta" id="snapshot-meta"></p>
+        <p><a href="#paper-code-section" id="open-links">查看论文与代码关联 →</a></p>
+        <div class="note" id="history-update" hidden>
+          <span id="history-update-text"></span>
+          <a href="#history-section" id="open-history">查看多年积累与证据 →</a>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="分析类别">
+        <button type="button" id="main-tab" aria-controls="main-panel" aria-pressed="true">
+          主流研究方向</button
+        ><button type="button" id="niche-tab" aria-controls="niche-panel" aria-pressed="false">
+          小众积累方向
+        </button>
+      </nav>
+      <section id="main-panel" aria-labelledby="main-tab">
+        <h2>目前，研究关注主要集中在哪里？</h2>
+        <p class="subtle" id="window-label"></p>
+        <div class="metrics" id="metrics"></div>
+        <div class="note">
+          集中度 =（论文内占比 + 开源内占比 + 动态内占比）÷
+          3。三个来源等权，避免某一来源的记录量主导排名。方向允许重叠，结果表示库内关注度，不是全领域的人力或资金规模。
+        </div>
+        <div class="toolbar">
+          <label><input type="checkbox" id="main-only" checked />仅显示主流候选</label
+          ><span class="meta" id="main-count" aria-live="polite"></span>
+        </div>
+        <div class="cards" id="main-cards"></div>
+      </section>
+      <section id="niche-panel" aria-labelledby="niche-tab" hidden>
+        <h2>哪些小众主题已有研究积累线索？</h2>
+        <p class="subtle">先查看定向补证的研究专题，再展开全库词法初筛产生的主题组合。</p>
+        <div class="toolbar">
+          <label class="search"
+            ><span>搜索主题</span
+            ><input
+              type="search"
+              id="niche-search"
+              placeholder="如：脑、泛化、分割"
+              aria-label="搜索小众主题" /></label
+          ><label
+            >证据状态<select id="niche-status">
+              <option value="all">全部状态</option>
+              <option value="sufficient">证据充分</option>
+              <option value="pending">待补证据</option>
+            </select></label
+          ><label
+            >词法初筛排序<select id="niche-sort">
+              <option value="evidence">证据缺口少优先</option>
+              <option value="span">积累跨度长优先</option>
+              <option value="count">论文数量多优先</option>
+            </select></label
+          >
+        </div>
+        <section id="history-section" aria-labelledby="history-heading" hidden>
+          <h2 id="history-heading">专题补证 · 多年数据与代码积累</h2>
+          <p class="subtle" id="history-description"></p>
+          <div class="metrics" id="history-metrics"></div>
+          <div class="note">
+            “证据充分”表示通过本轮可核查规则，不代表科学有效性已获证明；“待补证据”表示仍有材料缺口，不表示方向不成立。库内占比取自补证前的论文库，不代表全领域占比。跨年代码事件只证明这些时间点存在变更，不等于每年持续维护。
+          </div>
+          <p class="hidden-status" id="history-count" role="status"></p>
+          <div class="cards" id="history-cards"></div>
+        </section>
+        <details class="rules" id="lexical-section">
+          <summary id="lexical-summary">词法初筛 · 全库主题组合</summary>
+          <p class="subtle">
+            按“方向 × 问题 × 场景”匹配历史方法论文。此处的主题组合与上方专题补证分别统计，不能直接相加。
+          </p>
+          <div class="metrics" id="niche-metrics"></div>
+          <div class="note warning" id="niche-notice"></div>
+          <p class="hidden-status" id="niche-count" role="status"></p>
+          <div class="cards" id="niche-cards"></div>
+          <button type="button" class="more" id="load-more">再显示 12 个主题</button>
+        </details>
+      </section>
+      <details class="rules" id="paper-code-section">
+        <summary class="association-heading">论文与代码关联 · TF-IDF / BM25</summary>
+        <p class="association-help">
+          在明确链接之外，结合 TF-IDF 和 BM25
+          生成可能相关的代码仓库，供逐条核对。候选关联不会补足小众方向的代码证据，也不表示论文的官方实现。此处结果已随真实数据快照计算并内嵌，展开与搜索无需联网。
+        </p>
+        <div class="metrics link-metrics" id="link-metrics"></div>
+        <div class="toolbar">
+          <label class="search"
+            ><span>搜索关联</span
+            ><input
+              type="search"
+              id="link-search"
+              aria-label="搜索论文与代码关联"
+              placeholder="论文标题、仓库名或匹配词" /></label
+          ><label
+            >关联状态<select id="link-status">
+              <option value="all">全部论文</option>
+              <option value="explicit">有明确链接</option>
+              <option value="candidate">仅有候选关联</option>
+              <option value="none">暂未找到关联</option>
+            </select></label
+          >
+        </div>
+        <p class="hidden-status" id="link-count" role="status"></p>
+        <div class="cards" id="link-cards"></div>
+        <button type="button" class="more" id="link-more">再显示 12 篇论文</button>
+        <details class="details">
+          <summary>候选算法与分数说明</summary>
+          <p>
+            词汇匹配前去除网址与标识符，分别计算 TF-IDF 余弦相似度、BM25
+            得分，再合并两个排序。卡片中的分数仅供理解匹配线索，不是准确率或置信概率，不同算法的原始分数不能直接比较。明确链接与候选分开显示；原文内容、数据和代码可用性仍需人工核对。
+          </p>
+        </details>
+      </details>
+      <details class="rules">
+        <summary>分析口径、数据覆盖与边界</summary>
+        <p>
+          这是当前采集快照的规则和词汇检索结果，不使用大语言模型。方法、问题和场景来自文本词语线索，不能据此证明论文结论成立。来源“已收集”也不代表覆盖完整领域。
+        </p>
+        <ul>
+          <li>
+            主流窗口为最近 365 个 UTC 日。论文和动态按发表日；仓库按最近提交日。主流候选需至少 3
+            篇独立论文、至少两类来源各有 2 条记录、三源集中度不低于 5%。
+          </li>
+          <li>
+            专题补证和词法初筛分别统计。低占比按补证前的合格论文库计算，阈值为不足
+            10%，不能当作全领域占比。两类结果中的“待补证据”都表示当前材料尚未满足对应规则，不表示研究方向不成立。
+          </li>
+          <li>
+            专题补证 · 论文：至少 3 个独立作品，跨度至少 730 天，覆盖至少 3 个发表年份；至少 2
+            篇原始摘要同时命中问题、方法、验证和数值结果的固定规则。摘要未命中不等于没有实验或结果。
+          </li>
+          <li>
+            专题补证 · 数据：同一数据集与论文明确关联，至少 2 个有确切日期的版本相隔至少 365
+            天，且配对版本之间有新增影像或标注证据。重复链接、元数据修订或不同数据集的日期不能替代内容积累。
+          </li>
+          <li>
+            专题补证 · 代码与证据链：与论文明确关联且未归档，实际发布或提交覆盖至少 3 个年份、跨度至少 730
+            天，并有最近 365
+            天内的事件；建库日期不计。还要求至少一个选中作品同时明确关联满足条件的数据集和代码库。TF-IDF/BM25
+            候选不计入。
+          </li>
+          <li>
+            词法初筛 · 论文：以“方向 × 问题 × 场景”生成组合；至少 3 个独立作品，跨度至少 730 天，覆盖至少 3
+            个发表年份；至少 2 篇包含问题、方法、验证和结果线索。
+          </li>
+          <li>
+            词法初筛 · 数据与代码：同一数据链接跨至少 365
+            天出现在论文开放表述中；代码须与论文明确关联、仓库创建满两年、近一年有提交且未归档。这组初筛条件不等同于上方专题补证的版本和提交历史核查。
+          </li>
+          <li>
+            关联动态是补充线索，不是独立科学验证。来源事实核查不等于下载数据并复现实验；资源可访问性、算法有效性和持续维护仍需分别验证。
+          </li>
+          <li>
+            论文按可靠作品标识去重；仓库按地址去重；动态按 URL 和原文 URL
+            传递归并。固定词典可能漏检，未分类记录保留在各自分母中。
+          </li>
+        </ul>
+        <div class="table-wrap" id="coverage"></div>
+        <p id="source-health"></p>
+        <p>页面自身不访问网络。展开证据、搜索和切换类别均可离线使用；点击论文或仓库原文链接时才需要联网。</p>
+      </details>
+      <footer id="provenance"></footer>
+      <noscript
+        ><p class="note warning">
+          此文件已内嵌全部分析结果。请在启用 JavaScript 的浏览器中打开，以切换两个类别并展开证据。
+        </p></noscript
+      >
+    </div>
+    <script type="application/json" id="analysis-data">
+      __ANALYSIS_DATA__
+    </script>
+    <script>
+      (function () {
+        "use strict";
+        try {
+          const root = document.getElementById("oevryn-offline");
+          const $ = (id) => root.querySelector("#" + id);
+          const payload = JSON.parse(document.getElementById("analysis-data").textContent);
+          const d = payload.result;
+          const associations = payload.paperCodeLinks;
+          const history = payload.history;
+          const historyDirections = history?.directions ?? [];
+          const isSufficient = (n) => (n.evidenceStatus ? n.evidenceStatus === "sufficient" : n.ready);
+          const esc = (s) =>
+            String(s ?? "").replace(
+              /[&<>"']/g,
+              (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+            );
+          const num = (n) => Number(n).toLocaleString("zh-CN");
+          const pct = (n) => (n * 100).toFixed(1) + "%";
+          const names = { paper: "论文", github: "开源", news: "动态" };
+          const safeUrl = (u) => {
+            try {
+              const p = new URL(u);
+              return /^https?:$/.test(p.protocol) && !p.username && !p.password ? p.href : "";
+            } catch {
+              return "";
+            }
+          };
+          const evidence = (items) =>
+            items.length
+              ? '<ul class="evidence">' +
+                items
+                  .map((e) => {
+                    const url = safeUrl(e.url);
+                    return (
+                      "<li><small>" +
+                      names[e.kind] +
+                      " · " +
+                      esc(e.id) +
+                      "</small>" +
+                      (url
+                        ? '<a href="' +
+                          esc(url) +
+                          '" target="_blank" rel="noopener noreferrer">' +
+                          esc(e.title) +
+                          "</a>"
+                        : "<strong>" + esc(e.title) + "</strong>") +
+                      "<blockquote>" +
+                      esc(e.excerpt) +
+                      "</blockquote></li>"
+                    );
+                  })
+                  .join("") +
+                "</ul>"
+              : '<p class="subtle">当前资料中未找到符合条件的依据。</p>';
+          const metric = (value, label) =>
+            '<div class="metric"><strong>' + num(value) + "</strong><span>" + esc(label) + "</span></div>";
+          $("snapshot-meta").textContent =
+            "论文采集：" +
+            payload.collectedAt +
+            " · 来源采集：" +
+            payload.signalsGeneratedAt +
+            " · 分析截止：" +
+            d.asOf +
+            "（均为 UTC）";
+          $("window-label").textContent =
+            d.windowStart + " — " + d.asOf + " · 以下统计使用近期论文、活跃仓库及近期动态。";
+          $("metrics").innerHTML =
+            metric(d.totals.paper, "独立论文") +
+            metric(d.totals.github, "活跃开源仓库") +
+            metric(d.totals.news, "动态原文组");
+          function directionCard(x) {
+            return (
+              '<article class="card"><header class="card-head"><h3>' +
+              esc(x.label.zh) +
+              '</h3><span class="badge ' +
+              (x.mainstream ? "" : "pending") +
+              '">' +
+              (x.mainstream ? "主流候选" : "观察方向") +
+              '</span></header><div class="score"><span>三源集中度</span><strong>' +
+              pct(x.score) +
+              '</strong></div><div class="sources">' +
+              ["paper", "github", "news"]
+                .map(
+                  (k) =>
+                    '<div><div class="source-row"><span>' +
+                    names[k] +
+                    " " +
+                    num(x.counts[k]) +
+                    " 条</span><span>" +
+                    pct(x.shares[k]) +
+                    '</span></div><div class="track" aria-hidden="true"><div class="fill" style="width:' +
+                    Math.max(0, Math.min(100, x.shares[k] * 100)) +
+                    '%"></div></div></div>',
+                )
+                .join("") +
+              '</div><div class="facets">' +
+              [
+                ["problems", "主要问题"],
+                ["methods", "技术手段"],
+                ["scenarios", "应用场景"],
+              ]
+                .map(
+                  ([k, title]) =>
+                    "<section><h4>" +
+                    title +
+                    "</h4>" +
+                    (x.facets[k].length
+                      ? x.facets[k]
+                          .slice(0, 3)
+                          .map(
+                            (f) =>
+                              '<details class="facet"><summary>' +
+                              esc(f.label.zh) +
+                              '<span class="counts">论文 ' +
+                              num(f.counts.paper) +
+                              " · 开源 " +
+                              num(f.counts.github) +
+                              " · 动态 " +
+                              num(f.counts.news) +
+                              "</span></summary>" +
+                              evidence(f.evidence) +
+                              "</details>",
+                          )
+                          .join("")
+                      : '<p class="subtle">尚无足够文本线索。</p>') +
+                    "</section>",
+                )
+                .join("") +
+              '</div><details class="details"><summary>查看方向依据 · 每类来源最多 3 条</summary>' +
+              evidence(x.evidence) +
+              "</details></article>"
+            );
+          }
+          function renderMain() {
+            const list = d.directions.filter((x) => !$("main-only").checked || x.mainstream);
+            $("main-count").textContent = "显示 " + list.length + " / " + d.directions.length + " 个方向";
+            $("main-cards").innerHTML = list.length
+              ? list.map(directionCard).join("")
+              : '<p class="empty">当前没有满足主流条件的方向，可取消筛选查看观察方向。</p>';
+          }
+          const readyCount = d.niches.filter(isSufficient).length;
+          $("niche-metrics").innerHTML =
+            metric(d.historyTotal, "历史独立方法论文") +
+            metric(d.niches.length, "低占比主题组合") +
+            metric(readyCount, "证据充分");
+          $("niche-notice").textContent = readyCount
+            ? "证据充分表示已满足当前规则门槛，仍需核对全文与资源。待补证据表示采集材料不足，不表示研究方向不成立。"
+            : "当前没有主题达到“证据充分”门槛。以下主题均标为“待补证据”，列出已有线索和待补材料；这不表示研究方向不成立。";
+          let limit = 12;
+          function nicheCard(n) {
+            return (
+              '<article class="card"><header class="card-head"><h3>' +
+              esc(n.label.zh) +
+              '</h3><span class="badge ' +
+              (isSufficient(n) ? "" : "pending") +
+              '">' +
+              (isSufficient(n) ? "证据充分" : "待补证据 · " + n.gaps.length + " 项缺口") +
+              '</span></header><div class="niche-stats"><span>' +
+              num(n.count) +
+              " 篇独立论文</span><span>历史论文占比 " +
+              pct(n.share) +
+              "</span><span>" +
+              n.spanDays +
+              " 天跨度</span><span>发表年份 " +
+              n.years.join(" / ") +
+              "</span><span>" +
+              n.logicPapers +
+              " 篇含全部逻辑线索</span><span>同一数据链接跨度 " +
+              n.dataSpanDays +
+              " 天</span></div>" +
+              (n.gaps.length
+                ? '<ul class="gap-list">' + n.gaps.map((g) => "<li>" + esc(g.zh) + "</li>").join("") + "</ul>"
+                : '<p class="note">满足规则筛选条件，建议进一步核对全文及数据、代码资源。</p>') +
+              '<details class="details"><summary>展开论文、数据、代码与动态依据</summary><div class="evidence-sections">' +
+              [
+                ["evidence", "论文积累 · 展示最多 3 篇"],
+                ["data", "数据开放表述 · 展示最多 3 条"],
+                ["code", "明确关联代码 · 展示最多 5 条"],
+                ["news", "关联动态 · 不作为独立验证"],
+              ]
+                .map(([key, title]) => "<section><h4>" + title + "</h4>" + evidence(n[key]) + "</section>")
+                .join("") +
+              "</div></details></article>"
+            );
+          }
+          function historyLink(url, title) {
+            const href = safeUrl(url);
+            return href
+              ? '<a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + esc(title) + "</a>"
+              : "<span>" + esc(title) + "</span>";
+          }
+          function historyTimeline(items) {
+            return items.length
+              ? '<ol class="history-timeline">' +
+                  items
+                    .map(
+                      (item) =>
+                        "<li><time>" +
+                        esc(item.date || "日期未核实") +
+                        "</time>" +
+                        historyLink(item.url, item.title) +
+                        (item.description ? "<p>" + esc(item.description) + "</p>" : "") +
+                        "</li>",
+                    )
+                    .join("") +
+                  "</ol>"
+              : '<p class="subtle">尚未收集到可核查的时间点。</p>';
+          }
+          function historyCard(item) {
+            const papers = item.papers ?? [];
+            const datasets = item.datasets ?? [];
+            const repositories = item.repositories ?? [];
+            return (
+              '<article class="card history-card" data-history-id="' +
+              esc(item.id) +
+              '">' +
+              '<header class="card-head"><h3>' +
+              esc(item.title) +
+              '</h3><span class="badge ' +
+              (isSufficient(item) ? "" : "pending") +
+              '">' +
+              (isSufficient(item) ? "证据充分" : "待补证据") +
+              "</span></header>" +
+              '<p class="subtle">' +
+              esc(item.scope) +
+              "</p>" +
+              '<div class="niche-stats"><span>补证前库内 ' +
+              num(item.archiveCount) +
+              " 篇 · " +
+              pct(item.archiveShare) +
+              "</span><span>核查 " +
+              papers.length +
+              " 篇独立论文</span><span>" +
+              datasets.length +
+              " 个数据资源</span><span>" +
+              repositories.length +
+              " 个代码仓库</span></div>" +
+              '<ul class="history-checks">' +
+              item.checks
+                .map(
+                  (check) =>
+                    '<li class="' +
+                    (check.passed ? "" : "pending") +
+                    '"><strong>' +
+                    (check.passed ? "✓ 已满足 · " : "待补 · ") +
+                    esc(check.label) +
+                    "</strong><small>" +
+                    esc(check.detail) +
+                    "</small></li>",
+                )
+                .join("") +
+              "</ul>" +
+              (item.gaps.length
+                ? '<ul class="gap-list">' +
+                  item.gaps.map((gap) => "<li>" + esc(gap) + "</li>").join("") +
+                  "</ul>"
+                : '<p class="note">本轮规则检查均已通过；可展开核对论文、版本日期与代码事件。</p>') +
+              '<details class="details history-details"><summary>展开论文、数据版本与代码时间线</summary><div class="history-resources">' +
+              '<h4>论文 · 原始文献与规则线索</h4><p class="subtle">问题、方法、验证与结果线索由原始摘要的固定规则匹配。未命中或零命中只表示规则未覆盖，不代表论文没有实验或结果，也不是全文质量评审。</p>' +
+              historyTimeline(
+                papers.map((paper) => ({
+                  date: paper.date,
+                  url: paper.url,
+                  title: paper.title,
+                  description:
+                    (paper.doi ? "DOI " + paper.doi + " · " : "") +
+                    (paper.logicComplete ? "四类摘要规则均命中" : "摘要规则未覆盖四类线索") +
+                    "；" +
+                    [
+                      ["problem", "问题"],
+                      ["method", "方法"],
+                      ["validation", "验证"],
+                      ["result", "结果"],
+                    ]
+                      .map(
+                        ([key, label]) => label + "：" + ((paper.cues?.[key] ?? []).join(" / ") || "未命中"),
+                      )
+                      .join("；"),
+                })),
+              ) +
+              "<h4>数据 · 同一资源的版本记录</h4>" +
+              (datasets.length
+                ? datasets
+                    .map(
+                      (dataset) =>
+                        "<section><h4>" +
+                        historyLink(dataset.url, dataset.title) +
+                        '</h4><p class="subtle">版本跨度 ' +
+                        num(dataset.spanDays) +
+                        " 天 · " +
+                        (dataset.contentGrowth ? "已记录数据内容变化" : "内容增长尚未核实") +
+                        " · " +
+                        (dataset.linked ? "论文链接证据已匹配" : "论文关联尚待补证") +
+                        "</p>" +
+                        historyTimeline(
+                          dataset.versions.map((version) => ({
+                            date: version.date,
+                            url: version.url,
+                            title: "版本 " + version.version,
+                            description:
+                              (version.participants != null
+                                ? version.participants + " 个样本/参与者；"
+                                : "") + version.changeDescription,
+                          })),
+                        ) +
+                        "</section>",
+                    )
+                    .join("")
+                : '<p class="subtle">尚无可核查的数据版本记录。</p>') +
+              "<h4>代码 · 已观察到的发布与提交</h4>" +
+              (repositories.length
+                ? repositories
+                    .map(
+                      (repository) =>
+                        "<section><h4>" +
+                        historyLink(repository.url, repository.repository) +
+                        "</h4>" +
+                        '<p class="subtle">记录年份 ' +
+                        repository.years.map(esc).join(" / ") +
+                        " · 跨度 " +
+                        num(repository.spanDays) +
+                        " 天 · " +
+                        (repository.recent ? "已记录近期事件" : "近期维护尚待补证") +
+                        " · " +
+                        (repository.linked ? "论文链接证据已匹配" : "论文关联尚待补证") +
+                        (repository.archived === true
+                          ? " · 仓库已归档"
+                          : repository.archived === null
+                            ? " · 归档状态未核实"
+                            : "") +
+                        "</p>" +
+                        historyTimeline(
+                          repository.events.map((event) => ({
+                            date: event.date,
+                            url: event.url,
+                            title: (event.kind === "release" ? "发布 " : "提交 ") + event.label,
+                            description: event.description,
+                          })),
+                        ) +
+                        "</section>",
+                    )
+                    .join("")
+                : '<p class="subtle">尚无可核查的代码历史。</p>') +
+              '<details class="details"><summary>来源记录与核查边界</summary>' +
+              '<ul class="history-source-list">' +
+              item.sources
+                .map(
+                  (source) =>
+                    "<li>" +
+                    historyLink(source.url, source.id) +
+                    " · 访问 " +
+                    esc(source.retrievedAt) +
+                    "</li>",
+                )
+                .join("") +
+              "</ul>" +
+              '<ul class="subtle">' +
+              item.limitations.map((limitation) => "<li>" + esc(limitation) + "</li>").join("") +
+              "</ul></details>" +
+              "</div></details></article>"
+            );
+          }
+          const historyReady = historyDirections.filter(isSufficient).length;
+          $("history-section").hidden = !historyDirections.length;
+          $("history-update").hidden = !historyDirections.length;
+          $("lexical-section").open = !historyDirections.length;
+          $("lexical-summary").textContent = "词法初筛 · " + d.niches.length + " 个全库主题组合（单独统计）";
+          if (historyDirections.length) {
+            $("history-update-text").textContent =
+              "本次新增 " +
+              historyDirections.length +
+              " 个多年积累专题核查，其中 " +
+              historyReady +
+              " 个达到证据充分门槛。 ";
+            $("history-description").textContent =
+              "本轮定向补充 " +
+              historyDirections.length +
+              " 个专题的历史证据。补证前论文库 " +
+              num(history.basePaperCount) +
+              " 篇；本次核查 " +
+              num(history.enrichedPaperCount) +
+              " 个独立作品（单独统计）。来源事实经逐项核对；状态由固定规则计算，未调用大语言模型。分析截止 " +
+              history.asOf +
+              "。";
+            $("history-metrics").innerHTML =
+              metric(historyDirections.length, "定向核查专题") +
+              metric(historyReady, "证据充分") +
+              metric(historyDirections.length - historyReady, "待补证据");
+          }
+          function renderHistory() {
+            if (!historyDirections.length) return;
+            const query = $("niche-search").value.trim().toLowerCase();
+            const status = $("niche-status").value;
+            const list = historyDirections
+              .filter(
+                (item) =>
+                  (status === "all" || item.evidenceStatus === status) &&
+                  (!query ||
+                    [
+                      item.title,
+                      item.scope,
+                      ...item.papers.map((p) => p.title),
+                      ...item.datasets.map((d) => d.title),
+                      ...item.repositories.map((r) => r.repository),
+                    ]
+                      .join(" ")
+                      .toLowerCase()
+                      .includes(query)),
+              )
+              .sort(
+                (a, b) => Number(isSufficient(b)) - Number(isSufficient(a)) || a.title.localeCompare(b.title),
+              );
+            $("history-count").textContent =
+              "专题补证：匹配 " + list.length + " / " + historyDirections.length + " 个专题";
+            $("history-cards").innerHTML = list.length
+              ? list.map(historyCard).join("")
+              : '<p class="empty">没有符合筛选条件的补证专题。可切换证据状态或修改关键词。</p>';
+          }
+          $("open-history").addEventListener("click", (event) => {
+            event.preventDefault();
+            setTab("niche");
+            $("history-section").scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+          function renderNiches() {
+            renderHistory();
+            const query = $("niche-search").value.trim().toLowerCase();
+            let list = d.niches.filter(
+              (n) =>
+                ($("niche-status").value === "all" ||
+                  ($("niche-status").value === "sufficient" ? isSufficient(n) : !isSufficient(n))) &&
+                (!query || (n.label.zh + " " + n.label.en).toLowerCase().includes(query)),
+            );
+            const mode = $("niche-sort").value;
+            if (mode === "span") list.sort((a, b) => b.spanDays - a.spanDays || a.id.localeCompare(b.id));
+            if (mode === "count") list.sort((a, b) => b.count - a.count || a.id.localeCompare(b.id));
+            $("niche-count").textContent =
+              "匹配 " + list.length + " 个主题 · 已显示 " + Math.min(limit, list.length) + " 个";
+            $("niche-cards").innerHTML = list.length
+              ? list.slice(0, limit).map(nicheCard).join("")
+              : '<p class="empty">没有符合筛选条件的主题。可切换证据状态或修改关键词。</p>';
+            $("load-more").hidden = limit >= list.length;
+          }
+          function setTab(name) {
+            const main = name !== "niche";
+            $("main-panel").hidden = !main;
+            $("niche-panel").hidden = main;
+            $("main-tab").setAttribute("aria-pressed", String(main));
+            $("niche-tab").setAttribute("aria-pressed", String(!main));
+          }
+          $("main-tab").addEventListener("click", () => setTab("main"));
+          $("niche-tab").addEventListener("click", () => setTab("niche"));
+          $("main-only").addEventListener("change", renderMain);
+          for (const id of ["niche-search", "niche-status", "niche-sort"])
+            $(id).addEventListener(id === "niche-search" ? "input" : "change", () => {
+              limit = 12;
+              renderNiches();
+            });
+          $("load-more").addEventListener("click", () => {
+            limit += 12;
+            renderNiches();
+          });
+          $("open-links").addEventListener("click", (event) => {
+            event.preventDefault();
+            $("paper-code-section").open = true;
+            $("paper-code-section").scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+          const linkRows = associations?.links ?? [];
+          const linkState = (x) =>
+            x.explicit.length ? "explicit" : x.candidates.length ? "candidate" : "none";
+          const linked = (x) => {
+            const u = safeUrl(x.url);
+            return u
+              ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(x.title) + "</a>"
+              : "<strong>" + esc(x.title) + "</strong>";
+          };
+          $("link-metrics").innerHTML =
+            metric(linkRows.length, "参与关联的独立论文") +
+            metric(linkRows.filter((x) => linkState(x) === "explicit").length, "有明确链接") +
+            metric(linkRows.filter((x) => linkState(x) === "candidate").length, "仅有候选关联") +
+            metric(linkRows.filter((x) => linkState(x) === "none").length, "暂未找到关联");
+          let linkLimit = 12;
+          function associationCard(x) {
+            const state = linkState(x);
+            const terms = (c) => (Array.isArray(c.sharedTerms) ? c.sharedTerms.map(esc).join(" · ") : "");
+            return (
+              '<article class="card association-card"><header class="card-head"><h3>' +
+              linked({ title: x.paperTitle, url: x.paperUrl }) +
+              '</h3><span class="badge ' +
+              (state === "explicit" ? "" : "pending") +
+              '">' +
+              { explicit: "有明确链接", candidate: "候选待核对", none: "暂未找到关联" }[state] +
+              "</span></header>" +
+              (x.explicit.length
+                ? '<section class="details"><h4>明确链接 · 来自原始资料中的地址或标识符</h4>' +
+                  x.explicit.map((c) => '<div class="candidate">' + linked(c) + "</div>").join("") +
+                  '<p class="meta">已找到明确关联线索；不代表已验证代码可运行或属于官方实现。</p></section>'
+                : "") +
+              (x.candidates.length
+                ? '<details class="details"><summary>查看 ' +
+                  x.candidates.length +
+                  " 个候选仓库 · 待人工核对</summary>" +
+                  x.candidates
+                    .map(
+                      (c) =>
+                        '<div class="candidate">' +
+                        linked(c) +
+                        ' <span class="badge pending">候选关联</span><p class="meta">匹配词：' +
+                        (terms(c) || "无可展示词语") +
+                        '</p><details class="score-details"><summary>查看词汇匹配分数</summary><p>TF-IDF 余弦 ' +
+                        Number(c.tfidf).toFixed(4) +
+                        "（排序 " +
+                        esc(c.rankTfidf ?? "—") +
+                        "） · BM25 " +
+                        Number(c.bm25).toFixed(3) +
+                        "（排序 " +
+                        esc(c.rankBm25 ?? "—") +
+                        "）</p><p>以上为检索分数，不是置信度或验证结果。</p></details></div>",
+                    )
+                    .join("") +
+                  "</details>"
+                : "") +
+              (state === "none"
+                ? '<p class="subtle">当前收录资料未找到明确链接或满足筛选条件的候选；论文可能尚未开源，也可能尚未采集到。</p>'
+                : "") +
+              "</article>"
+            );
+          }
+          function renderLinks() {
+            const q = $("link-search").value.trim().toLowerCase(),
+              state = $("link-status").value;
+            const list = linkRows.filter(
+              (x) =>
+                (state === "all" || linkState(x) === state) &&
+                (!q ||
+                  [
+                    x.paperTitle,
+                    ...x.explicit.map((c) => c.title),
+                    ...x.candidates.flatMap((c) => [c.title, ...c.sharedTerms]),
+                  ]
+                    .join(" ")
+                    .toLowerCase()
+                    .includes(q)),
+            );
+            $("link-count").textContent =
+              "匹配 " +
+              num(list.length) +
+              " 篇论文 · 已显示 " +
+              num(Math.min(linkLimit, list.length)) +
+              " 篇 · 仓库候选库 " +
+              num(associations?.stats.repositories ?? 0) +
+              " 个";
+            $("link-cards").innerHTML = list.length
+              ? list.slice(0, linkLimit).map(associationCard).join("")
+              : '<p class="empty">没有符合当前筛选条件的论文，可修改关键词或关联状态。</p>';
+            $("link-more").hidden = linkLimit >= list.length;
+          }
+          for (const id of ["link-search", "link-status"])
+            $(id).addEventListener(id === "link-search" ? "input" : "change", () => {
+              linkLimit = 12;
+              renderLinks();
+            });
+          $("link-more").addEventListener("click", () => {
+            linkLimit += 12;
+            renderLinks();
+          });
+          $("coverage").innerHTML =
+            "<table><thead><tr><th>来源</th><th>近期纳入</th><th>排除</th><th>合并重复</th><th>近期未分类</th></tr></thead><tbody>" +
+            ["paper", "github", "news"]
+              .map(
+                (k) =>
+                  "<tr><td>" +
+                  names[k] +
+                  "</td><td>" +
+                  num(d.totals[k]) +
+                  "</td><td>" +
+                  num(d.excluded[k]) +
+                  "</td><td>" +
+                  num(d.duplicates[k]) +
+                  "</td><td>" +
+                  num(d.unmatched[k]) +
+                  "</td></tr>",
+              )
+              .join("") +
+            '</tbody></table><p class="meta">排除与合并统计针对输入全库；近期纳入与未分类统计针对当前时间窗口，因此不能直接相加还原全库。</p>';
+          $("source-health").textContent =
+            "来源采集状态：" +
+            payload.sourceStates.filter((s) => s.status !== "ok").length +
+            " / " +
+            payload.sourceStates.length +
+            " 个来源未完整采集。";
+          $("provenance").textContent =
+            "OEVRYN · 规则版本 " +
+            d.version +
+            " · 原始快照 " +
+            num(payload.inputPapers) +
+            " 篇论文 / " +
+            num(payload.inputSignals) +
+            " 条来源记录。此文件内嵌全部 " +
+            d.niches.length +
+            " 个小众组合及七类方向的分析结果；并内嵌论文—代码关联候选；证据展示按规则截取，不含全部原始语料。候选不会计入小众证据充分判定。导出版本 " +
+            payload.exportVersion +
+            (historyDirections.length
+              ? "；另含 " + historyDirections.length + " 个定向历史核查专题，历史规则版本 " + history.version
+              : "") +
+            "。";
+          renderMain();
+          renderNiches();
+          renderLinks();
+          setTab(historyDirections.length ? "niche" : "main");
+          window.__oevrynOfflineReady = {
+            directions: d.directions.length,
+            niches: d.niches.length,
+            qualified: readyCount,
+            associatedPapers: linkRows.length,
+            historyDirections: historyDirections.length,
+            historySufficient: historyDirections.filter(isSufficient).length,
+          };
+        } catch (error) {
+          const box = document.getElementById("runtime-error");
+          box.hidden = false;
+          box.textContent = "页面载入失败：" + String(error.message || error);
+        }
+      })();
+    </script>
+  </body>
+</html>

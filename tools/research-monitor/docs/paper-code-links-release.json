@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-16",
+  "html": "../../../OEVRYN-分析-关联与证据.html",
+  "bytes": 7901908,
+  "sha256": "d99d3af5cd2e27b1be1029305423fbde88e4af1c8590c85c1f36c887e3269366",
+  "associations": {
+    "papers": 5330,
+    "repositories": 74260,
+    "explicitPapers": 113,
+    "candidatePapers": 5217,
+    "unmatchedPapers": 0
+  },
+  "niches": {
+    "total": 303,
+    "sufficient": 0
+  },
+  "checks": {
+    "fullTypeScriptTestsPassed": 622,
+    "fullLocalTestsPassed": 25,
+    "targetedTestsAfterFinalChangesPassed": 26,
+    "initialBrowserSuite": {
+      "passed": 62,
+      "timedOut": 2
+    },
+    "timedOutCasesSerialRetryPassed": 2,
+    "finalAffectedBrowserTestsPassed": 8,
+    "typecheck": "passed",
+    "format": "passed",
+    "viteBuild": "passed",
+    "copyData": "passed",
+    "resourceBudgets": "passed",
+    "offlineActualFileBrowser": "desktop/mobile controls verified; zero page errors and network requests; final artifact byte-identical to browser-verified artifact"
+  },
+  "limitations": [
+    "Candidate associations are unverified and never satisfy niche evidence gates.",
+    "Evidence sufficient only means the explicit rule thresholds are met, not scientific validation.",
+    "Lexical matching is English-oriented, with CT/MR abbreviations retained."
+  ]
+}

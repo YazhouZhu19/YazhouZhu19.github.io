@@ -1,0 +1,21 @@
+{
+  "version": "2026-11-16-v1",
+  "asOf": "2026-11-16",
+  "status": "parameters fixed before first benchmark run; no human gold labels",
+  "seed": 42,
+  "modelSeeds": [42, 43, 44],
+  "topics": [7, 20],
+  "trainCapPerSource": 1600,
+  "testCapPerSource": 400,
+  "split": "SHA256 connected explicit-link component modulo 5; bucket 0 test; normalized exact-text duplicates also joined",
+  "maxFeatures": 6000,
+  "minDf": 3,
+  "maxDf": 0.95,
+  "topWords": 10,
+  "nmfMaxIter": 400,
+  "ldaMaxIter": 20,
+  "bm25": {"k1": 1.2, "b": 0.75},
+  "retrieval": "all eligible GitHub and news as separate galleries; held-out explicitly linked papers as queries; URLs and identifiers stripped from every method",
+  "metrics": ["document NPMI on held-out source-balanced documents", "top-word diversity", "seed stability matched Jaccard", "source-specific assignment coverage", "known-link Recall@10 and MRR with paired query bootstrap", "niche evidence-gate counts and ablations"],
+  "limits": ["No precision, recall or F1 for true directions without human gold", "known links are incomplete silver relevance labels", "topic coherence is not clinical/research validity", "no LLM or pretrained language model; previous AI labels excluded", "no parameter search or winner selection on the test set", "upstream scope and direct-relevance rules remain a conditional population filter"]
+}

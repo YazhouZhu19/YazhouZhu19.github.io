@@ -1,0 +1,15 @@
+{
+  "manifest_matches_results": true,
+  "train_test_ids_disjoint": true,
+  "retrieval_means_independently_recomputed": true,
+  "no_model_convergence_warnings": true,
+  "review_labels_not_claimed_human_confirmed": true,
+  "niche_counts_reconcile": true,
+  "benchmark_unit_tests": 7,
+  "production_analysis_regression_tests": 9,
+  "typecheck": "passed",
+  "vite_build": "passed",
+  "copy_data_validation": "passed",
+  "resource_budgets": "passed",
+  "visual": "comparison PNG inspected; initial caption overlap fixed"
+}

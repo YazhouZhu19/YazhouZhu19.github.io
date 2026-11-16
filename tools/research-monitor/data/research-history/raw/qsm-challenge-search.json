@@ -1,0 +1,2178 @@
+{
+  "version": "6.9",
+  "hitCount": 8,
+  "request": {
+    "queryString": "TITLE_ABS:\"QSM Reconstruction Challenge 2.0\"",
+    "resultType": "core",
+    "cursorMark": "*",
+    "pageSize": 25,
+    "sort": "",
+    "synonym": false
+  },
+  "resultList": {
+    "result": [
+      {
+        "id": "42627567",
+        "source": "MED",
+        "pmid": "42627567",
+        "doi": "10.1007/s10334-026-01402-2",
+        "title": "Simulation of realistic brain phantoms for susceptibility tensor imaging.",
+        "authorString": "Mu\u00f1oz N, Milovic C, Langkammer C, Tejos C.",
+        "authorList": {
+          "author": [
+            {
+              "fullName": "Mu\u00f1oz N",
+              "lastName": "Mu\u00f1oz",
+              "firstName": "Nestor",
+              "initials": "N",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0009-0002-7031-4390"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Biomedical Imaging Center, Pontificia Universidad Cat\u00f3lica de Chile, Santiago, Chile. namunoz7@uc.cl."
+                  },
+                  {
+                    "affiliation": "Department of Electrical Engineering, Pontificia Universidad Cat\u00f3lica de Chile, 7820436, Santiago, Chile. namunoz7@uc.cl."
+                  },
+                  {
+                    "affiliation": "Millennium Institute of Intelligent Healthcare Engineering (iHEALTH), Santiago, Chile. namunoz7@uc.cl."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Milovic C",
+              "lastName": "Milovic",
+              "firstName": "Carlos",
+              "initials": "C",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Biomedical Imaging Center, Pontificia Universidad Cat\u00f3lica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Department of Electrical Engineering, Pontificia Universidad Cat\u00f3lica de Chile, 7820436, Santiago, Chile."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Langkammer C",
+              "lastName": "Langkammer",
+              "firstName": "Christian",
+              "initials": "C",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Neurology, Medical University of Graz, Graz, Austria."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Tejos C",
+              "lastName": "Tejos",
+              "firstName": "Cristian",
+              "initials": "C",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Biomedical Imaging Center, Pontificia Universidad Cat\u00f3lica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Department of Electrical Engineering, Pontificia Universidad Cat\u00f3lica de Chile, 7820436, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Millennium Institute of Intelligent Healthcare Engineering (iHEALTH), Santiago, Chile."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "authorIdList": {
+          "authorId": [
+            {
+              "type": "ORCID",
+              "value": "0009-0002-7031-4390"
+            }
+          ]
+        },
+        "journalInfo": {
+          "journalIssueId": 4236439,
+          "dateOfPublication": "2026 Aug",
+          "monthOfPublication": 8,
+          "yearOfPublication": 2026,
+          "journal": {
+            "medlineAbbreviation": "MAGMA",
+            "title": "Magma (New York, N.Y.)",
+            "essn": "1352-8661",
+            "issn": "0968-5243",
+            "nlmid": "9310752",
+            "isoabbreviation": "MAGMA"
+          },
+          "printPublicationDate": "2026-08-01"
+        },
+        "pubYear": "2026",
+        "abstractText": "<h4>Objective</h4>To propose three Susceptibility Tensor Imaging (STI) brain phantoms as ground truth for evaluating STI reconstruction algorithms: two derived from STI data and the one from Diffusion Tensor Imaging (DTI).<h4>Methods</h4>The eigenvalues were generated through a pipeline inspired by the Quantitative Susceptibility Mapping (QSM) Reconstruction Challenge 2.0. An eigendecomposition was applied to an acquired susceptibility tensor, and literature-reported mean eigenvalues were assigned to 13 distinct brain regions. Fractional Anisotropy (FA) maps provided realistic spatial texture in the eigenvalues. Eigenvectors were obtained from DTI and two STI reconstructions: a Least-Squares algorithm and Diffusion Regularized STI (DRSTI). Microstructural simulations were incorporated into white matter regions. Phantom behavior was tested in three experiments: (i) anisotropic susceptibility assessment using QSM at different orientations; (ii) STI reconstructions across five algorithms with varying orientation numbers; and (iii) reconstructions under different angular rotation ranges.<h4>Results</h4>The phantoms showed strong contrast in subcortical regions and realistic microstructural patterns. Algorithmic performance trends matched prior reports, with reduced errors as orientation count and rotation range increased.<h4>Discussion</h4>Three open-source, in-silico STI brain phantoms were developed and validated as ground truth references for the evaluation of current and future STI reconstruction algorithms.",
+        "affiliation": "Biomedical Imaging Center, Pontificia Universidad Cat\u00f3lica de Chile, Santiago, Chile. namunoz7@uc.cl.",
+        "publicationStatus": "aheadofprint",
+        "language": "eng",
+        "pubModel": "Print-Electronic",
+        "pubTypeList": {
+          "pubType": [
+            "Journal Article"
+          ]
+        },
+        "grantsList": {
+          "grant": [
+            {
+              "agency": "Agencia Nacional de Investigaci\u00f3n y Desarrollo",
+              "grantId": "ICN2021_004",
+              "orderIn": 0
+            },
+            {
+              "agency": "Austrian Science Fund FWF",
+              "grantId": "P35887",
+              "orderIn": 0
+            },
+            {
+              "agency": "Fondo Nacional de Desarrollo Cient\u00edfico y Tecnol\u00f3gico",
+              "grantId": "1231535",
+              "orderIn": 0
+            },
+            {
+              "agency": "Austrian Science Fund FWF",
+              "grantId": "P30134",
+              "orderIn": 0
+            },
+            {
+              "agency": "Fondo Nacional de Desarrollo Cient\u00edfico y Tecnol\u00f3gico",
+              "grantId": "11240279",
+              "orderIn": 0
+            }
+          ]
+        },
+        "keywordList": {
+          "keyword": [
+            "Microstructure",
+            "Diffusion Tensor Imaging",
+            "Susceptibility Tensor Imaging",
+            "Brain Phantom"
+          ]
+        },
+        "subsetList": {
+          "subset": [
+            {
+              "code": "IM",
+              "name": "Index Medicus"
+            }
+          ]
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Subscription required",
+              "availabilityCode": "S",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1007/s10334-026-01402-2"
+            }
+          ]
+        },
+        "isOpenAccess": "N",
+        "inEPMC": "N",
+        "inPMC": "N",
+        "citedByCount": 0,
+        "hasReferences": "Y",
+        "hasTextMinedTerms": "N",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "N",
+        "hasBook": "N",
+        "hasSuppl": "N",
+        "hasLabsLinks": "N",
+        "hasData": "N",
+        "authMan": "N",
+        "epmcAuthMan": "N",
+        "nihAuthMan": "N",
+        "hasTMAccessionNumbers": "N",
+        "dateOfCreation": "2026-08-21",
+        "dateOfRevision": "2026-08-21",
+        "electronicPublicationDate": "2026-08-21",
+        "firstPublicationDate": "2026-08-21",
+        "firstIndexDate": "2026-08-22",
+        "hasEvaluations": "N"
+      },
+      {
+        "id": "39176438",
+        "source": "MED",
+        "pmid": "39176438",
+        "doi": "10.1002/mrm.30271",
+        "title": "XSIM: A structural similarity index measure optimized for MRI QSM.",
+        "authorString": "Milovic C, Tejos C, Silva J, Shmueli K, Irarrazaval P.",
+        "authorList": {
+          "author": [
+            {
+              "fullName": "Milovic C",
+              "lastName": "Milovic",
+              "firstName": "Carlos",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-1196-6703"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "School of Electrical Engineering, Pontificia Universidad Catolica de Valparaiso, Valparaiso, Chile."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Tejos C",
+              "lastName": "Tejos",
+              "firstName": "Cristian",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-8367-155X"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Electrical Engineering, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Biomedical Imaging Center, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Millennium Institute for Intelligent Healthcare Engineering (iHEALTH), Santiago, Chile."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Silva J",
+              "lastName": "Silva",
+              "firstName": "Javier",
+              "initials": "J",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-7276-9033"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Electrical Engineering, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Biomedical Imaging Center, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Shmueli K",
+              "lastName": "Shmueli",
+              "firstName": "Karin",
+              "initials": "K",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-7520-2975"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Medical Physics and Biomedical Engineering, University College London, London, UK."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Irarrazaval P",
+              "lastName": "Irarrazaval",
+              "firstName": "Pablo",
+              "initials": "P",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-5186-2642"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Electrical Engineering, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Biomedical Imaging Center, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Millennium Institute for Intelligent Healthcare Engineering (iHEALTH), Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Institute for Biological and Medical Engineering, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "authorIdList": {
+          "authorId": [
+            {
+              "type": "ORCID",
+              "value": "0000-0001-7520-2975"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-1196-6703"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-5186-2642"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-7276-9033"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-8367-155X"
+            }
+          ]
+        },
+        "journalInfo": {
+          "issue": "1",
+          "volume": "93",
+          "journalIssueId": 3843442,
+          "dateOfPublication": "2025 Jan",
+          "monthOfPublication": 1,
+          "yearOfPublication": 2025,
+          "journal": {
+            "medlineAbbreviation": "Magn Reson Med",
+            "title": "Magnetic resonance in medicine",
+            "essn": "1522-2594",
+            "issn": "0740-3194",
+            "nlmid": "8505245",
+            "isoabbreviation": "Magn Reson Med"
+          },
+          "printPublicationDate": "2025-01-01"
+        },
+        "pubYear": "2025",
+        "pageInfo": "411-421",
+        "abstractText": "<h4>Purpose</h4>The structural similarity index measure (SSIM) has become a popular quality metric to evaluate QSM in a way that is closer to human perception than RMS error (RMSE). However, SSIM may overpenalize errors in diamagnetic tissues and underpenalize them in paramagnetic tissues, resulting in biasing. In addition, extreme artifacts may compress the dynamic range, resulting in unrealistically high SSIM scores (hacking). To overcome biasing and hacking, we propose XSIM: SSIM implemented in the native QSM range, and with internal parameters optimized for QSM.<h4>Methods</h4>We used forward simulations from a COSMOS ground-truth brain susceptibility map included in the 2016 QSM Reconstruction Challenge to investigate the effect of QSM reconstruction errors on the SSIM, XSIM, and RMSE metrics. We also used these metrics to optimize QSM reconstructions of the in vivo challenge data set. We repeated this experiment with the QSM abdominal phantom. To validate the use of XSIM instead of SSIM for QSM quality assessment across a range of different reconstruction techniques/algorithms, we analyzed the reconstructions submitted to the 2019 QSM Reconstruction Challenge 2.0.<h4>Results</h4>Our experiments confirmed the biasing and hacking effects on the SSIM metric applied to QSM. The XSIM metric was robust to those effects, penalizing the presence of streaking artifacts and reconstruction errors. Using XSIM to optimize QSM reconstruction regularization weights returned less overregularization than SSIM and RMSE.<h4>Conclusion</h4>XSIM is recommended over traditional SSIM to evaluate QSM reconstructions against a known ground truth, as it avoids biasing and hacking effects and provides a larger dynamic range of scores.",
+        "affiliation": "School of Electrical Engineering, Pontificia Universidad Catolica de Valparaiso, Valparaiso, Chile.",
+        "publicationStatus": "ppublish",
+        "language": "eng",
+        "pubModel": "Print-Electronic",
+        "pubTypeList": {
+          "pubType": [
+            "Research Support, Non-U.S. Gov't",
+            "Journal Article"
+          ]
+        },
+        "grantsList": {
+          "grant": [
+            {
+              "agency": "Fondo Nacional de Desarrollo Cient\u00edfico y Tecnol\u00f3gico Millennium Institute for Intelligent Healthcare En",
+              "grantId": "1231535",
+              "orderIn": 0
+            },
+            {
+              "agency": "Fondo Nacional de Desarrollo Cient\u00edfico y Tecnol\u00f3gico Millennium Institute for Intelligent Healthcare En",
+              "grantId": "Iniciacion 11240279",
+              "orderIn": 0
+            },
+            {
+              "agency": "Vicerrector\u00eda de Investigaci\u00f3n, Creaci\u00f3n e Innovaci\u00f3n",
+              "grantId": "VINCI\u2010DI Iniciacion 2023",
+              "orderIn": 0
+            },
+            {
+              "agency": "European Research Council",
+              "acronym": "ERC_",
+              "grantId": "SFN 770939",
+              "orderIn": 0
+            },
+            {
+              "agency": "Fondo Nacional de Desarrollo Cient\u00edfico y Tecnol\u00f3gico",
+              "grantId": "Iniciacion 11240279",
+              "orderIn": 0
+            },
+            {
+              "agency": "Fondo Nacional de Desarrollo Cient\u00edfico y Tecnol\u00f3gico",
+              "grantId": "1210747",
+              "orderIn": 0
+            },
+            {
+              "agency": "Fondo Nacional de Desarrollo Cient\u00edfico y Tecnol\u00f3gico Millennium Institute for Intelligent Healthcare En",
+              "grantId": "1210747",
+              "orderIn": 0
+            },
+            {
+              "agency": "Fondo Nacional de Desarrollo Cient\u00edfico y Tecnol\u00f3gico",
+              "grantId": "1231535",
+              "orderIn": 0
+            },
+            {
+              "agency": "Cancer Research UK",
+              "acronym": "CRUK_",
+              "grantId": "C53545/A24348",
+              "orderIn": 0
+            },
+            {
+              "agency": "Vicerrector\u00eda de Investigaci\u00f3n, Creaci\u00f3n e Innovaci\u00f3n",
+              "grantId": "VINCI-DI Iniciacion 2023",
+              "orderIn": 0
+            }
+          ]
+        },
+        "meshHeadingList": {
+          "meshHeading": [
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Abdomen",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "DG",
+                    "qualifierName": "diagnostic imaging"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Brain",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "DG",
+                    "qualifierName": "diagnostic imaging"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Humans"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Magnetic Resonance Imaging",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Artifacts"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Reproducibility of Results"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Phantoms, Imaging"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Algorithms"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Computer Simulation"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Image Processing, Computer-Assisted",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "keywordList": {
+          "keyword": [
+            "quality index",
+            "Magnetic Susceptibility",
+            "Total Variation",
+            "Ssim"
+          ]
+        },
+        "subsetList": {
+          "subset": [
+            {
+              "code": "IM",
+              "name": "Index Medicus"
+            }
+          ]
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Subscription required",
+              "availabilityCode": "S",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/mrm.30271"
+            }
+          ]
+        },
+        "isOpenAccess": "N",
+        "inEPMC": "N",
+        "inPMC": "N",
+        "citedByCount": 9,
+        "hasReferences": "Y",
+        "hasTextMinedTerms": "Y",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "N",
+        "hasBook": "N",
+        "hasSuppl": "N",
+        "hasLabsLinks": "N",
+        "hasData": "N",
+        "authMan": "N",
+        "epmcAuthMan": "N",
+        "nihAuthMan": "N",
+        "hasTMAccessionNumbers": "N",
+        "dateOfCompletion": "2024-10-28",
+        "dateOfCreation": "2024-08-23",
+        "dateOfRevision": "2026-05-20",
+        "electronicPublicationDate": "2024-08-23",
+        "firstPublicationDate": "2024-08-23",
+        "firstIndexDate": "2024-08-26",
+        "hasEvaluations": "N"
+      },
+      {
+        "id": "33783037",
+        "source": "MED",
+        "pmid": "33783037",
+        "pmcid": "PMC12142683",
+        "fullTextIdList": {
+          "fullTextId": [
+            "PMC12142683"
+          ]
+        },
+        "doi": "10.1002/mrm.28754",
+        "title": "QSM reconstruction challenge 2.0: Design and report of results.",
+        "authorString": "QSM Challenge 2.0 Organization Committee, Bilgic B, Langkammer C, Marques JP, Meineke J, Milovic C, Schweser F.",
+        "authorList": {
+          "author": [
+            {
+              "collectiveName": "QSM Challenge 2.0 Organization Committee"
+            },
+            {
+              "fullName": "Bilgic B",
+              "lastName": "Bilgic",
+              "firstName": "Berkin",
+              "initials": "B",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-9080-7865"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Athinoula A. Martinos Center for Biomedical Imaging, Charlestown, Massachusetts, USA."
+                  },
+                  {
+                    "affiliation": "Department of Radiology, Harvard Medical School, Boston, Massachusetts, USA."
+                  },
+                  {
+                    "affiliation": "Harvard-MIT Health Sciences and Technology, MIT, Cambridge, Massachusetts, USA."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Langkammer C",
+              "lastName": "Langkammer",
+              "firstName": "Christian",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-7097-9707"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Neurology, Medical University of Graz, Graz, Austria."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Marques JP",
+              "lastName": "Marques",
+              "firstName": "Jos\u00e9 P",
+              "initials": "JP",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-8157-8864"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Donders Centre for Cognitive Neuroimaging, Radboud University, Nijmegen, Netherlands."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Meineke J",
+              "lastName": "Meineke",
+              "firstName": "Jakob",
+              "initials": "J",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-8663-1468"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Philips Research, Hamburg, Germany."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Milovic C",
+              "lastName": "Milovic",
+              "firstName": "Carlos",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-1196-6703"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Electrical Engineering, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Biomedical Imaging Center, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Department of Medical Physics and Biomedical Engineering, University College London, London, UK."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Schweser F",
+              "lastName": "Schweser",
+              "firstName": "Ferdinand",
+              "initials": "F",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0003-0399-9211"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Buffalo Neuroimaging Analysis Center, Department of Neurology, Jacobs School of Medicine and Biomedical Sciences, University at Buffalo, The State University of New York, Buffalo, New York, USA."
+                  },
+                  {
+                    "affiliation": "Center for Biomedical Imaging, Clinical and Translational Science Institute, University at Buffalo, The State University of New York, Buffalo, New York, USA."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "authorIdList": {
+          "authorId": [
+            {
+              "type": "ORCID",
+              "value": "0000-0001-8157-8864"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0001-8663-1468"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-1196-6703"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-7097-9707"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-9080-7865"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0003-0399-9211"
+            }
+          ]
+        },
+        "dataLinksTagsList": {
+          "dataLinkstag": [
+            "supporting_data"
+          ]
+        },
+        "journalInfo": {
+          "issue": "3",
+          "volume": "86",
+          "journalIssueId": 3183112,
+          "dateOfPublication": "2021 Sep",
+          "monthOfPublication": 9,
+          "yearOfPublication": 2021,
+          "journal": {
+            "medlineAbbreviation": "Magn Reson Med",
+            "title": "Magnetic resonance in medicine",
+            "essn": "1522-2594",
+            "issn": "0740-3194",
+            "nlmid": "8505245",
+            "isoabbreviation": "Magn Reson Med"
+          },
+          "printPublicationDate": "2021-09-01"
+        },
+        "pubYear": "2021",
+        "pageInfo": "1241-1255",
+        "abstractText": "<h4>Purpose</h4>The aim of the second quantitative susceptibility mapping (QSM) reconstruction challenge (Oct 2019, Seoul, Korea) was to test the accuracy of QSM dipole inversion algorithms in simulated brain data.<h4>Methods</h4>A two-stage design was chosen for this challenge. The participants were provided with datasets of multi-echo gradient echo images synthesized from two realistic in silico head phantoms using an MR simulator. At the first stage, participants optimized QSM reconstructions without ground truth data available to mimic the clinical setting. At the second stage, ground truth data were provided for parameter optimization. Submissions were evaluated using eight numerical metrics and visual ratings.<h4>Results</h4>A total of 98 reconstructions were submitted for stage 1 and 47 submissions for stage 2. Iterative methods had the best quantitative metric scores, followed by deep learning and direct inversion methods. Priors derived from magnitude data improved the metric scores. Algorithms based on iterative approaches and total variation (and its derivatives) produced the best overall results. The reported results and analysis pipelines have been made public to allow researchers to compare new methods to the current state of the art.<h4>Conclusion</h4>The synthetic data provide a consistent framework to test the accuracy and robustness of QSM algorithms in the presence of noise, calcifications and minor voxel dephasing effects. Total Variation-based algorithms produced the best results among all metrics. Future QSM challenges should assess whether this good performance with synthetic datasets translates to more realistic scenarios, where background fields and dipole-incompatible phase contributions are included.",
+        "publicationStatus": "ppublish",
+        "language": "eng",
+        "pubModel": "Print-Electronic",
+        "pubTypeList": {
+          "pubType": [
+            "Research Support, Non-U.S. Gov't",
+            "research-article",
+            "Journal Article",
+            "Research Support, N.I.H., Extramural"
+          ]
+        },
+        "grantsList": {
+          "grant": [
+            {
+              "agency": "NIH HHS",
+              "acronym": "NH",
+              "grantId": "P41 EB030006",
+              "orderIn": 0
+            },
+            {
+              "agency": "NIBIB NIH HHS",
+              "acronym": "EB",
+              "grantId": "U01 EB026996",
+              "orderIn": 0
+            },
+            {
+              "agency": "NCATS NIH HHS",
+              "acronym": "TR",
+              "grantId": "UL1TR001412",
+              "orderIn": 0
+            },
+            {
+              "agency": "National Institutes of Health",
+              "grantId": "P41 EB030006",
+              "orderIn": 0
+            },
+            {
+              "agency": "Fondo Nacional de Desarrollo Cient\u00edfico y Tecnol\u00f3gico",
+              "grantId": "PIA\u2010ACT192064",
+              "orderIn": 0
+            },
+            {
+              "agency": "NIBIB NIH HHS",
+              "acronym": "EB",
+              "grantId": "U01 EB025162",
+              "orderIn": 0
+            },
+            {
+              "agency": "NIMH NIH HHS",
+              "acronym": "MH",
+              "grantId": "R01 MH116173",
+              "orderIn": 0
+            },
+            {
+              "agency": "Dutch Research Council (NWO)",
+              "grantId": "FOM\u2010N\u201031/16PR1056",
+              "orderIn": 0
+            },
+            {
+              "agency": "National Institutes of Health",
+              "grantId": "R01 EB028797",
+              "orderIn": 0
+            },
+            {
+              "agency": "National Institutes of Health",
+              "grantId": "R01 MH11",
+              "orderIn": 0
+            },
+            {
+              "agency": "National Institutes of Health",
+              "grantId": "U01 EB025162",
+              "orderIn": 0
+            },
+            {
+              "agency": "NIBIB NIH HHS",
+              "acronym": "EB",
+              "grantId": "R01 EB028797",
+              "orderIn": 0
+            },
+            {
+              "agency": "NIH HHS",
+              "acronym": "NH",
+              "grantId": "R01 EB028797",
+              "orderIn": 0
+            },
+            {
+              "agency": "NIH HHS",
+              "acronym": "NH",
+              "grantId": "R01 MH11",
+              "orderIn": 0
+            },
+            {
+              "agency": "NIH HHS",
+              "acronym": "NH",
+              "grantId": "U01 EB025162",
+              "orderIn": 0
+            },
+            {
+              "agency": "Siemens Healthineers",
+              "orderIn": 0
+            },
+            {
+              "agency": "NIBIB NIH HHS",
+              "acronym": "EB",
+              "grantId": "P41 EB030006",
+              "orderIn": 0
+            },
+            {
+              "agency": "NCATS NIH HHS",
+              "acronym": "TR",
+              "grantId": "UL1 TR001412",
+              "orderIn": 0
+            },
+            {
+              "agency": "National Center for Advancing Translational Sciences",
+              "grantId": "UL1TR001412",
+              "orderIn": 0
+            }
+          ]
+        },
+        "meshHeadingList": {
+          "meshHeading": [
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "DG",
+                    "qualifierName": "diagnostic imaging"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Magnetic Resonance Imaging"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain Mapping"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Algorithms"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Image Processing, Computer-Assisted"
+            }
+          ]
+        },
+        "keywordList": {
+          "keyword": [
+            "Assessment",
+            "Challenge",
+            "Quantitative Susceptibility Mapping",
+            "Reconstruction Algorithms",
+            "Dipole Inversion"
+          ]
+        },
+        "subsetList": {
+          "subset": [
+            {
+              "code": "IM",
+              "name": "Index Medicus"
+            }
+          ]
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Subscription required",
+              "availabilityCode": "S",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/mrm.28754"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "html",
+              "site": "Europe_PMC",
+              "url": "https://europepmc.org/articles/PMC12142683"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "pdf",
+              "site": "Europe_PMC",
+              "url": "https://europepmc.org/articles/PMC12142683?pdf=render"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/mrm.28754"
+            }
+          ]
+        },
+        "commentCorrectionList": {
+          "commentCorrection": [
+            {
+              "source": "PPR",
+              "id": "PPR244930",
+              "type": "Preprint in",
+              "note": "CrossRef Pre-print loader",
+              "orderIn": 10002
+            }
+          ]
+        },
+        "isOpenAccess": "N",
+        "inEPMC": "Y",
+        "inPMC": "Y",
+        "citedByCount": 53,
+        "hasReferences": "Y",
+        "hasTextMinedTerms": "Y",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "Y",
+        "hasBook": "N",
+        "hasSuppl": "Y",
+        "hasLabsLinks": "N",
+        "hasData": "Y",
+        "license": "cc by",
+        "authMan": "Y",
+        "epmcAuthMan": "N",
+        "nihAuthMan": "Y",
+        "manuscriptId": "NIHMS2085342",
+        "hasTMAccessionNumbers": "Y",
+        "tmAccessionTypeList": {
+          "accessionType": [
+            "doi"
+          ]
+        },
+        "dateOfCompletion": "2021-06-17",
+        "dateOfCreation": "2021-03-30",
+        "dateOfRevision": "2025-06-09",
+        "electronicPublicationDate": "2021-03-30",
+        "firstPublicationDate": "2021-03-30",
+        "firstIndexDate": "2021-03-31",
+        "fullTextReceivedDate": "2025-12-02",
+        "hasEvaluations": "N"
+      },
+      {
+        "id": "36999746",
+        "source": "MED",
+        "pmid": "36999746",
+        "doi": "10.1002/mrm.29627",
+        "title": "To mask or not to mask? Investigating the impact of accounting for spatial frequency distributions and susceptibility sources on QSM quality.",
+        "authorString": "Sandgaard AD, Shemesh N, Jespersen SN, Kiselev VG.",
+        "authorList": {
+          "author": [
+            {
+              "fullName": "Sandgaard AD",
+              "lastName": "Sandgaard",
+              "firstName": "Anders Dyhr",
+              "initials": "AD",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-8728-375X"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Center for Functionally Integrative Neuroscience, Department of Clinical Medicine, Aarhus University, Aarhus, Denmark."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Shemesh N",
+              "lastName": "Shemesh",
+              "firstName": "Noam",
+              "initials": "N",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-6681-5876"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Champalimaud Research, Champalimaud Centre for the Unknown, Lisbon, Portugal."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Jespersen SN",
+              "lastName": "Jespersen",
+              "firstName": "Sune N\u00f8rh\u00f8j",
+              "initials": "SN",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0003-3146-4329"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Center for Functionally Integrative Neuroscience, Department of Clinical Medicine, Aarhus University, Aarhus, Denmark."
+                  },
+                  {
+                    "affiliation": "Department of Physics and Astronomy, Aarhus University, Aarhus, Denmark."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Kiselev VG",
+              "lastName": "Kiselev",
+              "firstName": "Valerij G",
+              "initials": "VG",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-5349-5399"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Division of Medical Physics, Department of Radiology, Faculty of Medicine, University of Freiburg, University Medical Center Freiburg, Freiburg, Germany."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "authorIdList": {
+          "authorId": [
+            {
+              "type": "ORCID",
+              "value": "0000-0001-6681-5876"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0001-8728-375X"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-5349-5399"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0003-3146-4329"
+            }
+          ]
+        },
+        "journalInfo": {
+          "issue": "1",
+          "volume": "90",
+          "journalIssueId": 3553628,
+          "dateOfPublication": "2023 Jul",
+          "monthOfPublication": 7,
+          "yearOfPublication": 2023,
+          "journal": {
+            "medlineAbbreviation": "Magn Reson Med",
+            "title": "Magnetic resonance in medicine",
+            "essn": "1522-2594",
+            "issn": "0740-3194",
+            "nlmid": "8505245",
+            "isoabbreviation": "Magn Reson Med"
+          },
+          "printPublicationDate": "2023-07-01"
+        },
+        "pubYear": "2023",
+        "pageInfo": "353-362",
+        "abstractText": "<h4>Purpose</h4>Estimating magnetic susceptibility using MRI depends on inverting a forward relationship between the susceptibility and measured Larmor frequency. However, an often-overlooked constraint in susceptibility fitting is that the Larmor frequency is only measured inside the sample, and after successful background field removal, susceptibility sources should only reside inside the same sample. Here, we test the impact of accounting for these constraints in susceptibility fitting.<h4>Theory and methods</h4>Two different digital brain phantoms with scalar susceptibility were examined. We used the MEDI phantom, a simple phantom with no background fields, to examine the effect of the imposed constraints for various levels of SNR. Next, we considered the QSM reconstruction challenge 2.0 phantom with and without background fields. We estimated the parameter accuracy of openly-available QSM algorithms by comparing fitting results to the ground truth. Next, we implemented the mentioned constraints and compared to the standard approach.<h4>Results</h4>Including the spatial distribution of frequencies and susceptibility sources decreased the RMS-error compared to standard QSM on both brain phantoms when background fields were absent. When background field removal was unsuccessful, as is presumably the case in most in vivo conditions, it is better to allow sources outside the brain.<h4>Conclusion</h4>Informing QSM algorithms about the location of susceptibility sources and where Larmor frequency was measured improves susceptibility fitting for realistic SNR levels and efficient background field removal. However, the latter remains the bottleneck of the algorithm. Allowing for external sources regularizes unsuccessful background field removal and is currently the best strategy in vivo.",
+        "affiliation": "Center for Functionally Integrative Neuroscience, Department of Clinical Medicine, Aarhus University, Aarhus, Denmark.",
+        "publicationStatus": "ppublish",
+        "language": "eng",
+        "pubModel": "Print-Electronic",
+        "pubTypeList": {
+          "pubType": [
+            "Research Support, Non-U.S. Gov't",
+            "Journal Article"
+          ]
+        },
+        "grantsList": {
+          "grant": [
+            {
+              "agency": "Danmarks Frie Forskningsfond",
+              "grantId": "Grant/Award Number: 8020\u201000158B",
+              "orderIn": 0
+            }
+          ]
+        },
+        "meshHeadingList": {
+          "meshHeading": [
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Brain",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "DG",
+                    "qualifierName": "diagnostic imaging"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Magnetic Resonance Imaging",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain Mapping",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Algorithms"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Image Processing, Computer-Assisted",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "keywordList": {
+          "keyword": [
+            "Inverse problem",
+            "Fitting",
+            "Magnetic Susceptibility",
+            "Quantitative Susceptibility Mapping",
+            "Larmor Frequency"
+          ]
+        },
+        "subsetList": {
+          "subset": [
+            {
+              "code": "IM",
+              "name": "Index Medicus"
+            }
+          ]
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Open access",
+              "availabilityCode": "OA",
+              "documentStyle": "pdf",
+              "site": "Unpaywall",
+              "url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/mrm.29627"
+            },
+            {
+              "availability": "Subscription required",
+              "availabilityCode": "S",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/mrm.29627"
+            }
+          ]
+        },
+        "isOpenAccess": "N",
+        "inEPMC": "N",
+        "inPMC": "N",
+        "citedByCount": 4,
+        "hasReferences": "Y",
+        "hasTextMinedTerms": "N",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "N",
+        "hasBook": "N",
+        "hasSuppl": "N",
+        "hasLabsLinks": "N",
+        "hasData": "N",
+        "license": "cc by-nc-nd",
+        "authMan": "N",
+        "epmcAuthMan": "N",
+        "nihAuthMan": "N",
+        "hasTMAccessionNumbers": "N",
+        "dateOfCompletion": "2023-05-01",
+        "dateOfCreation": "2023-03-31",
+        "dateOfRevision": "2023-05-18",
+        "electronicPublicationDate": "2023-03-31",
+        "firstPublicationDate": "2023-03-31",
+        "firstIndexDate": "2023-04-05",
+        "hasEvaluations": "N"
+      },
+      {
+        "id": "36259729",
+        "source": "MED",
+        "pmid": "36259729",
+        "doi": "10.1002/nbm.4849",
+        "title": "Deep learning-regularized, single-step quantitative susceptibility mapping quantification.",
+        "authorString": "Wang Z, Mak HK, Cao P.",
+        "authorList": {
+          "author": [
+            {
+              "fullName": "Wang Z",
+              "lastName": "Wang",
+              "firstName": "Zuojun",
+              "initials": "Z",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-7028-4665"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Diagnostic Radiology, The University of Hong Kong, Hong Kong, China."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Mak HK",
+              "lastName": "Mak",
+              "firstName": "Henry Ka-Fung",
+              "initials": "HK",
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Diagnostic Radiology, The University of Hong Kong, Hong Kong, China."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Cao P",
+              "lastName": "Cao",
+              "firstName": "Peng",
+              "initials": "P",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-1116-1171"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Diagnostic Radiology, The University of Hong Kong, Hong Kong, China."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "authorIdList": {
+          "authorId": [
+            {
+              "type": "ORCID",
+              "value": "0000-0002-1116-1171"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-7028-4665"
+            }
+          ]
+        },
+        "dataLinksTagsList": {
+          "dataLinkstag": [
+            "altmetrics"
+          ]
+        },
+        "journalInfo": {
+          "issue": "3",
+          "volume": "36",
+          "journalIssueId": 3500782,
+          "dateOfPublication": "2023 Mar",
+          "monthOfPublication": 3,
+          "yearOfPublication": 2023,
+          "journal": {
+            "medlineAbbreviation": "NMR Biomed",
+            "title": "NMR in biomedicine",
+            "essn": "1099-1492",
+            "issn": "0952-3480",
+            "nlmid": "8915233",
+            "isoabbreviation": "NMR Biomed"
+          },
+          "printPublicationDate": "2023-03-01"
+        },
+        "pubYear": "2023",
+        "pageInfo": "e4849",
+        "abstractText": "The purpose of the current study was to develop deep learning-regularized, single-step quantitative susceptibility mapping (QSM) quantification, directly generating QSM from the total phase map. A deep learning-regularized, single-step QSM quantification model, named SS-POCSnet, was trained with datasets created using the QSM synthesis approach in QSM reconstruction challenge 2.0. In SS-POCSnet, a data fidelity term based on a single-step model was iteratively applied that combined the spherical mean value kernel and dipole model. Meanwhile, SS-POCSnet regularized susceptibility maps, avoiding underestimating susceptibility values. We evaluated the SS-POCSnet on 10 synthetic datasets, 24 clinical datasets with lesions of cerebral microbleed (CMB) and calcification, and 10 datasets with multiple sclerosis (MS).On synthetic datasets, SS-POCSnet showed the best performance among the methods evaluated, with a normalized root mean squared error of 37.3%\u2009\u00b1\u20094.2%, susceptibility-tuned structured similarity index measure of 0.823\u2009\u00b1\u20090.02, high-frequency error norm of 37.0\u2009\u00b1\u20095.7, and peak signal-to-noise ratio of 42.8\u2009\u00b1\u20091.1. SS-POCSnet also reduced the underestimations of susceptibility values in deep brain nuclei compared with those from the other models evaluated. Furthermore, SS-POCSnet was sensitive to CMB/calcification and MS lesions, demonstrating its clinical applicability. Our method also supported variable imaging parameters, including matrix size and resolution. It was concluded that deep learning-regularized, single-step QSM quantification can mitigate underestimating susceptibility values in deep brain nuclei.",
+        "affiliation": "Department of Diagnostic Radiology, The University of Hong Kong, Hong Kong, China.",
+        "publicationStatus": "ppublish",
+        "language": "eng",
+        "pubModel": "Print-Electronic",
+        "pubTypeList": {
+          "pubType": [
+            "Research Support, Non-U.S. Gov't",
+            "Journal Article"
+          ]
+        },
+        "meshHeadingList": {
+          "meshHeading": [
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "DG",
+                    "qualifierName": "diagnostic imaging"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Humans"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Calcinosis"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Magnetic Resonance Imaging",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain Mapping",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Algorithms"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Image Processing, Computer-Assisted",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "MT",
+                    "qualifierName": "methods"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Deep Learning"
+            }
+          ]
+        },
+        "keywordList": {
+          "keyword": [
+            "Quantitative Susceptibility Mapping",
+            "Deep Learning",
+            "Data-driven",
+            "Single-step",
+            "Susceptibility Quantification"
+          ]
+        },
+        "subsetList": {
+          "subset": [
+            {
+              "code": "IM",
+              "name": "Index Medicus"
+            }
+          ]
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Subscription required",
+              "availabilityCode": "S",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/nbm.4849"
+            }
+          ]
+        },
+        "isOpenAccess": "N",
+        "inEPMC": "N",
+        "inPMC": "N",
+        "citedByCount": 2,
+        "hasReferences": "Y",
+        "hasTextMinedTerms": "Y",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "N",
+        "hasBook": "N",
+        "hasSuppl": "N",
+        "hasLabsLinks": "Y",
+        "hasData": "N",
+        "authMan": "N",
+        "epmcAuthMan": "N",
+        "nihAuthMan": "N",
+        "hasTMAccessionNumbers": "N",
+        "dateOfCompletion": "2023-02-06",
+        "dateOfCreation": "2022-10-19",
+        "dateOfRevision": "2023-02-11",
+        "electronicPublicationDate": "2022-11-23",
+        "firstPublicationDate": "2022-11-23",
+        "firstIndexDate": "2022-10-20",
+        "hasEvaluations": "N"
+      },
+      {
+        "id": "33638241",
+        "source": "MED",
+        "pmid": "33638241",
+        "pmcid": "PMC8048665",
+        "fullTextIdList": {
+          "fullTextId": [
+            "PMC8048665"
+          ]
+        },
+        "doi": "10.1002/mrm.28716",
+        "title": "QSM reconstruction challenge 2.0: A realistic in silico head phantom for MRI data simulation and evaluation of susceptibility mapping procedures.",
+        "authorString": "Marques JP, Meineke J, Milovic C, Bilgic B, Chan KS, Hedouin R, van der Zwaag W, Langkammer C, Schweser F.",
+        "authorList": {
+          "author": [
+            {
+              "fullName": "Marques JP",
+              "lastName": "Marques",
+              "firstName": "Jos\u00e9 P",
+              "initials": "JP",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-8157-8864"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Donders Institute for Brain, Cognition and Behavior, Radboud University, Nijmegen, the Netherlands."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Meineke J",
+              "lastName": "Meineke",
+              "firstName": "Jakob",
+              "initials": "J",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-8663-1468"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Philips Research, Hamburg, Germany."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Milovic C",
+              "lastName": "Milovic",
+              "firstName": "Carlos",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-1196-6703"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Electrical Engineering, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Biomedical Imaging Center, Pontificia Universidad Catolica de Chile, Santiago, Chile."
+                  },
+                  {
+                    "affiliation": "Department of Medical Physics and Biomedical Engineering, University College London, London, United Kingdom."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Bilgic B",
+              "lastName": "Bilgic",
+              "firstName": "Berkin",
+              "initials": "B",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-9080-7865"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Athinoula A. Martinos Center for Biomedical Imaging, Charlestown, Massachusetts, USA."
+                  },
+                  {
+                    "affiliation": "Department of Radiology, Harvard Medical School, Boston, Massachusetts, USA."
+                  },
+                  {
+                    "affiliation": "Harvard-MIT Health Sciences and Technology, MIT, Cambridge, Massachusetts, USA."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Chan KS",
+              "lastName": "Chan",
+              "firstName": "Kwok-Shing",
+              "initials": "KS",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-8427-169X"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Donders Institute for Brain, Cognition and Behavior, Radboud University, Nijmegen, the Netherlands."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Hedouin R",
+              "lastName": "Hedouin",
+              "firstName": "Renaud",
+              "initials": "R",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-4341-9907"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Donders Institute for Brain, Cognition and Behavior, Radboud University, Nijmegen, the Netherlands."
+                  },
+                  {
+                    "affiliation": "Centre Inria Rennes - Bretagne Atlantique, Rennes, France."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "van der Zwaag W",
+              "lastName": "van der Zwaag",
+              "firstName": "Wietske",
+              "initials": "W",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0003-3223-9721"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Spinoza Center for Neuroimaging, Amsterdam, the Netherlands."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Langkammer C",
+              "lastName": "Langkammer",
+              "firstName": "Christian",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-7097-9707"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Department of Neurology, Medical University of Graz, Graz, Austria."
+                  }
+                ]
+              }
+            },
+            {
+              "fullName": "Schweser F",
+              "lastName": "Schweser",
+              "firstName": "Ferdinand",
+              "initials": "F",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0003-0399-9211"
+              },
+              "authorAffiliationDetailsList": {
+                "authorAffiliation": [
+                  {
+                    "affiliation": "Buffalo Neuroimaging Analysis Center, Department of Neurology, Jacobs School of Medicine and Biomedical Sciences, University at Buffalo, The State University of New York, Buffalo, New York, USA."
+                  },
+                  {
+                    "affiliation": "Center for Biomedical Imaging, Clinical and Translational Science Institute, University at Buffalo, The State University of New York, Buffalo, New York, USA."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "authorIdList": {
+          "authorId": [
+            {
+              "type": "ORCID",
+              "value": "0000-0001-8157-8864"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0001-8427-169X"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0001-8663-1468"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-1196-6703"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-4341-9907"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-7097-9707"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-9080-7865"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0003-0399-9211"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0003-3223-9721"
+            }
+          ]
+        },
+        "dataLinksTagsList": {
+          "dataLinkstag": [
+            "altmetrics",
+            "supporting_data"
+          ]
+        },
+        "journalInfo": {
+          "issue": "1",
+          "volume": "86",
+          "journalIssueId": 3139576,
+          "dateOfPublication": "2021 Jul",
+          "monthOfPublication": 7,
+          "yearOfPublication": 2021,
+          "journal": {
+            "medlineAbbreviation": "Magn Reson Med",
+            "title": "Magnetic resonance in medicine",
+            "essn": "1522-2594",
+            "issn": "0740-3194",
+            "nlmid": "8505245",
+            "isoabbreviation": "Magn Reson Med"
+          },
+          "printPublicationDate": "2021-07-01"
+        },
+        "pubYear": "2021",
+        "pageInfo": "526-542",
+        "abstractText": "<h4>Purpose</h4>To create a realistic in silico head phantom for the second QSM reconstruction challenge and for future evaluations of processing algorithms for QSM.<h4>Methods</h4>We created a digital whole-head tissue property phantom by segmenting and postprocessing high-resolution (0.64 mm isotropic), multiparametric MRI data acquired at 7 T from a healthy volunteer. We simulated the steady-state magnetization at 7 T using a Bloch simulator and mimicked a Cartesian sampling scheme through Fourier-based processing. Computer code for generating the phantom and performing the MR simulation was designed to facilitate flexible modifications of the phantom in the future, such as the inclusion of pathologies as well as the simulation of a wide range of acquisition protocols. Specifically, the following parameters and effects were implemented: TR and TE, voxel size, background fields, and RF phase biases. Diffusion-weighted imaging phantom data are provided, allowing future investigations of tissue-microstructure effects in phase and QSM algorithms.<h4>Results</h4>The brain part of the phantom featured realistic morphology with spatial variations in relaxation and susceptibility values similar to the in vivo setting. We demonstrated some of the phantom's properties, including the possibility of generating phase data with nonlinear evolution over TE due to partial-volume effects or complex distributions of frequency shifts within the voxel.<h4>Conclusion</h4>The presented phantom and computer programs are publicly available and may serve as a ground truth in future assessments of the faithfulness of quantitative susceptibility reconstruction algorithms.",
+        "affiliation": "Donders Institute for Brain, Cognition and Behavior, Radboud University, Nijmegen, the Netherlands.",
+        "publicationStatus": "ppublish",
+        "language": "eng",
+        "pubModel": "Print-Electronic",
+        "pubTypeList": {
+          "pubType": [
+            "Research Support, Non-U.S. Gov't",
+            "research-article",
+            "Journal Article"
+          ]
+        },
+        "grantsList": {
+          "grant": [
+            {
+              "agency": "Cancer Research UK",
+              "acronym": "CRUK_",
+              "grantId": "24348",
+              "orderIn": 0
+            },
+            {
+              "agency": "NCATS NIH HHS",
+              "acronym": "TR",
+              "grantId": "UL1 TR001412",
+              "orderIn": 0
+            }
+          ]
+        },
+        "meshHeadingList": {
+          "meshHeading": [
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Head",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "DG",
+                    "qualifierName": "diagnostic imaging"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Brain",
+              "meshQualifierList": {
+                "meshQualifier": [
+                  {
+                    "majorTopic_YN": "N",
+                    "abbreviation": "DG",
+                    "qualifierName": "diagnostic imaging"
+                  }
+                ]
+              }
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Humans"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Magnetic Resonance Imaging"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Phantoms, Imaging"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Algorithms"
+            },
+            {
+              "majorTopic_YN": "N",
+              "descriptorName": "Computer Simulation"
+            },
+            {
+              "majorTopic_YN": "Y",
+              "descriptorName": "Image Processing, Computer-Assisted"
+            }
+          ]
+        },
+        "keywordList": {
+          "keyword": [
+            "Quantitative Susceptibility Mapping",
+            "Mri Simulations",
+            "In Silico Head Phantom"
+          ]
+        },
+        "subsetList": {
+          "subset": [
+            {
+              "code": "IM",
+              "name": "Index Medicus"
+            }
+          ]
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Open access",
+              "availabilityCode": "OA",
+              "documentStyle": "pdf",
+              "site": "Unpaywall",
+              "url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/mrm.28716"
+            },
+            {
+              "availability": "Subscription required",
+              "availabilityCode": "S",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1002/mrm.28716"
+            },
+            {
+              "availability": "Open access",
+              "availabilityCode": "OA",
+              "documentStyle": "html",
+              "site": "Europe_PMC",
+              "url": "https://europepmc.org/articles/PMC8048665"
+            },
+            {
+              "availability": "Open access",
+              "availabilityCode": "OA",
+              "documentStyle": "pdf",
+              "site": "Europe_PMC",
+              "url": "https://europepmc.org/articles/PMC8048665?pdf=render"
+            }
+          ]
+        },
+        "commentCorrectionList": {
+          "commentCorrection": [
+            {
+              "source": "PPR",
+              "id": "PPR220607",
+              "type": "Preprint in",
+              "note": "CrossRef Pre-print loader",
+              "orderIn": 10002
+            }
+          ]
+        },
+        "isOpenAccess": "Y",
+        "inEPMC": "Y",
+        "inPMC": "Y",
+        "citedByCount": 51,
+        "hasReferences": "Y",
+        "hasTextMinedTerms": "Y",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "Y",
+        "hasBook": "N",
+        "hasSuppl": "Y",
+        "hasLabsLinks": "Y",
+        "hasData": "Y",
+        "license": "cc by",
+        "authMan": "N",
+        "epmcAuthMan": "N",
+        "nihAuthMan": "N",
+        "hasTMAccessionNumbers": "N",
+        "dateOfCompletion": "2021-05-20",
+        "dateOfCreation": "2021-02-27",
+        "dateOfRevision": "2025-05-30",
+        "electronicPublicationDate": "2021-02-26",
+        "firstPublicationDate": "2021-02-26",
+        "firstIndexDate": "2021-02-28",
+        "fullTextReceivedDate": "2025-02-04",
+        "hasEvaluations": "N"
+      },
+      {
+        "id": "PPR220607",
+        "source": "PPR",
+        "doi": "10.1101/2020.09.29.316836",
+        "title": "QSM Reconstruction Challenge 2.0: a realistic in silico head phantom for MRI data simulation and evaluation of susceptibility mapping procedures",
+        "authorString": "Marques JP, Meineke J, Milovic C, Bilgic B, Chan K, Hedouin R, van der Zwaag W, Langkammer C, Schweser F.",
+        "authorList": {
+          "author": [
+            {
+              "fullName": "Marques JP",
+              "lastName": "Marques",
+              "firstName": "Jos\u00e9",
+              "initials": "JP"
+            },
+            {
+              "fullName": "Meineke J",
+              "lastName": "Meineke",
+              "firstName": "Jakob",
+              "initials": "J"
+            },
+            {
+              "fullName": "Milovic C",
+              "lastName": "Milovic",
+              "firstName": "Carlos",
+              "initials": "C"
+            },
+            {
+              "fullName": "Bilgic B",
+              "lastName": "Bilgic",
+              "firstName": "Berkin",
+              "initials": "B"
+            },
+            {
+              "fullName": "Chan K",
+              "lastName": "Chan",
+              "firstName": "Kwok-Shing",
+              "initials": "K",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0001-8427-169X"
+              }
+            },
+            {
+              "fullName": "Hedouin R",
+              "lastName": "Hedouin",
+              "firstName": "Renaud",
+              "initials": "R"
+            },
+            {
+              "fullName": "van der Zwaag W",
+              "lastName": "van der Zwaag",
+              "firstName": "Wietske",
+              "initials": "W",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0003-3223-9721"
+              }
+            },
+            {
+              "fullName": "Langkammer C",
+              "lastName": "Langkammer",
+              "firstName": "Christian",
+              "initials": "C",
+              "authorId": {
+                "type": "ORCID",
+                "value": "0000-0002-7097-9707"
+              }
+            },
+            {
+              "fullName": "Schweser F",
+              "lastName": "Schweser",
+              "firstName": "Ferdinand",
+              "initials": "F"
+            }
+          ]
+        },
+        "authorIdList": {
+          "authorId": [
+            {
+              "type": "ORCID",
+              "value": "0000-0001-8427-169X"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0002-7097-9707"
+            },
+            {
+              "type": "ORCID",
+              "value": "0000-0003-3223-9721"
+            }
+          ]
+        },
+        "dataLinksTagsList": {
+          "dataLinkstag": [
+            "altmetrics"
+          ]
+        },
+        "pubYear": "2020",
+        "abstractText": "<h4>Purpose</h4>  To create a realistic  in-silico head phantom for the second Quantitative Susceptibility Mapping (QSM) Reconstruction Challenge and for future evaluations of processing algorithms for QSM.  <h4>Methods</h4>  We created a digital whole-head tissue property phantom by segmenting and post-processing high-resolution (0.64mm isotropic), multi-parametric MRI data acquired at 7T from a healthy volunteer. We simulated the steady-state magnetization at 7T using a Bloch simulator and mimicked a Cartesian sampling scheme through Fourier-based processing. Computer code for generating the phantom and performing the MR simulation was designed to facilitate flexible modifications of the phantom in the future, such as the inclusion of pathologies, as well as the simulation of a wide range of acquisition protocols. Specifically, the following parameters and effects were implemented: repetition time and echo time, voxel size, background fields, and RF phase biases. Diffusion weighted imaging phantom data is provided allowing future investigations of tissue microstructure effects in phase and QSM algorithms. <h4>Results</h4>  The brain-part of the phantom featured realistic morphology with spatial variations in relaxation and susceptibility values similar to the in vivo setting. We demonstrated some of the phantom\u2019s properties, including the possibility of generating phase data with non-linear evolution over echo time due to partial volume effects or complex distributions of frequency shifts within the voxel. <h4>Conclusion</h4>  The presented phantom and computer programs are publicly available and may serve as a ground truth in future assessments of the faithfulness of quantitative susceptibility reconstruction algorithms.",
+        "pubTypeList": {
+          "pubType": [
+            "Preprint"
+          ]
+        },
+        "bookOrReportDetails": {
+          "publisher": "bioRxiv",
+          "yearOfPublication": 2020
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Open access",
+              "availabilityCode": "OA",
+              "documentStyle": "pdf",
+              "site": "Unpaywall",
+              "url": "https://www.biorxiv.org/content/biorxiv/early/2021/01/12/2020.09.29.316836.full.pdf"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1101/2020.09.29.316836"
+            }
+          ]
+        },
+        "commentCorrectionList": {
+          "commentCorrection": [
+            {
+              "source": "MED",
+              "id": "33638241",
+              "reference": "Magnetic resonance in medicine. 2021 Jul;86(1):526-542",
+              "type": "Preprint of",
+              "note": "CrossRef Pre-print loader",
+              "orderIn": 10001
+            }
+          ]
+        },
+        "isOpenAccess": "N",
+        "inEPMC": "N",
+        "inPMC": "N",
+        "citedByCount": 2,
+        "hasReferences": "Y",
+        "hasTextMinedTerms": "N",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "N",
+        "hasBook": "N",
+        "hasSuppl": "N",
+        "hasLabsLinks": "Y",
+        "hasData": "N",
+        "license": "cc by-nc-nd",
+        "authMan": "N",
+        "epmcAuthMan": "N",
+        "nihAuthMan": "N",
+        "hasTMAccessionNumbers": "N",
+        "dateOfCreation": "2020-10-03",
+        "firstPublicationDate": "2020-10-01",
+        "firstIndexDate": "2020-10-10",
+        "hasEvaluations": "N"
+      },
+      {
+        "id": "PPR244930",
+        "source": "PPR",
+        "doi": "10.1101/2020.11.25.397695",
+        "title": "QSM Reconstruction Challenge 2.0: Design and Report of Results",
+        "authorString": "Bilgic B, Langkammer C, Marques JP, Meineke J, Milovic C, Schweser F.",
+        "authorList": {
+          "author": [
+            {
+              "fullName": "Bilgic B",
+              "lastName": "Bilgic",
+              "firstName": "Berkin",
+              "initials": "B"
+            },
+            {
+              "fullName": "Langkammer C",
+              "lastName": "Langkammer",
+              "firstName": "Christian",
+              "initials": "C"
+            },
+            {
+              "fullName": "Marques JP",
+              "lastName": "Marques",
+              "firstName": "Jos\u00e9",
+              "initials": "JP"
+            },
+            {
+              "fullName": "Meineke J",
+              "lastName": "Meineke",
+              "firstName": "Jakob",
+              "initials": "J"
+            },
+            {
+              "fullName": "Milovic C",
+              "lastName": "Milovic",
+              "firstName": "Carlos",
+              "initials": "C"
+            },
+            {
+              "fullName": "Schweser F",
+              "lastName": "Schweser",
+              "firstName": "Ferdinand",
+              "initials": "F"
+            }
+          ]
+        },
+        "pubYear": "2020",
+        "abstractText": "<h4>Purpose</h4>  The aim of the second quantitative susceptibility mapping (QSM) reconstruction challenge (Oct 2019, Seoul, Korea) was to test the accuracy of QSM dipole inversion algorithms in simulated brain data. <h4>Methods</h4>  A two-stage design was chosen for this challenge. The participants were provided with datasets of multi-echo gradient echo images synthesized from two realistic  in silico head phantoms using an MR simulator. At the first stage, participants optimized QSM reconstructions without ground-truths available to mimic the clinical setting. At the second stage, ground-truths were provided for parameter optimization.Submissions were evaluated using eight numerical metrics and visual ratings.  <h4>Results</h4>  A total of 98 reconstructions were submitted for stage 1 and 47 submissions for stage 2. Iterative methods had the best quantitative metric scores, followed by deep-learning and direct inversion methods. Priors derived from magnitude data improved the metric scores. Algorithms based on iterative approaches and Total Variation (and its derivatives) produced the best overall results. The reported results and analysis pipelines have been made public to allow researchers to compare new methods to the current state of the art. <h4>Conclusion</h4>  The synthetic data provides a consistent framework to test the accuracy and robustness of QSM algorithms in the presence of noise, calcifications and minor voxel dephasing effects. Total Variation-based algorithmsproduced the best results along all metrics. Future QSM challenges should asses if this good performance with synthetic datasets translates to more realistic scenarios, where background fields and dipole-incompatible phase contributions are included.",
+        "pubTypeList": {
+          "pubType": [
+            "Preprint"
+          ]
+        },
+        "bookOrReportDetails": {
+          "publisher": "bioRxiv",
+          "yearOfPublication": 2020
+        },
+        "fullTextUrlList": {
+          "fullTextUrl": [
+            {
+              "availability": "Open access",
+              "availabilityCode": "OA",
+              "documentStyle": "pdf",
+              "site": "Unpaywall",
+              "url": "https://www.biorxiv.org/content/biorxiv/early/2020/11/26/2020.11.25.397695.full.pdf"
+            },
+            {
+              "availability": "Free",
+              "availabilityCode": "F",
+              "documentStyle": "doi",
+              "site": "DOI",
+              "url": "https://doi.org/10.1101/2020.11.25.397695"
+            }
+          ]
+        },
+        "commentCorrectionList": {
+          "commentCorrection": [
+            {
+              "source": "MED",
+              "id": "33783037",
+              "reference": "Magnetic resonance in medicine. 2021 Sep;86(3):1241-1255",
+              "type": "Preprint of",
+              "note": "CrossRef Pre-print loader",
+              "orderIn": 10001
+            }
+          ]
+        },
+        "isOpenAccess": "N",
+        "inEPMC": "N",
+        "inPMC": "N",
+        "citedByCount": 3,
+        "hasReferences": "N",
+        "hasTextMinedTerms": "Y",
+        "hasDbCrossReferences": "N",
+        "hasPDF": "N",
+        "hasBook": "N",
+        "hasSuppl": "N",
+        "hasLabsLinks": "N",
+        "hasData": "N",
+        "authMan": "N",
+        "epmcAuthMan": "N",
+        "nihAuthMan": "N",
+        "hasTMAccessionNumbers": "N",
+        "dateOfCreation": "2020-11-27",
+        "firstPublicationDate": "2020-11-26",
+        "firstIndexDate": "2020-11-27",
+        "hasEvaluations": "N"
+      }
+    ]
+  }
+}

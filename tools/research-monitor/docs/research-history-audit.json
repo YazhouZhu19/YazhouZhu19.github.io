@@ -1,0 +1,1347 @@
+{
+  "inputSnapshotCollectedAt": "2026-11-09T22:33:52.202Z",
+  "thresholds": {
+    "maxArchiveShare": 0.1,
+    "papers": 3,
+    "paperYears": 3,
+    "paperSpanDays": 730,
+    "logicPapers": 2,
+    "datasetSpanDays": 365,
+    "codeYears": 3,
+    "codeSpanDays": 730,
+    "recentCodeDays": 365
+  },
+  "fingerprints": [
+    {
+      "file": "spinal-cord-evidence.json",
+      "sha256": "dab287f255913284f0640eed5ff88cd199bdd880dc486af32f02f0e16f581343"
+    },
+    {
+      "file": "fetal-mri-evidence.json",
+      "sha256": "7cacc4724674b0cf96e722470d2253207fa2922897324d3c26ced22f6c0cc218"
+    },
+    {
+      "file": "qsm-evidence.json",
+      "sha256": "b18d310dd5ce32bbb62ff0de52dabcb2e3ed79571dd134fb61340bb367344a34"
+    }
+  ],
+  "history": {
+    "version": "2026-11-17-history-v1",
+    "asOf": "2026-11-17",
+    "basePaperCount": 5330,
+    "enrichedPaperCount": 14,
+    "directions": [
+      {
+        "id": "spinal-cord-mri",
+        "title": "脊髓 MRI 分割与定量分析",
+        "scope": "脊髓 MRI 的分割、神经根定位与跨中心定量测量；不包含椎骨影像。",
+        "archiveCount": 15,
+        "archiveShare": 0.0028142589118198874,
+        "evidenceStatus": "sufficient",
+        "checks": [
+          {
+            "id": "niche",
+            "label": "补采前库内占比较低",
+            "passed": true,
+            "detail": "15 / 5330 篇（0.28%），阈值 <10%；仅代表本地库。"
+          },
+          {
+            "id": "papers",
+            "label": "多年独立论文",
+            "passed": true,
+            "detail": "4 个独立作品、4 个年份、跨度 2827 天；要求 ≥3 / ≥3 / ≥730。"
+          },
+          {
+            "id": "logic",
+            "label": "问题—方法—验证—数值结果线索",
+            "passed": true,
+            "detail": "3 篇原始摘要同时命中四类固定词法规则；要求 ≥2。仅检查文本线索，不验证科学结论。"
+          },
+          {
+            "id": "data",
+            "label": "同一数据集的跨年内容积累",
+            "passed": true,
+            "detail": "要求明确论文关联、≥2 个已核实日期的版本、跨度 ≥365 天，并有配对版本的新增影像或标注证据；元数据改动不计。"
+          },
+          {
+            "id": "code",
+            "label": "论文关联与多年代码维护",
+            "passed": true,
+            "detail": "要求非归档、明确论文关联、实际发布或提交覆盖 ≥3 年且跨度 ≥730 天，最近事件 ≤365 天；建库日期不计。"
+          },
+          {
+            "id": "chain",
+            "label": "数据—论文—代码证据链闭合",
+            "passed": true,
+            "detail": "至少一个选中作品同时明确关联满足积累条件的数据集和代码库；文本相似候选不计。"
+          }
+        ],
+        "gaps": [],
+        "papers": [
+          {
+            "id": "10.1016/j.neuroimage.2016.10.009",
+            "title": "SCT: Spinal Cord Toolbox, an open-source software for processing spinal cord MRI data.",
+            "date": "2016-10-05",
+            "url": "https://doi.org/10.1016/j.neuroimage.2016.10.009",
+            "doi": "10.1016/j.neuroimage.2016.10.009",
+            "cues": {
+              "problem": [
+                "运动与伪影"
+              ],
+              "method": [
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估"
+              ],
+              "result": []
+            },
+            "logicComplete": false
+          },
+          {
+            "id": "10.1016/j.neuroimage.2018.09.081",
+            "title": "Automatic segmentation of the spinal cord and intramedullary multiple sclerosis lesions with convolutional neural networks.",
+            "date": "2018-10-06",
+            "url": "https://doi.org/10.1016/j.neuroimage.2018.09.081",
+            "doi": "10.1016/j.neuroimage.2018.09.081",
+            "cues": {
+              "problem": [
+                "运动与伪影",
+                "跨中心差异",
+                "数据或方法局限"
+              ],
+              "method": [
+                "神经网络",
+                "分割与配准",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "比较或基准实验"
+              ],
+              "result": [
+                "数值结果与性能指标共现"
+              ]
+            },
+            "logicComplete": true
+          },
+          {
+            "id": "10.1038/s41597-021-00941-8",
+            "title": "Open-access quantitative MRI data of the spinal cord and reproducibility across participants, sites and manufacturers.",
+            "date": "2021-08-16",
+            "url": "https://doi.org/10.1038/s41597-021-00941-8",
+            "doi": "10.1038/s41597-021-00941-8",
+            "cues": {
+              "problem": [
+                "跨中心差异",
+                "可重复性"
+              ],
+              "method": [
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估",
+                "变异系数评估"
+              ],
+              "result": [
+                "数值结果与性能指标共现"
+              ]
+            },
+            "logicComplete": true
+          },
+          {
+            "id": "10.1162/imag_a_00218",
+            "title": "Automatic segmentation of the spinal cord nerve rootlets.",
+            "date": "2024-07-02",
+            "url": "https://doi.org/10.1162/imag_a_00218",
+            "doi": "10.1162/imag_a_00218",
+            "cues": {
+              "problem": [
+                "跨中心差异"
+              ],
+              "method": [
+                "神经网络",
+                "分割与配准",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估",
+                "变异系数评估"
+              ],
+              "result": [
+                "数值结果与性能指标共现"
+              ]
+            },
+            "logicComplete": true
+          }
+        ],
+        "datasets": [
+          {
+            "id": "spine-generic-multi-subject",
+            "title": "Spine Generic Public Database (Multi-Subject)",
+            "url": "https://github.com/spine-generic/data-multi-subject",
+            "versions": [
+              {
+                "version": "r20200826",
+                "date": "2020-08-26",
+                "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20200826",
+                "participants": 260,
+                "changeDescription": "First release"
+              },
+              {
+                "version": "r20211125",
+                "date": "2021-11-25",
+                "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20211125",
+                "participants": 267,
+                "changeDescription": "add site data ucdavis"
+              },
+              {
+                "version": "r20250314",
+                "date": "2025-03-14",
+                "url": "https://github.com/spine-generic/data-multi-subject/releases/tag/r20250314",
+                "participants": 267,
+                "changeDescription": "Update spinal cord seg of T2w with contrast-agnostic v3.1"
+              }
+            ],
+            "spanDays": 1661,
+            "contentGrowth": true,
+            "linked": true
+          }
+        ],
+        "repositories": [
+          {
+            "repository": "spinalcordtoolbox/spinalcordtoolbox",
+            "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox",
+            "events": [
+              {
+                "date": "2019-11-28",
+                "label": "4.1.1",
+                "kind": "release",
+                "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/4.1.1",
+                "description": ""
+              },
+              {
+                "date": "2020-11-08",
+                "label": "5.0.0",
+                "kind": "release",
+                "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/5.0.0",
+                "description": ""
+              },
+              {
+                "date": "2025-08-19",
+                "label": "7.1",
+                "kind": "release",
+                "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/7.1",
+                "description": ""
+              },
+              {
+                "date": "2026-05-09",
+                "label": "7.3",
+                "kind": "release",
+                "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/releases/tag/7.3",
+                "description": ""
+              },
+              {
+                "date": "2026-11-11",
+                "label": "017d797f",
+                "kind": "commit",
+                "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/017d797f37009568479888a528081df726cbe692",
+                "description": "Add `-p sct_deepseg` to `sct_qc` (#5319)"
+              },
+              {
+                "date": "2026-11-12",
+                "label": "63ce8a80",
+                "kind": "commit",
+                "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/63ce8a80f18df91eb1fc532a5a0f2031123b620a",
+                "description": "Add new `brachial_plexus` task for BP and DRG labeling (with coronal mosaic QC report) (#5327)"
+              },
+              {
+                "date": "2026-11-16",
+                "label": "50643b61",
+                "kind": "commit",
+                "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox/commit/50643b61a5ad8dda99a9e251983e13c94354eab2",
+                "description": "Replace retired `macos-14` runner and pin `-latest` runners to fixed versions (#5356)"
+              }
+            ],
+            "years": [
+              2019,
+              2020,
+              2025,
+              2026
+            ],
+            "spanDays": 2545,
+            "recent": true,
+            "linked": true,
+            "archived": false
+          }
+        ],
+        "sources": [
+          {
+            "id": "dataset-releases",
+            "url": "https://api.github.com/repos/spine-generic/data-multi-subject/releases?per_page=30",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "official-github-api"
+          },
+          {
+            "id": "sct-releases",
+            "url": "https://api.github.com/repos/spinalcordtoolbox/spinalcordtoolbox/releases?per_page=30",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "official-github-api"
+          },
+          {
+            "id": "sct-commits",
+            "url": "https://api.github.com/repos/spinalcordtoolbox/spinalcordtoolbox/commits?per_page=3",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "official-github-api"
+          },
+          {
+            "id": "sct-repo",
+            "url": "https://api.github.com/repos/spinalcordtoolbox/spinalcordtoolbox",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "official-github-api"
+          },
+          {
+            "id": "dataset-growth-pr",
+            "url": "https://github.com/spine-generic/data-multi-subject/pull/77",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "official-dataset-pull-request"
+          },
+          {
+            "id": "spine-docs",
+            "url": "https://spine-generic.readthedocs.io/",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "official-project-documentation"
+          },
+          {
+            "id": "dataset-readme",
+            "url": "https://github.com/spine-generic/data-multi-subject",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "official-dataset-repository"
+          },
+          {
+            "id": "sct-readme",
+            "url": "https://github.com/spinalcordtoolbox/spinalcordtoolbox",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "official-code-repository"
+          },
+          {
+            "id": "rootlets-arxiv",
+            "url": "https://arxiv.org/abs/2402.00724",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "author-preprint"
+          },
+          {
+            "id": "paper-27720818",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:27720818&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "Europe-PMC-publication-metadata"
+          },
+          {
+            "id": "paper-30300751",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:30300751&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "Europe-PMC-publication-metadata"
+          },
+          {
+            "id": "paper-34400655",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:34400655&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "Europe-PMC-publication-metadata"
+          },
+          {
+            "id": "paper-rootlets",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A10.1162/imag_a_00218&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "Europe-PMC-publication-metadata"
+          },
+          {
+            "id": "participants-r20200826",
+            "url": "https://raw.githubusercontent.com/spine-generic/data-multi-subject/r20200826/participants.tsv",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "versioned-dataset-file"
+          },
+          {
+            "id": "participants-r20211125",
+            "url": "https://raw.githubusercontent.com/spine-generic/data-multi-subject/r20211125/participants.tsv",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "versioned-dataset-file"
+          },
+          {
+            "id": "participants-r20250314",
+            "url": "https://raw.githubusercontent.com/spine-generic/data-multi-subject/r20250314/participants.tsv",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "versioned-dataset-file"
+          },
+          {
+            "id": "rootlets-fulltext",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12272210/fullTextXML",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "original-article-open-fulltext"
+          },
+          {
+            "id": "spine-data-fulltext",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8368310/fullTextXML",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "original-article-open-fulltext"
+          }
+        ],
+        "limitations": [
+          "这是定向补采的三个候选，不是对全领域的小众方向穷尽排名；补采论文不加入占比分母。",
+          "证据充分表示达到当前规则门槛；不等于研究质量已获人工评审、数据已下载复现，或每年都持续维护。",
+          "No resource downloads, model training or human scientific validation were performed.",
+          "Named-software links are explicitly marked separately from literal URLs in abstracts. Do not silently treat named software mentions as literal DOI-to-repository evidence.",
+          "Dataset participant growth was merged on 2021-04-16 and published in release r20211125 on 2021-11-25; release span is not continuous data-acquisition duration.",
+          "r20250314 changes derived spinal-cord segmentations, not participant count.",
+          "GitHub release publication timestamps can reflect re-publication/backports; selected SCT release dates are reported as API published_at, not claimed to be every original release date.",
+          "Some official Spine Generic documentation prints DOI 10.1038/s41597-021-01026-2 while linking the PDF for 10.1038/s41597-021-00941-8. This pack uses the original data-descriptor DOI verified through Europe PMC.",
+          "Existing status sufficient/pending is intentionally not assigned by this evidence pack."
+        ]
+      },
+      {
+        "id": "qsm-reconstruction",
+        "title": "QSM 重建稳健性与可重复性",
+        "scope": "定量磁化率成像的掩膜、背景场去除、偶极反演与重建可重复性。",
+        "archiveCount": 7,
+        "archiveShare": 0.0013133208255159475,
+        "evidenceStatus": "pending",
+        "checks": [
+          {
+            "id": "niche",
+            "label": "补采前库内占比较低",
+            "passed": true,
+            "detail": "7 / 5330 篇（0.13%），阈值 <10%；仅代表本地库。"
+          },
+          {
+            "id": "papers",
+            "label": "多年独立论文",
+            "passed": true,
+            "detail": "6 个独立作品、4 个年份、跨度 2822 天；要求 ≥3 / ≥3 / ≥730。"
+          },
+          {
+            "id": "logic",
+            "label": "问题—方法—验证—数值结果线索",
+            "passed": true,
+            "detail": "3 篇原始摘要同时命中四类固定词法规则；要求 ≥2。仅检查文本线索，不验证科学结论。"
+          },
+          {
+            "id": "data",
+            "label": "同一数据集的跨年内容积累",
+            "passed": false,
+            "detail": "要求明确论文关联、≥2 个已核实日期的版本、跨度 ≥365 天，并有配对版本的新增影像或标注证据；元数据改动不计。"
+          },
+          {
+            "id": "code",
+            "label": "论文关联与多年代码维护",
+            "passed": true,
+            "detail": "要求非归档、明确论文关联、实际发布或提交覆盖 ≥3 年且跨度 ≥730 天，最近事件 ≤365 天；建库日期不计。"
+          },
+          {
+            "id": "chain",
+            "label": "数据—论文—代码证据链闭合",
+            "passed": false,
+            "detail": "至少一个选中作品同时明确关联满足积累条件的数据集和代码库；文本相似候选不计。"
+          }
+        ],
+        "gaps": [
+          "同一数据集的跨年内容积累：要求明确论文关联、≥2 个已核实日期的版本、跨度 ≥365 天，并有配对版本的新增影像或标注证据；元数据改动不计。",
+          "数据—论文—代码证据链闭合：至少一个选中作品同时明确关联满足积累条件的数据集和代码库；文本相似候选不计。"
+        ],
+        "papers": [
+          {
+            "id": "10.1002/mrm.26830",
+            "title": "Quantitative susceptibility mapping: Report from the 2016 reconstruction challenge.",
+            "date": "2017-07-31",
+            "url": "https://doi.org/10.1002/mrm.26830",
+            "doi": "10.1002/mrm.26830",
+            "cues": {
+              "problem": [
+                "数据或方法局限"
+              ],
+              "method": [
+                "重建与反演",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估",
+                "比较或基准实验"
+              ],
+              "result": [
+                "数值结果与性能指标共现"
+              ]
+            },
+            "logicComplete": true
+          },
+          {
+            "id": "10.1002/mrm.28716",
+            "title": "QSM reconstruction challenge 2.0: A realistic in silico head phantom for MRI data simulation and evaluation of susceptibility mapping procedures.",
+            "date": "2021-02-26",
+            "url": "https://doi.org/10.1002/mrm.28716",
+            "doi": "10.1002/mrm.28716",
+            "cues": {
+              "problem": [
+                "数据或方法局限"
+              ],
+              "method": [
+                "重建与反演",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估"
+              ],
+              "result": []
+            },
+            "logicComplete": false
+          },
+          {
+            "id": "10.1002/mrm.28754",
+            "title": "QSM reconstruction challenge 2.0: Design and report of results.",
+            "date": "2021-03-30",
+            "url": "https://doi.org/10.1002/mrm.28754",
+            "doi": "10.1002/mrm.28754",
+            "cues": {
+              "problem": [
+                "数据或方法局限"
+              ],
+              "method": [
+                "神经网络",
+                "重建与反演",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估",
+                "比较或基准实验"
+              ],
+              "result": []
+            },
+            "logicComplete": false
+          },
+          {
+            "id": "10.1002/mrm.29048",
+            "title": "QSMxT: Robust masking and artifact reduction for quantitative susceptibility mapping.",
+            "date": "2021-10-22",
+            "url": "https://doi.org/10.1002/mrm.29048",
+            "doi": "10.1002/mrm.29048",
+            "cues": {
+              "problem": [
+                "运动与伪影"
+              ],
+              "method": [
+                "重建与反演",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "比较或基准实验"
+              ],
+              "result": [
+                "数值结果与性能指标共现"
+              ]
+            },
+            "logicComplete": true
+          },
+          {
+            "id": "10.1002/mrm.30006",
+            "title": "Recommended implementation of quantitative susceptibility mapping for clinical research in the brain: A consensus of the ISMRM electro-magnetic tissue properties study group.",
+            "date": "2024-01-21",
+            "url": "https://doi.org/10.1002/mrm.30006",
+            "doi": "10.1002/mrm.30006",
+            "cues": {
+              "problem": [
+                "可重复性"
+              ],
+              "method": [
+                "重建与反演"
+              ],
+              "validation": [],
+              "result": []
+            },
+            "logicComplete": false
+          },
+          {
+            "id": "10.1002/hbm.70187",
+            "title": "Sensitivity of Quantitative Susceptibility Mapping for Clinical Research in Deep Gray Matter.",
+            "date": "2025-04-22",
+            "url": "https://doi.org/10.1002/hbm.70187",
+            "doi": "10.1002/hbm.70187",
+            "cues": {
+              "problem": [
+                "跨中心差异",
+                "可重复性"
+              ],
+              "method": [
+                "重建与反演",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估"
+              ],
+              "result": [
+                "数值结果与性能指标共现"
+              ]
+            },
+            "logicComplete": true
+          }
+        ],
+        "datasets": [
+          {
+            "id": "qsm-consensus-example-data",
+            "title": "QSM consensus example datasets, reconstruction results and code",
+            "url": "https://zenodo.org/records/7410454",
+            "versions": [
+              {
+                "version": "v0.1.0",
+                "date": "2022-12-10",
+                "url": "https://zenodo.org/records/7410455",
+                "participants": null,
+                "changeDescription": "Initial release. README lists GRE DICOM, GRE NIfTI, protocols, SEPIA processing outputs and example code."
+              },
+              {
+                "version": "v0.2.0",
+                "date": "2023-03-03",
+                "url": "https://zenodo.org/records/7696711",
+                "participants": null,
+                "changeDescription": "Fix potential holes inside the brain mask after background field removal due to zero frequency values with SEPIA v1.2.2.2; alternative VSHARP implementation."
+              },
+              {
+                "version": "v0.2.1",
+                "date": "2023-04-03",
+                "url": "https://zenodo.org/records/7795492",
+                "participants": null,
+                "changeDescription": "Remove iterative Tikhonov reconstruction; provide full QSM reconstruction for both FANSI and MEDI pipelines."
+              }
+            ],
+            "spanDays": 114,
+            "contentGrowth": false,
+            "linked": true
+          },
+          {
+            "id": "qsm-reconstruction-challenge-2",
+            "title": "QSM Reconstruction Challenge 2.0 simulated brain datasets",
+            "url": "https://qsm.snu.ac.kr/qsm-challenge",
+            "versions": [],
+            "spanDays": 0,
+            "contentGrowth": false,
+            "linked": true
+          }
+        ],
+        "repositories": [
+          {
+            "repository": "QSMxT/QSMxT",
+            "url": "https://github.com/QSMxT/QSMxT",
+            "events": [
+              {
+                "date": "2021-05-05",
+                "label": "210506",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/210506",
+                "description": ""
+              },
+              {
+                "date": "2021-12-19",
+                "label": "v1.1.9",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.1.9",
+                "description": ""
+              },
+              {
+                "date": "2022-12-08",
+                "label": "v1.2.0",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v1.2.0",
+                "description": ""
+              },
+              {
+                "date": "2023-04-14",
+                "label": "v2.0.0",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v2.0.0",
+                "description": ""
+              },
+              {
+                "date": "2023-10-30",
+                "label": "v6.3.2",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.3.2",
+                "description": ""
+              },
+              {
+                "date": "2024-02-09",
+                "label": "v6.4.0",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v6.4.0",
+                "description": ""
+              },
+              {
+                "date": "2024-10-29",
+                "label": "v7.2.2",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v7.2.2",
+                "description": ""
+              },
+              {
+                "date": "2025-03-31",
+                "label": "v8.0.0",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.0.0",
+                "description": ""
+              },
+              {
+                "date": "2025-12-05",
+                "label": "v8.2.0",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.2.0",
+                "description": ""
+              },
+              {
+                "date": "2026-04-21",
+                "label": "v8.3.2",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v8.3.2",
+                "description": ""
+              },
+              {
+                "date": "2026-06-26",
+                "label": "v9.0.0",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v9.0.0",
+                "description": ""
+              },
+              {
+                "date": "2026-10-14",
+                "label": "v10.0.0",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v10.0.0",
+                "description": ""
+              },
+              {
+                "date": "2026-11-06",
+                "label": "v11.0.0",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v11.0.0",
+                "description": ""
+              },
+              {
+                "date": "2026-11-14",
+                "label": "v12.0.0",
+                "kind": "release",
+                "url": "https://github.com/QSMxT/QSMxT/releases/tag/v12.0.0",
+                "description": ""
+              },
+              {
+                "date": "2026-11-16",
+                "label": "26ed3d10",
+                "kind": "commit",
+                "url": "https://github.com/QSMxT/QSMxT/commit/26ed3d101ea73641e79f8e3b4068b9185bd7d139",
+                "description": "QSMART: a relative Frangi C option (--qsmart-frangi-c-mode relative) (#569)"
+              }
+            ],
+            "years": [
+              2021,
+              2022,
+              2023,
+              2024,
+              2025,
+              2026
+            ],
+            "spanDays": 2021,
+            "recent": true,
+            "linked": true,
+            "archived": false
+          }
+        ],
+        "sources": [
+          {
+            "id": "paper-34687073",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.29048&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "publication-metadata"
+          },
+          {
+            "id": "paper-28762243",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.26830&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "publication-metadata"
+          },
+          {
+            "id": "paper-38247051",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.30006&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "publication-metadata"
+          },
+          {
+            "id": "paper-40260740",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/hbm.70187&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "publication-metadata"
+          },
+          {
+            "id": "paper-70187-fulltext",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12012649/fullTextXML",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "primary-paper-fulltext"
+          },
+          {
+            "id": "paper-33783037",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.28754&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "publication-metadata"
+          },
+          {
+            "id": "paper-33638241",
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1002/mrm.28716&format=json&resultType=core",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "publication-metadata"
+          },
+          {
+            "id": "qsm-repo",
+            "url": "https://api.github.com/repos/QSMxT/QSMxT",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "qsm-releases",
+            "url": "https://api.github.com/repos/QSMxT/QSMxT/releases?per_page=100",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "release-api"
+          },
+          {
+            "id": "qsm-readme",
+            "url": "https://raw.githubusercontent.com/QSMxT/QSMxT/main/README.md",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "repository-readme"
+          },
+          {
+            "id": "qsm-commit",
+            "url": "https://api.github.com/repos/QSMxT/QSMxT/commits?per_page=1",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "commit-api"
+          },
+          {
+            "id": "consensus-versions",
+            "url": "https://zenodo.org/api/records/7410455/versions",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "dataset-version-api"
+          },
+          {
+            "id": "consensus-changelog",
+            "url": "https://zenodo.org/api/records/7795492/files/Update_log.md/content",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "dataset-changelog"
+          },
+          {
+            "id": "consensus-readme",
+            "url": "https://zenodo.org/api/records/7795492/files/README.md/content",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "dataset-readme"
+          },
+          {
+            "id": "qsm-challenge-site",
+            "url": "https://qsm.snu.ac.kr/qsm-challenge",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "official-challenge-site"
+          },
+          {
+            "id": "consensus-paper-page",
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10950544/",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "primary-paper-fulltext"
+          },
+          {
+            "id": "consensus-7410455",
+            "url": "https://zenodo.org/records/7410455",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "dataset-record"
+          },
+          {
+            "id": "consensus-7696711",
+            "url": "https://zenodo.org/records/7696711",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "dataset-record"
+          },
+          {
+            "id": "consensus-7795492",
+            "url": "https://zenodo.org/records/7795492",
+            "retrievedAt": "2026-11-17",
+            "sourceType": "dataset-record"
+          }
+        ],
+        "limitations": [
+          "这是定向补采的三个候选，不是对全领域的小众方向穷尽排名；补采论文不加入占比分母。",
+          "证据充分表示达到当前规则门槛；不等于研究质量已获人工评审、数据已下载复现，或每年都持续维护。",
+          "This is a targeted source collection, not an exhaustive estimate of field prevalence or a claim that QSM is globally niche.",
+          "The verified consensus dataset releases span only 114 days; no multi-year acquisition/participant growth is established.",
+          "The 2016 and 2019 QSM challenge datasets are different benchmark designs; calendar spacing alone must not be counted as dataset-version accumulation.",
+          "The 2025 paper studies 10-year follow-up data, but this does not establish public multi-year dataset version history. The availability statement for public participant-level data has not been verified.",
+          "QSMxT is explicitly linked to its own 2021 online-first / 2022 issue paper. Other papers in this pack address the same research problem; they are not asserted to use QSMxT merely because the topics match.",
+          "The consensus article is a guideline, not an independent empirical experiment. The 2019 challenge design paper and phantom paper share a benchmark; unique DOI does not mean an independent cohort.",
+          "Preprints and later journal versions were not counted as additional papers.",
+          "No model-generated relevance, sufficiency or confidence labels are stored in this pack. Source facts are supplied for deterministic downstream rules."
+        ]
+      },
+      {
+        "id": "fetal-brain-mri",
+        "title": "胎儿脑 MRI 运动校正、重建与分割",
+        "scope": "胎儿脑 MRI 的运动校正、超分辨重建与组织分割。",
+        "archiveCount": 21,
+        "archiveShare": 0.003939962476547843,
+        "evidenceStatus": "pending",
+        "checks": [
+          {
+            "id": "niche",
+            "label": "补采前库内占比较低",
+            "passed": true,
+            "detail": "21 / 5330 篇（0.39%），阈值 <10%；仅代表本地库。"
+          },
+          {
+            "id": "papers",
+            "label": "多年独立论文",
+            "passed": true,
+            "detail": "4 个独立作品、4 个年份、跨度 1819 天；要求 ≥3 / ≥3 / ≥730。"
+          },
+          {
+            "id": "logic",
+            "label": "问题—方法—验证—数值结果线索",
+            "passed": false,
+            "detail": "0 篇原始摘要同时命中四类固定词法规则；要求 ≥2。仅检查文本线索，不验证科学结论。"
+          },
+          {
+            "id": "data",
+            "label": "同一数据集的跨年内容积累",
+            "passed": false,
+            "detail": "要求明确论文关联、≥2 个已核实日期的版本、跨度 ≥365 天，并有配对版本的新增影像或标注证据；元数据改动不计。"
+          },
+          {
+            "id": "code",
+            "label": "论文关联与多年代码维护",
+            "passed": true,
+            "detail": "要求非归档、明确论文关联、实际发布或提交覆盖 ≥3 年且跨度 ≥730 天，最近事件 ≤365 天；建库日期不计。"
+          },
+          {
+            "id": "chain",
+            "label": "数据—论文—代码证据链闭合",
+            "passed": false,
+            "detail": "至少一个选中作品同时明确关联满足积累条件的数据集和代码库；文本相似候选不计。"
+          }
+        ],
+        "gaps": [
+          "问题—方法—验证—数值结果线索：0 篇原始摘要同时命中四类固定词法规则；要求 ≥2。仅检查文本线索，不验证科学结论。",
+          "同一数据集的跨年内容积累：要求明确论文关联、≥2 个已核实日期的版本、跨度 ≥365 天，并有配对版本的新增影像或标注证据；元数据改动不计。",
+          "数据—论文—代码证据链闭合：至少一个选中作品同时明确关联满足积累条件的数据集和代码库；文本相似候选不计。"
+        ],
+        "papers": [
+          {
+            "id": "10.1016/j.neuroimage.2019.116324",
+            "title": "An automated framework for localization, segmentation and super-resolution reconstruction of fetal brain MRI",
+            "date": "2020-02-01",
+            "url": "https://doi.org/10.1016/j.neuroimage.2019.116324",
+            "doi": "10.1016/j.neuroimage.2019.116324",
+            "cues": {
+              "problem": [
+                "运动与伪影",
+                "跨中心差异"
+              ],
+              "method": [
+                "神经网络",
+                "重建与反演",
+                "分割与配准",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估",
+                "比较或基准实验"
+              ],
+              "result": []
+            },
+            "logicComplete": false
+          },
+          {
+            "id": "10.1038/s41597-021-00946-3",
+            "title": "An automatic multi-tissue human fetal brain segmentation benchmark using the Fetal Tissue Annotation Dataset",
+            "date": "2021-07-06",
+            "url": "https://doi.org/10.1038/s41597-021-00946-3",
+            "doi": "10.1038/s41597-021-00946-3",
+            "cues": {
+              "problem": [],
+              "method": [
+                "分割与配准",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估"
+              ],
+              "result": []
+            },
+            "logicComplete": false
+          },
+          {
+            "id": "10.1109/tmi.2024.3485554",
+            "title": "Multi-Center Fetal Brain Tissue Annotation (FeTA) Challenge 2022 Results",
+            "date": "2024-02-08",
+            "url": "https://arxiv.org/abs/2402.09463",
+            "doi": "10.1109/TMI.2024.3485554",
+            "cues": {
+              "problem": [
+                "数据或方法局限"
+              ],
+              "method": [
+                "重建与反演",
+                "分割与配准",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估",
+                "比较或基准实验"
+              ],
+              "result": []
+            },
+            "logicComplete": false
+          },
+          {
+            "id": "10.1007/s00247-025-06165-x",
+            "title": "Scanner-based real-time three-dimensional brain + body slice-to-volume reconstruction for T2-weighted 0.55-T low-field fetal magnetic resonance imaging",
+            "date": "2025-01-24",
+            "url": "https://doi.org/10.1007/s00247-025-06165-x",
+            "doi": "10.1007/s00247-025-06165-x",
+            "cues": {
+              "problem": [
+                "运动与伪影"
+              ],
+              "method": [
+                "神经网络",
+                "重建与反演",
+                "分割与配准",
+                "算法与处理流程"
+              ],
+              "validation": [
+                "测试或评估"
+              ],
+              "result": []
+            },
+            "logicComplete": false
+          }
+        ],
+        "datasets": [
+          {
+            "id": "feta-tissue",
+            "title": "Fetal Tissue Annotation Dataset (FeTA)",
+            "url": "https://doi.org/10.7303/syn25649159",
+            "versions": [
+              {
+                "version": "1.2.1",
+                "date": "2021-02-15",
+                "url": "https://zenodo.org/records/4541606",
+                "participants": null,
+                "changeDescription": "未核实该版本的内容变更"
+              },
+              {
+                "version": "second version (80 cases)",
+                "date": null,
+                "url": "https://www.synapse.org/#!Synapse:syn25649159/wiki/610007",
+                "participants": 80,
+                "changeDescription": "The dataset authors report a second version containing 80 cases for the 2021 challenge."
+              }
+            ],
+            "spanDays": 0,
+            "contentGrowth": false,
+            "linked": true
+          },
+          {
+            "id": "feta-biometry",
+            "title": "Fetal Tissue Annotation Challenge (FeTA) Biometry - MICCAI 2024",
+            "url": "https://zenodo.org/records/11192452",
+            "versions": [
+              {
+                "version": "1",
+                "date": "2024-05-14",
+                "url": "https://zenodo.org/records/11192452",
+                "participants": null,
+                "changeDescription": "A separate derived dataset adds measurement masks for five fetal brain biometric structures and alignment transforms to existing T2-weighted reconstructions."
+              }
+            ],
+            "spanDays": 0,
+            "contentGrowth": false,
+            "linked": true
+          }
+        ],
+        "repositories": [
+          {
+            "repository": "gift-surg/NiftyMIC",
+            "url": "https://github.com/gift-surg/NiftyMIC",
+            "events": [
+              {
+                "date": "2019-01-31",
+                "label": "v0.5",
+                "kind": "release",
+                "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.5",
+                "description": ""
+              },
+              {
+                "date": "2019-01-31",
+                "label": "v0.4",
+                "kind": "release",
+                "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.4",
+                "description": ""
+              },
+              {
+                "date": "2019-02-06",
+                "label": "v0.6",
+                "kind": "release",
+                "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.6",
+                "description": ""
+              },
+              {
+                "date": "2019-02-06",
+                "label": "v0.5.2",
+                "kind": "release",
+                "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.5.2",
+                "description": ""
+              },
+              {
+                "date": "2019-02-06",
+                "label": "v0.5.1",
+                "kind": "release",
+                "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.5.1",
+                "description": ""
+              },
+              {
+                "date": "2020-11-26",
+                "label": "f4432f18",
+                "kind": "commit",
+                "url": "https://github.com/gift-surg/NiftyMIC/commit/f4432f18f02de55f1f61265d83219566dccf655c",
+                "description": "Merge pull request #12 from martaranzini/monai-segmentation\n\nMONAIfbs for fetal brain segmentation"
+              },
+              {
+                "date": "2022-02-15",
+                "label": "553bce08",
+                "kind": "commit",
+                "url": "https://github.com/gift-surg/NiftyMIC/commit/553bce0824e7b40cd221897b683142d9aeee77d8",
+                "description": "DOC: Update README"
+              }
+            ],
+            "years": [
+              2019,
+              2020,
+              2022
+            ],
+            "spanDays": 1111,
+            "recent": false,
+            "linked": true,
+            "archived": null
+          },
+          {
+            "repository": "SVRTK/SVRTK",
+            "url": "https://github.com/SVRTK/SVRTK",
+            "events": [
+              {
+                "date": "2020-12-23",
+                "label": "04291ba3",
+                "kind": "commit",
+                "url": "https://github.com/SVRTK/SVRTK/commit/04291ba37d948c7ff238c5bdf7a1101091d836b4",
+                "description": "v2.7"
+              },
+              {
+                "date": "2025-04-07",
+                "label": "426963ba",
+                "kind": "commit",
+                "url": "https://github.com/SVRTK/SVRTK/commit/426963ba6a4b159fae2f20975bfa19107892662c",
+                "description": "Merge pull request #25 from SVRTK/n_dev\n\nParallelisation bug fix."
+              }
+            ],
+            "years": [
+              2020,
+              2025
+            ],
+            "spanDays": 1566,
+            "recent": false,
+            "linked": false,
+            "archived": null
+          },
+          {
+            "repository": "SVRTK/auto-proc-svrtk",
+            "url": "https://github.com/SVRTK/auto-proc-svrtk",
+            "events": [
+              {
+                "date": "2023-12-10",
+                "label": "2cec7c43",
+                "kind": "commit",
+                "url": "https://github.com/SVRTK/auto-proc-svrtk/commit/2cec7c43325ed95da210953ff7d907d5faad384a",
+                "description": "additional scripts"
+              },
+              {
+                "date": "2024-12-23",
+                "label": "0571fe4f",
+                "kind": "commit",
+                "url": "https://github.com/SVRTK/auto-proc-svrtk/commit/0571fe4fb0522774b0de928e4bfdd36877dabccc",
+                "description": "Update auto-brain-reconstruction-northh.sh"
+              },
+              {
+                "date": "2026-06-23",
+                "label": "b83bf870",
+                "kind": "commit",
+                "url": "https://github.com/SVRTK/auto-proc-svrtk/commit/b83bf870ebb9a2e188ce41868eb81c26c38d79eb",
+                "description": "recon updates"
+              }
+            ],
+            "years": [
+              2023,
+              2024,
+              2026
+            ],
+            "spanDays": 926,
+            "recent": true,
+            "linked": true,
+            "archived": false
+          }
+        ],
+        "sources": [
+          {
+            "id": "nifty-paper",
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7103783/",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "open-access-paper"
+          },
+          {
+            "id": "feta-paper",
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8260784/",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "open-access-paper"
+          },
+          {
+            "id": "feta2022-paper",
+            "url": "https://arxiv.org/abs/2402.09463",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "preprint"
+          },
+          {
+            "id": "svrtk-scanner-paper",
+            "url": "https://link.springer.com/article/10.1007/s00247-025-06165-x",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "open-access-paper"
+          },
+          {
+            "id": "feta-zenodo",
+            "url": "https://zenodo.org/records/4541606",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "dataset-record"
+          },
+          {
+            "id": "feta-zenodo-newrecord",
+            "url": "https://zenodo.org/records/4736376",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "dataset-record"
+          },
+          {
+            "id": "feta-biometry",
+            "url": "https://zenodo.org/records/11192452",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "dataset-record"
+          },
+          {
+            "id": "feta2024-download",
+            "url": "https://fetachallenge.github.io/pages/Data_download.html",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "official-dataset-documentation"
+          },
+          {
+            "id": "nifty-releases",
+            "url": "https://api.github.com/repos/gift-surg/NiftyMIC/releases?per_page=5",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "nifty-latest",
+            "url": "https://api.github.com/repos/gift-surg/NiftyMIC/commits?per_page=3",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "nifty-2020",
+            "url": "https://api.github.com/repos/gift-surg/NiftyMIC/commits?until=2020-12-31T23%3A59%3A59Z&per_page=1",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "svrtk-latest",
+            "url": "https://api.github.com/repos/SVRTK/SVRTK/commits?per_page=3",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "svrtk-2020",
+            "url": "https://api.github.com/repos/SVRTK/SVRTK/commits?until=2020-12-31T23%3A59%3A59Z&per_page=1",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "svrtk-releases",
+            "url": "https://api.github.com/repos/SVRTK/SVRTK/releases?per_page=5",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "auto-readme",
+            "url": "https://raw.githubusercontent.com/SVRTK/auto-proc-svrtk/main/README.md",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "official-code-documentation"
+          },
+          {
+            "id": "auto-repo",
+            "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "auto-releases",
+            "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/releases",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "auto-latest",
+            "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits?per_page=3",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "auto-brain-2023",
+            "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits/2cec7c43325ed95da210953ff7d907d5faad384a",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "auto-brain-2024",
+            "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits/0571fe4fb0522774b0de928e4bfdd36877dabccc",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "auto-brain-2026",
+            "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits/b83bf870ebb9a2e188ce41868eb81c26c38d79eb",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "repository-api"
+          },
+          {
+            "id": "feta-preprint-identity",
+            "url": "https://arxiv.org/abs/2010.15526",
+            "retrievedAt": "2026-11-16",
+            "sourceType": "preprint-identity"
+          }
+        ],
+        "limitations": [
+          "这是定向补采的三个候选，不是对全领域的小众方向穷尽排名；补采论文不加入占比分母。",
+          "证据充分表示达到当前规则门槛；不等于研究质量已获人工评审、数据已下载复现，或每年都持续维护。",
+          "These are factual primary-source observations for one candidate topic. No sufficient/pending decision, quality score, or LLM-generated abstract is present.",
+          "Four listed papers are distinct works. arXiv and journal versions share workId/relatedDoi and must not be counted twice.",
+          "Publication date bases differ: the NiftyMIC journal issue date, FeTA journal date, FeTA2022 first preprint submission and 2025 version-of-record date are explicitly identified.",
+          "FeTA has one exact-day observed release plus a month-only second-version statement. A second same-dataset release at least 365 days later has not been verified.",
+          "FeTA Biometry 2024 is a separate, explicitly derived annotation dataset. Combining its date with the FeTA image dataset as if both were consecutive versions would overstate longitudinal MRI data accumulation.",
+          "The official FeTA2024 site says Zurich images are unchanged from 2021/2022. A challenge's year, a record modification date, and a different metadata URL are not automatically evidence of new data.",
+          "FeTA original paper distinguishes a 50-subject study from 40 released labeled reconstructions; no original release participant count is inferred from the abstract alone.",
+          "Dataset access is restricted; only public records were inspected. No restricted clinical images were downloaded and file-level content changes were not independently checked.",
+          "NiftyMIC latest observed default-branch commit is in February 2022; SVRTK core latest is in April 2025. Recent maintenance belongs specifically to auto-proc-svrtk.",
+          "Auto-proc-svrtk has observed brain-script changes across 2023, 2024 and 2026; this is sampled commit evidence, not a complete maintenance audit or validation of clinical performance.",
+          "The 2025 scanner study explicitly states its individual MRI datasets are not publicly available; that cohort is not counted as an open data release.",
+          "The candidate groups related reconstruction and segmentation infrastructure; topical relationship alone does not establish that every paper uses every dataset or repository."
+        ]
+      }
+    ]
+  }
+}

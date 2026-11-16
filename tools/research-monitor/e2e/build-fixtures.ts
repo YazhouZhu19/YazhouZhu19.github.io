@@ -133,7 +133,7 @@ const repos: GitHubSignal[] = ["atlas-segmentation", "beacon-reconstruction", "i
     updatedAt: now,
     topics: ["medical-imaging", "segmentation"],
     sourceId: "github-public",
-    relatedUrls: [],
+    relatedUrls: i === 0 ? ["https://example.org/fixture/paper-1"] : [],
     stars: 120 + i * 40,
     forks: 12,
     openIssues: 3,

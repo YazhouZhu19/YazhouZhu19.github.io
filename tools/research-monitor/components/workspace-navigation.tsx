@@ -77,7 +77,7 @@ export function WorkspaceNavigation({
                       ? ui("返回开源洞察", "Back to open-source insights")
                       : drillOrigin === "news"
                         ? ui("返回前沿动态", "Back to frontier updates")
-                        : ui("返回方向研判", "Back to outlook")}
+                        : ui("返回分析", "Back to analysis")}
           </Button>
           <Button variant="ghost" onClick={reset}>
             {tr("清除钻取")}

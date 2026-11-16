@@ -1,0 +1,609 @@
+{
+  "schemaVersion": 1,
+  "candidate": {
+    "id": "fetal-brain-mri",
+    "title": "胎儿脑 MRI 运动校正、重建与分割",
+    "scopeDescription": "Fetal brain MRI motion correction, slice-to-volume/super-resolution reconstruction, and tissue segmentation; factual NiftyMIC, SVRTK and FeTA resource history."
+  },
+  "collectedAt": "2026-11-16T16:20:22Z",
+  "sources": [
+    {
+      "id": "nifty-paper",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7103783/",
+      "publisher": "NeuroImage / PubMed Central",
+      "sourceType": "open-access-paper",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "feta-paper",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8260784/",
+      "publisher": "Scientific Data / PubMed Central",
+      "sourceType": "open-access-paper",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "feta2022-paper",
+      "url": "https://arxiv.org/abs/2402.09463",
+      "publisher": "arXiv",
+      "sourceType": "preprint",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "svrtk-scanner-paper",
+      "url": "https://link.springer.com/article/10.1007/s00247-025-06165-x",
+      "publisher": "Pediatric Radiology / Springer Nature",
+      "sourceType": "open-access-paper",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "feta-zenodo",
+      "url": "https://zenodo.org/records/4541606",
+      "publisher": "Zenodo / University Children's Hospital Zurich",
+      "sourceType": "dataset-record",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "feta-zenodo-newrecord",
+      "url": "https://zenodo.org/records/4736376",
+      "publisher": "Zenodo / University Children's Hospital Zurich",
+      "sourceType": "dataset-record",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "feta-biometry",
+      "url": "https://zenodo.org/records/11192452",
+      "publisher": "Zenodo / FeTA Challenge authors",
+      "sourceType": "dataset-record",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "feta2024-download",
+      "url": "https://fetachallenge.github.io/pages/Data_download.html",
+      "publisher": "FeTA Challenge organizers",
+      "sourceType": "official-dataset-documentation",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "nifty-releases",
+      "url": "https://api.github.com/repos/gift-surg/NiftyMIC/releases?per_page=5",
+      "publisher": "GitHub / gift-surg",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "nifty-latest",
+      "url": "https://api.github.com/repos/gift-surg/NiftyMIC/commits?per_page=3",
+      "publisher": "GitHub / gift-surg",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "nifty-2020",
+      "url": "https://api.github.com/repos/gift-surg/NiftyMIC/commits?until=2020-12-31T23%3A59%3A59Z&per_page=1",
+      "publisher": "GitHub / gift-surg",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "svrtk-latest",
+      "url": "https://api.github.com/repos/SVRTK/SVRTK/commits?per_page=3",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "svrtk-2020",
+      "url": "https://api.github.com/repos/SVRTK/SVRTK/commits?until=2020-12-31T23%3A59%3A59Z&per_page=1",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "svrtk-releases",
+      "url": "https://api.github.com/repos/SVRTK/SVRTK/releases?per_page=5",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "auto-readme",
+      "url": "https://raw.githubusercontent.com/SVRTK/auto-proc-svrtk/main/README.md",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "official-code-documentation",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "auto-repo",
+      "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "auto-releases",
+      "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/releases",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "auto-latest",
+      "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits?per_page=3",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "auto-brain-2023",
+      "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits/2cec7c43325ed95da210953ff7d907d5faad384a",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "auto-brain-2024",
+      "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits/0571fe4fb0522774b0de928e4bfdd36877dabccc",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "auto-brain-2026",
+      "url": "https://api.github.com/repos/SVRTK/auto-proc-svrtk/commits/b83bf870ebb9a2e188ce41868eb81c26c38d79eb",
+      "publisher": "GitHub / SVRTK",
+      "sourceType": "repository-api",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    },
+    {
+      "id": "feta-preprint-identity",
+      "url": "https://arxiv.org/abs/2010.15526",
+      "publisher": "arXiv",
+      "sourceType": "preprint-identity",
+      "retrievedAt": "2026-11-16T16:20:22Z"
+    }
+  ],
+  "papers": [
+    {
+      "id": "niftymic-2020",
+      "workId": "doi:10.1016/j.neuroimage.2019.116324",
+      "title": "An automated framework for localization, segmentation and super-resolution reconstruction of fetal brain MRI",
+      "doi": "10.1016/j.neuroimage.2019.116324",
+      "publishedAt": "2020-02-01",
+      "publicationDateBasis": "Journal issue date shown by PubMed Central; not the accepted date or earliest online-publication date.",
+      "url": "https://doi.org/10.1016/j.neuroimage.2019.116324",
+      "attribution": "Ebner et al., NeuroImage 206 (2020), 116324.",
+      "abstractLicense": {
+        "name": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "transcription": "Original abstract text; paragraph whitespace normalized; no paraphrasing."
+      },
+      "rawAbstract": "High-resolution volume reconstruction from multiple motion-corrupted stacks of 2D slices plays an increasing role for fetal brain Magnetic Resonance Imaging (MRI) studies. Currently existing reconstruction methods are time-consuming and often require user interactions to localize and extract the brain from several stacks of 2D slices.\n\nWe propose a fully automatic framework for fetal brain reconstruction that consists of four stages: 1) fetal brain localization based on a coarse segmentation by a Convolutional Neural Network (CNN), 2) fine segmentation by another CNN trained with a multi-scale loss function, 3) novel, single-parameter outlier-robust super-resolution reconstruction, and 4) fast and automatic high-resolution visualization in standard anatomical space suitable for pathological brains.\n\nWe validated our framework with images from fetuses with normal brains and with variable degrees of ventriculomegaly associated with open spina bifida, a congenital malformation affecting also the brain. Experiments show that each step of our proposed pipeline outperforms state-of-the-art methods in both segmentation and reconstruction comparisons including expert-reader quality assessments.\n\nThe reconstruction results of our proposed method compare favorably with those obtained by manual, labor-intensive brain segmentation, which unlocks the potential use of automatic fetal brain reconstruction studies in clinical practice.",
+      "abstractSourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7103783/",
+      "methodFacts": [
+        {
+          "text": "The paper combines CNN localization and segmentation with outlier-robust super-resolution reconstruction, and compares segmentation/reconstruction against other methods and expert-reader assessments.",
+          "sourceId": "nifty-paper"
+        }
+      ],
+      "explicitResourceLinks": [
+        {
+          "url": "https://github.com/gift-surg/NiftyMIC",
+          "relation": "implementation cited in article; paper reports version 0.7.3",
+          "sourceId": "nifty-paper"
+        },
+        {
+          "url": "https://github.com/gift-surg/fetal_brain_seg",
+          "relation": "segmentation implementation cited in article",
+          "sourceId": "nifty-paper"
+        }
+      ],
+      "sourceId": "nifty-paper"
+    },
+    {
+      "id": "feta-2021",
+      "workId": "doi:10.1038/s41597-021-00946-3",
+      "title": "An automatic multi-tissue human fetal brain segmentation benchmark using the Fetal Tissue Annotation Dataset",
+      "doi": "10.1038/s41597-021-00946-3",
+      "relatedDoi": "10.48550/arXiv.2010.15526",
+      "publishedAt": "2021-07-06",
+      "publicationDateBasis": "Journal publication date; arXiv antecedent is the same work and is not a separate paper.",
+      "url": "https://doi.org/10.1038/s41597-021-00946-3",
+      "attribution": "Payette et al., Scientific Data 8 (2021), 167.",
+      "abstractLicense": {
+        "name": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "transcription": "Original abstract text; paragraph whitespace normalized; no paraphrasing."
+      },
+      "rawAbstract": "It is critical to quantitatively analyse the developing human fetal brain in order to fully understand neurodevelopment in both normal fetuses and those with congenital disorders. To facilitate this analysis, automatic multi-tissue fetal brain segmentation algorithms are needed, which in turn requires open datasets of segmented fetal brains.\n\nHere we introduce a publicly available dataset of 50 manually segmented pathological and non-pathological fetal magnetic resonance brain volume reconstructions across a range of gestational ages (20 to 33 weeks) into 7 different tissue categories (external cerebrospinal fluid, grey matter, white matter, ventricles, cerebellum, deep grey matter, brainstem/spinal cord).\n\nIn addition, we quantitatively evaluate the accuracy of several automatic multi-tissue segmentation algorithms of the developing human fetal brain. Four research groups participated, submitting a total of 10 algorithms, demonstrating the benefits the dataset for the development of automatic algorithms.",
+      "abstractSourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8260784/",
+      "methodFacts": [
+        {
+          "text": "The abstract describes 50 reconstructed fetal brains and a seven-tissue segmentation benchmark. The Data Records section separately specifies 40 released reconstructions with manual labels, so cohort and released labeled-subset counts must not be conflated.",
+          "sourceId": "feta-paper"
+        },
+        {
+          "text": "The study compares ten submitted algorithms from four research groups.",
+          "sourceId": "feta-paper"
+        }
+      ],
+      "explicitResourceLinks": [
+        {
+          "url": "https://doi.org/10.7303/syn23747212",
+          "relation": "dataset and code availability location explicitly given in the article",
+          "sourceId": "feta-paper"
+        }
+      ],
+      "identitySourceId": "feta-preprint-identity",
+      "sourceId": "feta-paper"
+    },
+    {
+      "id": "feta2022-results",
+      "workId": "doi:10.1109/TMI.2024.3485554",
+      "title": "Multi-Center Fetal Brain Tissue Annotation (FeTA) Challenge 2022 Results",
+      "doi": "10.1109/TMI.2024.3485554",
+      "relatedDoi": "10.48550/arXiv.2402.09463",
+      "arxivId": "2402.09463",
+      "publishedAt": "2024-02-08",
+      "publicationDateBasis": "First arXiv v1 submission at 18:17:03 UTC; linked journal DOI is the same work and is not counted again.",
+      "url": "https://arxiv.org/abs/2402.09463",
+      "attribution": "Payette et al., arXiv:2402.09463v1 (2024).",
+      "abstractLicense": {
+        "name": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "transcription": "Original abstract text; paragraph whitespace normalized; no paraphrasing."
+      },
+      "rawAbstract": "Segmentation is a critical step in analyzing the developing human fetal brain. There have been vast improvements in automatic segmentation methods in the past several years, and the Fetal Brain Tissue Annotation (FeTA) Challenge 2021 helped to establish an excellent standard of fetal brain segmentation. However, FeTA 2021 was a single center study, and the generalizability of algorithms across different imaging centers remains unsolved, limiting real-world clinical applicability.\n\nThe multi-center FeTA Challenge 2022 focuses on advancing the generalizability of fetal brain segmentation algorithms for magnetic resonance imaging (MRI). In FeTA 2022, the training dataset contained images and corresponding manually annotated multi-class labels from two imaging centers, and the testing data contained images from these two imaging centers as well as two additional unseen centers.\n\nThe data from different centers varied in many aspects, including scanners used, imaging parameters, and fetal brain super-resolution algorithms applied. 16 teams participated in the challenge, and 17 algorithms were evaluated. Here, a detailed overview and analysis of the challenge results are provided, focusing on the generalizability of the submissions.\n\nBoth in- and out of domain, the white matter and ventricles were segmented with the highest accuracy, while the most challenging structure remains the cerebral cortex due to anatomical complexity. The FeTA Challenge 2022 was able to successfully evaluate and advance generalizability of multi-class fetal brain tissue segmentation algorithms for MRI and it continues to benchmark new algorithms. The resulting new methods contribute to improving the analysis of brain development in utero.",
+      "abstractSourceUrl": "https://arxiv.org/abs/2402.09463",
+      "methodFacts": [
+        {
+          "text": "The benchmark evaluates 17 algorithms using training images from two centers and test images from those plus two unseen centers, to examine cross-center generalization.",
+          "sourceId": "feta2022-paper"
+        }
+      ],
+      "explicitResourceLinks": [
+        {
+          "url": "https://zenodo.org/records/11192452",
+          "relation": "dataset metadata explicitly cites this paper as a continued work; this is a reverse metadata citation, not a claim that the paper released the later biometry data",
+          "sourceId": "feta-biometry"
+        }
+      ],
+      "sourceId": "feta2022-paper"
+    },
+    {
+      "id": "svrtk-scanner-2025",
+      "workId": "doi:10.1007/s00247-025-06165-x",
+      "title": "Scanner-based real-time three-dimensional brain + body slice-to-volume reconstruction for T2-weighted 0.55-T low-field fetal magnetic resonance imaging",
+      "doi": "10.1007/s00247-025-06165-x",
+      "publishedAt": "2025-01-24",
+      "publicationDateBasis": "Publisher version-of-record publication date; March 2025 is the issue date.",
+      "url": "https://doi.org/10.1007/s00247-025-06165-x",
+      "attribution": "Uus, Neves Silva, Aviles Verdera et al., Pediatric Radiology 55 (2025), 556–569.",
+      "abstractLicense": {
+        "name": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "transcription": "Original abstract text; paragraph whitespace normalized; no paraphrasing."
+      },
+      "rawAbstract": "Background\nMotion correction methods based on slice-to-volume registration (SVR) for fetal magnetic resonance imaging (MRI) allow reconstruction of three-dimensional (3-D) isotropic images of the fetal brain and body. However, all existing SVR methods are confined to research settings, which limits clinical integration. Furthermore, there have been no reported SVR solutions for low-field 0.55-T MRI.\n\nObjective\nIntegration of automated SVR motion correction methods directly into fetal MRI scanning process via the Gadgetron framework to enable automated T2-weighted (T2W) 3-D fetal brain and body reconstruction in the low-field 0.55-T MRI scanner within the duration of the scan.\n\nMaterials and methods\nA deep learning fully automated pipeline was developed for T2W 3-D rigid and deformable (D/SVR) reconstruction of the fetal brain and body of 0.55-T T2W datasets. Next, it was integrated into 0.55-T low-field MRI scanner environment via a Gadgetron workflow that enables launching of the reconstruction process directly during scanning in real-time.\n\nResults\nDuring prospective testing on 12 cases (22–40 weeks gestational age), the fetal brain and body reconstructions were available on average 6:42 ± 3:13 min after the acquisition of the final stack and could be assessed and archived on the scanner console during the ongoing fetal MRI scan. The output image data quality was rated as good to acceptable for interpretation. The retrospective testing of the pipeline on 83 0.55-T datasets demonstrated stable reconstruction quality for low-field MRI.\n\nConclusion\nThe proposed pipeline allows scanner-based prospective T2W 3-D motion correction for low-field 0.55-T fetal MRI via direct online integration into the scanner environment.",
+      "abstractSourceUrl": "https://link.springer.com/article/10.1007/s00247-025-06165-x",
+      "methodFacts": [
+        {
+          "text": "The article reports prospective testing on 12 fetal datasets and retrospective testing on 83 datasets, and explicitly links its implementation to auto-proc-svrtk.",
+          "sourceId": "svrtk-scanner-paper"
+        },
+        {
+          "text": "The article states that its individual fetal MRI datasets are not publicly available because of ethics regulations.",
+          "sourceId": "svrtk-scanner-paper"
+        }
+      ],
+      "explicitResourceLinks": [
+        {
+          "url": "https://github.com/SVRTK/auto-proc-svrtk",
+          "relation": "proposed reconstruction implementation explicitly linked in article Notes 1 and 3",
+          "sourceId": "svrtk-scanner-paper"
+        },
+        {
+          "url": "https://github.com/SVRTK/gadgetron-svrtk-integration",
+          "relation": "scanner integration implementation explicitly linked in article Note 5",
+          "sourceId": "svrtk-scanner-paper"
+        }
+      ],
+      "sourceId": "svrtk-scanner-paper"
+    }
+  ],
+  "datasets": [
+    {
+      "id": "feta-tissue",
+      "title": "Fetal Tissue Annotation Dataset (FeTA)",
+      "url": "https://doi.org/10.7303/syn25649159",
+      "repository": "Zenodo / Synapse",
+      "access": "Registration and data-use agreement required; no image files downloaded.",
+      "versions": [
+        {
+          "version": "1.2.1",
+          "releasedAt": "2021-02-15",
+          "dateBasis": "Zenodo publication date, not later record modification date.",
+          "url": "https://zenodo.org/records/4541606",
+          "sourceId": "feta-zenodo",
+          "changeDescription": null,
+          "changeType": "original-observed-release",
+          "notes": "The later Zenodo record 4736376 repeats the same version 1.2.1 and publication date. It is not counted as a new data release."
+        },
+        {
+          "version": "second version (80 cases)",
+          "releasedAt": null,
+          "releaseMonth": "2021-05",
+          "datePrecision": "month",
+          "dateBasis": "Zenodo description says second version with 80 cases moved to Synapse from May 2021; exact release day not established.",
+          "url": "https://www.synapse.org/#!Synapse:syn25649159/wiki/610007",
+          "sourceId": "feta-zenodo",
+          "changeDescription": "The dataset authors report a second version containing 80 cases for the 2021 challenge.",
+          "participants": 80,
+          "changeType": "expanded-cohort",
+          "notes": "This partial date is deliberately excluded from calculations requiring exact day-level dates."
+        }
+      ],
+      "paperLinks": [
+        {
+          "paperId": "feta-2021",
+          "doi": "10.1038/s41597-021-00946-3",
+          "relation": "dataset paper; journal explicitly links the earlier Synapse record syn23747212",
+          "sourceId": "feta-paper"
+        },
+        {
+          "paperId": "feta2022-results",
+          "doi": "10.1109/TMI.2024.3485554",
+          "relation": "benchmark on FeTA multi-center data; does not establish the dataset release day",
+          "sourceId": "feta2022-paper"
+        }
+      ],
+      "sourceFacts": [
+        {
+          "text": "The official 2024 download page says the Zurich data are the same as the 2021 and 2022 data.",
+          "sourceId": "feta2024-download"
+        },
+        {
+          "text": "Vienna data access for the 2024 challenge was to stop after its August 2024 submission deadline and required a signed institutional agreement.",
+          "sourceId": "feta2024-download"
+        }
+      ]
+    },
+    {
+      "id": "feta-biometry",
+      "title": "Fetal Tissue Annotation Challenge (FeTA) Biometry - MICCAI 2024",
+      "url": "https://zenodo.org/records/11192452",
+      "repository": "Zenodo",
+      "access": "Public metadata; restricted files. No image or annotation files downloaded.",
+      "derivedFrom": [
+        {
+          "doi": "10.7303/syn25649159",
+          "relation": "is derived from",
+          "sourceId": "feta-biometry"
+        }
+      ],
+      "versions": [
+        {
+          "version": "1",
+          "releasedAt": "2024-05-14",
+          "dateBasis": "Zenodo declared publication date; record creation May 21 and modification July 5 are not separate releases.",
+          "url": "https://zenodo.org/records/11192452",
+          "sourceId": "feta-biometry",
+          "changeDescription": "A separate derived dataset adds measurement masks for five fetal brain biometric structures and alignment transforms to existing T2-weighted reconstructions.",
+          "changeType": "new-derived-annotations",
+          "notes": "A separately identified biometry extension, not a second version or demonstrated growth of the FeTA tissue MRI image cohort."
+        }
+      ],
+      "paperLinks": [
+        {
+          "paperId": "feta-2021",
+          "doi": "10.1038/s41597-021-00946-3",
+          "relation": "is derived from publication",
+          "sourceId": "feta-biometry"
+        },
+        {
+          "paperId": "feta2022-results",
+          "doi": "10.48550/arXiv.2402.09463",
+          "relation": "continues",
+          "sourceId": "feta-biometry"
+        },
+        {
+          "doi": "10.1016/j.media.2023.102833",
+          "relation": "continues",
+          "sourceId": "feta-biometry"
+        }
+      ]
+    }
+  ],
+  "code": [
+    {
+      "repository": "gift-surg/NiftyMIC",
+      "url": "https://github.com/gift-surg/NiftyMIC",
+      "officialPaperLinks": [
+        {
+          "paperId": "niftymic-2020",
+          "doi": "10.1016/j.neuroimage.2019.116324",
+          "sourceId": "nifty-paper",
+          "relation": "article explicitly links repository"
+        }
+      ],
+      "releases": [
+        {
+          "version": "v0.6",
+          "publishedAt": "2019-02-06T19:31:03Z",
+          "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.6",
+          "sourceId": "nifty-releases"
+        },
+        {
+          "version": "v0.5.2",
+          "publishedAt": "2019-02-06T19:36:56Z",
+          "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.5.2",
+          "sourceId": "nifty-releases"
+        },
+        {
+          "version": "v0.5.1",
+          "publishedAt": "2019-02-06T19:29:30Z",
+          "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.5.1",
+          "sourceId": "nifty-releases"
+        },
+        {
+          "version": "v0.5",
+          "publishedAt": "2019-01-31T01:37:46Z",
+          "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.5",
+          "sourceId": "nifty-releases"
+        },
+        {
+          "version": "v0.4",
+          "publishedAt": "2019-01-31T01:40:03Z",
+          "url": "https://github.com/gift-surg/NiftyMIC/releases/tag/v0.4",
+          "sourceId": "nifty-releases"
+        }
+      ],
+      "maintenanceFacts": [
+        {
+          "sha": "f4432f18f02de55f1f61265d83219566dccf655c",
+          "committedAt": "2020-11-26T17:47:32Z",
+          "dateBasis": "GitHub commit committer timestamp",
+          "url": "https://github.com/gift-surg/NiftyMIC/commit/f4432f18f02de55f1f61265d83219566dccf655c",
+          "sourceId": "nifty-2020",
+          "text": "Merge pull request #12 from martaranzini/monai-segmentation\n\nMONAIfbs for fetal brain segmentation",
+          "files": []
+        },
+        {
+          "sha": "553bce0824e7b40cd221897b683142d9aeee77d8",
+          "committedAt": "2022-02-15T12:58:45Z",
+          "dateBasis": "GitHub commit committer timestamp",
+          "url": "https://github.com/gift-surg/NiftyMIC/commit/553bce0824e7b40cd221897b683142d9aeee77d8",
+          "sourceId": "nifty-latest",
+          "text": "DOC: Update README",
+          "files": [],
+          "notes": "Latest default-branch commit observed; message says README update."
+        }
+      ],
+      "historyScope": "Sampled dated commits and first five release records; latest default-branch query is not an exhaustive all-branch history."
+    },
+    {
+      "repository": "SVRTK/SVRTK",
+      "url": "https://github.com/SVRTK/SVRTK",
+      "officialPaperLinks": [],
+      "releases": [],
+      "maintenanceFacts": [
+        {
+          "sha": "04291ba37d948c7ff238c5bdf7a1101091d836b4",
+          "committedAt": "2020-12-23T20:48:42Z",
+          "dateBasis": "GitHub commit committer timestamp",
+          "url": "https://github.com/SVRTK/SVRTK/commit/04291ba37d948c7ff238c5bdf7a1101091d836b4",
+          "sourceId": "svrtk-2020",
+          "text": "v2.7",
+          "files": [],
+          "notes": "v2.7 is the commit message, not a verified GitHub Release."
+        },
+        {
+          "sha": "426963ba6a4b159fae2f20975bfa19107892662c",
+          "committedAt": "2025-04-07T16:36:32Z",
+          "dateBasis": "GitHub commit committer timestamp",
+          "url": "https://github.com/SVRTK/SVRTK/commit/426963ba6a4b159fae2f20975bfa19107892662c",
+          "sourceId": "svrtk-latest",
+          "text": "Merge pull request #25 from SVRTK/n_dev\n\nParallelisation bug fix.",
+          "files": [],
+          "notes": "Latest default-branch commit observed."
+        }
+      ],
+      "releaseObservation": {
+        "sourceId": "svrtk-releases",
+        "recordsReturned": 0
+      },
+      "historyScope": "SVRTK core repository history is separate from auto-proc-svrtk; timestamps are not transferred between repositories."
+    },
+    {
+      "repository": "SVRTK/auto-proc-svrtk",
+      "url": "https://github.com/SVRTK/auto-proc-svrtk",
+      "createdAt": "2023-09-09T08:19:29Z",
+      "archived": false,
+      "metadataSourceId": "auto-repo",
+      "officialPaperLinks": [
+        {
+          "paperId": "svrtk-scanner-2025",
+          "doi": "10.1007/s00247-025-06165-x",
+          "sourceId": "svrtk-scanner-paper",
+          "relation": "article explicitly links repository; official README also cites article"
+        }
+      ],
+      "releases": [],
+      "releaseObservation": {
+        "sourceId": "auto-releases",
+        "recordsReturned": 0
+      },
+      "maintenanceFacts": [
+        {
+          "sha": "2cec7c43325ed95da210953ff7d907d5faad384a",
+          "committedAt": "2023-12-10T13:47:23Z",
+          "dateBasis": "GitHub commit committer timestamp",
+          "url": "https://github.com/SVRTK/auto-proc-svrtk/commit/2cec7c43325ed95da210953ff7d907d5faad384a",
+          "sourceId": "auto-brain-2023",
+          "text": "additional scripts",
+          "files": [
+            "scripts/auto-body-055t-reconstruction.sh",
+            "scripts/auto-body-organ-segmentation.sh",
+            "scripts/auto-body-reconstruction.sh",
+            "scripts/auto-body-reorientation.sh",
+            "scripts/auto-brain-055t-reconstruction.sh",
+            "scripts/auto-brain-bet-segmentation-fetal.sh",
+            "scripts/auto-brain-bounti-segmentation-fetal.sh",
+            "scripts/auto-brain-reconstruction.sh",
+            "scripts/auto-brain-reorientation.sh",
+            "scripts/auto-head-055t-reconstruction.sh",
+            "scripts/auto-thorax-reconstruction.sh",
+            "scripts/auto-thorax-reorientation.sh"
+          ]
+        },
+        {
+          "sha": "0571fe4fb0522774b0de928e4bfdd36877dabccc",
+          "committedAt": "2024-12-23T09:09:02Z",
+          "dateBasis": "GitHub commit committer timestamp",
+          "url": "https://github.com/SVRTK/auto-proc-svrtk/commit/0571fe4fb0522774b0de928e4bfdd36877dabccc",
+          "sourceId": "auto-brain-2024",
+          "text": "Update auto-brain-reconstruction-northh.sh",
+          "files": [
+            "scripts/auto-brain-reconstruction-northh.sh"
+          ]
+        },
+        {
+          "sha": "b83bf870ebb9a2e188ce41868eb81c26c38d79eb",
+          "committedAt": "2026-06-23T11:47:10Z",
+          "dateBasis": "GitHub commit committer timestamp",
+          "url": "https://github.com/SVRTK/auto-proc-svrtk/commit/b83bf870ebb9a2e188ce41868eb81c26c38d79eb",
+          "sourceId": "auto-brain-2026",
+          "text": "recon updates",
+          "files": [
+            "scripts/auto-brain-055t-reconstruction-2026.sh",
+            "scripts/auto-brain-reconstruction-2026.sh"
+          ]
+        }
+      ],
+      "latestDefaultBranchCommit": {
+        "sha": "7d75fa96162245326f7046bb4df0a41cdeaf7f5c",
+        "committedAt": "2026-07-20T14:27:04Z",
+        "dateBasis": "GitHub commit committer timestamp",
+        "url": "https://github.com/SVRTK/auto-proc-svrtk/commit/7d75fa96162245326f7046bb4df0a41cdeaf7f5c",
+        "sourceId": "auto-latest",
+        "text": "Update README.md",
+        "files": [],
+        "notes": "Latest observed commit updates README; recent brain-code evidence is the separately inspected June 23, 2026 commit."
+      },
+      "historyScope": "Three inspected commits modify fetal brain scripts in 2023, 2024 and 2026. This proves observed multi-year changes, not continuous maintenance in every intervening period."
+    }
+  ],
+  "limitations": [
+    "These are factual primary-source observations for one candidate topic. No sufficient/pending decision, quality score, or LLM-generated abstract is present.",
+    "Four listed papers are distinct works. arXiv and journal versions share workId/relatedDoi and must not be counted twice.",
+    "Publication date bases differ: the NiftyMIC journal issue date, FeTA journal date, FeTA2022 first preprint submission and 2025 version-of-record date are explicitly identified.",
+    "FeTA has one exact-day observed release plus a month-only second-version statement. A second same-dataset release at least 365 days later has not been verified.",
+    "FeTA Biometry 2024 is a separate, explicitly derived annotation dataset. Combining its date with the FeTA image dataset as if both were consecutive versions would overstate longitudinal MRI data accumulation.",
+    "The official FeTA2024 site says Zurich images are unchanged from 2021/2022. A challenge's year, a record modification date, and a different metadata URL are not automatically evidence of new data.",
+    "FeTA original paper distinguishes a 50-subject study from 40 released labeled reconstructions; no original release participant count is inferred from the abstract alone.",
+    "Dataset access is restricted; only public records were inspected. No restricted clinical images were downloaded and file-level content changes were not independently checked.",
+    "NiftyMIC latest observed default-branch commit is in February 2022; SVRTK core latest is in April 2025. Recent maintenance belongs specifically to auto-proc-svrtk.",
+    "Auto-proc-svrtk has observed brain-script changes across 2023, 2024 and 2026; this is sampled commit evidence, not a complete maintenance audit or validation of clinical performance.",
+    "The 2025 scanner study explicitly states its individual MRI datasets are not publicly available; that cohort is not counted as an open data release.",
+    "The candidate groups related reconstruction and segmentation infrastructure; topical relationship alone does not establish that every paper uses every dataset or repository."
+  ]
+}

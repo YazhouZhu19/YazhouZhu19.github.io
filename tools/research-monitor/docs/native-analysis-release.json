@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-17",
+  "route": "#/analysis",
+  "legacyRoute": "#/outlook",
+  "defaultCategory": "niche",
+  "historyRuleVersion": "2026-11-17-history-v1",
+  "historySnapshotSha256": "5e34e03f51ca6424a0f1099590b8a27a45c582d4b5efcb82d704177d8dcf595a",
+  "tests": {
+    "unitPassed": 645,
+    "unitFailed": 0,
+    "browserPassed": 16,
+    "browserFailed": 0,
+    "scopedAxeWcagAaViolations": 0,
+    "typecheck": "passed",
+    "format": "passed",
+    "build": "passed",
+    "budgetViolations": []
+  },
+  "realDataBrowser": {
+    "paperCount": 11294,
+    "historyTopics": 3,
+    "historyWorks": 14,
+    "sufficient": 1,
+    "pending": 2,
+    "mainstreamDirections": 7,
+    "currentCounts": [
+      "5,197",
+      "28,202",
+      "1,639"
+    ],
+    "desktop": true,
+    "mobile": true,
+    "darkTheme": true,
+    "externalRequests": 0,
+    "modelRequests": 0,
+    "pageErrors": 0
+  },
+  "preview": "screenshots/native-analysis/workspace-desktop.png",
+  "notes": [
+    "Native React integration retains the workspace navigation, typography, design tokens and shared controls.",
+    "The approved history snapshot is fixed at 2026-11-17 and separately counted from current-library analysis.",
+    "Local source and build updated; this report does not claim a remote deployment."
+  ]
+}

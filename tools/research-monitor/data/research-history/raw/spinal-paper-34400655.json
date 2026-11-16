@@ -1,0 +1,67 @@
+{
+  "sourceUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:34400655&format=json&resultType=core",
+  "retrievedAt": "2026-11-17",
+  "records": [
+    {
+      "id": "34400655",
+      "source": "MED",
+      "pmcid": "PMC8368310",
+      "doi": "10.1038/s41597-021-00941-8",
+      "title": "Open-access quantitative MRI data of the spinal cord and reproducibility across participants, sites and manufacturers.",
+      "journalInfo": {
+        "issue": "1",
+        "volume": "8",
+        "journalIssueId": 3211999,
+        "dateOfPublication": "2021 Aug",
+        "monthOfPublication": 8,
+        "yearOfPublication": 2021,
+        "journal": {
+          "medlineAbbreviation": "Sci Data",
+          "title": "Scientific data",
+          "essn": "2052-4463",
+          "issn": "2052-4463",
+          "isoabbreviation": "Sci Data",
+          "nlmid": "101640192"
+        },
+        "printPublicationDate": "2021-08-01"
+      },
+      "pubYear": "2021",
+      "abstractText": "In a companion paper by Cohen-Adad et al. we introduce the spine generic quantitative MRI protocol that provides valuable metrics for assessing spinal cord macrostructural and microstructural integrity. This protocol was used to acquire a single subject dataset across 19 centers and a multi-subject dataset across 42 centers (for a total of 260 participants), spanning the three main MRI manufacturers: GE, Philips and Siemens. Both datasets are publicly available via git-annex. Data were analysed using the Spinal Cord Toolbox to produce normative values as well as inter/intra-site and inter/intra-manufacturer statistics. Reproducibility for the spine generic protocol was high across sites and manufacturers, with an average inter-site coefficient of variation of less than 5% for all the metrics. Full documentation and results can be found at https://spine-generic.rtfd.io/ . The datasets and analysis pipeline will help pave the way towards accessible and reproducible quantitative MRI in the spinal cord.",
+      "fullTextUrlList": {
+        "fullTextUrl": [
+          {
+            "availability": "Open access",
+            "availabilityCode": "OA",
+            "documentStyle": "pdf",
+            "site": "Unpaywall",
+            "url": "https://www.nature.com/articles/s41597-021-00941-8.pdf"
+          },
+          {
+            "availability": "Subscription required",
+            "availabilityCode": "S",
+            "documentStyle": "doi",
+            "site": "DOI",
+            "url": "https://doi.org/10.1038/s41597-021-00941-8"
+          },
+          {
+            "availability": "Open access",
+            "availabilityCode": "OA",
+            "documentStyle": "html",
+            "site": "Europe_PMC",
+            "url": "https://europepmc.org/articles/PMC8368310"
+          },
+          {
+            "availability": "Open access",
+            "availabilityCode": "OA",
+            "documentStyle": "pdf",
+            "site": "Europe_PMC",
+            "url": "https://europepmc.org/articles/PMC8368310?pdf=render"
+          }
+        ]
+      },
+      "isOpenAccess": "Y",
+      "firstPublicationDate": "2021-08-16",
+      "firstIndexDate": "2021-08-18"
+    }
+  ]
+}

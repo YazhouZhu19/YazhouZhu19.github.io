@@ -16,7 +16,7 @@ export const WORKSPACE_ROUTES = {
   analysis: "/papers/leads",
   github: "/github",
   news: "/news",
-  foresight: "/outlook",
+  foresight: "/analysis",
   teams: "/teams",
   saved: "/saved",
   sources: "/sources",
@@ -63,7 +63,9 @@ export function parseWorkspaceHash(hash: string): WorkspaceUrlState {
   const separator = raw.indexOf("?");
   const path = separator < 0 ? raw : raw.slice(0, separator);
   const query = separator < 0 ? "" : raw.slice(separator + 1);
-  const view = Object.entries(WORKSPACE_ROUTES).find(([, route]) => route === path)?.[0];
+  const view = Object.entries(WORKSPACE_ROUTES).find(
+    ([, route]) => route === (path === "/outlook" ? "/analysis" : path),
+  )?.[0];
   if (!view) return { ...DEFAULT_URL_STATE };
   const params = new URLSearchParams(query);
   const scope = params.get("scope");
@@ -73,6 +75,9 @@ export function parseWorkspaceHash(hash: string): WorkspaceUrlState {
     period: defaultPeriod(view),
     scope: scope === "adjacent" || scope === "all" ? scope : "core",
   };
+  // The replacement analysis view owns its complete-library scope. Legacy outlook
+  // filters do not restrict the reviewed history or leak into paper-library state.
+  if (view === "foresight") return { ...publicBase, scope: "core" };
   if (view === "github" || view === "news") {
     const sourceBrowse = parseSourceBrowseState(view, params);
     const label = params.get("drill");
@@ -93,7 +98,7 @@ export function parseWorkspaceHash(hash: string): WorkspaceUrlState {
     directory.author = directory.tab === "directory" ? publicAuthorId(params.get("author") ?? "") : "";
     return { ...publicBase, teamDirectory: directory };
   }
-  const track = params.get("track") ?? (view === "foresight" ? "segmentation" : "all");
+  const track = params.get("track") ?? "all";
   const period = params.get("days") ?? defaultPeriod(view);
   const label = params.get("drill");
   const validTrack = track === "all" || Object.hasOwn(TRACKS, track) ? track : "all";
@@ -104,7 +109,7 @@ export function parseWorkspaceHash(hash: string): WorkspaceUrlState {
   }
   return {
     view: workspaceView(view),
-    track: view === "foresight" && validTrack === "all" ? "segmentation" : validTrack,
+    track: validTrack,
     period: periods.has(period) ? period : defaultPeriod(view),
     source: params.get("source") || "all",
     search: params.get("q") ?? "",
@@ -118,6 +123,7 @@ export function parseWorkspaceHash(hash: string): WorkspaceUrlState {
 }
 
 export function serializeWorkspaceHash(state: WorkspaceUrlState): string {
+  if (state.view === "foresight") return "#/analysis";
   const params = new URLSearchParams();
   if (state.view === "github" || state.view === "news" || state.view === "teams") {
     if (state.scope && state.scope !== "core") params.set("scope", state.scope);
