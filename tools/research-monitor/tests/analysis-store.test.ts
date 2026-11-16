@@ -71,7 +71,8 @@ function abortable<T>(promise: Promise<T>, signal: AbortSignal | null | undefine
   });
 }
 async function until(predicate: () => boolean) {
-  for (let i = 0; i < 100 && !predicate(); i++) await new Promise<void>((done) => setImmediate(done));
+  const deadline = performance.now() + 5000;
+  while (!predicate() && performance.now() < deadline) await new Promise<void>((done) => setImmediate(done));
   assert.ok(predicate(), "Expected store state did not become observable");
 }
 function store(fetcher: typeof fetch, timeoutMs = 1000) {
@@ -244,7 +245,8 @@ test("cancellation cannot publish a late response or prevent a subsequent load",
   assert.equal(current.getSnapshot().loading, false);
 });
 
-test("timeout is recoverable and does not leave a permanent pending request", async () => {
+test("timeout is recoverable and does not leave a permanent pending request", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
   const old = packet(),
     never = deferred<Response>();
   let paused = true;
@@ -254,7 +256,11 @@ test("timeout is recoverable and does not leave a permanent pending request", as
     if (String(input) === manifestUrl) return response(old.manifest);
     throw new Error("Unexpected request");
   }, 30);
-  assert.equal(await current.load(), null);
+  const stalled = current.load();
+  t.mock.timers.tick(29);
+  assert.equal(current.getSnapshot().loading, true);
+  t.mock.timers.tick(1);
+  assert.equal(await stalled, null);
   assert.equal(current.getSnapshot().error, true);
   assert.equal(current.getSnapshot().loading, false);
   paused = false;
@@ -276,7 +282,8 @@ test("source freshness compares instants rather than timestamp strings with diff
   assert.deepEqual(current.getSnapshot().data, next.snapshot);
 });
 
-test("manifest timeout retains immediately available bootstrap data and marks freshness unconfirmed", async () => {
+test("manifest timeout retains immediately available bootstrap data and marks freshness unconfirmed", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
   const pack = packet(),
     remote = deferred<Response>();
   const current = store(async (input, init) => {
@@ -284,7 +291,10 @@ test("manifest timeout retains immediately available bootstrap data and marks fr
     if (String(input) === manifestUrl) return abortable(remote.promise, init?.signal);
     throw new Error("Unexpected full-data request");
   }, 30);
-  await current.load();
+  const pending = current.load();
+  await until(() => current.getSnapshot().data !== null);
+  t.mock.timers.tick(30);
+  await pending;
   assert.deepEqual(current.getSnapshot().data, pack.snapshot);
   assert.equal(current.getSnapshot().error, true);
   assert.equal(current.getSnapshot().current, false);
