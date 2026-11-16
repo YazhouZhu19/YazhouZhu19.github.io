@@ -37,8 +37,17 @@ type Props = {
   data: DashboardData<DashboardPaper> | null;
   signals: ResearchSignalsData | null;
   sourceRecordCount: number;
+  analysisMetadata?: { totalStored: number; collectedAt: string };
 };
-export function AppSidebar({ view, setView, savedCount, data, signals, sourceRecordCount }: Props) {
+export function AppSidebar({
+  view,
+  setView,
+  savedCount,
+  data,
+  signals,
+  sourceRecordCount,
+  analysisMetadata,
+}: Props) {
   const { locale, tr } = useI18n();
   const ui = (zh: string, en: string) => (locale === "en" ? en : zh);
   const signalsView = view === "github" || view === "news";
@@ -99,16 +108,25 @@ export function AppSidebar({ view, setView, savedCount, data, signals, sourceRec
                     `${sourceRecordCount.toLocaleString()} ${view === "github" ? "repositories" : "announcements"}`,
                   )
                 : ui("读取来源数据", "Loading source data")
-              : data
+              : analysisMetadata
                 ? ui(
-                    `${data.papers.length.toLocaleString()} 条论文记录`,
-                    `${data.papers.length.toLocaleString()} paper records`,
+                    `${analysisMetadata.totalStored.toLocaleString()} 条论文记录`,
+                    `${analysisMetadata.totalStored.toLocaleString()} paper records`,
                   )
-                : tr("读取论文库")}
+                : data
+                  ? ui(
+                      `${data.papers.length.toLocaleString()} 条论文记录`,
+                      `${data.papers.length.toLocaleString()} paper records`,
+                    )
+                  : tr("读取论文库")}
             <br />
             <small>
               {tr("最后更新 ")}
-              {tr(fmtTime(signalsView ? signals?.generatedAt : data?.collectedAt))}
+              {tr(
+                fmtTime(
+                  signalsView ? signals?.generatedAt : (analysisMetadata?.collectedAt ?? data?.collectedAt),
+                ),
+              )}
             </small>
           </span>
         </div>

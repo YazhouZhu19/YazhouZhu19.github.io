@@ -1,22 +1,29 @@
 import { test, expect, openHome } from "./test-support";
 
-test("paper-code retrieval separates candidates, filters results and stays local", async ({ page }, info) => {
+test("paper-code retrieval separates candidates, filters results and stays local", async ({
+  page,
+  context,
+}, info) => {
   const en = info.project.name === "en";
   const requests: string[] = [];
+  const fullRequests: string[] = [];
+  context.on("request", (request) => {
+    if (/\/data\/(?:public-papers|papers\/|signals-v2\/)/.test(request.url()))
+      fullRequests.push(request.url());
+  });
   page.on("request", (r) => {
     if (/ai-worker|web-llm|webllm|\/assets\/lib-/.test(r.url())) requests.push(r.url());
   });
-  await openHome(page);
-  await page
-    .locator(".workspace-main-nav")
-    .getByRole("button", { name: en ? "Analysis" : "分析", exact: true })
-    .click();
+  await page.goto("./#/analysis");
   const panel = page.locator(".paper-code-links");
   await panel.locator(":scope > summary").click();
+  expect(fullRequests, "Opening the tool must not download full source archives").toEqual([]);
   await panel
     .getByRole("button", { name: en ? "Find code associations" : "查找代码关联", exact: true })
     .click();
   await expect(panel.locator(".paper-code-stats")).toBeVisible();
+  expect(fullRequests.some((url) => url.includes("/public-papers-v3.json"))).toBe(true);
+  expect(fullRequests.some((url) => url.includes("/signals-v2/"))).toBe(true);
   await panel.getByRole("combobox").selectOption("candidate");
   await expect(panel.locator(".paper-code-row").first()).toBeVisible();
   await panel.locator(".paper-code-row details > summary").first().click();

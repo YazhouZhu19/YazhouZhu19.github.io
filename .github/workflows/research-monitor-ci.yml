@@ -48,6 +48,7 @@ jobs:
         run: |
           node --import tsx scripts/compact-archive.ts
           npm run build
+          node --import tsx scripts/check-analysis-publication.ts
           npm run measure
           site_bytes="$(du -sb dist | cut -f1)"
           if [ "$site_bytes" -gt 800000000 ]; then

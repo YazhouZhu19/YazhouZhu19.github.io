@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-16T18:06:02.425Z",
+  "evidence": "Complete real source archives; no synthetic fixtures or language models",
+  "sourceFiles": [
+    "data/papers.json",
+    "data/research-signals.json"
+  ],
+  "generatedAt": "2026-11-16T18:00:51.062Z",
+  "asOf": "2026-11-16",
+  "ruleVersion": "2026-11-16-v1",
+  "sourceCounts": {
+    "papers": 11294,
+    "signals": 90123
+  },
+  "analysisCounts": {
+    "historicalUniquePapers": 5330,
+    "windowTotals": {
+      "paper": 5197,
+      "github": 28202,
+      "news": 1639
+    },
+    "directions": 7,
+    "nicheCandidates": 303
+  },
+  "checks": {
+    "fullResultDeepEqual": true,
+    "equivalenceCoverage": "All totals, exclusions, duplicates, direction ordering, shares, scores, facets, niche candidates, statuses, gaps and source evidence",
+    "bootstrapSummaryBytesIdentical": true,
+    "manifestBytesAndSha256Verified": true,
+    "sourceManifestHashesVerified": true,
+    "sourceCountsTimesAndStatesVerified": true,
+    "deploymentHashesVerified": true
+  },
+  "transport": {
+    "measurement": "Uncompressed file bytes and data request counts only; excludes application assets and HTTP headers. This is not a network latency measurement.",
+    "previousFullData": {
+      "requests": 302,
+      "rawBytes": 121270517,
+      "paperShards": 71,
+      "signalShards": 229
+    },
+    "sameGeneration": {
+      "requests": 2,
+      "rawBytes": 1430380,
+      "snapshotRawBytes": 1429815,
+      "manifestRawBytes": 565,
+      "snapshotGzipBytes": 317028
+    },
+    "refreshOrSlowBootstrap": {
+      "requests": 3,
+      "note": "A differing remote manifest or a slow web bootstrap can add one verified summary transfer; deployment races can require one bounded retry. The two-request case is the healthy same-generation path, observed separately in the local browser report."
+    },
+    "rawBytesReductionPercent": 98.82
+  },
+  "fingerprints": {
+    "analysisSummary": "268bda38de90e23123f48caeb62fb42de6a136f095563b761e062c7631ab27c0",
+    "paperManifest": "fd97f5484f93c14ddad7d9a042a168a46eefc52e72f62504b50e66ba8da2600f",
+    "signalManifest": "379be88f91d7f98119b902fdfa0cf480f6b65c510f5f7f7218961c614e111f96"
+  }
+}

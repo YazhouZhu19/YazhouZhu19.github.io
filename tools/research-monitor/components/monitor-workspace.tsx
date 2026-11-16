@@ -6,6 +6,7 @@ import { LoadingState } from "./state-views";
 import { useSignals } from "@/hooks/use-signals";
 import { usePaperOverview } from "@/hooks/use-paper-overview";
 import type { DashboardPaper } from "@/lib/dashboard-base";
+import { useAnalysisSnapshot } from "@/hooks/use-analysis-snapshot";
 import { usePaperSnapshot } from "@/hooks/use-paper-snapshot";
 import { usePersonalData } from "@/hooks/use-personal-data";
 import { usePaperLibrary } from "@/hooks/use-paper-library";
@@ -97,7 +98,8 @@ export default function MonitorWorkspace() {
     async () => (signalsStore.getSnapshot().manifest ? (await signalsStore.refresh()) !== null : true),
     [signalsStore],
   );
-  const fullViewRequired = !["dashboard", "github", "news"].includes(view);
+  const fullViewRequired = !["dashboard", "github", "news", "foresight"].includes(view);
+  const analysis = useAnalysisSnapshot(view === "foresight");
   const snapshot = usePaperSnapshot(pollOtherSources, fullViewRequired);
   const { data, loading } = snapshot;
   // Once complete records are accepted, their loader owns freshness checks.
@@ -248,7 +250,7 @@ export default function MonitorWorkspace() {
     [overview.data, library.scope],
   );
   const openOverviewPaper = useCallback(
-    async (paper: DashboardPaper) => {
+    async (paper: Pick<DashboardPaper, "id">) => {
       const found = data?.papers.find((p) => p.id === paper.id);
       if (found) {
         openPaper(found);
@@ -263,6 +265,21 @@ export default function MonitorWorkspace() {
     },
     [data, openPaper, snapshot.load, locale],
   );
+  const openAnalysisPaper = useCallback(
+    (id: string) => {
+      void openOverviewPaper({ id });
+    },
+    [openOverviewPaper],
+  );
+  const loadAnalysisCodeInputs = useCallback(async () => {
+    const [complete, codes] = await Promise.all([
+      data ? Promise.resolve(data) : snapshot.load(),
+      signalsStore.ensureKind("github"),
+    ]);
+    if (!complete || !codes || !signalsStore.getSnapshot().loaded.github)
+      throw new Error("Complete paper/code inputs unavailable");
+    return { papers: complete.papers, signals: codes.records };
+  }, [data, snapshot.load, signalsStore]);
   const scopedPapers = useMemo(
     () => papers.filter((paper) => matchesPaperScope(paper, library.scope)),
     [papers, library.scope],
@@ -366,12 +383,25 @@ export default function MonitorWorkspace() {
           data={displayData}
           signals={signals}
           sourceRecordCount={sourceRecordCount}
+          analysisMetadata={view === "foresight" ? analysis.data?.sources.papers : undefined}
         />
         <SidebarInset>
           <WorkspaceTopbar view={view} accountControl={accountControl} hash={urlHash} />
           <div className="workspace foresight-workspace">
             <WorkspaceHeader
-              {...(view === "dashboard" && !data && !overview.error ? overview : snapshot)}
+              {...(view === "foresight"
+                ? {
+                    data: null,
+                    loading: analysis.loading,
+                    refreshing: analysis.loading,
+                    error: "",
+                    checkResult: null,
+                    load: analysis.load,
+                  }
+                : view === "dashboard" && !data && !overview.error
+                  ? overview
+                  : snapshot)}
+              analysisMetadata={view === "foresight" ? analysis.data?.sources.papers : undefined}
               view={view}
               setView={setView}
               signals={signals}
@@ -447,6 +477,13 @@ export default function MonitorWorkspace() {
                   onNavigate={setView}
                   onPaper={openOverviewPaper}
                 />
+              ) : view === "foresight" ? (
+                <IntegratedAnalysis
+                  analysis={analysis}
+                  reload={analysis.load}
+                  onPaper={openAnalysisPaper}
+                  loadCodeInputs={loadAnalysisCodeInputs}
+                />
               ) : loading || (!data && fullRequired) || (view === "dashboard" && overview.loading) ? (
                 viewFallback
               ) : view === "dashboard" && scopedData ? (
@@ -468,13 +505,6 @@ export default function MonitorWorkspace() {
                   filters={analysisFilters}
                   onFilters={setAnalysisFilters}
                   onDrill={(d) => openDrill(d, "analysis")}
-                  onPaper={openPaper}
-                />
-              ) : view === "foresight" && data ? (
-                <IntegratedAnalysis
-                  papers={papers}
-                  signals={sourceRecords}
-                  sourceStates={signals?.sources ?? []}
                   onPaper={openPaper}
                 />
               ) : view === "teams" && scopedData ? (

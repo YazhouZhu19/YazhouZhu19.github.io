@@ -1,0 +1,1 @@
+export const ANALYSIS_RULE_VERSION = "2026-11-16-v1";

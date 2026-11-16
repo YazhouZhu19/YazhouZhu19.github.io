@@ -1,0 +1,30 @@
+{
+  "paperCount": 11294,
+  "historyTopics": 3,
+  "historyWorks": 14,
+  "sufficient": 1,
+  "pending": 2,
+  "mainstreamDirections": 7,
+  "currentCounts": [
+    "5,197",
+    "28,202",
+    "1,639"
+  ],
+  "desktop": true,
+  "mobile": true,
+  "darkTheme": true,
+  "externalRequests": 0,
+  "modelRequests": 0,
+  "pageErrors": 0,
+  "analysisAsOf": "2026-11-16",
+  "historyReadyMs": 532,
+  "analysisReadyMs": 559,
+  "resultsVisibleMs": 99,
+  "previousDataBytes": 121270517,
+  "analysisDataBytes": 1430380,
+  "dataReductionPercent": 98.82,
+  "previousDataRequests": 302,
+  "analysisDataRequests": 2,
+  "fullDataRequests": 0,
+  "timingEnvironment": "Local production preview, cold browser; timings are not a claim about Internet latency."
+}
