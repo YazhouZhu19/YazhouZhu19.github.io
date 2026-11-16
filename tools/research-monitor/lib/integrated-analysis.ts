@@ -1,3 +1,4 @@
+import { ANALYSIS_RULE_VERSION } from "./analysis-version";
 import { groupWorks } from "./paper-works";
 import { paperScope } from "./paper-scope";
 import type { Paper } from "./types";
@@ -158,7 +159,7 @@ export const ANALYSIS_TAXONOMY = {
   methods: METHODS,
   scenarios: SCENARIOS,
 };
-export const ANALYSIS_RULE_VERSION = "2026-11-16-v1";
+export { ANALYSIS_RULE_VERSION } from "./analysis-version";
 export type Kind = "paper" | "github" | "news";
 export type Evidence = { id: string; kind: Kind; title: string; url: string; excerpt: string };
 type Facet = { label: Text; counts: Record<Kind, number>; evidence: Evidence[] };

@@ -1,6 +1,8 @@
+import { createHash } from "node:crypto";
+import { createAnalysisManifest, createAnalysisSnapshot } from "../scripts/analysis-snapshot";
 import { createPaperOverview } from "../scripts/paper-overview";
 import assert from "node:assert/strict";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { normalizeRecord } from "../lib/record";
 import { monitorDataSchema } from "../lib/public-data-schema";
@@ -197,6 +199,24 @@ await writePublicSnapshotV3(join(target, "public-papers-v3.json"), data);
 await mkdir(join(target, "signals-v2"), { recursive: true });
 await writeSignalsSnapshot(join(target, "signals-v2/manifest.json"), signals);
 await writeFile(join(target, "research-signals.json"), JSON.stringify(signals));
+const hash = async (file: string) =>
+  createHash("sha256")
+    .update(await readFile(join(target, file)))
+    .digest("hex");
+const analysis = createAnalysisSnapshot({
+  papers: data,
+  signals,
+  generatedAt: now,
+  paperManifestSha256: await hash("public-papers-v3.json"),
+  signalsManifestSha256: await hash("signals-v2/manifest.json"),
+});
+const analysisText = JSON.stringify(analysis) + "\n";
+await writeFile(join(target, "analysis-summary.json"), analysisText);
+await writeFile(
+  join(target, "analysis-manifest.json"),
+  JSON.stringify(createAnalysisManifest(analysis, analysisText)) + "\n",
+);
+await writeFile(resolve(".e2e-dist/analysis-bootstrap.json"), analysisText);
 for (const file of ["papers.json", "public-papers-v2.json", "public-papers-v3.json"])
   assert.equal((await readSnapshotFile(join(target, file))).papers.length, descriptions.length);
 await writeFile(

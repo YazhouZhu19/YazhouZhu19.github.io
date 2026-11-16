@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { chromium, expect } from "@playwright/test";
 
 // Review the native application against its real production snapshot, never fixture data.
@@ -44,7 +44,19 @@ try {
   });
   const errors: string[] = [],
     external: string[] = [],
-    models: string[] = [];
+    models: string[] = [],
+    fullDownloads: string[] = [],
+    analysisDownloads: string[] = [];
+  context.on("request", (request) => {
+    if (
+      /\/data\/(?:public-papers|papers(?:\.json|\/)|paper-overview|research-signals|signals-v2\/)/.test(
+        request.url(),
+      )
+    )
+      fullDownloads.push(request.url());
+    if (/analysis-(?:bootstrap|manifest|summary)\.json/.test(request.url()))
+      analysisDownloads.push(request.url());
+  });
   await context.route("**/*", async (route) => {
     const url = route.request().url();
     if (new URL(url).origin !== origin) {
@@ -57,17 +69,20 @@ try {
   page.on("request", (request) => {
     if (/ai-worker|webllm|web-llm|\/assets\/lib-/.test(request.url())) models.push(request.url());
   });
+  const startedAt = performance.now();
   await page.goto(`${base}#/analysis`);
   const panel = page.locator(".integrated-analysis");
   const history = panel.locator(".analysis-history");
-  await expect(history.locator("article[data-history-id]")).toHaveCount(3, { timeout: 90000 });
+  await expect(history.locator("article[data-history-id]")).toHaveCount(3, { timeout: 10000 });
+  const historyReadyMs = Math.round(performance.now() - startedAt);
   await expect(history.locator('[data-history-count="works"]')).toHaveText("14");
   await expect(
     page.locator(".workspace-main-nav").getByRole("button", { name: "分析", exact: true }),
   ).toBeVisible();
   await expect(panel.locator("iframe")).toHaveCount(0);
-  const run = panel.getByRole("button", { name: "运行规则分析", exact: true });
-  await expect(run).toBeEnabled({ timeout: 90000 });
+  const run = panel.getByRole("button", { name: "查看规则分析", exact: true });
+  await expect(run).toBeEnabled({ timeout: 15000 });
+  const analysisReadyMs = Math.round(performance.now() - startedAt);
   assert.match(
     await panel.locator(".integrated-toolbar").innerText(),
     new RegExp(manifest.totalStored.toLocaleString()),
@@ -93,14 +108,33 @@ try {
   await page.emulateMedia({ colorScheme: "light" });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await panel.getByRole("button", { name: "主流研究方向", exact: true }).click();
+  const viewStartedAt = performance.now();
   await run.click();
   await expect(panel.locator(".integrated-directions > article")).toHaveCount(7, { timeout: 90000 });
+  const resultsVisibleMs = Math.round(performance.now() - viewStartedAt);
   const currentCounts = await panel.locator(".integrated-counts strong").allTextContents();
+  const published = JSON.parse(await readFile("dist/analysis-bootstrap.json", "utf8"));
+  assert.deepEqual(
+    currentCounts,
+    ["paper", "github", "news"].map((kind) => published.result.totals[kind].toLocaleString()),
+  );
   assert.ok(Number(currentCounts[0].replaceAll(",", "")) >= 5000);
   await page.screenshot({ path: "docs/screenshots/native-analysis/mainstream-desktop.png", fullPage: true });
   assert.deepEqual(errors, []);
   assert.deepEqual(external, []);
   assert.deepEqual(models, []);
+  assert.deepEqual(fullDownloads, []);
+  const paperManifestBytes = await readFile("dist/data/public-papers-v3.json");
+  const signalManifestBytes = await readFile("dist/data/signals-v2/manifest.json");
+  const oldPaperManifest = JSON.parse(paperManifestBytes.toString());
+  const oldSignalManifest = JSON.parse(signalManifestBytes.toString());
+  const previousDataBytes =
+    paperManifestBytes.length +
+    signalManifestBytes.length +
+    [...oldPaperManifest.shards, ...oldSignalManifest.shards].reduce((sum, shard) => sum + shard.bytes, 0);
+  const analysisDataBytes =
+    (await readFile("dist/analysis-bootstrap.json")).length +
+    (await readFile("dist/data/analysis-manifest.json")).length;
   const report = {
     paperCount: manifest.totalStored,
     historyTopics: 3,
@@ -115,8 +149,20 @@ try {
     externalRequests: 0,
     modelRequests: 0,
     pageErrors: 0,
+    analysisAsOf: published.result.asOf,
+    historyReadyMs,
+    analysisReadyMs,
+    resultsVisibleMs,
+    previousDataBytes,
+    analysisDataBytes,
+    dataReductionPercent: Number(((1 - analysisDataBytes / previousDataBytes) * 100).toFixed(2)),
+    previousDataRequests: 2 + oldPaperManifest.shards.length + oldSignalManifest.shards.length,
+    analysisDataRequests: analysisDownloads.length,
+    fullDataRequests: fullDownloads.length,
+    timingEnvironment:
+      "Local production preview, cold browser; timings are not a claim about Internet latency.",
   };
-  await writeFile("docs/native-analysis-browser-check.json", JSON.stringify(report, null, 2) + "\n");
+  await writeFile("docs/analysis-loading-browser-check.json", JSON.stringify(report, null, 2) + "\n");
   console.log(JSON.stringify(report, null, 2));
 } finally {
   await browser?.close();

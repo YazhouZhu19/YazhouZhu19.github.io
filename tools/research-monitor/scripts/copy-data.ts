@@ -1,3 +1,4 @@
+import { createAnalysisManifest, createAnalysisSnapshot } from "./analysis-snapshot";
 import { createPaperOverview } from "./paper-overview";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -35,11 +36,26 @@ assert.deepEqual(await readSignalsSnapshot("dist/data/signals-v2/manifest.json")
   records: [...signals.records].sort((a, b) => a.id.localeCompare(b.id)),
 });
 const retention = await prunePublishedShards("dist/data", previous, ["public-papers-v3.json"]);
-const publication = await checkPublicationSize("dist");
 const hash = async (path: string) =>
   createHash("sha256")
     .update(await readFile(path))
     .digest("hex");
+const compactPapersSha256 = await hash("dist/data/public-papers-v3.json");
+const signalsManifestSha256 = await hash("dist/data/signals-v2/manifest.json");
+const analysis = createAnalysisSnapshot({
+  papers: data,
+  signals,
+  paperManifestSha256: compactPapersSha256,
+  signalsManifestSha256,
+  generatedAt: new Date().toISOString(),
+});
+const analysisText = JSON.stringify(analysis) + "\n";
+const analysisManifest = createAnalysisManifest(analysis, analysisText);
+await writeFile("dist/data/analysis-summary.json", analysisText);
+await writeFile("dist/data/analysis-manifest.json", JSON.stringify(analysisManifest) + "\n");
+// Root-level bootstrap belongs to this web build while the independent data site catches up.
+await writeFile("dist/analysis-bootstrap.json", analysisText);
+const publication = await checkPublicationSize("dist");
 await writeFile(
   "dist/deployment.json",
   JSON.stringify(
@@ -51,9 +67,11 @@ await writeFile(
       signalCount: signals.records.length,
       collectedAt: data.collectedAt,
       signalsGeneratedAt: signals.generatedAt,
-      compactPapersSha256: await hash("dist/data/public-papers-v3.json"),
+      compactPapersSha256,
       paperOverviewSha256: await hash("dist/data/paper-overview.json"),
-      signalsManifestSha256: await hash("dist/data/signals-v2/manifest.json"),
+      signalsManifestSha256,
+      analysisSnapshotSha256: analysisManifest.snapshotSha256,
+      analysisManifestSha256: await hash("dist/data/analysis-manifest.json"),
     },
     null,
     2,

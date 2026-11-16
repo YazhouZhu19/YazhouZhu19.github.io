@@ -63,6 +63,7 @@ type Props = Pick<ReturnType<typeof usePaperSnapshot>, "loading" | "error" | "re
   signalsError: boolean;
   signalsCheckedAt: string | null;
   loadSignals: () => unknown;
+  analysisMetadata?: { collectedAt: string };
 };
 export function WorkspaceHeader({
   data,
@@ -78,6 +79,7 @@ export function WorkspaceHeader({
   signalsError,
   signalsCheckedAt,
   loadSignals,
+  analysisMetadata,
 }: Props) {
   const { locale, tr } = useI18n();
   const ui = (zh: string, en: string) => (locale === "en" ? en : zh);
@@ -223,9 +225,11 @@ export function WorkspaceHeader({
             ? signals
               ? fmtTime(signals.generatedAt)
               : tr("尚未载入")
-            : data
-              ? fmtTime(data.collectedAt)
-              : tr("尚未载入")}
+            : analysisMetadata
+              ? fmtTime(analysisMetadata.collectedAt)
+              : data
+                ? fmtTime(data.collectedAt)
+                : tr("尚未载入")}
         </span>
         {!signalsView && (
           <button onClick={() => setView("sources")}>

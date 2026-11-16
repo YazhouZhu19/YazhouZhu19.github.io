@@ -14,7 +14,8 @@
       "assets/lib.js is the optional WebLLM runtime; assets/ai-worker.js is the optional AI worker. Neither is loaded by the default page.",
       "2026-11-16 integrated rule analysis replaces the direction page. Initial measured optional UI 11285/5005 raw/gzip, worker 23887/10510, CSS 2294/738. Explicit feature caps 14336/6144, 28672/12288 and 3072/1024; existing startup and aggregate limits remain unchanged. No model runtime is needed by this view.",
       "2026-11-16 paper-code lexical retrieval adds lazy optional UI 6646/3087 raw/gzip, worker 18694/8303 and CSS 865/369 bytes. New caps are 8192/4096, 20480/9216 and 1024/512 respectively. Optional totals grow only by these new caps; all startup, dataset and existing per-asset limits stay unchanged. Niche status UI stays within its existing cap.",
-      "2026-11-17 native Analysis integrates the approved 14-work history snapshot in a lazy optional panel (initial measurement 48370/13070 raw/gzip JS, 8570/1640 CSS). Caps 50176/14336 JS and 9216/2048 CSS. Parent view gains snapshot filters, native theme tokens and separated live/snapshot sections; caps become 18432/7680 JS and 9216/2048 CSS. Optional totals grow only by these explicit feature allowances; all startup, data, worker and other asset ceilings remain unchanged. The newly shared chevron-down icon has a 512/512 raw/gzip per-asset cap within the same aggregate allowances."
+      "2026-11-17 native Analysis integrates the approved 14-work history snapshot in a lazy optional panel (initial measurement 48370/13070 raw/gzip JS, 8570/1640 CSS). Caps 50176/14336 JS and 9216/2048 CSS. Parent view gains snapshot filters, native theme tokens and separated live/snapshot sections; caps become 18432/7680 JS and 9216/2048 CSS. Optional totals grow only by these explicit feature allowances; all startup, data, worker and other asset ceilings remain unchanged. The newly shared chevron-down icon has a 512/512 raw/gzip per-asset cap within the same aggregate allowances.",
+      "2026-11-17 analysis loading optimization replaces approximately 121 MB / 302 full-data requests with a complete 1.43 MB published rule result and a 565-byte manifest. New lazy analysis-store measured 8250/3080 raw/gzip, bounded at 9216/3584; the in-browser analysis worker is no longer emitted. The shared workspace gains analysis metadata, a lazy-loader hook and on-demand detail/retrieval controls: measured main 165200 raw bytes, explicit cap 166912 (+3072). All aggregate startup/optional limits, CSS limits and existing dataset caps remain unchanged. The new optional analysis package is independently capped at 2 MiB raw / 512 KiB gzip and the manifest at 8 KiB / 2 KiB; no build changes these limits."
     ]
   },
   "initialData": [
@@ -63,7 +64,7 @@
         "gzipBytes": 22000
       },
       "assets/main.js": {
-        "rawBytes": 163840,
+        "rawBytes": 166912,
         "gzipBytes": 110000
       },
       "assets/monitor-views.js": {
@@ -301,6 +302,10 @@
       "assets/chevron-down.js": {
         "rawBytes": 512,
         "gzipBytes": 512
+      },
+      "assets/analysis-store.js": {
+        "rawBytes": 9216,
+        "gzipBytes": 3584
       }
     },
     "totals": {
@@ -347,6 +352,18 @@
         "gzipBytes": 4194304,
         "fileRawBytes": 67108864,
         "fileGzipBytes": 16777216
+      },
+      "analysis-summary": {
+        "rawBytes": 2097152,
+        "gzipBytes": 524288,
+        "fileRawBytes": 2097152,
+        "fileGzipBytes": 524288
+      },
+      "analysis-manifest": {
+        "rawBytes": 8192,
+        "gzipBytes": 2048,
+        "fileRawBytes": 8192,
+        "fileGzipBytes": 2048
       }
     }
   },
@@ -385,6 +402,16 @@
       "id": "papers",
       "kind": "paper-snapshot",
       "path": "data/public-papers-v3.json"
+    },
+    {
+      "id": "analysis-summary",
+      "kind": "file",
+      "path": "analysis-bootstrap.json"
+    },
+    {
+      "id": "analysis-manifest",
+      "kind": "file",
+      "path": "data/analysis-manifest.json"
     }
   ],
   "initialDynamicEntries": [

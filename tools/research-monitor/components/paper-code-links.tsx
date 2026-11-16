@@ -6,7 +6,17 @@ import type { ResearchSignal } from "../lib/research-signals";
 import type { PaperCodeResult } from "../lib/paper-code-links";
 import "../styles/paper-code-links.css";
 
-export function PaperCodeLinks({ papers, signals }: { papers: Paper[]; signals: ResearchSignal[] }) {
+const EMPTY_PAPERS: Paper[] = [];
+const EMPTY_SIGNALS: ResearchSignal[] = [];
+export function PaperCodeLinks({
+  papers = EMPTY_PAPERS,
+  signals = EMPTY_SIGNALS,
+  loadInputs,
+}: {
+  papers?: Paper[];
+  signals?: ResearchSignal[];
+  loadInputs?: () => Promise<{ papers: Paper[]; signals: ResearchSignal[] }>;
+}) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
   const [result, setResult] = useState<PaperCodeResult | null>(null),
@@ -16,21 +26,28 @@ export function PaperCodeLinks({ papers, signals }: { papers: Paper[]; signals: 
     [filter, setFilter] = useState("all"),
     [limit, setLimit] = useState(10);
   const worker = useRef<Worker | null>(null);
+  const requestId = useRef(0);
   useEffect(() => {
     worker.current?.terminate();
     worker.current = null;
     setResult(null);
     setRunning(false);
     setError(false);
-    return () => worker.current?.terminate();
+    return () => {
+      requestId.current++;
+      worker.current?.terminate();
+    };
   }, [papers, signals]);
-  function run() {
+  async function run() {
+    const id = ++requestId.current;
     worker.current?.terminate();
     setRunning(true);
     setError(false);
     setResult(null);
     setLimit(10);
     try {
+      const inputs = loadInputs ? await loadInputs() : { papers, signals };
+      if (id !== requestId.current) return;
       const w = new Worker(new URL("../lib/paper-code-links-worker.ts", import.meta.url), { type: "module" });
       worker.current = w;
       w.onmessage = (event: MessageEvent<{ result?: PaperCodeResult; error?: string }>) => {
@@ -49,8 +66,9 @@ export function PaperCodeLinks({ papers, signals }: { papers: Paper[]; signals: 
         w.terminate();
         worker.current = null;
       };
-      w.postMessage({ papers, signals, asOf: new Date().toISOString().slice(0, 10) });
+      w.postMessage({ ...inputs, asOf: new Date().toISOString().slice(0, 10) });
     } catch {
+      if (id !== requestId.current) return;
       setError(true);
       setRunning(false);
     }
@@ -89,6 +107,7 @@ export function PaperCodeLinks({ papers, signals }: { papers: Paper[]; signals: 
         <Button
           variant="outline"
           onClick={() => {
+            requestId.current++;
             worker.current?.terminate();
             worker.current = null;
             setRunning(false);
@@ -100,8 +119,8 @@ export function PaperCodeLinks({ papers, signals }: { papers: Paper[]; signals: 
       <p role="status">
         {running
           ? t(
-              "在本地构建词汇索引并融合两个检索排名，首次运行可能需要数十秒。",
-              "Building a local lexical index and combining two rankings. The first run may take tens of seconds.",
+              "正在载入检索所需资料并在本地构建词汇索引，首次运行可能需要较长时间。",
+              "Loading retrieval inputs and building a local lexical index. The first run may take longer.",
             )
           : result
             ? t(
@@ -109,8 +128,8 @@ export function PaperCodeLinks({ papers, signals }: { papers: Paper[]; signals: 
                 `Analyzed ${result.stats.papers} papers and ${result.stats.repositories} repositories.`,
               )
             : t(
-                "点击后在本地计算，不调用模型或联网检索。",
-                "Compute locally on request, without models or network search.",
+                "点击后按需载入已发布资料并在本地计算，不调用模型或外部检索。",
+                "Load published inputs on request and compute locally, without models or external search.",
               )}
       </p>
       {error && (

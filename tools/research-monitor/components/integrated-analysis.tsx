@@ -1,6 +1,5 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useI18n } from "./locale-provider";
-import { useSignalsAccess } from "./signals-context";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 const PaperCodeLinks = lazy(() => import("./paper-code-links").then((m) => ({ default: m.PaperCodeLinks })));
@@ -8,84 +7,33 @@ const AnalysisHistoryPanel = lazy(() =>
   import("./analysis-history-panel").then((m) => ({ default: m.AnalysisHistoryPanel })),
 );
 import type { Paper } from "@/lib/types";
-import type { ResearchSignal, SignalSourceState } from "@/lib/research-signals";
-import type { AnalysisResult, Evidence, Text } from "@/lib/integrated-analysis";
+import type { ResearchSignal } from "@/lib/research-signals";
+import type { AnalysisState } from "@/lib/analysis-store";
+import type { Evidence, Text } from "@/lib/integrated-analysis";
 import "@/styles/integrated-analysis.css";
 
 export function IntegratedAnalysis({
-  papers,
-  signals,
+  analysis,
+  reload,
   onPaper,
-  sourceStates,
+  loadCodeInputs,
 }: {
-  sourceStates: SignalSourceState[];
-  papers: Paper[];
-  signals: ResearchSignal[];
-  onPaper: (paper: Paper) => void;
+  analysis: AnalysisState & { reloadRequired?: boolean };
+  reload: () => Promise<unknown>;
+  onPaper: (id: string) => void;
+  loadCodeInputs: () => Promise<{ papers: Paper[]; signals: ResearchSignal[] }>;
 }) {
   const { locale } = useI18n();
   const t = (zh: string, en: string) => (locale === "en" ? en : zh);
   const label = (x: Text) => x[locale === "en" ? "en" : "zh"];
-  const access = useSignalsAccess();
-  const [result, setResult] = useState<AnalysisResult | null>(null),
-    [running, setRunning] = useState(false),
-    [error, setError] = useState(false);
+  const [showResult, setShowResult] = useState(false);
+  const result = showResult ? (analysis.data?.result ?? null) : null;
+  const ready = !!analysis.data;
+  const sourceStates = analysis.data?.sources.signals.states ?? [];
   const [tab, setTab] = useState<"mainstream" | "niche">("niche"),
     [evidenceFilter, setEvidenceFilter] = useState<"all" | "sufficient" | "pending">("all"),
     [limit, setLimit] = useState(12),
     [query, setQuery] = useState("");
-  const worker = useRef<Worker | null>(null);
-  const ready = !!access?.loaded.github && !!access?.loaded.news;
-  const load = async () => {
-    setError(false);
-    try {
-      await access?.ensureKind("github");
-      await access?.ensureKind("news");
-    } catch {
-      setError(true);
-    }
-  };
-  useEffect(() => {
-    void load();
-  }, []);
-  useEffect(() => {
-    worker.current?.terminate();
-    worker.current = null;
-    setResult(null);
-    setRunning(false);
-    return () => worker.current?.terminate();
-  }, [papers, signals, ready]);
-  function run() {
-    worker.current?.terminate();
-    setError(false);
-    setRunning(true);
-    setResult(null);
-    try {
-      const w = new Worker(new URL("../lib/integrated-analysis-worker.ts", import.meta.url), {
-        type: "module",
-      });
-      worker.current = w;
-      w.onmessage = (event: MessageEvent<{ result?: AnalysisResult; error?: string }>) => {
-        if (worker.current !== w) return;
-        setResult(event.data.result ?? null);
-        setError(!event.data.result);
-        setRunning(false);
-        w.terminate();
-        worker.current = null;
-      };
-      w.onerror = (event) => {
-        event.preventDefault();
-        setError(true);
-        setRunning(false);
-        w.terminate();
-        worker.current = null;
-      };
-      w.postMessage({ papers, signals, asOf: new Date().toISOString().slice(0, 10) });
-    } catch {
-      setError(true);
-      setRunning(false);
-    }
-  }
   const evidence = (items: Evidence[]) => (
     <ul className="integrated-evidence">
       {items.map((e) => (
@@ -98,14 +46,7 @@ export function IntegratedAnalysis({
                 : t("动态", "News")}
           </span>
           {e.kind === "paper" ? (
-            <button
-              onClick={() => {
-                const p = papers.find((p) => p.id === e.id);
-                if (p) onPaper(p);
-              }}
-            >
-              {e.title}
-            </button>
+            <button onClick={() => onPaper(e.id)}>{e.title}</button>
           ) : /^https?:\/\//i.test(e.url) ? (
             <a href={e.url} target="_blank" rel="noopener noreferrer">
               {e.title}
@@ -143,66 +84,58 @@ export function IntegratedAnalysis({
       <div className="integrated-toolbar">
         <div>
           <span>
-            {t("当前库", "Current library")} · {papers.length.toLocaleString()} {t("篇论文", "papers")} ·
-            GitHub {access?.loaded.github ? t("已载入", "loaded") : t("载入中", "loading")} ·{" "}
-            {t("动态", "News")} {access?.loaded.news ? t("已载入", "loaded") : t("载入中", "loading")}
+            {t("当前库", "Current library")} ·{" "}
+            {analysis.data?.sources.papers.totalStored.toLocaleString() ?? "—"} {t("篇论文", "papers")} ·
+            GitHub {ready ? t("已载入", "loaded") : t("载入中", "loading")} · {t("动态", "News")}{" "}
+            {ready ? t("已载入", "loaded") : t("载入中", "loading")}
           </span>
           <p className="integrated-coverage">
             {t(
-              "运行可更新主流统计与全库初筛；下方定向补证保留已核查版本，单独统计。",
-              "Run to update mainstream statistics and library screening. Targeted history retains its reviewed snapshot and is counted separately.",
+              "主流统计与全库初筛采用同一批已发布资料；下方定向补证保留已核查版本，单独统计。",
+              "Mainstream statistics and library screening use one published source generation. Targeted history retains its reviewed snapshot and is counted separately.",
             )}
           </p>
         </div>
-        <Button onClick={run} disabled={!ready || running || !papers.length}>
-          {running ? t("正在分析…", "Analyzing…") : t("运行规则分析", "Run rule analysis")}
+        <Button onClick={() => setShowResult(true)} disabled={!ready}>
+          {t("查看规则分析", "View rule analysis")}
         </Button>
-        {running && (
-          <Button
-            variant="outline"
-            onClick={() => {
-              worker.current?.terminate();
-              worker.current = null;
-              setRunning(false);
-            }}
-          >
-            {t("取消", "Cancel")}
-          </Button>
-        )}
-        {(!ready || access?.error) && (
-          <Button variant="outline" disabled={access?.loading} onClick={() => void load()}>
-            {t("重新载入来源", "Retry sources")}
+        {(!ready || analysis.error) && (
+          <Button variant="outline" disabled={analysis.loading} onClick={() => void reload()}>
+            {analysis.reloadRequired ? t("刷新页面", "Reload page") : t("重新载入来源", "Retry sources")}
           </Button>
         )}
       </div>
-      {(error || access?.error) && (
+      {analysis.error && (
         <p role="alert">
-          {t("分析或来源加载未完成，请重试。", "Analysis or source loading did not complete. Please retry.")}
+          {ready
+            ? t(
+                "最新发布检查未完成，已保留下方标注日期的分析结果。",
+                "The latest publication could not be checked. The dated analysis below is retained.",
+              )
+            : t(
+                "分析或来源加载未完成，请重试。",
+                "Analysis or source loading did not complete. Please retry.",
+              )}
         </p>
       )}
       <p role="status" className="integrated-coverage">
-        {running
+        {analysis.data
           ? t(
-              "正在去重、统计三类来源并核对积累证据。",
-              "Deduplicating sources and checking concentration and accumulation evidence.",
+              `规则计算截至 ${analysis.data.result.asOf} UTC；可直接查看三类来源的分析结果。`,
+              `Rules evaluated as of ${analysis.data.result.asOf} UTC. Analysis across all three sources is ready to view.`,
             )
-          : result
-            ? t(
-                "当前库分析完成；展开卡片可查看原始依据。",
-                "Library analysis complete. Expand cards to inspect source evidence.",
-              )
-            : t(
-                "定向补证可直接查看；三类来源载入后可运行当前库分析。",
-                "Reviewed history is ready to browse. Run library analysis once all three sources have loaded.",
-              )}
+          : t(
+              "定向补证可直接查看；正在载入已发布的规则分析。",
+              "Reviewed history is ready to browse. Loading the published rule analysis.",
+            )}
       </p>
       {tab === "mainstream" ? (
         <div id="integrated-mainstream-panel">
           {!result ? (
             <p className="integrated-empty">
               {t(
-                "点击“运行规则分析”，查看当前论文、开源和动态中的主流方向。",
-                "Select Run rule analysis to explore mainstream directions across the current papers, code and news.",
+                "点击“查看规则分析”，查看当前论文、开源和动态中的主流方向。",
+                "Select View rule analysis to explore mainstream directions across the current papers, code and news.",
               )}
             </p>
           ) : (
@@ -354,8 +287,8 @@ export function IntegratedAnalysis({
             {!result ? (
               <p>
                 {t(
-                  "运行规则分析后，可查看当前库中的其他候选组合。",
-                  "Run rule analysis to inspect other combinations in the current library.",
+                  "查看规则分析后，可浏览当前库中的其他候选组合。",
+                  "View rule analysis to inspect other combinations in the current library.",
                 )}
               </p>
             ) : (
@@ -448,15 +381,18 @@ export function IntegratedAnalysis({
       <div className="integrated-tools">
         {ready && (
           <Suspense fallback={null}>
-            <PaperCodeLinks papers={papers} signals={signals} />
+            <PaperCodeLinks
+              key={`${analysis.data?.sources.papers.manifestSha256}:${analysis.data?.sources.signals.manifestSha256}:${analysis.data?.result.asOf}`}
+              loadInputs={loadCodeInputs}
+            />
           </Suspense>
         )}
         <details className="integrated-rules">
           <summary>{t("查看算法与筛选口径", "Rules and inclusion criteria")}</summary>
           <p>
             {t(
-              "主流分析采用最近 365 个 UTC 日：论文与动态按发表日，仓库按最近提交日；无有效日期的不进入该窗口。小众分析使用完整历史论文库。先按作品标识、仓库地址及资讯原文链接去重。方向允许多标签，因此占比不相加。集中度 =（论文内占比 + 开源内占比 + 动态内占比）÷ 3；空来源贡献为零，另行显示来源数量。主流候选须至少 3 篇独立论文、至少两类来源各有 2 条记录、集中度不低于 5%。问题、技术和场景均为同一方向记录中出现的词语线索，不作因果关系或性能优劣判断。",
-              "Mainstream analysis uses the last 365 UTC days: publication dates for papers/news and push dates for repositories. Missing dates are not included. Niche analysis uses the full paper history. Deduplicate works, repositories and declared news originals. Directions may overlap, so shares do not sum to 100%. Concentration is the mean of paper, code and news shares; empty sources contribute zero. A mainstream candidate needs 3 works, at least 2 records in each of 2 source types, and a concentration of at least 5%. Problems, methods and scenarios are wording cues within that direction, not causal or performance conclusions.",
+              "主流分析按标注的计算日期回看 365 个 UTC 日：论文与动态按发表日，仓库按最近提交日；无有效日期的不进入该窗口。小众分析使用完整历史论文库。先按作品标识、仓库地址及资讯原文链接去重。方向允许多标签，因此占比不相加。集中度 =（论文内占比 + 开源内占比 + 动态内占比）÷ 3；空来源贡献为零，另行显示来源数量。主流候选须至少 3 篇独立论文、至少两类来源各有 2 条记录、集中度不低于 5%。问题、技术和场景均为同一方向记录中出现的词语线索，不作因果关系或性能优劣判断。",
+              "Mainstream analysis uses the 365 UTC days ending on the displayed calculation date: publication dates for papers/news and push dates for repositories. Missing dates are not included. Niche analysis uses the full paper history. Deduplicate works, repositories and declared news originals. Directions may overlap, so shares do not sum to 100%. Concentration is the mean of paper, code and news shares; empty sources contribute zero. A mainstream candidate needs 3 works, at least 2 records in each of 2 source types, and a concentration of at least 5%. Problems, methods and scenarios are wording cues within that direction, not causal or performance conclusions.",
             )}
           </p>
           <p>

@@ -97,7 +97,7 @@ test("Analysis replaces outlook navigation and legacy bookmarks open both native
 
   await category(panel, en, false).click();
   await expect(category(panel, en, false)).toHaveAttribute("aria-pressed", "true");
-  const run = panel.getByRole("button", { name: en ? "Run rule analysis" : "运行规则分析", exact: true });
+  const run = panel.getByRole("button", { name: en ? "View rule analysis" : "查看规则分析", exact: true });
   await expect(run).toBeEnabled();
   await run.click();
   await expect(panel.locator(".integrated-directions article")).toHaveCount(7);
@@ -237,16 +237,16 @@ test("native history adapts to mobile and dark theme without horizontal overflow
   await panel.screenshot({ path: `test-results/native-history-desktop-dark-${info.project.name}.png` });
 });
 
-test("incomplete live sources preserve native history, block joint analysis and recover after retry", async ({
+test("unavailable published analysis preserves native history and recovers after retry", async ({
   page,
 }, info) => {
   const en = info.project.name === "en";
   let fail = true;
-  await page.route("**/data/signals-v2/**", (route) =>
+  await page.route(/\/(?:analysis-bootstrap|data\/analysis-(?:manifest|summary))\.json(?:\?|$)/, (route) =>
     fail ? route.fulfill({ status: 503, body: "unavailable" }) : route.continue(),
   );
   const panel = await openAnalysis(page, en);
-  const run = panel.getByRole("button", { name: en ? "Run rule analysis" : "运行规则分析", exact: true });
+  const run = panel.getByRole("button", { name: en ? "View rule analysis" : "查看规则分析", exact: true });
   await expect(panel.getByRole("alert")).toBeVisible();
   await expect(run).toBeDisabled();
   await expect(panel.locator(".analysis-history article[data-history-id]")).toHaveCount(3);
