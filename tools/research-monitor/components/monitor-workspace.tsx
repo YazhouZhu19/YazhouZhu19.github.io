@@ -42,7 +42,9 @@ const PaperDetailSheet = lazy(() =>
 );
 import { PaperScopeControl } from "./paper-scope-control";
 import { matchesPaperScope, paperScopeCounts } from "@/lib/paper-scope";
-import { ResearchDashboard } from "./research-dashboard";
+const ResearchDashboard = lazy(() =>
+  import("./research-dashboard").then((module) => ({ default: module.ResearchDashboard })),
+);
 import { exportPaperCsv } from "@/lib/paper-export";
 import { defaultDashboardFilters, type DashboardFilters, type DashboardDrill } from "@/lib/dashboard";
 import type { Paper } from "@/lib/types";

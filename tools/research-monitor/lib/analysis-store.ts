@@ -1,10 +1,17 @@
+import { type AnalysisSnapshot } from "./analysis-snapshot";
 import {
-  ANALYSIS_SNAPSHOT_MAX_BYTES,
-  parseAnalysisManifest,
-  parseAnalysisSnapshot,
-  type AnalysisManifest,
-  type AnalysisSnapshot,
-} from "./analysis-snapshot";
+  ANALYSIS_TRANSPORT_MAX_BYTES,
+  parseAnalysisManifestV2,
+  parseAnalysisTransport,
+  stableAnalysisContent,
+  type AnalysisManifestV2,
+} from "./analysis-transport";
+
+export type PrefetchedAnalysisBootstrap = {
+  url: string;
+  promise: Promise<Response>;
+  controller: AbortController;
+};
 
 export type AnalysisState = {
   data: AnalysisSnapshot | null;
@@ -21,10 +28,13 @@ export function createAnalysisStore(options: {
   fetcher?: typeof fetch;
   timeoutMs?: number;
   bootstrapGraceMs?: number;
+  prefetchedBootstrap?: PrefetchedAnalysisBootstrap;
 }) {
   let state: AnalysisState = { data: null, loading: false, error: false, current: false, checkedAt: null };
   let controller: AbortController | undefined;
   let pending: Promise<AnalysisSnapshot | null> | undefined;
+  let contentSha256: string | undefined;
+  let prefetched = options.prefetchedBootstrap;
   const listeners = new Set<() => void>();
   const publish = (next: Partial<AnalysisState>) => {
     state = { ...state, ...next };
@@ -35,12 +45,27 @@ export function createAnalysisStore(options: {
     data = root(options.dataBaseUrl);
   const fetcher = options.fetcher ?? fetch;
 
-  async function read(path: string, maxBytes: number, signal: AbortSignal) {
-    const response = await fetcher(path, { cache: "no-cache", credentials: "omit", signal });
+  // Also settle when an embedding fetcher ignores AbortSignal; late data is never published.
+  function abortable<T>(request: Promise<T>, signal: AbortSignal): Promise<T> {
+    return new Promise((resolve, reject) => {
+      const abort = () => reject(signal.reason ?? new Error("Analysis request aborted"));
+      if (signal.aborted) {
+        abort();
+        return;
+      }
+      signal.addEventListener("abort", abort, { once: true });
+      request.then(resolve, reject).finally(() => signal.removeEventListener("abort", abort));
+    });
+  }
+  async function read(path: string, maxBytes: number, signal: AbortSignal, early?: Promise<Response>) {
+    const response = await abortable(
+      early ?? fetcher(path, { cache: "no-cache", credentials: "omit", signal }),
+      signal,
+    );
     signal.throwIfAborted();
     if (!response.ok) throw new Error(`Analysis request failed: ${response.status}`);
     if (Number(response.headers.get("Content-Length")) > maxBytes) {
-      await response.body?.cancel();
+      void response.body?.cancel().catch(() => {});
       throw new Error("Analysis response exceeds its size limit");
     }
     const reader = response.body?.getReader();
@@ -50,14 +75,14 @@ export function createAnalysisStore(options: {
     try {
       for (;;) {
         signal.throwIfAborted();
-        const next = await reader.read();
+        const next = await abortable(reader.read(), signal);
         if (next.done) break;
         size += next.value.byteLength;
         if (size > maxBytes) throw new Error("Analysis response exceeds its size limit");
         chunks.push(next.value);
       }
     } catch (error) {
-      await reader.cancel().catch(() => {});
+      void reader.cancel().catch(() => {});
       throw error;
     } finally {
       reader.releaseLock();
@@ -72,7 +97,7 @@ export function createAnalysisStore(options: {
     return bytes;
   }
   const json = (bytes: Uint8Array) => JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
-  function sameCalculation(snapshot: AnalysisSnapshot, manifest: AnalysisManifest) {
+  function sameCalculation(snapshot: AnalysisSnapshot, manifest: AnalysisManifestV2) {
     return (
       snapshot.result.version === manifest.ruleVersion &&
       snapshot.result.asOf === manifest.asOf &&
@@ -84,13 +109,19 @@ export function createAnalysisStore(options: {
       snapshot.sources.signals.generatedAt === manifest.sources.signals.generatedAt
     );
   }
-  function noRegression(next: Pick<AnalysisManifest, "asOf" | "sources">) {
+  function noRegression(next: Pick<AnalysisManifestV2, "asOf" | "sources">) {
     return (
       !state.data ||
       (next.asOf >= state.data.result.asOf &&
         Date.parse(next.sources.papers.collectedAt) >= Date.parse(state.data.sources.papers.collectedAt) &&
         Date.parse(next.sources.signals.generatedAt) >= Date.parse(state.data.sources.signals.generatedAt))
     );
+  }
+  async function sha256(value: Uint8Array | string) {
+    const bytes = typeof value === "string" ? new TextEncoder().encode(value) : new Uint8Array(value);
+    return [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
   }
   async function load() {
     if (pending) return pending;
@@ -103,74 +134,97 @@ export function createAnalysisStore(options: {
       // Start the tiny manifest check alongside the web copy. On the first web
       // rollout the data site may not publish this format yet; history and the
       // web calculation must remain usable in that case.
-      const manifestRequest = read(`${data}data/analysis-manifest.json`, 32_768, signal).then((bytes) =>
-        parseAnalysisManifest(json(bytes)),
+      const manifestRequest = read(`${data}data/analysis-manifest-v2.json`, 32_768, signal).then((bytes) =>
+        parseAnalysisManifestV2(json(bytes)),
       );
       void manifestRequest.catch(() => {});
-      const bootstrapController = new AbortController();
+      const bootstrapPath = `${web}analysis-bootstrap-v2.json`;
+      const bootstrapUrl =
+        typeof location === "undefined" ? bootstrapPath : new URL(bootstrapPath, location.href).href;
+      const early =
+        prefetched?.url === bootstrapUrl && !prefetched.controller.signal.aborted ? prefetched : undefined;
+      prefetched = undefined;
+      const bootstrapController = early?.controller ?? new AbortController();
+      const abortBootstrap = () => bootstrapController.abort();
+      signal.addEventListener("abort", abortBootstrap, { once: true });
       const bootstrapSignal = AbortSignal.any([signal, bootstrapController.signal]);
       const bootstrapRequest = state.data
         ? Promise.resolve()
         : (async () => {
             try {
-              const bootstrap = parseAnalysisSnapshot(
+              const bootstrap = parseAnalysisTransport(
                 json(
-                  await read(`${web}analysis-bootstrap.json`, ANALYSIS_SNAPSHOT_MAX_BYTES, bootstrapSignal),
+                  await read(bootstrapPath, ANALYSIS_TRANSPORT_MAX_BYTES, bootstrapSignal, early?.promise),
                 ),
               );
+              const hash = await sha256(stableAnalysisContent(bootstrap));
               if (
                 controller === active &&
                 !bootstrapSignal.aborted &&
                 noRegression({ asOf: bootstrap.result.asOf, sources: bootstrap.sources })
-              )
+              ) {
+                contentSha256 = hash;
                 publish({ data: bootstrap });
+              }
             } catch {
               /* The data package can recover a missing or slow web copy. */
+            } finally {
+              signal.removeEventListener("abort", abortBootstrap);
             }
           })();
       try {
         let manifest = await manifestRequest;
-        // Give an already-arriving web copy a brief chance to avoid a duplicate
-        // transfer, but never let a stalled copy block the healthy data site.
+        // HTML starts the compact web copy before React. Wait for that one
+        // payload, then cancel a stalled transfer before trying the remote copy.
         await new Promise<void>((resolve) => {
           const grace = setTimeout(
             resolve,
-            options.bootstrapGraceMs ?? Math.min(250, (options.timeoutMs ?? 60_000) / 4),
+            options.bootstrapGraceMs ?? Math.min(1500, (options.timeoutMs ?? 60_000) / 4),
           );
           void bootstrapRequest.finally(() => {
             clearTimeout(grace);
             resolve();
           });
         });
+        bootstrapController.abort();
         for (let attempt = 0; attempt < 2; attempt++) {
           signal.throwIfAborted();
           if (!noRegression(manifest)) throw new Error("Older analysis publication");
-          if (state.data && sameCalculation(state.data, manifest)) {
+          if (state.data && contentSha256 === manifest.contentSha256) {
             if (controller === active)
               publish({ current: true, error: false, checkedAt: new Date().toISOString() });
             bootstrapController.abort();
             return state.data;
           }
-          const bytes = await read(`${data}data/analysis-summary.json`, ANALYSIS_SNAPSHOT_MAX_BYTES, signal);
-          const hash = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
-            .map((byte) => byte.toString(16).padStart(2, "0"))
-            .join("");
+          const bytes = await read(
+            `${data}data/analysis-summary-v2.json`,
+            ANALYSIS_TRANSPORT_MAX_BYTES,
+            signal,
+          );
+          const hash = await sha256(bytes);
           if (hash === manifest.snapshotSha256 && bytes.length === manifest.snapshotBytes) {
-            const next = parseAnalysisSnapshot(json(bytes));
-            if (!sameCalculation(next, manifest) || next.generatedAt !== manifest.generatedAt)
+            const next = parseAnalysisTransport(json(bytes));
+            const contentHash = await sha256(stableAnalysisContent(next));
+            if (
+              !sameCalculation(next, manifest) ||
+              next.generatedAt !== manifest.generatedAt ||
+              contentHash !== manifest.contentSha256
+            )
               throw new Error("Analysis metadata mismatch");
             signal.throwIfAborted();
             if (!noRegression(manifest)) throw new Error("Older analysis publication");
-            if (controller === active)
+            if (controller === active) {
+              contentSha256 = contentHash;
               publish({ data: next, current: true, error: false, checkedAt: new Date().toISOString() });
+            }
             bootstrapController.abort();
             return next;
           }
           // A deploy may occur between the two reads. Retry the small manifest
           // once rather than accepting an unverified or mixed-generation result.
           if (attempt === 0)
-            manifest = parseAnalysisManifest(
-              json(await read(`${data}data/analysis-manifest.json`, 32_768, signal)),
+            manifest = parseAnalysisManifestV2(
+              json(await read(`${data}data/analysis-manifest-v2.json`, 32_768, signal)),
             );
         }
         throw new Error("Analysis digest mismatch");

@@ -104,7 +104,7 @@ test("Analysis replaces outlook navigation and legacy bookmarks open both native
   await category(panel, en, true).click();
   await expect(panel.locator(".analysis-history article[data-history-id]")).toHaveCount(3);
 
-  await page.goto("./#/outlook");
+  await page.goto("./#/outlook?scope=all");
   await expect(page.getByRole("heading", { name: en ? "Analysis" : "分析", exact: true })).toBeVisible();
   await expect(analysisPanel(page, en).locator(".analysis-history article[data-history-id]")).toHaveCount(3);
   expect(modelRequests).toEqual([]);
@@ -242,8 +242,9 @@ test("unavailable published analysis preserves native history and recovers after
 }, info) => {
   const en = info.project.name === "en";
   let fail = true;
-  await page.route(/\/(?:analysis-bootstrap|data\/analysis-(?:manifest|summary))\.json(?:\?|$)/, (route) =>
-    fail ? route.fulfill({ status: 503, body: "unavailable" }) : route.continue(),
+  await page.route(
+    /\/(?:analysis-bootstrap|data\/analysis-(?:manifest|summary))-v2\.json(?:\?|$)/,
+    (route) => (fail ? route.fulfill({ status: 503, body: "unavailable" }) : route.continue()),
   );
   const panel = await openAnalysis(page, en);
   const run = panel.getByRole("button", { name: en ? "View rule analysis" : "查看规则分析", exact: true });

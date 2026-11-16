@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { AnalysisState, createAnalysisStore } from "@/lib/analysis-store";
+import type { AnalysisState, PrefetchedAnalysisBootstrap, createAnalysisStore } from "@/lib/analysis-store";
 import { startManifestPolling } from "@/lib/manifest-polling";
 
 const initial: AnalysisState = { data: null, loading: false, error: false, current: false, checkedAt: null };
@@ -23,7 +23,11 @@ export function useAnalysisSnapshot(enabled: boolean) {
     void import("@/lib/analysis-store")
       .then(({ createAnalysisStore }) => {
         if (disposed) return;
+        const earlyWindow = window as Window & { __oevrynAnalysisBootstrap?: PrefetchedAnalysisBootstrap };
+        const prefetchedBootstrap = earlyWindow.__oevrynAnalysisBootstrap;
+        delete earlyWindow.__oevrynAnalysisBootstrap;
         store.current ??= createAnalysisStore({
+          prefetchedBootstrap,
           webBaseUrl: import.meta.env.BASE_URL,
           dataBaseUrl: import.meta.env.VITE_MONITOR_DATA_BASE_URL || import.meta.env.BASE_URL,
         });

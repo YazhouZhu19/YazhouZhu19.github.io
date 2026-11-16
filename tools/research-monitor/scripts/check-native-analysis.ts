@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { chromium, expect } from "@playwright/test";
+import { parseAnalysisTransport } from "../lib/analysis-transport";
 
 // Review the native application against its real production snapshot, never fixture data.
 const origin = "http://127.0.0.1:4176";
@@ -46,7 +47,8 @@ try {
     external: string[] = [],
     models: string[] = [],
     fullDownloads: string[] = [],
-    analysisDownloads: string[] = [];
+    analysisDownloads: string[] = [],
+    deferredChunks: string[] = [];
   context.on("request", (request) => {
     if (
       /\/data\/(?:public-papers|papers(?:\.json|\/)|paper-overview|research-signals|signals-v2\/)/.test(
@@ -54,8 +56,10 @@ try {
       )
     )
       fullDownloads.push(request.url());
-    if (/analysis-(?:bootstrap|manifest|summary)\.json/.test(request.url()))
+    if (/analysis-(?:bootstrap|manifest|summary)(?:-v2)?\.json(?:\?|$)/.test(request.url()))
       analysisDownloads.push(request.url());
+    if (/\/assets\/(?:research-dashboard|paper-code-links)-[^/]+\.js(?:\?|$)/.test(request.url()))
+      deferredChunks.push(request.url());
   });
   await context.route("**/*", async (route) => {
     const url = route.request().url();
@@ -88,7 +92,11 @@ try {
     new RegExp(manifest.totalStored.toLocaleString()),
   );
   await mkdir("docs/screenshots/native-analysis", { recursive: true });
-  await page.screenshot({ path: "docs/screenshots/native-analysis/workspace-desktop.png", fullPage: true });
+  await page.screenshot({
+    animations: "disabled",
+    path: "docs/screenshots/native-analysis/workspace-desktop.png",
+    fullPage: true,
+  });
   const status = panel.getByRole("group", { name: "积累证据状态" });
   await status.getByRole("button", { name: "证据充分", exact: true }).click();
   await expect(history.locator("article[data-history-id]")).toHaveCount(1);
@@ -98,13 +106,22 @@ try {
   const datasets = card.locator('details[data-history-section="datasets"]');
   await expect(datasets).toContainText("260");
   await expect(datasets).toContainText("267");
-  await datasets.screenshot({ path: "docs/screenshots/native-analysis/data-timeline.png" });
+  await datasets.screenshot({
+    animations: "disabled",
+    path: "docs/screenshots/native-analysis/data-timeline.png",
+  });
   await page.setViewportSize({ width: 390, height: 844 });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-  await history.screenshot({ path: "docs/screenshots/native-analysis/history-mobile.png" });
+  await history.screenshot({
+    animations: "disabled",
+    path: "docs/screenshots/native-analysis/history-mobile.png",
+  });
   await page.emulateMedia({ colorScheme: "dark" });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-  await history.screenshot({ path: "docs/screenshots/native-analysis/history-mobile-dark.png" });
+  await history.screenshot({
+    animations: "disabled",
+    path: "docs/screenshots/native-analysis/history-mobile-dark.png",
+  });
   await page.emulateMedia({ colorScheme: "light" });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await panel.getByRole("button", { name: "主流研究方向", exact: true }).click();
@@ -113,17 +130,28 @@ try {
   await expect(panel.locator(".integrated-directions > article")).toHaveCount(7, { timeout: 90000 });
   const resultsVisibleMs = Math.round(performance.now() - viewStartedAt);
   const currentCounts = await panel.locator(".integrated-counts strong").allTextContents();
-  const published = JSON.parse(await readFile("dist/analysis-bootstrap.json", "utf8"));
+  const published = parseAnalysisTransport(
+    JSON.parse(await readFile("dist/analysis-bootstrap-v2.json", "utf8")),
+  );
   assert.deepEqual(
     currentCounts,
-    ["paper", "github", "news"].map((kind) => published.result.totals[kind].toLocaleString()),
+    (["paper", "github", "news"] as const).map((kind) => published.result.totals[kind].toLocaleString()),
   );
   assert.ok(Number(currentCounts[0].replaceAll(",", "")) >= 5000);
-  await page.screenshot({ path: "docs/screenshots/native-analysis/mainstream-desktop.png", fullPage: true });
+  await page.screenshot({
+    animations: "disabled",
+    path: "docs/screenshots/native-analysis/mainstream-desktop.png",
+    fullPage: true,
+  });
   assert.deepEqual(errors, []);
   assert.deepEqual(external, []);
   assert.deepEqual(models, []);
   assert.deepEqual(fullDownloads, []);
+  assert.deepEqual(deferredChunks, []);
+  assert.deepEqual(analysisDownloads.sort(), [
+    `${base}analysis-bootstrap-v2.json`,
+    `${base}data/analysis-manifest-v2.json`,
+  ]);
   const paperManifestBytes = await readFile("dist/data/public-papers-v3.json");
   const signalManifestBytes = await readFile("dist/data/signals-v2/manifest.json");
   const oldPaperManifest = JSON.parse(paperManifestBytes.toString());
@@ -133,8 +161,8 @@ try {
     signalManifestBytes.length +
     [...oldPaperManifest.shards, ...oldSignalManifest.shards].reduce((sum, shard) => sum + shard.bytes, 0);
   const analysisDataBytes =
-    (await readFile("dist/analysis-bootstrap.json")).length +
-    (await readFile("dist/data/analysis-manifest.json")).length;
+    (await readFile("dist/analysis-bootstrap-v2.json")).length +
+    (await readFile("dist/data/analysis-manifest-v2.json")).length;
   const report = {
     paperCount: manifest.totalStored,
     historyTopics: 3,
@@ -159,6 +187,8 @@ try {
     previousDataRequests: 2 + oldPaperManifest.shards.length + oldSignalManifest.shards.length,
     analysisDataRequests: analysisDownloads.length,
     fullDataRequests: fullDownloads.length,
+    initialDashboardOrRetrievalChunks: deferredChunks.length,
+    bootstrapRequests: analysisDownloads.filter((url) => url.endsWith("/analysis-bootstrap-v2.json")).length,
     timingEnvironment:
       "Local production preview, cold browser; timings are not a claim about Internet latency.",
   };

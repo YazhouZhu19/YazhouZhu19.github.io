@@ -1,4 +1,6 @@
 import { createAnalysisManifest, createAnalysisSnapshot } from "./analysis-snapshot";
+import { encodeAnalysisTransport } from "../lib/analysis-transport";
+import { createAnalysisManifestV2 } from "./analysis-transport";
 import { createPaperOverview } from "./paper-overview";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -55,6 +57,13 @@ await writeFile("dist/data/analysis-summary.json", analysisText);
 await writeFile("dist/data/analysis-manifest.json", JSON.stringify(analysisManifest) + "\n");
 // Root-level bootstrap belongs to this web build while the independent data site catches up.
 await writeFile("dist/analysis-bootstrap.json", analysisText);
+const analysisV2Text = JSON.stringify(encodeAnalysisTransport(analysis)) + "\n";
+const analysisV2Manifest = createAnalysisManifestV2(analysis, analysisV2Text);
+const analysisV2ManifestText = JSON.stringify(analysisV2Manifest) + "\n";
+await writeFile("dist/data/analysis-summary-v2.json", analysisV2Text);
+await writeFile("dist/data/analysis-manifest-v2.json", analysisV2ManifestText);
+await writeFile("dist/analysis-bootstrap-v2.json", analysisV2Text);
+await writeFile("dist/analysis-bootstrap-manifest-v2.json", analysisV2ManifestText);
 const publication = await checkPublicationSize("dist");
 await writeFile(
   "dist/deployment.json",
@@ -72,6 +81,9 @@ await writeFile(
       signalsManifestSha256,
       analysisSnapshotSha256: analysisManifest.snapshotSha256,
       analysisManifestSha256: await hash("dist/data/analysis-manifest.json"),
+      analysisSnapshotV2Sha256: analysisV2Manifest.snapshotSha256,
+      analysisManifestV2Sha256: await hash("dist/data/analysis-manifest-v2.json"),
+      analysisContentSha256: analysisV2Manifest.contentSha256,
     },
     null,
     2,

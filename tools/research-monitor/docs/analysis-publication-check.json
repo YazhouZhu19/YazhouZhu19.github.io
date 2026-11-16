@@ -1,12 +1,12 @@
 {
-  "schemaVersion": 1,
-  "checkedAt": "2026-11-16T18:06:02.425Z",
+  "schemaVersion": 2,
+  "checkedAt": "2026-11-16T18:53:30.398Z",
   "evidence": "Complete real source archives; no synthetic fixtures or language models",
   "sourceFiles": [
     "data/papers.json",
     "data/research-signals.json"
   ],
-  "generatedAt": "2026-11-16T18:00:51.062Z",
+  "generatedAt": "2026-11-16T18:52:50.504Z",
   "asOf": "2026-11-16",
   "ruleVersion": "2026-11-16-v1",
   "sourceCounts": {
@@ -25,6 +25,10 @@
   },
   "checks": {
     "fullResultDeepEqual": true,
+    "compactFullSnapshotDeepEqual": true,
+    "compactBootstrapSummaryBytesIdentical": true,
+    "compactWebDataManifestsIdentical": true,
+    "compactPhysicalAndContentFingerprintsVerified": true,
     "equivalenceCoverage": "All totals, exclusions, duplicates, direction ordering, shares, scores, facets, niche candidates, statuses, gaps and source evidence",
     "bootstrapSummaryBytesIdentical": true,
     "manifestBytesAndSha256Verified": true,
@@ -40,6 +44,16 @@
       "paperShards": 71,
       "signalShards": 229
     },
+    "compactSameContent": {
+      "requests": 2,
+      "rawBytes": 838757,
+      "snapshotRawBytes": 838110,
+      "snapshotGzipBytes": 202433,
+      "manifestRawBytes": 647,
+      "note": "One compact payload and one data manifest; unchanged content with different build timestamps or source shard hashes does not require a second payload.",
+      "rawReductionVsV1Percent": 41.38,
+      "gzipReductionVsV1Percent": 36.15
+    },
     "sameGeneration": {
       "requests": 2,
       "rawBytes": 1430380,
@@ -54,7 +68,9 @@
     "rawBytesReductionPercent": 98.82
   },
   "fingerprints": {
-    "analysisSummary": "268bda38de90e23123f48caeb62fb42de6a136f095563b761e062c7631ab27c0",
+    "analysisSummary": "8822deb104890f11e1fab12d0b3ac5ebe4fb2da4332e86a07a5ce9752d06bb11",
+    "compactAnalysisSummary": "e1dcfbf8369a4163063889cddfe6118cc13f6f0978ae2605c615e04b07097048",
+    "analysisContent": "f9ae187523f085d061c9017caa96edd85a513bd569d57f531e25b1417c0afba1",
     "paperManifest": "fd97f5484f93c14ddad7d9a042a168a46eefc52e72f62504b50e66ba8da2600f",
     "signalManifest": "379be88f91d7f98119b902fdfa0cf480f6b65c510f5f7f7218961c614e111f96"
   }

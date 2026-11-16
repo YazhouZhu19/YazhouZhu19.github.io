@@ -4,7 +4,6 @@ import { Button } from "./ui/button";
 import type { Paper } from "../lib/types";
 import type { ResearchSignal } from "../lib/research-signals";
 import type { PaperCodeResult } from "../lib/paper-code-links";
-import "../styles/paper-code-links.css";
 
 const EMPTY_PAPERS: Paper[] = [];
 const EMPTY_SIGNALS: ResearchSignal[] = [];
@@ -92,8 +91,7 @@ export function PaperCodeLinks({
       );
     }) ?? [];
   return (
-    <details className="paper-code-links">
-      <summary>{t("论文与代码关联 · TF-IDF / BM25", "Paper–code associations · TF-IDF / BM25")}</summary>
+    <>
       <p>
         {t(
           "明确链接与文本候选分别展示。候选需核对，不能据此认定为官方代码，也不会提升小众方向的证据状态。",
@@ -243,6 +241,6 @@ export function PaperCodeLinks({
           )}
         </>
       )}
-    </details>
+    </>
   );
 }

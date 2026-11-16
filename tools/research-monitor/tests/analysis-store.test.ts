@@ -1,15 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createAnalysisStore } from "../lib/analysis-store";
-import { createAnalysisSnapshot, createAnalysisManifest } from "../scripts/analysis-snapshot";
+import { createAnalysisSnapshot } from "../scripts/analysis-snapshot";
+import { createAnalysisManifestV2 } from "../scripts/analysis-transport";
+import { encodeAnalysisTransport } from "../lib/analysis-transport";
 import { monitorDataSchema } from "../lib/public-data-schema";
 import { normalizeRecord } from "../lib/record";
 
 const web = "https://web.example/research-monitor/";
 const data = "https://data.example/";
-const bootstrapUrl = `${web}analysis-bootstrap.json`;
-const manifestUrl = `${data}data/analysis-manifest.json`;
-const summaryUrl = `${data}data/analysis-summary.json`;
+const bootstrapUrl = `${web}analysis-bootstrap-v2.json`;
+const manifestUrl = `${data}data/analysis-manifest-v2.json`;
+const summaryUrl = `${data}data/analysis-summary-v2.json`;
 function packet(n = 1, generatedAt = "2026-11-17T00:00:00Z", collectedAt = `2026-11-${14 + n}T00:00:00Z`) {
   const papers = monitorDataSchema.parse({
     papers: Array.from({ length: n }, (_, i) =>
@@ -43,8 +45,8 @@ function packet(n = 1, generatedAt = "2026-11-17T00:00:00Z", collectedAt = `2026
     signalsManifestSha256: "b".repeat(64),
     generatedAt,
   });
-  const text = JSON.stringify(snapshot) + "\n";
-  return { snapshot, text, manifest: createAnalysisManifest(snapshot, text) };
+  const text = JSON.stringify(encodeAnalysisTransport(snapshot)) + "\n";
+  return { snapshot, text, manifest: createAnalysisManifestV2(snapshot, text) };
 }
 const response = (value: unknown) =>
   new Response(typeof value === "string" ? value : JSON.stringify(value), {
@@ -69,7 +71,8 @@ function abortable<T>(promise: Promise<T>, signal: AbortSignal | null | undefine
   });
 }
 async function until(predicate: () => boolean) {
-  for (let i = 0; i < 100 && !predicate(); i++) await new Promise<void>((done) => setImmediate(done));
+  const deadline = performance.now() + 5000;
+  while (!predicate() && performance.now() < deadline) await new Promise<void>((done) => setImmediate(done));
   assert.ok(predicate(), "Expected store state did not become observable");
 }
 function store(fetcher: typeof fetch, timeoutMs = 1000) {
@@ -242,7 +245,8 @@ test("cancellation cannot publish a late response or prevent a subsequent load",
   assert.equal(current.getSnapshot().loading, false);
 });
 
-test("timeout is recoverable and does not leave a permanent pending request", async () => {
+test("timeout is recoverable and does not leave a permanent pending request", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
   const old = packet(),
     never = deferred<Response>();
   let paused = true;
@@ -252,7 +256,11 @@ test("timeout is recoverable and does not leave a permanent pending request", as
     if (String(input) === manifestUrl) return response(old.manifest);
     throw new Error("Unexpected request");
   }, 30);
-  assert.equal(await current.load(), null);
+  const stalled = current.load();
+  t.mock.timers.tick(29);
+  assert.equal(current.getSnapshot().loading, true);
+  t.mock.timers.tick(1);
+  assert.equal(await stalled, null);
   assert.equal(current.getSnapshot().error, true);
   assert.equal(current.getSnapshot().loading, false);
   paused = false;
@@ -274,7 +282,8 @@ test("source freshness compares instants rather than timestamp strings with diff
   assert.deepEqual(current.getSnapshot().data, next.snapshot);
 });
 
-test("manifest timeout retains immediately available bootstrap data and marks freshness unconfirmed", async () => {
+test("manifest timeout retains immediately available bootstrap data and marks freshness unconfirmed", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
   const pack = packet(),
     remote = deferred<Response>();
   const current = store(async (input, init) => {
@@ -282,7 +291,10 @@ test("manifest timeout retains immediately available bootstrap data and marks fr
     if (String(input) === manifestUrl) return abortable(remote.promise, init?.signal);
     throw new Error("Unexpected full-data request");
   }, 30);
-  await current.load();
+  const pending = current.load();
+  await until(() => current.getSnapshot().data !== null);
+  t.mock.timers.tick(30);
+  await pending;
   assert.deepEqual(current.getSnapshot().data, pack.snapshot);
   assert.equal(current.getSnapshot().error, true);
   assert.equal(current.getSnapshot().current, false);
@@ -396,4 +408,108 @@ test("a late older bootstrap cannot replace a newer remote result even when tran
   assert.ok(published.length > 0);
   for (const value of published) assert.deepEqual(value, next.snapshot);
   stop();
+});
+
+test("equal content with different storage layouts skips the remote payload and keeps coherent source metadata", async () => {
+  const local = packet();
+  const remote = structuredClone(local.snapshot);
+  remote.generatedAt = "2026-11-17T01:00:00Z";
+  remote.sources.papers.manifestSha256 = "c".repeat(64);
+  remote.sources.signals.manifestSha256 = "d".repeat(64);
+  const text = JSON.stringify(encodeAnalysisTransport(remote));
+  const manifest = createAnalysisManifestV2(remote, text);
+  assert.equal(manifest.contentSha256, local.manifest.contentSha256);
+  const paths: string[] = [];
+  const current = store(async (input) => {
+    paths.push(String(input));
+    if (String(input) === bootstrapUrl) return response(local.text);
+    if (String(input) === manifestUrl) return response(manifest);
+    throw new Error("An identical result must not be downloaded again");
+  });
+  await current.load();
+  assert.deepEqual(current.getSnapshot().data, local.snapshot);
+  assert.equal(current.getSnapshot().current, true);
+  assert.deepEqual(paths.sort(), [bootstrapUrl, manifestUrl].sort());
+});
+
+test("HTML prefetch is adopted once and subsequent refreshes only fetch the manifest", async () => {
+  const pack = packet(),
+    paths: string[] = [];
+  const current = createAnalysisStore({
+    webBaseUrl: web,
+    dataBaseUrl: data,
+    prefetchedBootstrap: {
+      url: bootstrapUrl,
+      promise: Promise.resolve(response(pack.text)),
+      controller: new AbortController(),
+    },
+    fetcher: async (input) => {
+      paths.push(String(input));
+      assert.equal(String(input), manifestUrl);
+      return response(pack.manifest);
+    },
+  });
+  await current.load();
+  await current.load();
+  assert.deepEqual(current.getSnapshot().data, pack.snapshot);
+  assert.deepEqual(paths, [manifestUrl, manifestUrl]);
+});
+
+test("a healthy slower prefetch completes before remote fallback, without a second payload", async () => {
+  const pack = packet(),
+    early = deferred<Response>(),
+    paths: string[] = [];
+  const current = createAnalysisStore({
+    webBaseUrl: web,
+    dataBaseUrl: data,
+    bootstrapGraceMs: 200,
+    timeoutMs: 1000,
+    prefetchedBootstrap: { url: bootstrapUrl, promise: early.promise, controller: new AbortController() },
+    fetcher: async (input) => {
+      paths.push(String(input));
+      assert.equal(String(input), manifestUrl);
+      return response(pack.manifest);
+    },
+  });
+  const pending = current.load();
+  await new Promise((done) => setTimeout(done, 20));
+  early.resolve(response(pack.text));
+  await pending;
+  assert.equal(current.getSnapshot().current, true);
+  assert.deepEqual(paths, [manifestUrl]);
+});
+
+test("stalled prefetch is aborted before the remote payload starts", async () => {
+  const pack = packet(),
+    early = deferred<Response>(),
+    controller = new AbortController();
+  const current = createAnalysisStore({
+    webBaseUrl: web,
+    dataBaseUrl: data,
+    bootstrapGraceMs: 0,
+    prefetchedBootstrap: { url: bootstrapUrl, promise: early.promise, controller },
+    fetcher: async (input) => {
+      if (String(input) === manifestUrl) return response(pack.manifest);
+      assert.equal(String(input), summaryUrl);
+      assert.equal(controller.signal.aborted, true);
+      return response(pack.text);
+    },
+  });
+  await current.load();
+  assert.deepEqual(current.getSnapshot().data, pack.snapshot);
+  assert.equal(current.getSnapshot().current, true);
+});
+
+test("a remote content fingerprint mismatch is rejected despite a valid transport digest", async () => {
+  const pack = packet(2),
+    manifest = { ...pack.manifest, contentSha256: "0".repeat(64) };
+  const current = store(async (input) => {
+    if (String(input) === bootstrapUrl) return new Response("missing", { status: 404 });
+    if (String(input) === manifestUrl) return response(manifest);
+    if (String(input) === summaryUrl) return response(pack.text);
+    throw new Error("Unexpected request");
+  });
+  await current.load();
+  assert.equal(current.getSnapshot().data, null);
+  assert.equal(current.getSnapshot().error, true);
 });

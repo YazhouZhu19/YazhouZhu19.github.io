@@ -15,7 +15,8 @@
       "2026-11-16 integrated rule analysis replaces the direction page. Initial measured optional UI 11285/5005 raw/gzip, worker 23887/10510, CSS 2294/738. Explicit feature caps 14336/6144, 28672/12288 and 3072/1024; existing startup and aggregate limits remain unchanged. No model runtime is needed by this view.",
       "2026-11-16 paper-code lexical retrieval adds lazy optional UI 6646/3087 raw/gzip, worker 18694/8303 and CSS 865/369 bytes. New caps are 8192/4096, 20480/9216 and 1024/512 respectively. Optional totals grow only by these new caps; all startup, dataset and existing per-asset limits stay unchanged. Niche status UI stays within its existing cap.",
       "2026-11-17 native Analysis integrates the approved 14-work history snapshot in a lazy optional panel (initial measurement 48370/13070 raw/gzip JS, 8570/1640 CSS). Caps 50176/14336 JS and 9216/2048 CSS. Parent view gains snapshot filters, native theme tokens and separated live/snapshot sections; caps become 18432/7680 JS and 9216/2048 CSS. Optional totals grow only by these explicit feature allowances; all startup, data, worker and other asset ceilings remain unchanged. The newly shared chevron-down icon has a 512/512 raw/gzip per-asset cap within the same aggregate allowances.",
-      "2026-11-17 analysis loading optimization replaces approximately 121 MB / 302 full-data requests with a complete 1.43 MB published rule result and a 565-byte manifest. New lazy analysis-store measured 8250/3080 raw/gzip, bounded at 9216/3584; the in-browser analysis worker is no longer emitted. The shared workspace gains analysis metadata, a lazy-loader hook and on-demand detail/retrieval controls: measured main 165200 raw bytes, explicit cap 166912 (+3072). All aggregate startup/optional limits, CSS limits and existing dataset caps remain unchanged. The new optional analysis package is independently capped at 2 MiB raw / 512 KiB gzip and the manifest at 8 KiB / 2 KiB; no build changes these limits."
+      "2026-11-17 analysis loading optimization replaces approximately 121 MB / 302 full-data requests with a complete 1.43 MB published rule result and a 565-byte manifest. New lazy analysis-store measured 8250/3080 raw/gzip, bounded at 9216/3584; the in-browser analysis worker is no longer emitted. The shared workspace gains analysis metadata, a lazy-loader hook and on-demand detail/retrieval controls: measured main 165200 raw bytes, explicit cap 166912 (+3072). All aggregate startup/optional limits, CSS limits and existing dataset caps remain unchanged. The new optional analysis package is independently capped at 2 MiB raw / 512 KiB gzip and the manifest at 8 KiB / 2 KiB; no build changes these limits.",
+      "2026-11-17 second analysis startup optimization: ResearchDashboard and its shared chart/style helpers are now lazy. Main JS falls from 165200 to about 125964 raw bytes (new gzip 41098); main CSS from 119567/19961 to 84484/14954. Tightened per-asset main caps, added explicit caps for extracted chunks, and allowed analysis-store 14336/5120 for strict lossless dictionary decoding and semantic SHA verification. The compact analysis package gets a stricter 1.5 MiB/320 KiB cap; legacy v1 publication remains compatible. No algorithm or evidence is removed. CSS aggregate allowance is redistributed from startup to lazy assets while keeping the exact same combined 280768 raw / 53232 gzip ceiling. All JS aggregate ceilings remain unchanged; limits are never rewritten by builds."
     ]
   },
   "initialData": [
@@ -60,12 +61,12 @@
         "gzipBytes": 2155520
       },
       "assets/main.css": {
-        "rawBytes": 120000,
-        "gzipBytes": 22000
+        "rawBytes": 86016,
+        "gzipBytes": 16384
       },
       "assets/main.js": {
-        "rawBytes": 166912,
-        "gzipBytes": 110000
+        "rawBytes": 131072,
+        "gzipBytes": 45056
       },
       "assets/monitor-views.js": {
         "rawBytes": 15360,
@@ -304,8 +305,44 @@
         "gzipBytes": 512
       },
       "assets/analysis-store.js": {
-        "rawBytes": 9216,
-        "gzipBytes": 3584
+        "rawBytes": 14336,
+        "gzipBytes": 5120
+      },
+      "assets/research-dashboard.js": {
+        "rawBytes": 17408,
+        "gzipBytes": 6144
+      },
+      "assets/dashboard-common.js": {
+        "rawBytes": 3072,
+        "gzipBytes": 1536
+      },
+      "assets/dashboard-common.css": {
+        "rawBytes": 25600,
+        "gzipBytes": 4608
+      },
+      "assets/spatial-chart.js": {
+        "rawBytes": 13312,
+        "gzipBytes": 5120
+      },
+      "assets/trend-annotations.js": {
+        "rawBytes": 4608,
+        "gzipBytes": 2304
+      },
+      "assets/trend-annotations.css": {
+        "rawBytes": 11264,
+        "gzipBytes": 2816
+      },
+      "assets/table.js": {
+        "rawBytes": 1536,
+        "gzipBytes": 768
+      },
+      "assets/preload-helper.js": {
+        "rawBytes": 1536,
+        "gzipBytes": 1024
+      },
+      "assets/paper-works.js": {
+        "rawBytes": 4096,
+        "gzipBytes": 2048
       }
     },
     "totals": {
@@ -314,16 +351,16 @@
         "gzipBytes": 220160
       },
       "initialCss": {
-        "rawBytes": 120000,
-        "gzipBytes": 22000
+        "rawBytes": 86016,
+        "gzipBytes": 15872
       },
       "optionalJs": {
         "rawBytes": 12753920,
         "gzipBytes": 4525568
       },
       "optionalCss": {
-        "rawBytes": 160768,
-        "gzipBytes": 31232
+        "rawBytes": 194752,
+        "gzipBytes": 37360
       },
       "initialData": {
         "rawBytes": 14680064,
@@ -354,10 +391,10 @@
         "fileGzipBytes": 16777216
       },
       "analysis-summary": {
-        "rawBytes": 2097152,
-        "gzipBytes": 524288,
-        "fileRawBytes": 2097152,
-        "fileGzipBytes": 524288
+        "rawBytes": 1572864,
+        "gzipBytes": 327680,
+        "fileRawBytes": 1572864,
+        "fileGzipBytes": 327680
       },
       "analysis-manifest": {
         "rawBytes": 8192,
@@ -406,12 +443,12 @@
     {
       "id": "analysis-summary",
       "kind": "file",
-      "path": "analysis-bootstrap.json"
+      "path": "analysis-bootstrap-v2.json"
     },
     {
       "id": "analysis-manifest",
       "kind": "file",
-      "path": "data/analysis-manifest.json"
+      "path": "data/analysis-manifest-v2.json"
     }
   ],
   "initialDynamicEntries": [

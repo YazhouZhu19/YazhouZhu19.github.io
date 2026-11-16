@@ -3,6 +3,11 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import { parseAnalysisManifest, parseAnalysisSnapshot } from "../lib/analysis-snapshot";
+import {
+  parseAnalysisTransport,
+  parseAnalysisManifestV2,
+  stableAnalysisContent,
+} from "../lib/analysis-transport";
 import { analyzeResearch } from "../lib/integrated-analysis";
 import { parseResearchSignalsData } from "../lib/research-signals";
 import { parseSignalsManifest } from "../lib/signals-snapshot";
@@ -12,6 +17,10 @@ import { readSnapshotFile } from "./snapshot-files";
 // Verify the actual production artifacts against complete real source archives,
 // including every niche candidate and source excerpt; never substitute E2E fixtures.
 const [
+  bootstrapV2Bytes,
+  summaryV2Bytes,
+  manifestV2Bytes,
+  bootstrapManifestV2Bytes,
   bootstrapBytes,
   summaryBytes,
   analysisManifestBytes,
@@ -21,6 +30,10 @@ const [
   deploymentBytes,
   papers,
 ] = await Promise.all([
+  readFile("dist/analysis-bootstrap-v2.json"),
+  readFile("dist/data/analysis-summary-v2.json"),
+  readFile("dist/data/analysis-manifest-v2.json"),
+  readFile("dist/analysis-bootstrap-manifest-v2.json"),
   readFile("dist/analysis-bootstrap.json"),
   readFile("dist/data/analysis-summary.json"),
   readFile("dist/data/analysis-manifest.json"),
@@ -38,6 +51,35 @@ const paperManifest = parseSnapshotManifest(JSON.parse(paperManifestBytes.toStri
 const signalManifest = parseSignalsManifest(JSON.parse(signalManifestBytes.toString("utf8")));
 const signals = parseResearchSignalsData(JSON.parse(rawSignals));
 const deployment = JSON.parse(deploymentBytes);
+const snapshotV2 = parseAnalysisTransport(JSON.parse(bootstrapV2Bytes.toString("utf8")));
+const summaryV2 = parseAnalysisTransport(JSON.parse(summaryV2Bytes.toString("utf8")));
+const manifestV2 = parseAnalysisManifestV2(JSON.parse(manifestV2Bytes.toString("utf8")));
+assert.deepEqual(snapshotV2, snapshot, "Compact transport did not restore the complete original snapshot");
+assert.deepEqual(
+  summaryV2,
+  snapshot,
+  "Compact data publication did not restore the complete original snapshot",
+);
+assert.deepEqual(bootstrapV2Bytes, summaryV2Bytes, "Compact web/data payload bytes differ");
+assert.deepEqual(bootstrapManifestV2Bytes, manifestV2Bytes, "Compact web/data manifest bytes differ");
+assert.equal(manifestV2.snapshotSha256, hash(summaryV2Bytes));
+assert.equal(manifestV2.snapshotBytes, summaryV2Bytes.length);
+assert.equal(
+  manifestV2.contentSha256,
+  createHash("sha256").update(stableAnalysisContent(snapshot)).digest("hex"),
+);
+const {
+  contentSha256: _contentHash,
+  schema: _v2Schema,
+  snapshotSha256: _v2Hash,
+  snapshotBytes: _v2Bytes,
+  ...v2Metadata
+} = manifestV2;
+const { schema: _v1Schema, snapshotSha256: _v1Hash, snapshotBytes: _v1Bytes, ...v1Metadata } = manifest;
+assert.deepEqual(v2Metadata, v1Metadata);
+assert.equal(deployment.analysisSnapshotV2Sha256, hash(summaryV2Bytes));
+assert.equal(deployment.analysisManifestV2Sha256, hash(manifestV2Bytes));
+assert.equal(deployment.analysisContentSha256, manifestV2.contentSha256);
 assert.ok(
   papers.papers.length >= 10000 && signals.records.length >= 50000,
   "Expected complete real source archives, not synthetic browser fixtures",
@@ -86,8 +128,11 @@ const previousBytes =
   [...paperManifest.shards, ...signalManifest.shards].reduce((total, shard) => total + shard.bytes, 0);
 const previousRequests = 2 + paperManifest.shards.length + signalManifest.shards.length;
 const newBytes = bootstrapBytes.length + analysisManifestBytes.length;
+const compactBytes = bootstrapV2Bytes.length + manifestV2Bytes.length;
+const gzipBytes = gzipSync(bootstrapBytes, { level: 9 }).length;
+const compactGzipBytes = gzipSync(bootstrapV2Bytes, { level: 9 }).length;
 const report = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   checkedAt: new Date().toISOString(),
   evidence: "Complete real source archives; no synthetic fixtures or language models",
   sourceFiles: ["data/papers.json", "data/research-signals.json"],
@@ -103,6 +148,10 @@ const report = {
   },
   checks: {
     fullResultDeepEqual: true,
+    compactFullSnapshotDeepEqual: true,
+    compactBootstrapSummaryBytesIdentical: true,
+    compactWebDataManifestsIdentical: true,
+    compactPhysicalAndContentFingerprintsVerified: true,
     equivalenceCoverage:
       "All totals, exclusions, duplicates, direction ordering, shares, scores, facets, niche candidates, statuses, gaps and source evidence",
     bootstrapSummaryBytesIdentical: true,
@@ -120,6 +169,18 @@ const report = {
       paperShards: paperManifest.shards.length,
       signalShards: signalManifest.shards.length,
     },
+    compactSameContent: {
+      requests: 2,
+      rawBytes: compactBytes,
+      snapshotRawBytes: bootstrapV2Bytes.length,
+      snapshotGzipBytes: compactGzipBytes,
+      manifestRawBytes: manifestV2Bytes.length,
+      note: "One compact payload and one data manifest; unchanged content with different build timestamps or source shard hashes does not require a second payload.",
+      rawReductionVsV1Percent: Number(
+        ((1 - bootstrapV2Bytes.length / bootstrapBytes.length) * 100).toFixed(2),
+      ),
+      gzipReductionVsV1Percent: Number(((1 - compactGzipBytes / gzipBytes) * 100).toFixed(2)),
+    },
     sameGeneration: {
       requests: 2,
       rawBytes: newBytes,
@@ -135,6 +196,8 @@ const report = {
   },
   fingerprints: {
     analysisSummary: hash(summaryBytes),
+    compactAnalysisSummary: hash(summaryV2Bytes),
+    analysisContent: manifestV2.contentSha256,
     paperManifest: hash(paperManifestBytes),
     signalManifest: hash(signalManifestBytes),
   },
