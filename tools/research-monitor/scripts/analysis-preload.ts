@@ -67,21 +67,20 @@ export function analysisPreload(): Plugin {
     },
     transformIndexHtml: {
       order: "post",
-      handler(_html, context) {
+      handler(html, context) {
         if (!context.bundle) return;
         const resources = collectAnalysisPreloads(context.bundle, config.root);
         const base =
           config.base === "./" || config.base === ""
             ? `${normalize(relative(dirname(context.filename), config.root)) || "."}/`
             : config.base;
-        return [
-          {
-            tag: "script",
-            attrs: { "data-analysis-preload": true },
-            children: analysisPreloadScript(resources, base),
-            injectTo: "head",
-          },
-        ];
+        // Classic inline scripts wait for any preceding stylesheet. Keep the
+        // encoding declaration early, then start hints before Vite's CSS links.
+        const charset = /<meta\b[^>]*\bcharset\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)[^>]*>/i.exec(html);
+        if (!charset) throw new Error("Analysis preload requires an explicit HTML charset");
+        const position = charset.index + charset[0].length;
+        const script = `<script data-analysis-preload>${analysisPreloadScript(resources, base)}</script>`;
+        return html.slice(0, position) + "\n  " + script + html.slice(position);
       },
     },
   };

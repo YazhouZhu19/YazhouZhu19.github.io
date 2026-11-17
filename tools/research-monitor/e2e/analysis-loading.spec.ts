@@ -57,6 +57,45 @@ test("direct analysis starts one bootstrap before React and reuses it when the s
   }
 });
 
+test("analysis bootstrap and route module start before a slow main stylesheet completes", async ({
+  page,
+  context,
+}, info) => {
+  const en = info.project.name === "en";
+  const requests: string[] = [];
+  context.on("request", (request) => requests.push(new URL(request.url()).pathname));
+  let release!: () => void;
+  let mainCssRequests = 0;
+  const blocked = new Promise<void>((resolve) => (release = resolve));
+  await context.route(/\/assets\/main-[^/]+\.css(?:\?|$)/, async (route) => {
+    mainCssRequests++;
+    await blocked;
+    await route.continue();
+  });
+  try {
+    await page.goto("./#/analysis", { waitUntil: "commit" });
+    await expect.poll(() => mainCssRequests).toBe(1);
+    await expect
+      .poll(() => requests.filter((path) => path === "/research-monitor/analysis-bootstrap-v2.json"))
+      .toHaveLength(1);
+    await expect
+      .poll(() => requests.some((path) => /\/assets\/integrated-analysis-[^/]+\.js$/.test(path)))
+      .toBe(true);
+    await expect(panel(page)).toHaveCount(0);
+    release();
+    await expect(panel(page).locator(".analysis-history article[data-history-id]")).toHaveCount(3);
+    await expect(
+      panel(page).getByRole("button", { name: en ? "View rule analysis" : "查看规则分析", exact: true }),
+    ).toBeEnabled();
+    expect(requests.filter((path) => path === "/research-monitor/analysis-bootstrap-v2.json")).toHaveLength(
+      1,
+    );
+    expect(mainCssRequests).toBe(1);
+  } finally {
+    release();
+  }
+});
+
 test("a non-analysis first screen does not preload analysis modules or data", async ({ page, context }) => {
   const requests: string[] = [];
   context.on("request", (request) => {
