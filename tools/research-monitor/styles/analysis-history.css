@@ -16,7 +16,7 @@
   }
   .analysis-history .analysis-history-heading h2 {
     margin: 0;
-    font: 500 var(--text-20) / 1.5 var(--font-reading);
+    font: 600 var(--text-20) / 1.5 var(--font-ui);
   }
   .analysis-history .analysis-history-heading p,
   .analysis-history .analysis-history-context,
@@ -29,9 +29,11 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-16);
-    border-block: 1px solid var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-10);
+    background: var(--card);
     margin: 0 0 var(--space-12);
-    padding: var(--space-16) 0;
+    padding: var(--space-16);
   }
   .analysis-history-metrics > div {
     display: flex;
@@ -44,7 +46,8 @@
   }
   .analysis-history-metrics dd {
     margin: 0 0 var(--space-4);
-    font: 400 var(--text-26) / 1.2 var(--font-data);
+    font: 600 var(--text-26) / 1.2 var(--font-ui);
+    font-variant-numeric: tabular-nums;
   }
   .analysis-history-metrics dt {
     color: var(--muted-foreground);
@@ -53,7 +56,7 @@
   }
   .analysis-history .analysis-history-boundary {
     padding: var(--space-10) var(--space-12);
-    background: var(--muted);
+    background: var(--status-info-surface);
     border-radius: var(--radius-6);
     color: var(--foreground);
     font: var(--text-12) / 1.8 var(--font-ui);
@@ -75,23 +78,25 @@
   }
   .analysis-history .analysis-history-card-head h3 {
     margin: 0;
-    font: 500 var(--text-18) / 1.55 var(--font-reading);
+    font: 600 var(--text-18) / 1.55 var(--font-ui);
     min-width: 0;
     overflow-wrap: anywhere;
   }
   .analysis-history .analysis-history-badge {
-    border-radius: var(--radius-4);
-    font: 500 var(--text-11) / 1.5 var(--font-ui);
-    padding: var(--space-3) var(--space-7);
-    border-color: transparent;
+    border-radius: var(--radius-6);
+    font: 500 var(--text-12) / 1.5 var(--font-ui);
+    padding: var(--space-4) var(--space-9);
+    border-color: currentColor;
   }
   .analysis-history-badge.is-sufficient {
     color: var(--status-success);
     background: var(--status-success-surface);
+    border-color: color-mix(in srgb, var(--status-success) 20%, transparent);
   }
   .analysis-history-badge.is-pending {
     color: var(--status-warning);
     background: var(--status-warning-surface);
+    border-color: color-mix(in srgb, var(--status-warning) 20%, transparent);
   }
   .analysis-history .analysis-history-scope {
     margin: var(--space-6) 0 var(--space-10);
@@ -125,6 +130,7 @@
   }
   .analysis-history [data-history-toggle] {
     font-size: var(--text-12);
+    color: var(--primary);
   }
   .analysis-history [data-history-toggle] .is-open {
     transform: rotate(180deg);
@@ -145,6 +151,12 @@
     color: var(--foreground);
     font: 500 var(--text-13) / 1.7 var(--font-ui);
     cursor: pointer;
+  }
+  .analysis-history .analysis-history-section > summary::marker {
+    color: var(--primary);
+  }
+  .analysis-history .analysis-history-section > summary:hover {
+    color: var(--primary);
   }
   .analysis-history-section > summary > span {
     margin-left: var(--space-8);
@@ -248,7 +260,7 @@
     text-underline-offset: var(--space-3);
   }
   .analysis-history-timeline .analysis-history-source-link {
-    font: 400 var(--text-14) / 1.65 var(--font-reading);
+    font: 500 var(--text-14) / 1.65 var(--font-ui);
   }
   .analysis-history .analysis-history-timeline p {
     color: var(--muted-foreground);

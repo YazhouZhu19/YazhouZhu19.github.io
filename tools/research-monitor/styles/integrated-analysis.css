@@ -4,6 +4,7 @@
     min-width: 0;
     color: var(--foreground);
     font-size: var(--text-15);
+    font-family: var(--font-ui);
     line-height: 1.7;
   }
   .integrated-analysis > p,
@@ -41,6 +42,10 @@
     flex: 1 1 16rem;
     min-width: 0;
   }
+  .integrated-toolbar > [data-slot="button"] {
+    min-height: var(--space-40);
+    font-size: var(--text-13);
+  }
   .integrated-toolbar > span,
   .integrated-toolbar > div > span {
     color: var(--muted-foreground);
@@ -73,7 +78,7 @@
     overflow-wrap: anywhere;
   }
   .integrated-counts strong {
-    font: 500 var(--text-24) / 1.3 var(--font-data);
+    font: 600 var(--text-28) / 1.3 var(--font-ui);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.035em;
   }
@@ -82,7 +87,7 @@
   }
   .integrated-counts small {
     color: var(--muted-foreground);
-    font: var(--text-11) / 1.65 var(--font-ui);
+    font: var(--text-12) / 1.65 var(--font-ui);
   }
 
   /* History cards own their layout; these rules only style live rule results. */
@@ -110,17 +115,22 @@
     min-width: 0;
     margin: 0;
     font-size: var(--text-19);
-    font-weight: 550;
+    font-weight: 600;
     line-height: 1.55;
   }
   .integrated-directions > article > header > span {
-    color: var(--muted-foreground);
+    color: var(--accent-foreground);
+    background: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
+    border-radius: var(--radius-6);
+    padding: var(--space-3) var(--space-9);
     font: var(--text-12) / 1.7 var(--font-ui);
   }
   .integrated-directions h4,
   .integrated-lexical h4 {
     margin: 0 0 var(--space-10);
     font: 600 var(--text-13) / 1.6 var(--font-ui);
+    color: var(--primary);
   }
   .integrated-score {
     display: flex;
@@ -132,7 +142,7 @@
   }
   .integrated-score strong {
     color: var(--primary);
-    font: 500 var(--text-24) / 1.3 var(--font-data);
+    font: 600 var(--text-24) / 1.3 var(--font-ui);
     font-variant-numeric: tabular-nums;
   }
   .integrated-facets {
@@ -143,6 +153,10 @@
   }
   .integrated-facets > section {
     min-width: 0;
+    padding: var(--space-16);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-10);
+    background: var(--background);
   }
   .integrated-directions details,
   .integrated-lexical-card details {
@@ -154,11 +168,21 @@
     cursor: pointer;
     line-height: 1.65;
     overflow-wrap: anywhere;
+    font-size: var(--text-14);
+  }
+  .integrated-directions summary::marker,
+  .integrated-lexical summary::marker {
+    color: var(--primary);
+  }
+  .integrated-directions summary:hover,
+  .integrated-lexical summary:hover {
+    color: var(--primary);
   }
   .integrated-directions summary small,
   .integrated-lexical-card small {
     color: var(--muted-foreground);
-    font: var(--text-11) / 1.65 var(--font-ui);
+    font: var(--text-12) / 1.65 var(--font-ui);
+    font-variant-numeric: tabular-nums;
   }
   .integrated-evidence {
     margin: var(--space-8) 0 0;
@@ -183,7 +207,7 @@
   .integrated-evidence a {
     max-width: 100%;
     color: var(--foreground);
-    font: 550 var(--text-14) / 1.65 var(--font-reading);
+    font: 550 var(--text-14) / 1.65 var(--font-ui);
     text-align: left;
     text-decoration: underline;
     text-underline-offset: var(--space-3);
@@ -225,7 +249,7 @@
     min-height: var(--space-40);
     padding: var(--space-9) var(--space-12);
     border: 1px solid var(--input);
-    border-radius: var(--radius-7);
+    border-radius: var(--radius-8);
     background: var(--card);
     color: var(--foreground);
     font: var(--text-14) / 1.5 var(--font-ui);
@@ -244,6 +268,15 @@
     font-size: var(--text-13);
     line-height: 1.5;
     white-space: normal;
+  }
+  .integrated-status > button[aria-pressed="false"] {
+    background: var(--card);
+    border-color: var(--input);
+    color: var(--muted-foreground);
+  }
+  .integrated-status > button[aria-pressed="false"]:hover {
+    background: var(--accent);
+    color: var(--accent-foreground);
   }
   .integrated-niche-status {
     display: inline-flex;

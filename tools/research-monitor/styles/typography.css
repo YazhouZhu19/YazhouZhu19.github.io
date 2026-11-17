@@ -1,10 +1,10 @@
 @layer theme, base, components, utilities, app-base, app-surface, app-type, app-view;
 @layer app-type {
-  /* Academic reading typography, using local fonts so no font download blocks reading. */
+  /* Local system fonts keep dense research interfaces readable without a font download. */
 
   /* Body-level inheritance also reaches portal-based paper sheets and dialogs. */
   body {
-    font-family: var(--font-reading);
+    font-family: var(--font-ui);
   }
 
   /* Compact controls retain the reference's clear sans-serif treatment. */
@@ -32,9 +32,9 @@
   .page-heading h1,
   .dashboard-workspace .page-heading h1,
   html[lang="en"] .page-heading h1 {
-    font-family: var(--font-reading);
-    font-weight: 700;
-    letter-spacing: normal;
+    font-family: var(--font-ui);
+    font-weight: 650;
+    letter-spacing: -0.025em;
   }
 
   h2,
@@ -44,14 +44,14 @@
   .analysis-panel-heading h2,
   [data-slot="sheet-title"],
   [data-slot="dialog-title"] {
-    font-family: var(--font-reading);
-    letter-spacing: normal;
+    font-family: var(--font-ui);
+    letter-spacing: -0.015em;
   }
 
   .analysis-reading-title,
   .dash-recent-list > button > strong {
-    font-family: var(--font-reading);
-    font-weight: 400;
+    font-family: var(--font-ui);
+    font-weight: 550;
     letter-spacing: normal;
     line-height: 1.55;
   }

@@ -28,12 +28,16 @@
     border-bottom: 2px solid transparent;
     background: transparent;
     color: var(--muted-foreground);
-    font: 500 var(--text-13) / 1.5 var(--font-ui);
+    font: 500 var(--text-14) / 1.5 var(--font-ui);
     cursor: pointer;
   }
   .dashboard-section-tabs > button[aria-pressed="true"] {
-    color: var(--foreground);
+    color: var(--primary);
+    font-weight: 600;
     border-bottom-color: var(--primary);
+  }
+  .dashboard-section-tabs > button:hover {
+    color: var(--primary);
   }
   .dashboard-section-tabs > button > span {
     font: var(--text-11) var(--font-data);

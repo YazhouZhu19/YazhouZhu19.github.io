@@ -2,7 +2,7 @@
   /* Shared semantic palette and scales; optical aliases retain the existing geometry. */
   :root {
     color-scheme: light;
-    --background: #ffffff;
+    --background: #f8faf9;
     --foreground: #172a3a;
     --card: #ffffff;
     --card-foreground: var(--foreground);
@@ -13,7 +13,7 @@
     --secondary: #eaf1f4;
     --secondary-foreground: #334c5c;
     --muted: #edf2f5;
-    --muted-foreground: #627886;
+    --muted-foreground: #5b707d;
     --accent: #e5f4ef;
     --accent-foreground: #096f5f;
     --destructive: #b43f3b;
@@ -34,7 +34,7 @@
     --status-warning-surface: #fcf8ef;
     --status-error-surface: #fff5f5;
     --status-info-surface: #f3f6fa;
-    --sidebar: color-mix(in srgb, var(--card) 92%, transparent);
+    --sidebar: var(--card);
     --sidebar-foreground: var(--muted-foreground);
     --sidebar-primary: var(--primary);
     --sidebar-primary-foreground: var(--primary-foreground);
@@ -44,17 +44,17 @@
     --sidebar-ring: var(--ring);
     --living-ink: var(--foreground);
     --living-muted: var(--muted-foreground);
-    --living-paper: color-mix(in srgb, var(--card) 86%, transparent);
+    --living-paper: var(--card);
     --living-line: var(--border);
     --living-sage: color-mix(in srgb, var(--foreground) 3.5%, transparent);
     --living-lime: var(--primary);
     --living-rust: var(--status-warning);
-    --living-radius: var(--radius-22);
-    --radius: var(--radius-14);
+    --living-radius: var(--radius-14);
+    --radius: var(--radius-10);
     --glass-blur: blur(16px) saturate(115%);
     --glass-hover: color-mix(in srgb, var(--foreground) 3.5%, transparent);
-    --shadow-1: 0 14px 38px rgb(24 28 35 / 3.5%), inset 0 1px 0 rgb(255 255 255 / 95%);
-    --shadow-2: 0 12px 32px rgb(24 28 35 / 9%), inset 0 1px 0 rgb(255 255 255 / 95%);
+    --shadow-1: 0 1px 3px rgb(24 42 35 / 3%);
+    --shadow-2: 0 8px 24px rgb(24 42 35 / 10%), 0 2px 6px rgb(24 42 35 / 4%);
     --glass-shadow: var(--shadow-1);
     --focus-shadow: 0 0 0 2px var(--ring);
     --font-reading:
