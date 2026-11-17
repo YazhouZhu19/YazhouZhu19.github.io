@@ -1,7 +1,7 @@
 @layer theme, base, components, utilities, app-base, app-surface, app-type, app-view;
 @layer app-view {
   .github-maintenance .dash-status-legend > button > span {
-    font-size: var(--text-11);
+    font-size: var(--text-12);
   }
   .github-maintenance .dash-status-legend > button > span > i {
     flex-shrink: 0;
@@ -25,11 +25,11 @@
   .github-popularity-heading h2 {
     margin: 0;
     color: var(--living-ink);
-    font: 500 var(--text-18) / 1.5 var(--font-ui);
+    font: 600 var(--text-18) / 1.5 var(--font-ui);
   }
   .github-popularity-heading > span {
     color: var(--living-muted);
-    font: var(--text-11) / 1.6 var(--font-ui);
+    font: var(--text-12) / 1.6 var(--font-ui);
   }
   .github-popularity-metrics,
   .github-ranking-grid {
@@ -47,6 +47,8 @@
     color: var(--popularity-color);
   }
   .github-popularity-metric > strong {
+    font-family: var(--font-ui);
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
   }
@@ -56,18 +58,18 @@
     gap: var(--space-8) var(--space-18);
     flex-wrap: wrap;
     color: var(--living-muted);
-    font: var(--text-11) / 1.8 var(--font-ui);
+    font: var(--text-12) / 1.7 var(--font-ui);
   }
   .github-popularity-card-detail b {
     color: var(--living-ink);
-    font-weight: 500;
+    font-weight: 600;
     margin-left: var(--space-7);
     font-variant-numeric: tabular-nums;
   }
   .github-popularity-note {
     margin: var(--space-12) 0 var(--space-20);
     color: var(--living-muted);
-    font: var(--text-11) / 1.8 var(--font-ui);
+    font: var(--text-12) / 1.8 var(--font-ui);
   }
   .github-ranking {
     --popularity-color: var(--chart-1);
@@ -86,7 +88,7 @@
     gap: var(--space-8);
     margin: 0;
     color: var(--living-ink);
-    font: 500 var(--text-15) / 1.6 var(--font-ui);
+    font: 600 var(--text-16) / 1.6 var(--font-ui);
   }
   .github-ranking h3 > svg {
     color: var(--popularity-color);
@@ -109,11 +111,19 @@
     text-align: left;
     color: var(--living-ink);
     border: 0;
+    border-radius: var(--radius-6);
     background: transparent;
     cursor: pointer;
   }
   .github-ranking-row:hover {
-    background: var(--living-paper);
+    background: var(--accent);
+  }
+  .github-ranking-row:hover .github-ranking-project > strong {
+    color: var(--accent-foreground);
+  }
+  .github-ranking-row:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: var(--space-3);
   }
   .github-ranking-position {
     align-self: start;
@@ -128,12 +138,12 @@
   .github-ranking-project > strong {
     display: block;
     overflow-wrap: anywhere;
-    font: 500 var(--text-12) / 1.7 var(--font-ui);
+    font: 600 var(--text-14) / 1.6 var(--font-ui);
   }
   .github-ranking-project > span:not(.github-ranking-track) {
     display: block;
     color: var(--living-muted);
-    font: var(--text-10) / 1.7 var(--font-ui);
+    font: var(--text-12) / 1.7 var(--font-ui);
   }
   .github-ranking-track {
     display: block;
@@ -156,12 +166,12 @@
   .github-ranking-value b {
     display: block;
     white-space: nowrap;
-    font: 500 var(--text-15) / 1.5 var(--font-ui);
+    font: 600 var(--text-16) / 1.5 var(--font-ui);
   }
   .github-ranking-value small {
     display: block;
     color: var(--living-muted);
-    font: var(--text-10) / 1.5 var(--font-ui);
+    font: var(--text-12) / 1.5 var(--font-ui);
   }
   .github-ranking-row > svg {
     color: var(--living-muted);
@@ -169,7 +179,7 @@
   .github-ranking-scale {
     margin: var(--space-12) var(--space-24) var(--space-20);
     color: var(--living-muted);
-    font: var(--text-10) / 1.8 var(--font-ui);
+    font: var(--text-12) / 1.8 var(--font-ui);
   }
   .github-ranking-empty {
     min-height: 100px;

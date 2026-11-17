@@ -5,6 +5,10 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-8) var(--space-16);
+    padding: var(--space-12) var(--space-16);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-10);
+    background: var(--card);
     font: var(--text-12) / 1.7 var(--font-ui);
     color: var(--muted-foreground);
   }
@@ -17,6 +21,8 @@
     gap: var(--space-8);
     min-height: 40px;
     color: var(--foreground);
+    font-size: var(--text-13);
+    cursor: pointer;
   }
   .github-quality-control input {
     width: 16px;
@@ -28,8 +34,23 @@
     min-height: 40px;
     display: flex;
     align-items: center;
+    color: var(--primary);
+    font-weight: 500;
+    text-underline-offset: var(--space-3);
+  }
+  .github-quality-control summary:hover {
+    text-decoration: underline;
+  }
+  .github-quality-control :is(input, summary):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: var(--space-3);
   }
   .github-quality-control details[open] {
     flex-basis: 100%;
+  }
+  .github-quality-control details[open] p {
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--border);
+    line-height: 1.8;
   }
 }
