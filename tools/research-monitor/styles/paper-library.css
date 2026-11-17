@@ -49,7 +49,8 @@
     display: flex;
     gap: var(--space-12);
     flex-wrap: wrap;
-    font-size: var(--text-12);
+    align-items: center;
+    font-size: var(--text-14);
     color: var(--muted-foreground);
     margin-bottom: var(--space-8);
   }
@@ -161,7 +162,7 @@
     justify-content: space-between;
   }
   .paper-authors {
-    font-size: var(--text-12);
+    font-size: var(--text-14);
     color: var(--muted-foreground);
     margin-top: var(--space-8);
     line-height: 1.6;
@@ -378,8 +379,8 @@
   .paper-section,
   .filter-panel {
     border-color: var(--living-line);
-    border-radius: var(--living-radius);
-    background: var(--living-paper);
+    border-radius: var(--radius-14);
+    background: var(--card);
     box-shadow: var(--glass-shadow);
   }
   .filter-panel {
@@ -387,14 +388,14 @@
   }
   .filter-select {
     height: 40px;
-    border-radius: var(--radius-11);
-    background: var(--living-paper);
+    border-radius: var(--radius-8);
+    background: var(--card);
     border-color: var(--living-line);
   }
   .search-box input {
-    height: 46px;
-    border-radius: var(--radius-12);
-    background: var(--living-paper);
+    height: 40px;
+    border-radius: var(--radius-8);
+    background: var(--card);
   }
   .search-box > svg,
   .filter-row > svg {
@@ -405,7 +406,7 @@
   }
   .section-heading h2 {
     color: var(--living-ink);
-    font-weight: 550;
+    font-weight: 600;
   }
   .paper-row {
     padding: var(--space-27) var(--space-26);
@@ -413,15 +414,21 @@
     transition: background-color 180ms ease;
   }
   .paper-row:hover {
-    background: var(--glass-hover);
+    background: color-mix(in srgb, var(--primary) 3%, var(--card));
   }
   .paper-title {
     color: var(--living-ink);
     font-weight: 550;
     line-height: 1.65;
   }
-  .paper-title:hover {
-    color: var(--living-ink);
+  .paper-title:hover,
+  .paper-title:focus-visible {
+    color: var(--primary);
+  }
+  .paper-title:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
+    border-radius: var(--radius-4);
   }
   .paper-authors,
   .abstract-preview {
@@ -433,15 +440,15 @@
   }
   .tag {
     border-color: var(--living-line);
-    background: var(--living-paper);
+    background: var(--card);
     color: var(--living-muted);
     border-radius: var(--radius-7);
     padding: var(--space-3) var(--space-9);
   }
   .task-tag {
-    background: color-mix(in srgb, var(--foreground) 4%, transparent);
-    border-color: color-mix(in srgb, var(--foreground) 13%, transparent);
-    color: var(--foreground);
+    background: var(--accent);
+    border-color: color-mix(in srgb, var(--primary) 18%, var(--card));
+    color: var(--accent-foreground);
   }
   .human-tag {
     background: color-mix(in srgb, var(--foreground) 4%, transparent);
@@ -449,20 +456,20 @@
     color: var(--foreground);
   }
   .saved-tag {
-    background: color-mix(in srgb, var(--foreground) 4.5%, transparent);
-    border-color: color-mix(in srgb, var(--foreground) 14%, transparent);
-    color: var(--status-error);
+    background: var(--accent);
+    border-color: color-mix(in srgb, var(--primary) 18%, var(--card));
+    color: var(--accent-foreground);
   }
   .status-preprint {
-    background: color-mix(in srgb, var(--foreground) 6.5%, transparent);
-    color: var(--foreground);
+    background: var(--muted);
+    color: var(--secondary-foreground);
   }
   .status-published {
-    background: color-mix(in srgb, var(--foreground) 6%, transparent);
-    color: var(--foreground);
+    background: var(--accent);
+    color: var(--accent-foreground);
   }
   .saved-icon {
-    color: var(--living-ink);
+    color: var(--primary);
   }
   .saved-note {
     background: var(--living-paper);
@@ -471,14 +478,12 @@
     border-radius: 0 var(--radius-12) var(--radius-12) 0;
   }
   .paper-detail {
-    background: color-mix(in srgb, var(--card) 98%, transparent);
+    background: var(--card);
     color: var(--living-ink);
-    -webkit-backdrop-filter: var(--glass-blur);
-    backdrop-filter: var(--glass-blur);
     box-shadow: var(--glass-shadow);
   }
   .paper-detail [data-slot="sheet-header"] {
-    background: var(--living-paper);
+    background: var(--card);
   }
   .detail-body {
     padding: var(--space-30) var(--space-32) var(--space-40);
@@ -580,12 +585,15 @@
     border-top: 1px solid var(--living-line);
   }
   .filter-active-count {
+    display: inline-grid;
+    place-items: center;
     border-radius: 50%;
     min-width: 18px;
     height: 18px;
     font-size: var(--text-11);
-    background: var(--muted);
-    color: var(--primary);
+    background: var(--accent);
+    color: var(--accent-foreground);
+    font-variant-numeric: tabular-nums;
   }
   .library-statistics {
     margin-top: var(--space-28);
@@ -613,24 +621,32 @@
 }
 @layer app-type {
   .paper-meta,
+  .paper-authors,
+  .abstract-preview,
+  .section-caption,
   .tag-row,
   .detail-dates {
     font-family: var(--font-ui);
   }
 
   .paper-title,
-  .detail-body h2 {
-    font-family: var(--font-reading);
-    font-weight: 400;
+  .detail-body h2,
+  .paper-section .section-heading h2 {
+    font-family: var(--font-ui);
+    font-weight: 600;
     letter-spacing: normal;
     line-height: 1.55;
   }
 
   .paper-title {
-    font-size: var(--text-19);
+    font-size: var(--text-18);
   }
 
-  .abstract-preview,
+  .abstract-preview {
+    font-size: var(--text-14);
+    line-height: 1.75;
+  }
+
   .evidence blockquote {
     font-size: var(--text-15);
     line-height: 1.8;
@@ -643,7 +659,7 @@
 
   @media (max-width: 640px) {
     .paper-title {
-      font-size: var(--text-18);
+      font-size: var(--text-17);
     }
 
     .full-abstract {
