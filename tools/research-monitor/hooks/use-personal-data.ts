@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/lib/notifications";
 import { api, LOCAL_DATA_KEY, getLocalStorageStatus, type LocalStorageStatus } from "@/lib/local-api";
 import type { Collection, Paper, Team } from "@/lib/types";
 export function usePersonalData({

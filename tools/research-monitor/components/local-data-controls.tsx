@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { exportBackup, importBackup, validateBackup, MAX_BACKUP_BYTES } from "@/lib/local-api";
 import { useI18n } from "./locale-provider";
-import { toast } from "sonner";
+import { toast } from "@/lib/notifications";
 
 export function LocalDataControls({ onChange }: { onChange: () => Promise<unknown> }) {
   const { tr } = useI18n();

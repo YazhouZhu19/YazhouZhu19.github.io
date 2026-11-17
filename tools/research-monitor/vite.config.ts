@@ -21,12 +21,6 @@ export default defineConfig({
               test: /node_modules[\\/](?:react|react-dom|scheduler)[\\/]/,
               priority: 20,
             },
-            {
-              name: "vendor-ui",
-              test: /node_modules[\\/](?:@radix-ui|radix-ui|@base-ui|@floating-ui)[\\/]/,
-              priority: 10,
-              entriesAware: false,
-            },
           ],
         },
       },

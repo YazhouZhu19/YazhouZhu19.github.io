@@ -6,7 +6,8 @@ import { test, expect, openHome } from "./test-support";
 const fullData =
   /\/data\/(?:public-papers-v\d+\.json|papers(?:\.json|\/)|paper-overview\.json|research-signals\.json|signals-v2\/)/;
 const lightData = /\/(?:analysis-bootstrap|data\/analysis-(?:manifest|summary))(?:-v2)?\.json(?:\?|$)/;
-const deferredChunks = /\/assets\/(?:research-dashboard|paper-code-links)-[^/]+\.js(?:\?|$)/;
+const deferredChunks =
+  /\/assets\/(?:research-dashboard|paper-code-links|notification-host|sonner|select)-[^/]+\.js(?:\?|$)/;
 const analysisChunks =
   /\/assets\/(?:integrated-analysis|analysis-store|analysis-history-panel)-[^/]+\.js(?:\?|$)/;
 const initialAnalysisPaths = [
@@ -65,7 +66,7 @@ test("a non-analysis first screen does not preload analysis modules or data", as
   expect(requests).toEqual([]);
 });
 
-test("analysis preload transfers each style once and waits for slow history CSS before rendering", async ({
+test("analysis preload transfers each style once and waits for route CSS before rendering history", async ({
   page,
   context,
 }, info) => {
@@ -77,7 +78,7 @@ test("analysis preload transfers each style once and waits for slow history CSS 
   });
   let release!: () => void;
   const slowCss = new Promise<void>((resolve) => (release = resolve));
-  await context.route(/\/assets\/analysis-history-panel-[^/]+\.css(?:\?|$)/, async (route) => {
+  await context.route(/\/assets\/integrated-analysis-[^/]+\.css(?:\?|$)/, async (route) => {
     await slowCss;
     await route.continue();
   });
@@ -85,12 +86,10 @@ test("analysis preload transfers each style once and waits for slow history CSS 
     await page.goto("./#/analysis", { waitUntil: "domcontentloaded" });
     const analysis = panel(page);
     await expect(
-      analysis.getByText(en ? "Loading reviewed research history…" : "正在载入已核查的研究积累…", {
-        exact: true,
-      }),
+      page.locator(".view-state-loading").getByText(en ? "Loading content" : "正在加载内容", { exact: true }),
     ).toBeVisible();
-    await expect(analysis.locator(".analysis-history article[data-history-id]")).toHaveCount(0);
-    await expect(page.locator('link[rel="stylesheet"][href*="analysis-history-panel-"]')).toHaveCount(1);
+    await expect(analysis).toHaveCount(0);
+    await expect(page.locator('link[rel="stylesheet"][href*="/integrated-analysis-"]')).toHaveCount(1);
     release();
     await expect(analysis.locator(".analysis-history article[data-history-id]")).toHaveCount(3);
     expect(styles.filter((path, index) => styles.indexOf(path) !== index)).toEqual([]);
@@ -195,7 +194,10 @@ test("published results preserve counts and evidence without loading the full so
   await expect
     .poll(() => analysisRequests.map((url) => new URL(url).pathname).sort())
     .toEqual(initialAnalysisPaths);
-  expect(unusedChunks, "The dashboard and collapsed retrieval tool are outside the first screen").toEqual([]);
+  expect(
+    unusedChunks,
+    "Dashboard, retrieval, notifications and select modules are outside the analysis first screen",
+  ).toEqual([]);
   expect(fullRequests, "Neither the first screen nor rule results need the full source archives").toEqual([]);
 });
 

@@ -6,9 +6,9 @@ type BuildBundle = NonNullable<IndexHtmlTransformContext["bundle"]>;
 export type AnalysisPreloadResources = { modules: string[]; styles: string[] };
 
 const entryModules = [
+  "components/analysis-history-panel.tsx",
   "components/integrated-analysis.tsx",
   "lib/analysis-store.ts",
-  "components/analysis-history-panel.tsx",
 ];
 const normalize = (path: string) => path.replaceAll("\\", "/");
 
@@ -50,8 +50,10 @@ const inlineJson = (value: unknown) =>
 export function analysisPreloadScript(resources: AnalysisPreloadResources, base: string): string {
   const data = inlineJson({ ...resources, base });
   // Vite finds module links by their href attribute, so preserve its base-relative
-  // spelling. CSS is only hinted: Vite still installs, orders and awaits styles.
-  return `(()=>{if(!/^#\\/(?:analysis|outlook)(?:\\?|$)/.test(location.hash))return;const r=${data};const url=new URL(r.base+"analysis-bootstrap-v2.json",location.href).href;if(!window.__oevrynAnalysisBootstrap){const controller=new AbortController();const promise=fetch(url,{cache:"no-cache",credentials:"omit",signal:controller.signal});promise.catch(()=>{});window.__oevrynAnalysisBootstrap={url,promise,controller};}const links=()=>Array.from(document.getElementsByTagName("link"));for(const [files,rel] of [[r.modules,"modulepreload"],[r.styles,"preload"]])for(const file of files){const path=r.base+file;const href=new URL(path,location.href).href;if(links().some(link=>link.href===href&&link.rel===rel))continue;const link=document.createElement("link");link.rel=rel;link.crossOrigin="";link.as=rel==="modulepreload"?"script":"style";link.href=path;link.addEventListener("error",()=>link.remove(),{once:true});document.head.appendChild(link);}})();`;
+  // spelling. Queue history/CSS first, but keep the result's normal priority:
+  // real-network comparisons found that deprioritizing it delayed readiness.
+  // CSS is only hinted: Vite still installs, orders and awaits styles.
+  return `(()=>{if(!/^#\\/(?:analysis|outlook)(?:\\?|$)/.test(location.hash))return;const r=${data};const links=()=>Array.from(document.getElementsByTagName("link"));for(const [files,rel] of [[r.styles,"preload"],[r.modules,"modulepreload"]])for(const file of files){const path=r.base+file;const href=new URL(path,location.href).href;if(links().some(link=>link.href===href&&link.rel===rel))continue;const link=document.createElement("link");link.rel=rel;link.crossOrigin="";if(rel==="preload")link.fetchPriority="high";link.as=rel==="modulepreload"?"script":"style";link.href=path;link.addEventListener("error",()=>link.remove(),{once:true});document.head.appendChild(link);}const url=new URL(r.base+"analysis-bootstrap-v2.json",location.href).href;if(!window.__oevrynAnalysisBootstrap){const controller=new AbortController();const promise=fetch(url,{cache:"no-cache",credentials:"omit",signal:controller.signal});promise.catch(()=>{});window.__oevrynAnalysisBootstrap={url,promise,controller};}})();`;
 }
 
 /** Start analysis resources at HTML parse time, before the React entry executes. */
@@ -77,7 +79,7 @@ export function analysisPreload(): Plugin {
             tag: "script",
             attrs: { "data-analysis-preload": true },
             children: analysisPreloadScript(resources, base),
-            injectTo: "head-prepend",
+            injectTo: "head",
           },
         ];
       },

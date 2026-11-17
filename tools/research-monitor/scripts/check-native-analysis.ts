@@ -4,6 +4,12 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { chromium, expect } from "@playwright/test";
 import { parseAnalysisTransport } from "../lib/analysis-transport";
 
+declare global {
+  interface Window {
+    __analysisTiming?: { historyMs?: number; readyMs?: number };
+  }
+}
+
 // Review the native application against its real production snapshot, never fixture data.
 const origin = "http://127.0.0.1:4176";
 const base = `${origin}/research-monitor/`;
@@ -58,7 +64,11 @@ try {
       fullDownloads.push(request.url());
     if (/analysis-(?:bootstrap|manifest|summary)(?:-v2)?\.json(?:\?|$)/.test(request.url()))
       analysisDownloads.push(request.url());
-    if (/\/assets\/(?:research-dashboard|paper-code-links)-[^/]+\.js(?:\?|$)/.test(request.url()))
+    if (
+      /\/assets\/(?:research-dashboard|paper-code-links|notification-host|select)-[^/]+\.js(?:\?|$)/.test(
+        request.url(),
+      )
+    )
       deferredChunks.push(request.url());
   });
   await context.route("**/*", async (route) => {
@@ -73,12 +83,35 @@ try {
   page.on("request", (request) => {
     if (/ai-worker|webllm|web-llm|\/assets\/lib-/.test(request.url())) models.push(request.url());
   });
-  const startedAt = performance.now();
+  await page.addInitScript(() => {
+    const target = window as Window & { __analysisTiming?: { historyMs?: number; readyMs?: number } };
+    const marks: { historyMs?: number; readyMs?: number } = {};
+    target.__analysisTiming = marks;
+    const observer = new MutationObserver(() => {
+      if (
+        marks.historyMs === undefined &&
+        document.querySelectorAll(".analysis-history article[data-history-id]").length === 3
+      )
+        marks.historyMs = performance.now();
+      const button = [...document.querySelectorAll<HTMLButtonElement>(".integrated-analysis button")].find(
+        (element) => element.textContent?.trim() === "查看规则分析",
+      );
+      if (marks.readyMs === undefined && button && !button.disabled) marks.readyMs = performance.now();
+      if (marks.historyMs !== undefined && marks.readyMs !== undefined) observer.disconnect();
+    });
+    observer.observe(document, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["disabled"],
+    });
+  });
   await page.goto(`${base}#/analysis`);
   const panel = page.locator(".integrated-analysis");
   const history = panel.locator(".analysis-history");
   await expect(history.locator("article[data-history-id]")).toHaveCount(3, { timeout: 10000 });
-  const historyReadyMs = Math.round(performance.now() - startedAt);
+  const historyReadyMs = Math.round(await page.evaluate(() => window.__analysisTiming?.historyMs ?? NaN));
+  assert.ok(Number.isFinite(historyReadyMs));
   await expect(history.locator('[data-history-count="works"]')).toHaveText("14");
   await expect(
     page.locator(".workspace-main-nav").getByRole("button", { name: "分析", exact: true }),
@@ -86,7 +119,8 @@ try {
   await expect(panel.locator("iframe")).toHaveCount(0);
   const run = panel.getByRole("button", { name: "查看规则分析", exact: true });
   await expect(run).toBeEnabled({ timeout: 15000 });
-  const analysisReadyMs = Math.round(performance.now() - startedAt);
+  const analysisReadyMs = Math.round(await page.evaluate(() => window.__analysisTiming?.readyMs ?? NaN));
+  assert.ok(Number.isFinite(analysisReadyMs));
   assert.match(
     await panel.locator(".integrated-toolbar").innerText(),
     new RegExp(manifest.totalStored.toLocaleString()),
@@ -190,7 +224,7 @@ try {
     initialDashboardOrRetrievalChunks: deferredChunks.length,
     bootstrapRequests: analysisDownloads.filter((url) => url.endsWith("/analysis-bootstrap-v2.json")).length,
     timingEnvironment:
-      "Local production preview, cold browser; timings are not a claim about Internet latency.",
+      "Local production preview, cold browser, MutationObserver DOM timing from navigation; not Internet latency or pixel-presentation timing.",
   };
   await writeFile("docs/analysis-loading-browser-check.json", JSON.stringify(report, null, 2) + "\n");
   console.log(JSON.stringify(report, null, 2));
