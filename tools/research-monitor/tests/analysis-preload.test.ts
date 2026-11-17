@@ -217,8 +217,9 @@ test("a real Vite build injects hashed static dependencies in the head with an e
     const sources: Record<string, string> = {
       "index.html": html,
       "en/index.html": html.replace("<html>", '<html lang="en">'),
+      "entry.css": ".shell{display:grid}",
       "main.ts":
-        'window.start=()=>Promise.all([import("./components/integrated-analysis"),import("./lib/analysis-store")]);',
+        'import "./entry.css"; window.start=()=>Promise.all([import("./components/integrated-analysis"),import("./lib/analysis-store")]);',
       "components/integrated-analysis.tsx":
         'import { shared } from "../lib/shared"; import "./analysis.css"; export const analysis=shared; export const history=()=>import("./analysis-history-panel"); export const optional=()=>import("./optional");',
       "components/analysis-history-panel.tsx":
@@ -266,6 +267,9 @@ test("a real Vite build injects hashed static dependencies in the head with an e
       assert.ok(injected, path);
       assert.ok(html.indexOf(injected[0]) < html.indexOf("</head>"), path);
       assert.ok(html.indexOf('charset="UTF-8"') < 1024, path);
+      assert.ok(html.indexOf('charset="UTF-8"') < html.indexOf(injected[0]), path);
+      const stylesheet = html.search(/<link[^>]*rel=["']stylesheet["']/);
+      if (stylesheet >= 0) assert.ok(html.indexOf(injected[0]) < stylesheet, path);
       const observed = execute(injected[1], "#/analysis", `https://web.example/research-monitor/${path}`);
       observed.domReady();
       assert.deepEqual(
