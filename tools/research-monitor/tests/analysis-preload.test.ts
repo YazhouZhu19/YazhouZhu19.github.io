@@ -12,6 +12,7 @@ type Link = {
   href: string;
   as?: string;
   crossOrigin?: string;
+  fetchPriority?: string;
   isConnected: boolean;
   getAttribute: (attribute: string) => string;
   error?: () => void;
@@ -21,6 +22,7 @@ type Link = {
 function execute(script: string, hash: string, page = "https://web.example/research-monitor/") {
   const links: Link[] = [];
   const calls: { url: string; options: RequestInit }[] = [];
+  const events: string[] = [];
   const response = new Response("{}", { headers: { "content-type": "application/json" } });
   const promise = Promise.resolve(response);
   const window: {
@@ -32,6 +34,7 @@ function execute(script: string, hash: string, page = "https://web.example/resea
     AbortController,
     window,
     fetch(url: string, options: RequestInit) {
+      events.push("fetch");
       calls.push({ url, options });
       return promise;
     },
@@ -71,6 +74,7 @@ function execute(script: string, hash: string, page = "https://web.example/resea
       },
       head: {
         appendChild(link: Link) {
+          events.push(link.rel);
           const index = links.indexOf(link);
           if (index >= 0) links.splice(index, 1);
           link.isConnected = true;
@@ -84,7 +88,7 @@ function execute(script: string, hash: string, page = "https://web.example/resea
     context.document.readyState = "interactive";
   };
   run();
-  return { links, calls, window, context, promise, response, run, domReady };
+  return { links, calls, events, window, context, promise, response, run, domReady };
 }
 
 const resources = { modules: ["assets/analysis-123.js"], styles: ["assets/analysis-456.css"] };
@@ -100,8 +104,8 @@ test("only the current and legacy analysis routes start resources, including que
       assert.deepEqual(
         result.links.map(({ rel, href }) => [rel, href]),
         [
-          ["modulepreload", "https://web.example/research-monitor/assets/analysis-123.js"],
           ["preload", "https://web.example/research-monitor/assets/analysis-456.css"],
+          ["modulepreload", "https://web.example/research-monitor/assets/analysis-123.js"],
         ],
       );
     }
@@ -127,6 +131,9 @@ test("bootstrap exposes the untouched response promise and abort controller with
   const bootstrap = result.window.__oevrynAnalysisBootstrap!;
   assert.equal(bootstrap.promise, result.promise);
   assert.equal(bootstrap.url, result.calls[0].url);
+  assert.deepEqual(result.events, ["preload", "modulepreload", "fetch"]);
+  assert.equal(result.calls[0].options.priority, undefined);
+  assert.equal(result.links[0].fetchPriority, "high");
   assert.equal(result.calls[0].options.cache, "no-cache");
   assert.equal(result.calls[0].options.credentials, "omit");
   assert.equal(result.calls[0].options.signal, bootstrap.controller.signal);
@@ -153,10 +160,10 @@ test("failed preload links are removed so the normal lazy loader can retry", () 
 
 test("module href attributes match Vite selectors; CSS activation and ordering remain with Vite", () => {
   const result = execute(script, "#/analysis");
-  assert.equal(result.links[0].getAttribute("href"), "/research-monitor/assets/analysis-123.js");
-  assert.equal(result.links[1].rel, "preload");
-  assert.equal(result.links[1].as, "style");
-  assert.equal(result.links[1].getAttribute("href"), "/research-monitor/assets/analysis-456.css");
+  assert.equal(result.links[1].getAttribute("href"), "/research-monitor/assets/analysis-123.js");
+  assert.equal(result.links[0].rel, "preload");
+  assert.equal(result.links[0].as, "style");
+  assert.equal(result.links[0].getAttribute("href"), "/research-monitor/assets/analysis-456.css");
   const main = result.context.document.createElement("link");
   main.href = "https://web.example/research-monitor/assets/main.css";
   main.rel = "stylesheet";
@@ -167,7 +174,7 @@ test("module href attributes match Vite selectors; CSS activation and ordering r
     [main.href],
   );
   const loaded = result.context.document.createElement("link");
-  loaded.href = result.links[1].getAttribute("href");
+  loaded.href = result.links[0].getAttribute("href");
   loaded.rel = "stylesheet";
   result.context.document.head.appendChild(loaded);
   result.run();
@@ -201,7 +208,7 @@ test("inline JSON cannot terminate its HTML script element", () => {
   assert.equal(execute(unsafe, "#/analysis").links.length, 1);
 });
 
-test("a real Vite build injects hashed static dependencies before entry scripts in both locales", async () => {
+test("a real Vite build injects hashed static dependencies in the head with an early charset in both locales", async () => {
   const root = await realpath(await mkdtemp(join(tmpdir(), "analysis-preload-test-")));
   try {
     await Promise.all(["components", "lib", "en"].map((directory) => mkdir(join(root, directory))));
@@ -257,7 +264,8 @@ test("a real Vite build injects hashed static dependencies before entry scripts 
       const html = String(page.source);
       const injected = html.match(/<script data-analysis-preload>([\s\S]*?)<\/script>/);
       assert.ok(injected, path);
-      assert.ok(html.indexOf(injected[0]) < html.indexOf('<script type="module"'), path);
+      assert.ok(html.indexOf(injected[0]) < html.indexOf("</head>"), path);
+      assert.ok(html.indexOf('charset="UTF-8"') < 1024, path);
       const observed = execute(injected[1], "#/analysis", `https://web.example/research-monitor/${path}`);
       observed.domReady();
       assert.deepEqual(

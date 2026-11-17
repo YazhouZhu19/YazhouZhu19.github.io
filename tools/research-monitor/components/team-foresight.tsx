@@ -5,7 +5,7 @@ import "@/styles/foresight.css";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Plus, Search, Users } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/notifications";
 import { api } from "@/lib/local-api";
 import { buildForesight } from "@/lib/foresight";
 import { beijingDay, matchesTeam, type DashboardDrill } from "@/lib/dashboard";

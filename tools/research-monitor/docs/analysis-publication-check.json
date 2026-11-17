@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-11-16T18:53:30.398Z",
+  "checkedAt": "2026-11-17T01:40:41.570Z",
   "evidence": "Complete real source archives; no synthetic fixtures or language models",
   "sourceFiles": [
     "data/papers.json",
     "data/research-signals.json"
   ],
-  "generatedAt": "2026-11-16T18:52:50.504Z",
-  "asOf": "2026-11-16",
+  "generatedAt": "2026-11-17T01:36:17.558Z",
+  "asOf": "2026-11-17",
   "ruleVersion": "2026-11-16-v1",
   "sourceCounts": {
     "papers": 11294,
@@ -16,9 +16,9 @@
   "analysisCounts": {
     "historicalUniquePapers": 5330,
     "windowTotals": {
-      "paper": 5197,
-      "github": 28202,
-      "news": 1639
+      "paper": 5196,
+      "github": 28137,
+      "news": 1634
     },
     "directions": 7,
     "nicheCandidates": 303
@@ -46,20 +46,20 @@
     },
     "compactSameContent": {
       "requests": 2,
-      "rawBytes": 838757,
-      "snapshotRawBytes": 838110,
-      "snapshotGzipBytes": 202433,
+      "rawBytes": 838440,
+      "snapshotRawBytes": 837793,
+      "snapshotGzipBytes": 202365,
       "manifestRawBytes": 647,
       "note": "One compact payload and one data manifest; unchanged content with different build timestamps or source shard hashes does not require a second payload.",
-      "rawReductionVsV1Percent": 41.38,
+      "rawReductionVsV1Percent": 41.4,
       "gzipReductionVsV1Percent": 36.15
     },
     "sameGeneration": {
       "requests": 2,
-      "rawBytes": 1430380,
-      "snapshotRawBytes": 1429815,
+      "rawBytes": 1430316,
+      "snapshotRawBytes": 1429751,
       "manifestRawBytes": 565,
-      "snapshotGzipBytes": 317028
+      "snapshotGzipBytes": 316958
     },
     "refreshOrSlowBootstrap": {
       "requests": 3,
@@ -68,9 +68,9 @@
     "rawBytesReductionPercent": 98.82
   },
   "fingerprints": {
-    "analysisSummary": "8822deb104890f11e1fab12d0b3ac5ebe4fb2da4332e86a07a5ce9752d06bb11",
-    "compactAnalysisSummary": "e1dcfbf8369a4163063889cddfe6118cc13f6f0978ae2605c615e04b07097048",
-    "analysisContent": "f9ae187523f085d061c9017caa96edd85a513bd569d57f531e25b1417c0afba1",
+    "analysisSummary": "ad47b6d8b9744e094d6a77db2cb257521cf4e86bf821ea722a92c75087ea974f",
+    "compactAnalysisSummary": "842863ac381618dac59a2ab3dd17026a1f9f2d52f8a5eea393674558be5f66a1",
+    "analysisContent": "6de08acda054b854f7716c8b44ff37c6e142d15d71bb2db28194710aaf888f41",
     "paperManifest": "fd97f5484f93c14ddad7d9a042a168a46eefc52e72f62504b50e66ba8da2600f",
     "signalManifest": "379be88f91d7f98119b902fdfa0cf480f6b65c510f5f7f7218961c614e111f96"
   }

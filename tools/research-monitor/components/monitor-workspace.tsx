@@ -1,6 +1,7 @@
 "use client";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import { Toaster, toast } from "sonner";
+import { toast } from "@/lib/notifications";
+import { NotificationBoundary } from "./notification-boundary";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { LoadingState } from "./state-views";
 import { useSignals } from "@/hooks/use-signals";
@@ -377,7 +378,7 @@ export default function MonitorWorkspace() {
       <SidebarProvider
         style={{ "--sidebar-width": locale === "en" ? "260px" : "248px" } as React.CSSProperties}
       >
-        <Toaster richColors position="bottom-right" />
+        <NotificationBoundary />
         <AppSidebar
           view={view}
           setView={setView}

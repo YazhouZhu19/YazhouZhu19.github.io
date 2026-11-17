@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
+import { toast } from "@/lib/notifications";
 import { matchesTeam, matchesMember } from "@/lib/dashboard";
 import { TRACKS, normalizedName } from "@/lib/classify";
 import type { MonitorData, Paper, Team } from "@/lib/types";

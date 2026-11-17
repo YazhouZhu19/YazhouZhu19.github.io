@@ -6,9 +6,9 @@
   "pending": 2,
   "mainstreamDirections": 7,
   "currentCounts": [
-    "5,197",
-    "28,202",
-    "1,639"
+    "5,196",
+    "28,137",
+    "1,634"
   ],
   "desktop": true,
   "mobile": true,
@@ -16,17 +16,17 @@
   "externalRequests": 0,
   "modelRequests": 0,
   "pageErrors": 0,
-  "analysisAsOf": "2026-11-16",
-  "historyReadyMs": 256,
-  "analysisReadyMs": 273,
-  "resultsVisibleMs": 74,
+  "analysisAsOf": "2026-11-17",
+  "historyReadyMs": 328,
+  "analysisReadyMs": 328,
+  "resultsVisibleMs": 61,
   "previousDataBytes": 121270517,
-  "analysisDataBytes": 838757,
+  "analysisDataBytes": 838440,
   "dataReductionPercent": 99.31,
   "previousDataRequests": 302,
   "analysisDataRequests": 2,
   "fullDataRequests": 0,
   "initialDashboardOrRetrievalChunks": 0,
   "bootstrapRequests": 1,
-  "timingEnvironment": "Local production preview, cold browser; timings are not a claim about Internet latency."
+  "timingEnvironment": "Local production preview, cold browser, MutationObserver DOM timing from navigation; not Internet latency or pixel-presentation timing."
 }

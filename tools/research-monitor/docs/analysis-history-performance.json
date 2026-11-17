@@ -1,0 +1,164 @@
+{
+  "measurementPolicy": "DOM milestones recorded by MutationObserver; real network has no interception or throttling. Fixed-network comparisons are separate evidence, not a claim about Internet latency.",
+  "liveBaseline": {
+    "revision": "bce8d77485ff1d7276e28182bc1f71bb9b7a7734",
+    "startedAt": "2026-11-17T01:26:51.457Z",
+    "samples": 5,
+    "median": {
+      "historyDomMs": 1940.1999998092651,
+      "historyPaintOpportunityMs": 1970.7999999523163,
+      "readyDomMs": 2402.7000000476837,
+      "readyPaintOpportunityMs": 2414.800000190735,
+      "historyDomMsAfterDocument": 1143.0,
+      "historyPaintOpportunityMsAfterDocument": 1179.2999999523163,
+      "readyDomMsAfterDocument": 1608.8000001907349,
+      "readyPaintOpportunityMsAfterDocument": 1615.8000001907349,
+      "navTtfbMs": 810.2999999523163,
+      "documentMs": 810.7000000476837
+    },
+    "runs": [
+      {
+        "sample": 1,
+        "marks": {
+          "historyDomMs": 2260.699999809265,
+          "historyFirstRafMs": 2261.0999999046326,
+          "historyLayoutMs": 2273.399999856949,
+          "historyPaintOpportunityMs": 2286.7999999523163,
+          "readyDomMs": 2653,
+          "readyFirstRafMs": 2653,
+          "readyLayoutMs": 2655.5,
+          "readyPaintOpportunityMs": 2660
+        },
+        "navTtfbMs": 1040.5999999046326,
+        "documentMs": 1044.1999998092651,
+        "dataRequests": 2,
+        "transferBytes": 448221
+      },
+      {
+        "sample": 2,
+        "marks": {
+          "historyDomMs": 1940.1999998092651,
+          "historyFirstRafMs": 1942.5,
+          "historyLayoutMs": 1950.8999998569489,
+          "historyPaintOpportunityMs": 1970.7999999523163,
+          "readyDomMs": 2457.399999856949,
+          "readyFirstRafMs": 2457.5,
+          "readyLayoutMs": 2459.199999809265,
+          "readyPaintOpportunityMs": 2462.899999856949
+        },
+        "navTtfbMs": 817.3999998569489,
+        "documentMs": 818,
+        "dataRequests": 2,
+        "transferBytes": 448221
+      },
+      {
+        "sample": 3,
+        "marks": {
+          "historyDomMs": 1949.0999999046326,
+          "historyFirstRafMs": 1949.4000000953674,
+          "historyLayoutMs": 1960.9000000953674,
+          "historyPaintOpportunityMs": 1976.4000000953674,
+          "readyDomMs": 2229.4000000953674,
+          "readyFirstRafMs": 2230.0999999046326,
+          "readyLayoutMs": 2231.2999999523163,
+          "readyPaintOpportunityMs": 2242.5999999046326
+        },
+        "navTtfbMs": 810.2999999523163,
+        "documentMs": 810.7000000476837,
+        "dataRequests": 2,
+        "transferBytes": 448221
+      },
+      {
+        "sample": 4,
+        "marks": {
+          "historyDomMs": 1906.7000000476837,
+          "historyFirstRafMs": 1921.3000001907349,
+          "historyLayoutMs": 1925.9000000953674,
+          "historyPaintOpportunityMs": 1943,
+          "readyDomMs": 2402.7000000476837,
+          "readyFirstRafMs": 2402.800000190735,
+          "readyLayoutMs": 2404.2000000476837,
+          "readyPaintOpportunityMs": 2414.800000190735
+        },
+        "navTtfbMs": 762.6000001430511,
+        "documentMs": 763.7000000476837,
+        "dataRequests": 2,
+        "transferBytes": 448221
+      },
+      {
+        "sample": 5,
+        "marks": {
+          "historyDomMs": 1920.2000000476837,
+          "historyFirstRafMs": 1925.4000000953674,
+          "historyLayoutMs": 1930.2999999523163,
+          "historyPaintOpportunityMs": 1948.4000000953674,
+          "readyDomMs": 2201.9000000953674,
+          "readyFirstRafMs": 2201.9000000953674,
+          "readyLayoutMs": 2203.2000000476837,
+          "readyPaintOpportunityMs": 2216.4000000953674
+        },
+        "navTtfbMs": 765.9000000953674,
+        "documentMs": 766.4000000953674,
+        "dataRequests": 2,
+        "transferBytes": 448221
+      }
+    ]
+  },
+  "controlledFinal": {
+    "conditions": {
+      "offline": false,
+      "latency": 150,
+      "downloadThroughput": 187500,
+      "uploadThroughput": 93750,
+      "connectionType": "cellular3g"
+    },
+    "gzipLevel": 6,
+    "measurement": "MutationObserver performance.now from navigation; same Chromium, alternating new cold contexts; cache disabled; gzip precomputed before sampling",
+    "oldCommit": "3122faf90ad273a47ba1462003d00ca4317b3844",
+    "newCommit": "v3 final: default-priority bootstrap, history/css first, notification recovery, auto UI chunks, static history",
+    "payload": "Both versions use identical current packed v2 analysis payloads; final v3 main dist vs exact 3122 source, both asOf 2026-11-17",
+    "summaries": {
+      "old": {
+        "historyMedianMs": 2455,
+        "readyMedianMs": 2827,
+        "transferMedianBytes": 442071,
+        "requestCounts": [
+          25,
+          25,
+          25
+        ],
+        "analysisRequestCounts": [
+          2,
+          2,
+          2
+        ]
+      },
+      "new": {
+        "historyMedianMs": 2153,
+        "readyMedianMs": 2744,
+        "transferMedianBytes": 425655,
+        "requestCounts": [
+          24,
+          24,
+          24
+        ],
+        "analysisRequestCounts": [
+          2,
+          2,
+          2
+        ]
+      }
+    },
+    "historyImprovementPercent": 12.301425661914456,
+    "readyImprovementPercent": 2.9359745313052743,
+    "dataset": {
+      "asOf": "2026-11-17",
+      "generatedAt": "2026-11-17T01:36:17.558Z",
+      "contentSha256": "6de08acda054b854f7716c8b44ff37c6e142d15d71bb2db28194710aaf888f41",
+      "snapshotSha256": "842863ac381618dac59a2ab3dd17026a1f9f2d52f8a5eea393674558be5f66a1",
+      "snapshotBytes": 837793
+    },
+    "payloadCopiesIdentical": true,
+    "finalBootstrapFetchPriority": "default (priority low removed)"
+  }
+}

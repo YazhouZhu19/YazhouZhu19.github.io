@@ -3,9 +3,7 @@ import { useI18n } from "./locale-provider";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 const PaperCodeLinks = lazy(() => import("./paper-code-links").then((m) => ({ default: m.PaperCodeLinks })));
-const AnalysisHistoryPanel = lazy(() =>
-  import("./analysis-history-panel").then((m) => ({ default: m.AnalysisHistoryPanel })),
-);
+import { AnalysisHistoryPanel } from "./analysis-history-panel";
 import type { Paper } from "@/lib/types";
 import type { ResearchSignal } from "@/lib/research-signals";
 import type { AnalysisState } from "@/lib/analysis-store";
