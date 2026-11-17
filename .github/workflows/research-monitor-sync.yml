@@ -7,7 +7,14 @@ on:
   push:
     branches: [main]
     paths:
-      - 'tools/research-monitor/**'
+      - 'tools/research-monitor/lib/**'
+      - 'tools/research-monitor/scripts/**'
+      - 'tools/research-monitor/data/**'
+      - 'tools/research-monitor/package.json'
+      - 'tools/research-monitor/package-lock.json'
+      - 'tools/research-monitor/budget.json'
+      - 'tools/research-monitor/tsconfig.json'
+      - 'tools/research-monitor/vite.config.ts'
       - '.github/workflows/research-monitor-sync.yml'
 
 # Source collection only. Web and data Pages publications are independent.
@@ -50,10 +57,20 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          diagnostics="$RUNNER_TEMP/research-sync-diagnostics"
+          mkdir -p "$diagnostics"
+          stage() {
+            printf '%s\n' "$attempt" > "$diagnostics/attempt"
+            printf '%s\n' "$1" > "$diagnostics/stage"
+          }
 
           # All resets apply only to this disposable Actions checkout. A rejected
           # push is rebuilt from the new main; no force-push or stale JSON rebase.
           for attempt in 1 2 3; do
+            stage 'Refresh latest main'
+            rm -f tools/research-monitor/dist/budget-report.json tools/research-monitor/dist/deployment.json
+            rm -f "$RUNNER_TEMP/research-collect-exit" "$RUNNER_TEMP/research-signals-exit"
+            rm -f "$diagnostics/signal-limits.json"
             git fetch --depth=1 origin main
             git reset --hard origin/main
             export MONITOR_SOURCE_REVISION
@@ -61,12 +78,16 @@ jobs:
 
             (
               cd tools/research-monitor
+              stage 'Install locked dependencies'
               npm ci
+              node --import tsx --input-type=module -e 'import { SIGNALS_MAX_RECORDS, SIGNALS_MAX_BYTES } from "./lib/research-signals.ts"; console.log(JSON.stringify({maxRecords: SIGNALS_MAX_RECORDS, maxBytes: SIGNALS_MAX_BYTES}));' > "$diagnostics/signal-limits.json"
+              stage 'Prepare source archive baseline'
               mkdir -p "$RUNNER_TEMP/oevryn-archive-before/papers"
               cp data/papers.json "$RUNNER_TEMP/oevryn-archive-before/papers.json"
               rsync -a --delete data/papers/ "$RUNNER_TEMP/oevryn-archive-before/papers/"
               node --import tsx scripts/snapshot-cli.ts export data/papers.json "$RUNNER_TEMP/research-before-collect.json"
               python3 -c 'import time; print(time.time_ns() // 1000000)' > "$RUNNER_TEMP/research-collect-start-ms"
+              stage 'Collect and validate papers'
               collect_exit=0
               npm run collect || collect_exit=$?
               echo "$collect_exit" > "$RUNNER_TEMP/research-collect-exit"
@@ -130,13 +151,16 @@ jobs:
               fi
               cp data/research-signals.json "$RUNNER_TEMP/research-signals-before.json"
               signals_started_at="$(node -e 'console.log(new Date().toISOString())')"
+              stage 'Collect and validate research signals'
               signals_exit=0
               GH_TOKEN="${{ github.token }}" npm run collect:signals || signals_exit=$?
               echo "$signals_exit" > "$RUNNER_TEMP/research-signals-exit"
               node --import tsx scripts/check-signal-collection.ts "$RUNNER_TEMP/research-signals-before.json" data/research-signals.json "$signals_started_at" "$signals_exit"
+              stage 'Tests and formatting'
               npm test
               npm run format:check
               python3 -m unittest discover -s tests -p '*_test.py'
+              stage 'Build and enforce resource budgets'
               npm run build
               npm run measure
             )
@@ -149,15 +173,19 @@ jobs:
               signals_failed=true
             fi
 
+            stage 'Compact and verify source archives'
             (cd tools/research-monitor && node --import tsx scripts/compact-archive.ts data/papers.json "$RUNNER_TEMP/oevryn-archive-before/papers.json")
+            stage 'Commit verified source archives'
             git add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ tools/research-monitor/data/research-signals.json
             node tools/research-monitor/scripts/check-file-sizes.mjs
             if ! git diff --cached --quiet; then
               git commit -m 'chore: refresh verified research source archives'
             fi
+            stage 'Push verified source archives'
             if git push origin HEAD:main; then
               echo "collection_failed=$collection_failed" >> "$GITHUB_OUTPUT"
               echo "signals_failed=$signals_failed" >> "$GITHUB_OUTPUT"
+              stage 'Source archives saved'
               break
             fi
             if [ "$attempt" -eq 3 ]; then
@@ -171,3 +199,20 @@ jobs:
         run: |
           echo '::error::Fresh failure metadata was archived while preserving saved records. Inspect source status.'
           exit 1
+
+      - name: Summarize sync diagnostics
+        if: always()
+        env:
+          REFRESH_OUTCOME: ${{ steps.refresh.outcome }}
+        run: python3 tools/research-monitor/scripts/sync_report.py
+
+      - name: Retain sync diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: research-sync-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/research-sync-diagnostics/summary.json
+            tools/research-monitor/dist/budget-report.json
+          if-no-files-found: warn
+          retention-days: 7

@@ -66,6 +66,18 @@ function extendAffiliations(papers: any[], previous: string[], availableBytes: n
   return dictionary;
 }
 
+/** Retain existing indices; entries past the fitting prefix stay literal. */
+function fitAffiliationPrefix(previous: string[], availableBytes: number) {
+  const prefix: string[] = [];
+  for (const value of previous) {
+    const bytes = Buffer.byteLength(JSON.stringify(value)) + (prefix.length ? 1 : 0);
+    if (bytes > availableBytes) break;
+    prefix.push(value);
+    availableBytes -= bytes;
+  }
+  return prefix;
+}
+
 async function writePublicFormat(
   file: string,
   data: { papers: any[]; collectedAt?: unknown },
@@ -118,15 +130,31 @@ async function writePublicFormat(
       Buffer.byteLength(JSON.stringify(provisional) + "\n") -
       256 * 1024 -
       512 * (encoded.shards.length + 1);
-    const affiliations = extendAffiliations(papers, previousAffiliations, available);
-    const indices = new Map(affiliations.map((value, index) => [value, index]));
-    encoded = createSnapshotShards({ ...data, papers }, maxBytes, asOf, (paper) =>
-      encodeV3Paper(paper, indices),
-    );
-    manifest = { ...manifest, schema, affiliations, shards: encoded.shards };
+    const encode = (affiliations: string[]) => {
+      const indices = new Map(affiliations.map((value, index) => [value, index]));
+      encoded = createSnapshotShards({ ...data, papers }, maxBytes, asOf, (paper) =>
+        encodeV3Paper(paper, indices),
+      );
+      manifest = { ...manifest, schema, affiliations, shards: encoded.shards };
+    };
+    encode(extendAffiliations(papers, previousAffiliations, available));
     if (Buffer.byteLength(JSON.stringify(manifest) + "\n") > MAX_SHARD_BYTES) {
-      // An existing dictionary may outgrow its remaining budget as metadata
-      // grows. A v2 payload at this endpoint is still lossless and supported.
+      // Metadata and source URLs can grow past a previously safe dictionary.
+      // Retain its fitting prefix instead of losing all v3 tuple/abstract
+      // compression. Removed affiliations remain complete literal strings.
+      const capacity =
+        MAX_SHARD_BYTES -
+        Buffer.byteLength(JSON.stringify({ ...manifest, affiliations: [] }) + "\n") -
+        256 * 1024 -
+        512 * (encoded.shards.length + 1);
+      encode(fitAffiliationPrefix(previousAffiliations, capacity));
+      // A larger literal payload may need more shard descriptors. Check the
+      // exact result and try v3 without a dictionary before changing formats.
+      if (Buffer.byteLength(JSON.stringify(manifest) + "\n") > MAX_SHARD_BYTES) encode([]);
+    }
+    if (Buffer.byteLength(JSON.stringify(manifest) + "\n") > MAX_SHARD_BYTES) {
+      // Even the dictionary-free v3 envelope does not fit. A v2 payload at
+      // this endpoint remains lossless and supported by versioned clients.
       encoded = createSnapshotShards({ ...data, papers }, maxBytes, asOf);
       manifest = {
         schema: PUBLIC_SNAPSHOT_SCHEMA,

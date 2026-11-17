@@ -22,6 +22,12 @@ Record count alone cannot account for new collection history on existing papers.
 
 This allowance applies only to complete paper data. It does not relax the overview/startup budget, individual-file caps, code/CSS budgets, record maximum or publication caps. Enriched paper content can still exceed its reviewed density, and history can still exceed its independent maximum; either requires investigation. The source signal archive's separate 100,000-record / 96 MiB limits are unchanged and remain a separate capacity concern.
 
+The November 17 repair addresses sync run `44082074491` and the repeated failures since the last successful November 11 collection. The inherited v3 affiliation dictionary left only 11,142 bytes below the 4 MiB manifest cap. Growing metadata and query URLs pushed the next manifest over that cap, causing a lossless but much larger v2 fallback. The writer now retains a fitting prefix of the affiliation dictionary, preserves its indices, and encodes removed references as complete strings while keeping v3 author/provenance tuples and shared abstracts. The previous generation remains readable. No records, evidence, or size limits are removed or increased.
+
+A real November 17 collection of 12,231 papers and 158,471 provenance entries reproduced the failure: the old writer produced 108,301,523 raw bytes; the repaired writer produced 84,627,532 raw / 16,212,838 gzip bytes, within the existing 87,603,807-byte raw allowance. Full decoded records and metadata were equal in both outputs. The paper overview and individual-file limits also passed unchanged.
+
+Source status remains independent of publication success. Partial external failures retain saved records and their errors; GitHub's `lastSuccessAt` now means the latest run with a successful response, consistent with the other sources, including a valid zero-result response. A successful web/data deployment alone does not prove fresh collection: compare `collectedAt`, `signalsGeneratedAt`, counts, and source revision after a successful source sync. The failed November 17 run also reported 96,083 signals against the separate 100,000-record cap; that remaining capacity requires a source-archive sharding migration, not deletion of history or an unreviewed increase to a flat-file limit.
+
 ## Bootstrap / recovery
 
 1. Push this source change to a PR branch; run CI including round-trip, publication retention and artifact size checks.

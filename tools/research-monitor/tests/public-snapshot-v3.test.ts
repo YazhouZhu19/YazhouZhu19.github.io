@@ -138,6 +138,60 @@ test("v3 leaves affiliations literal when the shared manifest has no safe dictio
   assert.deepEqual(await readSnapshotFile(file), source);
 });
 
+test("metadata growth trims only the inherited affiliation suffix while keeping lossless v3 and old generations", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "monitor-v3-growing-metadata-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const affiliations = Array.from({ length: 8 }, (_, index) => `Institution ${index} ${"M".repeat(130000)}`);
+  const source = library();
+  for (const paper of source.papers.slice(0, 2)) {
+    paper.affiliations = [...affiliations];
+    for (const author of paper.authors) author.affiliations = [...affiliations];
+  }
+  const firstFile = join(dir, "previous", "public-papers-v3.json");
+  const first = await writePublicSnapshotV3(firstFile, source);
+  assert.equal(first.affiliations?.length, affiliations.length);
+  const next = { ...source, extraMetadata: "x".repeat(MAX_SHARD_BYTES - 700000) };
+  const nextFile = join(dir, "next", "public-papers-v3.json");
+  const second = await writePublicSnapshotV3(nextFile, next, firstFile);
+  assert.equal(second.schema, PUBLIC_SNAPSHOT_V3_SCHEMA);
+  assert.ok(second.affiliations!.length > 0 && second.affiliations!.length < first.affiliations!.length);
+  assert.deepEqual(second.affiliations, first.affiliations!.slice(0, second.affiliations!.length));
+  assert.deepEqual(second.queryUrls, first.queryUrls);
+  assert.ok((await stat(nextFile)).size <= MAX_SHARD_BYTES);
+  assert.deepEqual(await readSnapshotFile(nextFile), next);
+  assert.deepEqual(await readSnapshotFile(firstFile), source);
+  assert.deepEqual(await resolveSnapshot(first, (path) => readFile(join(dir, "next", path), "utf8")), source);
+  const october = second.shards.find((shard) => shard.bucket === "2026-10")!;
+  const [[flags, encoded]] = JSON.parse(await readFile(join(dir, "next", october.path), "utf8"));
+  assert.equal(flags, 1); // Equal abstracts still share storage.
+  assert.equal("originalAbstract" in encoded, false);
+  assert.ok(Array.isArray(encoded.authors[0]) && Array.isArray(encoded.provenance[0]));
+  assert.ok(encoded.affiliations.some((value: unknown) => typeof value === "number"));
+  assert.ok(encoded.affiliations.some((value: unknown) => typeof value === "string"));
+  assert.deepEqual(await writePublicSnapshotV3(nextFile, next, firstFile), second);
+});
+
+test("an oversized inherited dictionary becomes literal v3 before any format downgrade", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "monitor-v3-empty-prefix-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const source = library();
+  const repeated = "Large historical institution ".repeat(10000);
+  for (const paper of source.papers.slice(0, 2)) {
+    paper.affiliations = [repeated];
+    for (const author of paper.authors) author.affiliations = [repeated];
+  }
+  const file = join(dir, "public-papers-v3.json");
+  const first = await writePublicSnapshotV3(file, source);
+  assert.deepEqual(first.affiliations, [repeated]);
+  const next = { ...source, extraMetadata: "x".repeat(MAX_SHARD_BYTES - 2300) };
+  const second = await writePublicSnapshotV3(file, next);
+  assert.equal(second.schema, PUBLIC_SNAPSHOT_V3_SCHEMA);
+  assert.deepEqual(second.affiliations, []);
+  assert.ok((await stat(file)).size <= MAX_SHARD_BYTES);
+  assert.deepEqual(await readSnapshotFile(file), next);
+  assert.deepEqual(await resolveSnapshot(first, (path) => readFile(join(dir, path), "utf8")), source);
+});
+
 test("publishing both formats retains each preceding public generation after sibling pruning", async (t) => {
   const dir = await mkdtemp(join(tmpdir(), "monitor-v3-generations-"));
   t.after(() => rm(dir, { recursive: true, force: true }));
