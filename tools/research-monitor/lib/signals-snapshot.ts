@@ -252,8 +252,8 @@ const browse = z
     direct: count,
     candidate: count,
     publishers: count,
-    categories: z.record(count),
-    discoveryGroups: z.record(count),
+    categories: z.record(z.string(), count),
+    discoveryGroups: z.record(z.string(), count),
   })
   .strict();
 const githubOverview = z

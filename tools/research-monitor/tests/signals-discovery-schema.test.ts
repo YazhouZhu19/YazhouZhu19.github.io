@@ -115,7 +115,7 @@ test("archives exceeding the new record limit are rejected without truncating re
   assert.deepEqual(issue.path, ["records"]);
   if (issue.code === "too_big") {
     assert.equal(issue.maximum, SIGNALS_MAX_RECORDS);
-    assert.equal(issue.type, "array");
+    assert.equal(issue.origin, "array");
   }
 });
 

@@ -801,9 +801,11 @@ export async function collectResearchSignals(
       url: githubUrl,
       status: result.errors.length ? (result.successes ? "partial" : "error") : "ok",
       checkedAt: now,
-      lastSuccessAt: result.errors.length
-        ? (previous.sources.find((source) => source.id === "github-public")?.lastSuccessAt ?? null)
-        : now,
+      // A valid zero-hit response is still a success; partial errors remain visible above.
+      lastSuccessAt:
+        result.successes > 0
+          ? now
+          : (previous.sources.find((source) => source.id === "github-public")?.lastSuccessAt ?? null),
       received: result.received,
       retained: [...records.values()].filter((item) => item.kind === "github").length,
       error: result.errors.length ? result.errors.join("；").slice(0, 1600) : null,

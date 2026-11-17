@@ -26,6 +26,9 @@ const kindSchema = z.enum(["持续关注", "竞争观察", "合作候选"]);
 const timestamp = z.string().max(40).datetime({ offset: true });
 const paperId = z.string().min(1).max(500);
 const name = z.string().trim().min(1).max(160);
+// Existing backups accepted every hexadecimal 8-4-4-4-12 ID; preserve that
+// contract while new IDs continue to come from crypto.randomUUID().
+const teamId = z.guid();
 const collectionInput = z
   .object({ paperId, note: z.string().max(20000).default(""), stage: stageSchema.default("待读") })
   .strict();
@@ -49,7 +52,7 @@ const teamInput = z
   .strict();
 const teamSchema = z
   .object({
-    id: z.string().uuid(),
+    id: teamId,
     name,
     members: z.array(name).min(1).max(30),
     institution: z.string().max(250),
@@ -280,7 +283,7 @@ async function readPublicData(init?: RequestInit): Promise<LocalMonitorData> {
   }
 }
 
-function parseBody<T extends z.ZodTypeAny>(schema: T, init?: RequestInit): z.output<T> {
+function parseBody<T>(schema: z.ZodType<T>, init?: RequestInit): T {
   try {
     if (typeof init?.body !== "string" || byteLength(init.body) > 100000) throw new Error(LOCAL_ERRORS.input);
     return schema.parse(JSON.parse(init.body));
@@ -342,7 +345,7 @@ export async function api(
     writeData(target, data);
     return { ok: true, team, teams: data.teams };
   }
-  const { id } = parseBody(z.object({ id: z.string().uuid() }).strict(), init);
+  const { id } = parseBody(z.object({ id: teamId }).strict(), init);
   data.teams = data.teams.filter((row) => row.id !== id);
   writeData(target, data);
   return { ok: true, teams: data.teams };

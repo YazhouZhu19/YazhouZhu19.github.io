@@ -537,6 +537,9 @@ test("partial search failure retains old projects, excerpts, releases and group 
     githubOnly: true,
   });
   assert.equal(updated.data.sources[0].status, "partial");
+  assert.equal(updated.data.sources[0].checkedAt, "2026-10-15T04:00:00.000Z");
+  assert.equal(updated.data.sources[0].lastSuccessAt, "2026-10-15T04:00:00.000Z");
+  assert.ok(updated.data.sources[0].error, "partial failures remain visible after a successful request");
   assert.equal(updated.allFailed, false);
   const kept = updated.data.records.find((record) => record.id === original.id)!;
   assert.equal(kept.firstSeenAt, now);
@@ -546,6 +549,37 @@ test("partial search failure retains old projects, excerpts, releases and group 
   assert.equal(kept.releaseUrl, original.releaseUrl);
   assert.deepEqual(kept.discoveryGroups, ["segmentation"]);
   assert(first.data.records.every((old) => updated.data.records.some((record) => record.id === old.id)));
+});
+test("a successful zero-hit GitHub search updates last success without hiding other request failures", async () => {
+  const first = await collectResearchSignals(emptyResearchSignalsData(now), {
+    fetchText: fakeFetch,
+    now: new Date(now),
+    githubOnly: true,
+  });
+  let successfulSearches = 0;
+  const next = "2026-10-15T04:00:00.000Z";
+  const updated = await collectResearchSignals(first.data, {
+    fetchText: async (url) => {
+      if (new URL(url).pathname !== "/search/repositories") throw new Error("Repository unavailable");
+      successfulSearches++;
+      return { body: JSON.stringify({ total_count: 0, incomplete_results: false, items: [] }), status: 200 };
+    },
+    now: new Date(next),
+    githubOnly: true,
+  });
+  const source = updated.data.sources.find((entry) => entry.id === "github-public")!;
+  assert.ok(successfulSearches > 0);
+  assert.equal(source.received, 0, "a successful request need not return any records");
+  assert.equal(source.checkedAt, next);
+  assert.equal(source.lastSuccessAt, next);
+  assert.equal(source.status, "partial");
+  assert.ok(source.error, "repository request errors must still be reported");
+  assert.equal(updated.allFailed, false);
+  assert.deepEqual(
+    updated.data.records,
+    first.data.records,
+    "saved records are unchanged by zero-hit searches",
+  );
 });
 test("anonymous collection stays within 60 calls and long rate limits stop follow-up requests", async () => {
   let calls = 0;

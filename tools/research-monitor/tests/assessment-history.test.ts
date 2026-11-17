@@ -114,3 +114,29 @@ test("malformed storage fails closed and invalid review values cannot replace hi
   );
   assert.equal(history.contexts["direction:a"][0].review, "pending");
 });
+
+test("legacy history keeps missing-field defaults and arbitrary context keys within existing limits", () => {
+  const history = recordAssessment(emptyAssessmentHistory(), result(), stamp);
+  const { review, note, ...legacyRevision } = history.contexts["direction:a"][0];
+  const legacy = { schema: history.schema, contexts: { "team:影像研究": [legacyRevision] } };
+  const parsed = readAssessmentHistory(JSON.stringify(legacy));
+  assert.deepEqual(parsed.contexts["team:影像研究"][0], { ...legacyRevision, review, note });
+  for (const patch of [{ review: null }, { note: null }, { review: "invalid" }, { note: 1 }]) {
+    assert.throws(() =>
+      readAssessmentHistory(
+        JSON.stringify({ ...legacy, contexts: { a: [{ ...legacyRevision, ...patch }] } }),
+      ),
+    );
+  }
+  const contexts = Object.fromEntries(Array.from({ length: 40 }, (_, index) => [String(index), []]));
+  assert.equal(
+    Object.keys(readAssessmentHistory(JSON.stringify({ ...legacy, contexts })).contexts).length,
+    40,
+  );
+  assert.throws(() =>
+    readAssessmentHistory(JSON.stringify({ ...legacy, contexts: { ...contexts, extra: [] } })),
+  );
+  assert.throws(() =>
+    readAssessmentHistory(JSON.stringify({ ...legacy, contexts: { a: Array(13).fill(legacyRevision) } })),
+  );
+});

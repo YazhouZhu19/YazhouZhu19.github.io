@@ -38,6 +38,9 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      - name: Check dependency security advisories
+        run: npm audit --audit-level=high
+
       - name: Test and check formatting
         run: |
           npm test
