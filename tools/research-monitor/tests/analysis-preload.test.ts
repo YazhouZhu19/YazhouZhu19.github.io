@@ -256,9 +256,18 @@ test("a real Vite build injects hashed static dependencies in the head with an e
       actual.modules.some((file) => file.includes("optional-")),
       false,
     );
-    assert.equal(actual.styles.length, 2);
     assert.ok(actual.modules.every((file) => bundle[file]?.type === "chunk"));
-    assert.ok(actual.styles.every((file) => bundle[file]?.type === "asset"));
+    // CSS can be merged into a shared entry chunk differently across platforms.
+    // Check the required rules and valid assets, not a particular chunk count.
+    const preloadedStyles = actual.styles
+      .map((file) => {
+        const asset = bundle[file];
+        assert.ok(asset?.type === "asset", file);
+        return Buffer.from(asset.source).toString("utf8");
+      })
+      .join("\n");
+    assert.match(preloadedStyles, /\.analysis\s*\{/);
+    assert.match(preloadedStyles, /\.history\s*\{/);
     for (const path of ["index.html", "en/index.html"]) {
       const page = bundle[path];
       assert.ok(page?.type === "asset");
@@ -269,7 +278,8 @@ test("a real Vite build injects hashed static dependencies in the head with an e
       assert.ok(html.indexOf('charset="UTF-8"') < 1024, path);
       assert.ok(html.indexOf('charset="UTF-8"') < html.indexOf(injected[0]), path);
       const stylesheet = html.search(/<link[^>]*rel=["']stylesheet["']/);
-      if (stylesheet >= 0) assert.ok(html.indexOf(injected[0]) < stylesheet, path);
+      assert.ok(stylesheet >= 0, `${path} must contain the entry stylesheet`);
+      assert.ok(html.indexOf(injected[0]) < stylesheet, path);
       const observed = execute(injected[1], "#/analysis", `https://web.example/research-monitor/${path}`);
       observed.domReady();
       assert.deepEqual(
