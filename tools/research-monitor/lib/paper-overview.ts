@@ -36,7 +36,7 @@ export function parsePaperOverview(raw: unknown): PaperOverviewData {
   const envelope = z
     .object({
       schema: z.literal(PAPER_OVERVIEW_SCHEMA),
-      metadata: z.record(z.unknown()),
+      metadata: z.record(z.string(), z.unknown()),
       affiliations: z.array(z.string().max(2000)).max(100000),
       records: z.array(z.unknown()).max(100000),
     })

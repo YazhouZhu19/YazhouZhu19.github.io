@@ -28,6 +28,10 @@ A real November 17 collection of 12,231 papers and 158,471 provenance entries re
 
 Source status remains independent of publication success. Partial external failures retain saved records and their errors; GitHub's `lastSuccessAt` now means the latest run with a successful response, consistent with the other sources, including a valid zero-result response. A successful web/data deployment alone does not prove fresh collection: compare `collectedAt`, `signalsGeneratedAt`, counts, and source revision after a successful source sync. The failed November 17 run also reported 96,083 signals against the separate 100,000-record cap; that remaining capacity requires a source-archive sharding migration, not deletion of history or an unreviewed increase to a flat-file limit.
 
+The repository audit also found high-severity advisories in source-map-js, Vite, and Zod. The lockfile now uses source-map-js 1.2.2, Vite 8.1.6, and Zod 4.6.6; the npm audit returns zero known vulnerabilities. The Zod migration retains explicit string-keyed records, strict input/default behavior, and the existing hexadecimal GUID format for saved team backups. CI checks dependency advisories at the high-severity threshold before running application tests.
+
+The security update adds 12,929 gzip bytes to initial JavaScript, still within the previous startup ceiling. Its new schema chunk and the two schema-using workers have explicitly reviewed 2% asset allowances. Existing startup headroom is reassigned to optional code: the combined raw JavaScript ceiling is unchanged, and the combined gzip ceiling increases by only 12 KiB (0.26%). Startup code ceilings are tighter; CSS, data/shard, record/provenance and storage ceilings remain unchanged. The failed paper collection is repaired by preserving compression, independently of this security-library code allowance.
+
 ## Bootstrap / recovery
 
 1. Push this source change to a PR branch; run CI including round-trip, publication retention and artifact size checks.

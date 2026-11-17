@@ -22,7 +22,7 @@ const revisionSchema = z.object({
 });
 const historySchema = z.object({
   schema: z.literal("research-assessment-history-v1"),
-  contexts: z.record(z.array(revisionSchema).max(12)).refine((v) => Object.keys(v).length <= 40),
+  contexts: z.record(z.string(), z.array(revisionSchema).max(12)).refine((v) => Object.keys(v).length <= 40),
 });
 export type AssessmentRevision = z.infer<typeof revisionSchema>;
 export type AssessmentHistory = z.infer<typeof historySchema>;

@@ -92,6 +92,23 @@ test("overview rejects duplicate IDs, counts, schema and corrupt dictionary refe
   assert.throws(() => parsePaperOverview({ ...raw, metadata: { ...raw.metadata, totalStored: 0 } }));
 });
 
+test("overview metadata retains optional-field absence and validates known fields after the record envelope", () => {
+  const raw = createPaperOverview(fixture());
+  const parsed = parsePaperOverview(raw);
+  for (const field of ["error", "errors", "sourceTaxonomyVersions"])
+    assert.equal(Object.hasOwn(parsed, field), false);
+  assert.throws(() => parsePaperOverview({ ...raw, metadata: { ...raw.metadata, collectedAt: null } }));
+  assert.throws(() => parsePaperOverview({ ...raw, metadata: { ...raw.metadata, status: "invalid" } }));
+  assert.throws(() => parsePaperOverview({ ...raw, metadata: [] }));
+  assert.deepEqual(
+    parsePaperOverview({
+      ...raw,
+      metadata: { ...raw.metadata, sourceTaxonomyVersions: { "source:影像": "v1" } },
+    }).sourceTaxonomyVersions,
+    { "source:影像": "v1" },
+  );
+});
+
 test("overview publication and loading preserve collection failure notices without flagging limited coverage", () => {
   for (const status of ["partial", "error"] as const) {
     const source = {

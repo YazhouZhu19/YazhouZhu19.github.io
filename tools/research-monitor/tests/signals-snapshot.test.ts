@@ -262,6 +262,39 @@ test("precomputed overview values exactly match full browser models at the snaps
   assert.equal(actual.github.recent.length, 4);
 });
 
+test("overview records accept arbitrary string keys but keep count bounds and strict object validation", () => {
+  const manifest = createSignalsSnapshot(library()).manifest;
+  const changed = structuredClone(manifest);
+  changed.overview.github.browse.categories = { "category:影像": 2 };
+  changed.overview.github.browse.discoveryGroups = {};
+  const parsed = parseSignalsManifest(changed);
+  assert.deepEqual(parsed.overview.github.browse.categories, { "category:影像": 2 });
+  assert.deepEqual(parsed.overview.github.browse.discoveryGroups, {});
+  for (const invalid of [-1, 0.5, "2", null, Number.MAX_SAFE_INTEGER + 1]) {
+    assert.throws(() =>
+      parseSignalsManifest({
+        ...changed,
+        overview: {
+          ...changed.overview,
+          github: {
+            ...changed.overview.github,
+            browse: { ...changed.overview.github.browse, categories: { invalid } },
+          },
+        },
+      }),
+    );
+  }
+  assert.throws(() =>
+    parseSignalsManifest({
+      ...changed,
+      overview: {
+        ...changed.overview,
+        github: { ...changed.overview.github, privileged: true },
+      },
+    }),
+  );
+});
+
 test("constructing the loader makes no requests, overview loads only the manifest, and kinds load independently with caching", async () => {
   const built = createSignalsSnapshot(library()),
     cache = memoryCache();

@@ -202,6 +202,21 @@ test("backup round-trip restores only personal records and preserves stored valu
   assert.equal(fetchCalls.length, 0);
 });
 
+test("previously accepted GUID team IDs survive backup import and remain deletable", async () => {
+  const source = backup();
+  const legacyId = "ABCDEF01-2345-FFFF-0000-0123456789AB";
+  source.teams[0].id = legacyId;
+  importBackup(source);
+  assert.equal(exportBackup().teams[0].id, legacyId);
+  await api("/api/teams", { method: "DELETE", body: JSON.stringify({ id: legacyId }) });
+  assert.deepEqual(exportBackup().teams, []);
+  for (const invalid of ["not-a-guid", "ABCDEF01-2345-FFFF-0000-0123456789AZ", legacyId + " "]) {
+    assert.throws(() => importBackup({ ...source, teams: [{ ...source.teams[0], id: invalid }] }), {
+      message: LOCAL_ERRORS.backup,
+    });
+  }
+});
+
 test("malformed, privilege-bearing and prototype keys are rejected without mutation", () => {
   importBackup(backup());
   const before = local.getItem(LOCAL_DATA_KEY);

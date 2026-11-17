@@ -17,7 +17,8 @@
       "2026-11-17 native Analysis integrates the approved 14-work history snapshot in a lazy optional panel (initial measurement 48370/13070 raw/gzip JS, 8570/1640 CSS). Caps 50176/14336 JS and 9216/2048 CSS. Parent view gains snapshot filters, native theme tokens and separated live/snapshot sections; caps become 18432/7680 JS and 9216/2048 CSS. Optional totals grow only by these explicit feature allowances; all startup, data, worker and other asset ceilings remain unchanged. The newly shared chevron-down icon has a 512/512 raw/gzip per-asset cap within the same aggregate allowances.",
       "2026-11-17 analysis loading optimization replaces approximately 121 MB / 302 full-data requests with a complete 1.43 MB published rule result and a 565-byte manifest. New lazy analysis-store measured 8250/3080 raw/gzip, bounded at 9216/3584; the in-browser analysis worker is no longer emitted. The shared workspace gains analysis metadata, a lazy-loader hook and on-demand detail/retrieval controls: measured main 165200 raw bytes, explicit cap 166912 (+3072). All aggregate startup/optional limits, CSS limits and existing dataset caps remain unchanged. The new optional analysis package is independently capped at 2 MiB raw / 512 KiB gzip and the manifest at 8 KiB / 2 KiB; no build changes these limits.",
       "2026-11-17 second analysis startup optimization: ResearchDashboard and its shared chart/style helpers are now lazy. Main JS falls from 165200 to about 125964 raw bytes (new gzip 41098); main CSS from 119567/19961 to 84484/14954. Tightened per-asset main caps, added explicit caps for extracted chunks, and allowed analysis-store 14336/5120 for strict lossless dictionary decoding and semantic SHA verification. The compact analysis package gets a stricter 1.5 MiB/320 KiB cap; legacy v1 publication remains compatible. No algorithm or evidence is removed. CSS aggregate allowance is redistributed from startup to lazy assets while keeping the exact same combined 280768 raw / 53232 gzip ceiling. All JS aggregate ceilings remain unchanged; limits are never rewritten by builds.",
-      "2026-11-17 history-first startup: move Sonner to a notification host requested only by the first notice, stop forcing optional Select into vendor-ui, and combine history with its analysis route. The analysis/history per-asset caps are summed, new naturally shared Radix/Floating chunks receive explicit measured caps, and main.js is tightened. Initial JS measured 516256 raw /170983 gzip (versus 574100/185677); the 345-byte native notification fallback keeps chunk failure from replacing the workspace. Reallocate 75776 raw /19456 gzip from initial JS to optional JS: combined JS ceilings remain exactly 13450240 raw /4745728 gzip. Combined CSS and all data ceilings stay unchanged. History/CSS hints precede normal-priority bootstrap; low-priority data was rejected after a real-network A/B regression. Builds never rewrite these limits."
+      "2026-11-17 history-first startup: move Sonner to a notification host requested only by the first notice, stop forcing optional Select into vendor-ui, and combine history with its analysis route. The analysis/history per-asset caps are summed, new naturally shared Radix/Floating chunks receive explicit measured caps, and main.js is tightened. Initial JS measured 516256 raw /170983 gzip (versus 574100/185677); the 345-byte native notification fallback keeps chunk failure from replacing the workspace. Reallocate 75776 raw /19456 gzip from initial JS to optional JS: combined JS ceilings remain exactly 13450240 raw /4745728 gzip. Combined CSS and all data ceilings stay unchanged. History/CSS hints precede normal-priority bootstrap; low-priority data was rejected after a real-network A/B regression. Builds never rewrite these limits.",
+      "2026-11-17 security repair pins Vite 8.1.6, source-map-js 1.2.2 and Zod 4.6.6; npm audit reports zero vulnerabilities. Zod v4 retains existing validation/backup contracts but adds schema runtime bytes: initial JS 551716/183906 and optional JS 12870129/4565968 raw/gzip. The new schemas chunk and two schema-using workers receive measured 2% per-asset caps rounded to KiB. Reallocate startup headroom to optional JS: initial caps 576512/188416 and optional caps 12873728/4569600. Combined JS raw cap remains 13450240; combined gzip increases by 12288 bytes (0.26%). All CSS, startup-data, dataset, individual data-shard and publication caps remain unchanged; this is a reviewed security-library delta, not an automatic build adjustment."
     ]
   },
   "initialData": [
@@ -34,8 +35,8 @@
         "gzipBytes": 5120
       },
       "assets/information-screening-worker.js": {
-        "rawBytes": 102400,
-        "gzipBytes": 33792
+        "rawBytes": 139264,
+        "gzipBytes": 47104
       },
       "assets/information-screening.css": {
         "rawBytes": 3072,
@@ -106,8 +107,8 @@
         "gzipBytes": 4096
       },
       "assets/data-worker.js": {
-        "rawBytes": 86016,
-        "gzipBytes": 24576
+        "rawBytes": 120832,
+        "gzipBytes": 37888
       },
       "assets/paper-index.js": {
         "rawBytes": 2048,
@@ -344,20 +345,24 @@
       "assets/notification-host.js": {
         "rawBytes": 35840,
         "gzipBytes": 10240
+      },
+      "assets/schemas.js": {
+        "rawBytes": 94208,
+        "gzipBytes": 26624
       }
     },
     "totals": {
       "initialJs": {
-        "rawBytes": 620544,
-        "gzipBytes": 200704
+        "rawBytes": 576512,
+        "gzipBytes": 188416
       },
       "initialCss": {
         "rawBytes": 86016,
         "gzipBytes": 15872
       },
       "optionalJs": {
-        "rawBytes": 12829696,
-        "gzipBytes": 4545024
+        "rawBytes": 12873728,
+        "gzipBytes": 4569600
       },
       "optionalCss": {
         "rawBytes": 194752,
@@ -452,7 +457,5 @@
       "path": "data/analysis-manifest-v2.json"
     }
   ],
-  "initialDynamicEntries": [
-    "lib/paper-overview.ts"
-  ]
+  "initialDynamicEntries": ["lib/paper-overview.ts"]
 }
