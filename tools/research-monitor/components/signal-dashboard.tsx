@@ -19,6 +19,7 @@ import { buildSignalDashboard, type SignalDashboardBucket } from "@/lib/signal-d
 import type { ResearchSignal } from "@/lib/research-signals";
 import { useI18n } from "./locale-provider";
 import "@/styles/signal-dashboard.css";
+import "@/styles/signal-dashboard-legacy.css";
 
 export type SignalDashboardDrill = { label: string; ids: string[] };
 type Props = {

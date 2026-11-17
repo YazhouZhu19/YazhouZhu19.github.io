@@ -7,11 +7,24 @@
     padding: 0;
     border: 0;
     background: none;
-    color: var(--living-ink);
+    color: var(--primary);
     font: inherit;
     text-decoration: underline;
     text-underline-offset: 3px;
     cursor: pointer;
+  }
+  .news-baseline-note > button:hover {
+    color: var(--accent-foreground);
+    text-decoration-thickness: 2px;
+  }
+  .news-baseline-note > button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: var(--space-4);
+    border-radius: var(--radius-3);
+  }
+  .news-types .dash-status-legend > button > span {
+    font-size: var(--text-12);
+    font-weight: 500;
   }
   @media (max-width: 1200px) {
     .news-main-grid {
