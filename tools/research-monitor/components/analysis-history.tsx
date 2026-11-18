@@ -123,7 +123,7 @@ function HistoryCard({ item }: { item: HistoryDirection }) {
           data-history-toggle
           aria-expanded={expanded}
           aria-controls={panelId}
-          aria-label={`${expanded ? t("收起证据", "Hide evidence") : t("展开证据", "Show evidence")} · ${title}`}
+          aria-label={`${expanded ? t("收起证据", "Hide evidence") : t("证据与时间线", "Evidence and timeline")} · ${title}`}
           onClick={() => setExpanded((value) => !value)}
         >
           {expanded ? t("收起证据", "Hide evidence") : t("证据与时间线", "Evidence and timeline")}

@@ -5,6 +5,7 @@ import { AppErrorBoundary } from "./components/app-error-boundary";
 import "./styles/globals.css";
 import "./styles/typography.css";
 import "./styles/accessibility.css";
+import "./styles/editorial.css";
 
 const locale = document.documentElement.lang === "en" ? "en" : "zh";
 createRoot(document.getElementById("root")!).render(

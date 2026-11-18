@@ -13,11 +13,16 @@
     "collect": "tsx scripts/collect.ts",
     "collect:signals": "tsx scripts/collect-signals.ts",
     "test": "node --import tsx --test tests/*.test.ts && node tests/run-local.mjs",
-    "e2e:prepare": "vite build --outDir .e2e-dist && tsx e2e/build-fixtures.ts",
+    "e2e:prepare": "node scripts/security/picomatch-patch.mjs && vite build --outDir .e2e-dist && tsx e2e/build-fixtures.ts",
     "e2e": "npm run e2e:prepare && playwright test",
     "e2e:full-data": "tsx e2e/full-data-audit.ts",
     "format": "prettier --write lib components scripts styles hooks tests e2e main.tsx vite.config.ts playwright.config.ts",
-    "format:check": "prettier --check lib components scripts styles hooks tests e2e main.tsx vite.config.ts playwright.config.ts"
+    "format:check": "prettier --check lib components scripts styles hooks tests e2e main.tsx vite.config.ts playwright.config.ts",
+    "postinstall": "node scripts/security/picomatch-patch.mjs --apply",
+    "prebuild": "node scripts/security/picomatch-patch.mjs",
+    "predev": "node scripts/security/picomatch-patch.mjs",
+    "pretest": "node scripts/security/picomatch-patch.mjs",
+    "audit:security": "node scripts/security/audit.mjs"
   },
   "dependencies": {
     "@mlc-ai/web-llm": "0.2.86",

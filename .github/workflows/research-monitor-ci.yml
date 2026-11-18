@@ -39,7 +39,7 @@ jobs:
         run: npm ci
 
       - name: Check dependency security advisories
-        run: npm audit --audit-level=high
+        run: npm run audit:security
 
       - name: Test and check formatting
         run: |

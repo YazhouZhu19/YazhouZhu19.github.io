@@ -1,0 +1,119 @@
+@layer app-editorial {
+  /* Paper, ink and fine rules; keep the existing dashboard grids and controls. */
+  .topbar,
+  [data-slot="sidebar-inner"],
+  [data-slot="sidebar"][data-mobile="true"] {
+    background: var(--background);
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  .brand-symbol {
+    border-radius: 0;
+    border-color: var(--foreground);
+    background: transparent;
+    box-shadow: none;
+  }
+  .brand strong,
+  html[lang="en"] .brand strong {
+    font-size: 20px;
+    letter-spacing: -0.04em;
+  }
+  [data-slot="sidebar-menu-button"][data-active="true"] {
+    box-shadow: none;
+    background: var(--accent);
+    color: var(--foreground);
+    font-weight: 500;
+  }
+  .page-heading,
+  .dashboard-workspace .page-heading {
+    padding: 30px 0;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .page-heading h1,
+  .dashboard-workspace .page-heading h1,
+  html[lang="en"] .page-heading h1 {
+    font-size: clamp(30px, 3.1vw, 44px);
+    line-height: 1.2;
+  }
+  .page-heading p:not(.eyebrow) {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+  .page-heading .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.025em;
+  }
+  .dash-metric,
+  .source-signals .dash-metric,
+  .integrated-counts > div {
+    border: 0;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .dash-metric:hover {
+    transform: none;
+    background: var(--muted);
+  }
+  .dash-metric strong,
+  .source-signals .dash-metric strong,
+  .integrated-counts strong {
+    color: var(--foreground);
+    font-family: var(--font-reading);
+    font-size: 38px;
+    font-weight: 400;
+    letter-spacing: -0.035em;
+  }
+  .dash-panel,
+  .source-signals .dash-panel {
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .dash-panel-heading h2,
+  .source-signals .dash-panel-heading h2,
+  .dashboard-shell-heading h2,
+  .source-signals .dashboard-shell-heading h2 {
+    font-size: 22px;
+    font-weight: 450;
+    letter-spacing: -0.01em;
+  }
+  .integrated-directions > article,
+  .integrated-lexical-card,
+  .analysis-history .analysis-history-card,
+  .source-signals .signal-card {
+    border: 0;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .source-signals .signal-card h3,
+  .integrated-directions > article h3,
+  .analysis-history .analysis-history-card-head h3 {
+    font-weight: 450;
+  }
+  .dashboard-section-tabs > button[aria-pressed="true"] {
+    color: var(--foreground);
+    border-bottom-color: var(--foreground);
+    font-weight: 500;
+  }
+  @media (max-width: 640px) {
+    .page-heading,
+    .dashboard-workspace .page-heading {
+      padding: 24px 0;
+    }
+    .dash-metric strong,
+    .source-signals .dash-metric strong,
+    .integrated-counts strong {
+      font-size: 30px;
+    }
+  }
+}
