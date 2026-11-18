@@ -645,45 +645,6 @@
     );
     box-shadow: var(--glass-shadow);
   }
-  .page-heading::before,
-  .page-heading::after {
-    content: "";
-    position: absolute;
-    pointer-events: none;
-    z-index: -1;
-  }
-  .page-heading::before {
-    width: 310px;
-    height: 310px;
-    border: 1px solid var(--living-line);
-    border-radius: 50%;
-    right: 5%;
-    top: -62px;
-    background: radial-gradient(
-      circle at 28% 23%,
-      color-mix(in srgb, var(--card) 90%, transparent),
-      color-mix(in srgb, var(--foreground) 1.2%, transparent) 42%,
-      color-mix(in srgb, var(--foreground) 2.5%, transparent) 78%
-    );
-    box-shadow:
-      0 0 0 29px color-mix(in srgb, var(--foreground) 0.8%, transparent),
-      0 0 0 30px color-mix(in srgb, var(--foreground) 3.5%, transparent),
-      0 0 0 59px color-mix(in srgb, var(--foreground) 0.6%, transparent),
-      0 0 0 60px color-mix(in srgb, var(--foreground) 2.2%, transparent),
-      inset -10px -12px 30px color-mix(in srgb, var(--foreground) 1.8%, transparent),
-      inset 6px 6px 20px color-mix(in srgb, var(--card) 85%, transparent);
-    animation: none;
-  }
-  .page-heading::after {
-    inset: 0;
-    background-image: radial-gradient(
-      color-mix(in srgb, var(--foreground) 10%, transparent) 0.8px,
-      transparent 0.8px
-    );
-    background-size: 20px 20px;
-    mask-image: linear-gradient(90deg, transparent 45%, var(--foreground));
-    opacity: 0.6;
-  }
   .page-heading > div {
     min-width: 0;
   }
