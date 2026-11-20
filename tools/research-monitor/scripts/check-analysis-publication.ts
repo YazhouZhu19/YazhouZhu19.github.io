@@ -9,7 +9,7 @@ import {
   stableAnalysisContent,
 } from "../lib/analysis-transport";
 import { analyzeResearch } from "../lib/integrated-analysis";
-import { parseResearchSignalsData } from "../lib/research-signals";
+import { readSignalArchiveFile } from "./signal-archive";
 import { parseSignalsManifest } from "../lib/signals-snapshot";
 import { parseSnapshotManifest } from "../lib/snapshot";
 import { readSnapshotFile } from "./snapshot-files";
@@ -26,7 +26,7 @@ const [
   analysisManifestBytes,
   paperManifestBytes,
   signalManifestBytes,
-  rawSignals,
+  signals,
   deploymentBytes,
   papers,
 ] = await Promise.all([
@@ -39,7 +39,7 @@ const [
   readFile("dist/data/analysis-manifest.json"),
   readFile("dist/data/public-papers-v3.json"),
   readFile("dist/data/signals-v2/manifest.json"),
-  readFile("data/research-signals.json", "utf8"),
+  readSignalArchiveFile("data/research-signals.json"),
   readFile("dist/deployment.json", "utf8"),
   readSnapshotFile("data/papers.json"),
 ]);
@@ -48,8 +48,10 @@ const snapshot = parseAnalysisSnapshot(JSON.parse(bootstrapBytes.toString("utf8"
 const summary = parseAnalysisSnapshot(JSON.parse(summaryBytes.toString("utf8")));
 const manifest = parseAnalysisManifest(JSON.parse(analysisManifestBytes.toString("utf8")));
 const paperManifest = parseSnapshotManifest(JSON.parse(paperManifestBytes.toString("utf8")));
-const signalManifest = parseSignalsManifest(JSON.parse(signalManifestBytes.toString("utf8")));
-const signals = parseResearchSignalsData(JSON.parse(rawSignals));
+const signalManifest = parseSignalsManifest(
+  JSON.parse(signalManifestBytes.toString("utf8")),
+  signalManifestBytes.length,
+);
 const deployment = JSON.parse(deploymentBytes);
 const snapshotV2 = parseAnalysisTransport(JSON.parse(bootstrapV2Bytes.toString("utf8")));
 const summaryV2 = parseAnalysisTransport(JSON.parse(summaryV2Bytes.toString("utf8")));

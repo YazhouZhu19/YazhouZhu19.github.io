@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { readSignalArchiveFile } from "../scripts/signal-archive";
 import { GITHUB_DISCOVERY_GROUPS } from "../lib/github-discovery";
 import { NEWS_DISCOVERY_GROUPS } from "../lib/news-discovery";
 import type { ResearchSignal } from "../lib/research-signals";
@@ -79,10 +80,10 @@ test("missing, unknown and general routes always remain browseable without dilut
   ]);
 });
 
-test("the entire current GitHub and news archive is covered with valid nonduplicated categories", () => {
-  const data = JSON.parse(
-    readFileSync(new URL("../data/research-signals.json", import.meta.url), "utf8"),
-  ) as { records: ResearchSignal[] };
+test("the entire current GitHub and news archive is covered with valid nonduplicated categories", async () => {
+  const data = await readSignalArchiveFile(
+    fileURLToPath(new URL("../data/research-signals.json", import.meta.url)),
+  );
   for (const kind of ["github", "news"] as const) {
     const records = data.records.filter((record) => record.kind === kind);
     assert(records.length > 0, `${kind} archive is required for this coverage check`);

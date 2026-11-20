@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { readSignalArchiveFile } from "../scripts/signal-archive";
 import type { GitHubSignal, ResearchSignal } from "../lib/research-signals";
 import { buildGitHubDashboard } from "../lib/github-dashboard";
 import { buildGitHubPopularity, compareGitHubPopularity } from "../lib/github-popularity";
@@ -191,10 +192,10 @@ test("activity and creation select populations but never reinterpret cumulative 
   assert.equal(invalid.popularity.stars.median, null);
 });
 
-test("real archive totals and rankings reconcile with the selected dashboard records", () => {
-  const data = JSON.parse(
-    readFileSync(new URL("../data/research-signals.json", import.meta.url), "utf8"),
-  ) as { generatedAt: string; records: ResearchSignal[] };
+test("real archive totals and rankings reconcile with the selected dashboard records", async () => {
+  const data = await readSignalArchiveFile(
+    fileURLToPath(new URL("../data/research-signals.json", import.meta.url)),
+  );
   const github = data.records.filter((record): record is GitHubSignal => record.kind === "github");
   for (const baseRecords of [github, github.filter((record) => record.relevance?.level === "direct")]) {
     const model = buildGitHubDashboard(

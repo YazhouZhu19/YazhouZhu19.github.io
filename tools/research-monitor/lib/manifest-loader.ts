@@ -2,7 +2,7 @@
 export function createManifestLoader<T>(
   url: string,
   options: {
-    validate: (raw: unknown) => T;
+    validate: (raw: unknown, bytes: number) => T;
     fetcher?: typeof fetch;
     maxBytes?: number;
     /** Retry one failed fetch or body read, within the caller's existing deadline. */
@@ -79,7 +79,7 @@ export function createManifestLoader<T>(
           const text = new TextDecoder("utf-8", { fatal: true }).decode(joined);
           // Some hosts do not support conditional requests. Reuse the validated
           // object even when they send the same body with a 200 response.
-          const value = previous?.text === text ? previous.value : options.validate(JSON.parse(text));
+          const value = previous?.text === text ? previous.value : options.validate(JSON.parse(text), bytes);
           signal?.throwIfAborted();
           previous = { text, value, etag: response.headers.get("ETag") ?? undefined };
           return value;

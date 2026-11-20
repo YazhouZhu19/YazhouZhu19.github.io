@@ -178,7 +178,8 @@ export function createSignalsSnapshot(input: ResearchSignalsData, maxBytes = MAX
 }
 
 export async function readSignalsSnapshot(file: string): Promise<ResearchSignalsData> {
-  const manifest = parseSignalsManifest(JSON.parse(await readFile(file, "utf8")));
+  const body = await readFile(file);
+  const manifest = parseSignalsManifest(JSON.parse(body.toString("utf8")), body.length);
   const readShard = (shard: SignalShard) => readFile(join(dirname(file), shard.path), "utf8");
   const records = [
     ...(await resolveSignalKind(manifest, "github", readShard)),
@@ -197,7 +198,8 @@ export async function writeSignalsSnapshot(
   const { manifest, manifestText, texts } = createSignalsSnapshot(input, maxBytes);
   let previous: SignalsManifest | undefined;
   try {
-    previous = parseSignalsManifest(JSON.parse(await readFile(previousFile, "utf8")));
+    const body = await readFile(previousFile);
+    previous = parseSignalsManifest(JSON.parse(body.toString("utf8")), body.length);
   } catch (error: any) {
     if (error.code !== "ENOENT") throw error;
   }

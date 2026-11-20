@@ -1,10 +1,10 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import { readSnapshotFile } from "./snapshot-files";
 import { analyzeResearch } from "../lib/integrated-analysis";
 import type { Paper } from "../lib/types";
-import { parseResearchSignalsData } from "../lib/research-signals";
+import { readSignalArchiveFile } from "./signal-archive";
 const data = await readSnapshotFile("data/papers.json");
-const signals = parseResearchSignalsData(JSON.parse(await readFile("data/research-signals.json", "utf8")));
+const signals = await readSignalArchiveFile("data/research-signals.json");
 const start = performance.now();
 const result = analyzeResearch({
   papers: data.papers as Paper[],

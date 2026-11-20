@@ -3,6 +3,8 @@ import { createHash } from "node:crypto";
 import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { readSignalArchiveFile } from "../scripts/signal-archive";
 import test from "node:test";
 import { buildGitHubDashboard } from "../lib/github-dashboard";
 import { buildNewsDashboard, newsDashboardAsOf } from "../lib/news-dashboard";
@@ -16,6 +18,7 @@ import {
 } from "../lib/signals-snapshot";
 import {
   emptyResearchSignalsData,
+  SIGNALS_ARCHIVE_MAX_BYTES,
   type GitHubSignal,
   type NewsSignal,
   type ResearchSignalsData,
@@ -448,6 +451,60 @@ test("manifest paths, duplicate shards, inconsistent counters and overview refer
   assert.throws(() => parseSignalsManifest(changed));
 });
 
+function aggregateBoundaryManifest() {
+  const { manifest } = createSignalsSnapshot({
+    ...library(),
+    records: Array.from({ length: 64 }, (_, index) => repo(`boundary-${index}`)),
+  });
+  const descriptor = manifest.shards[0];
+  manifest.shards = Array.from({ length: 64 }, (_, index) => {
+    const sha256 = index.toString(16).padStart(64, "0");
+    return {
+      ...descriptor,
+      sha256,
+      path: `shards/${sha256}.json`,
+      bytes: 4 * 1024 * 1024,
+      count: 1,
+      bucket: `2026-10.part-${index + 1}`,
+    };
+  });
+  // All size digits are stable after the first pass; include the writer's newline.
+  for (let index = 0; index < 3; index++)
+    manifest.shards.at(-1)!.bytes = 4 * 1024 * 1024 - Buffer.byteLength(JSON.stringify(manifest) + "\n");
+  return manifest;
+}
+
+test("public signal capacity includes manifest UTF-8 bytes at the exact aggregate boundary", () => {
+  const manifest = aggregateBoundaryManifest();
+  const bytes = Buffer.byteLength(JSON.stringify(manifest) + "\n");
+  assert.equal(
+    manifest.shards.reduce((sum, shard) => sum + shard.bytes, bytes),
+    SIGNALS_ARCHIVE_MAX_BYTES,
+  );
+  assert.equal(parseSignalsManifest(manifest, bytes).counts.github, 64);
+  assert.equal(parseSignalsManifest(manifest).counts.github, 64);
+  assert.throws(() => parseSignalsManifest(manifest, bytes + 1), /aggregate size/);
+  const changed = structuredClone(manifest);
+  changed.shards.at(-1)!.bytes++;
+  assert.throws(() => parseSignalsManifest(changed), /aggregate size/);
+  for (const size of [0, -1, NaN, Infinity, 4 * 1024 * 1024 + 1])
+    assert.throws(() => parseSignalsManifest(manifest, size), /manifest.*size/i);
+});
+
+test("browser manifest validation counts actual wire whitespace before requesting any shard", async () => {
+  const manifest = aggregateBoundaryManifest();
+  const body = JSON.stringify(manifest) + "\n ";
+  let requests = 0;
+  const loader = createSignalsSnapshotLoader({
+    fetcher: async () => {
+      requests++;
+      return new Response(body);
+    },
+  });
+  await assert.rejects(loader.loadManifest(), /aggregate size/);
+  assert.equal(requests, 1);
+});
+
 test("atomic writer preserves the previous generation, prunes older orphan shards and leaves valid output on failure", async (t) => {
   const dir = await mkdtemp(join(tmpdir(), "monitor-signals-v2-"));
   t.after(() => rm(dir, { recursive: true, force: true }));
@@ -469,8 +526,8 @@ test("atomic writer preserves the previous generation, prunes older orphan shard
 });
 
 test("real signal archive round-trips without dropping fields and publishes a compact overview", async () => {
-  const data: ResearchSignalsData = JSON.parse(
-    await readFile(new URL("../data/research-signals.json", import.meta.url), "utf8"),
+  const data = await readSignalArchiveFile(
+    fileURLToPath(new URL("../data/research-signals.json", import.meta.url)),
   );
   const built = createSignalsSnapshot(data);
   const github = await resolveSignalKind(

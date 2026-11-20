@@ -1,7 +1,7 @@
-import { SIGNALS_MAX_BYTES, SIGNALS_MAX_RECORDS } from "../lib/research-signals";
+import { SIGNALS_ARCHIVE_MAX_BYTES, SIGNALS_MAX_BYTES, SIGNALS_MAX_RECORDS } from "../lib/research-signals";
 
 /** Report both source-archive limits; never change limits or remove records. */
-export function signalsCapacity(records: number, bytes: number) {
+export function signalsCapacity(records: number, bytes: number, format: "legacy" | "sharded" = "sharded") {
   if (![records, bytes].every((value) => Number.isSafeInteger(value) && value >= 0))
     throw new Error("Invalid signals capacity measurement");
   const metric = (used: number, limit: number) => ({
@@ -13,13 +13,18 @@ export function signalsCapacity(records: number, bytes: number) {
   });
   return {
     records: metric(records, SIGNALS_MAX_RECORDS),
-    bytes: metric(bytes, SIGNALS_MAX_BYTES),
+    bytes: metric(bytes, format === "legacy" ? SIGNALS_MAX_BYTES : SIGNALS_ARCHIVE_MAX_BYTES),
   };
 }
 
-export function signalsCapacityLines(records: number, bytes: number, phase: "input" | "output") {
-  const capacity = signalsCapacity(records, bytes);
-  const lines = [JSON.stringify({ event: "signals-capacity", phase, ...capacity })];
+export function signalsCapacityLines(
+  records: number,
+  bytes: number,
+  phase: "input" | "output",
+  format: "legacy" | "sharded" = "sharded",
+) {
+  const capacity = signalsCapacity(records, bytes, format);
+  const lines = [JSON.stringify({ event: "signals-capacity", phase, format, ...capacity })];
   if (capacity.records.warning || capacity.bytes.warning) {
     const detail = Object.entries(capacity)
       .map(
@@ -28,7 +33,7 @@ export function signalsCapacityLines(records: number, bytes: number, phase: "inp
       )
       .join("; ");
     lines.push(
-      `::warning title=Research signals capacity::${phase} archive at or above 80% of a capacity limit; ${detail}. Plan sharded source storage before the hard limit. No records were removed or limits changed.`,
+      `::warning title=Research signals capacity::${phase} archive at or above 80% of a capacity limit; ${detail}. Review archive growth before the hard limit. No records were removed.`,
     );
   }
   return lines;

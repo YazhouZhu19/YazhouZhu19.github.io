@@ -1,15 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { readSignalArchiveFile } from "../scripts/signal-archive";
 import { buildGitHubDashboard, githubDashboardDate } from "../lib/github-dashboard";
 import { buildNewsDashboard, newsDashboardDate, newsDashboardAsOf } from "../lib/news-dashboard";
 import { signalTrendStatistics } from "../lib/signal-trends";
 import { getSignalBrowseCategoryIds, getSignalBrowseCategories } from "../lib/signal-browse-categories";
 import { matureGitHubRecords } from "../lib/github-quality";
-import type { ResearchSignal, ResearchSignalsData } from "../lib/research-signals";
-const data = JSON.parse(
-  readFileSync(new URL("../data/research-signals.json", import.meta.url), "utf8"),
-) as ResearchSignalsData;
+import type { ResearchSignal } from "../lib/research-signals";
+const data = await readSignalArchiveFile(
+  fileURLToPath(new URL("../data/research-signals.json", import.meta.url)),
+);
 for (const kind of ["github", "news"] as const) {
   for (const clock of kind === "github"
     ? (["activity", "creation"] as const)

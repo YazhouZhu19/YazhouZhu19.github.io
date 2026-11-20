@@ -9,7 +9,8 @@ import {
   GITHUB_QUALITY_VERSION,
 } from "../lib/github-quality";
 import { getSignalBrowseCategoryIds } from "../lib/signal-browse-categories";
-import { parseResearchSignalsData, type GitHubSignal } from "../lib/research-signals";
+import type { GitHubSignal } from "../lib/research-signals";
+import { readSignalArchiveFile } from "./signal-archive";
 import { buildGitHubDashboard } from "../lib/github-dashboard";
 import { SIGNAL_RELEVANCE_VERSION } from "../lib/signal-relevance";
 export const GITHUB_REVIEW_SEED = "oevryn-github-direct-review-2026-10-21-v1";
@@ -53,7 +54,7 @@ export async function exportGitHubReview(
   output = "eval/github-direct-review-evidence.json",
 ) {
   const text = await readFile(resolve(input), "utf8"),
-    data = parseResearchSignalsData(JSON.parse(text));
+    data = await readSignalArchiveFile(resolve(input));
   const records = data.records.filter((record): record is GitHubSignal => record.kind === "github");
   const sample = sampleDirectRepositories(records, data.generatedAt);
   const before = buildGitHubDashboard(data.records, {}, data.generatedAt, data.generatedAt);
@@ -67,6 +68,7 @@ export async function exportGitHubReview(
     status: "provisional; pending human review; no direct-rule changes",
     seed: GITHUB_REVIEW_SEED,
     snapshot: data.generatedAt,
+    // The sharded manifest binds every verified shard; legacy input binds its flat bytes.
     sourceSha256: hash(text),
     qualityVersion: GITHUB_QUALITY_VERSION,
     relevanceVersion: SIGNAL_RELEVANCE_VERSION,

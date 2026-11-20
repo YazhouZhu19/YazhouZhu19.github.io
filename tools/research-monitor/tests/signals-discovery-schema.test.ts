@@ -9,6 +9,7 @@ import {
   ResearchSignalsDataSchema,
   SignalRelevanceSchema,
   SignalSourceStateSchema,
+  SIGNALS_ARCHIVE_MAX_BYTES,
   SIGNALS_MAX_BYTES,
   SIGNALS_MAX_RECORDS,
   SIGNALS_MAX_SOURCES,
@@ -45,7 +46,8 @@ test("discovery checkpoints retain independent providers and accept old snapshot
   const parsed = parseResearchSignalsData({ ...snapshot, discoveryState: { github, news } });
   assert.deepEqual(parsed.discoveryState, { github, news });
   assert.throws(() => parseResearchSignalsData({ ...snapshot, discoveryState: { thirdParty: {} } }));
-  assert.equal(SIGNALS_MAX_RECORDS, 100000);
+  assert.equal(SIGNALS_MAX_RECORDS, 250000);
+  assert.equal(SIGNALS_ARCHIVE_MAX_BYTES, 256 * 1024 * 1024);
   assert.equal(SIGNALS_MAX_BYTES, 96 * 1024 * 1024);
 });
 
@@ -98,11 +100,11 @@ function repositorySnapshot(size: number) {
   };
 }
 
-test("growing archives preserve valid unique repositories beyond the former 50000-record limit", () => {
-  const parsed = parseResearchSignalsData(repositorySnapshot(50001));
-  assert.equal(parsed.records.length, 50001);
+test("growing archives preserve valid unique repositories beyond the former 100000-record limit", () => {
+  const parsed = parseResearchSignalsData(repositorySnapshot(100001));
+  assert.equal(parsed.records.length, 100001);
   assert.equal(parsed.records[0].id, "github:lab/repository-0");
-  assert.equal(parsed.records.at(-1)?.id, "github:lab/repository-50000");
+  assert.equal(parsed.records.at(-1)?.id, "github:lab/repository-100000");
 });
 
 test("archives exceeding the new record limit are rejected without truncating records", () => {

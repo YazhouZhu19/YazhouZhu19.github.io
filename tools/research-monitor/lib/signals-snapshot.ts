@@ -5,6 +5,7 @@ import {
   ResearchSignalSchema,
   ResearchSignalsDataSchema,
   SIGNALS_MAX_RECORDS,
+  SIGNALS_ARCHIVE_MAX_BYTES,
   type GitHubSignal,
   type NewsSignal,
   type ResearchSignal,
@@ -302,7 +303,12 @@ export type SignalsManifest = Omit<ResearchSignalsData, "schemaVersion" | "recor
   overview: { github: GitHubSignalOverview; news: NewsSignalOverview };
 };
 
-export function parseSignalsManifest(raw: unknown): SignalsManifest {
+export function parseSignalsManifest(
+  raw: unknown,
+  manifestBytes = new TextEncoder().encode(JSON.stringify(raw) + "\n").length,
+): SignalsManifest {
+  if (!Number.isSafeInteger(manifestBytes) || manifestBytes < 1 || manifestBytes > MAX_SHARD_BYTES)
+    throw new SnapshotFormatError("Signal manifest exceeds size limit");
   const value = raw as SignalsManifest;
   if (
     !value ||
@@ -379,6 +385,8 @@ export function parseSignalsManifest(raw: unknown): SignalsManifest {
       quality.defaultCount !== quality.counts.established + quality.counts.active)
   )
     throw new SnapshotFormatError("GitHub maturity summary counts or date differ");
+  if (value.shards.reduce((total, shard) => total + shard.bytes, manifestBytes) > SIGNALS_ARCHIVE_MAX_BYTES)
+    throw new SnapshotFormatError("Signal shards exceed aggregate size limit");
   if (counted.github + counted.news > SIGNALS_MAX_RECORDS)
     throw new SnapshotFormatError("Too many signal records");
   for (const kind of kinds) {

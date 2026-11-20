@@ -5,6 +5,9 @@ import re
 
 from snapshot_checks import MAX_BYTES
 
+SIGNALS_MAX_RECORDS = 250000
+SIGNALS_ARCHIVE_MAX_BYTES = 256 * 1024 * 1024
+
 COMMON = ['id', 'kind', 'title', 'url', 'summary', 'summaryKind', 'publisher', 'publishedAt',
           'firstSeenAt', 'observedAt', 'updatedAt', 'topics', 'sourceId', 'relatedUrls', 'discoveryGroups', 'relevance']
 EXTRA = {
@@ -29,12 +32,14 @@ def verify_signals_snapshot(manifest_bytes, read_shard, *, return_data=False):
     counts, shards = manifest.get('counts'), manifest.get('shards')
     require(isinstance(counts, dict) and set(counts) == set(EXTRA)
             and all(type(value) is int and value >= 0 for value in counts.values()), 'counts')
-    require(sum(counts.values()) <= 100000 and isinstance(shards, list), 'record or shard bounds')
+    require(sum(counts.values()) <= SIGNALS_MAX_RECORDS
+            and isinstance(shards, list) and len(shards) <= SIGNALS_MAX_RECORDS, 'record or shard bounds')
     require(isinstance(manifest.get('sources'), list) and isinstance(manifest.get('limitations'), list)
             and isinstance(manifest.get('generatedAt'), str), 'metadata')
     source_ids = {source['id'] for source in manifest['sources'] if isinstance(source, dict) and isinstance(source.get('id'), str)}
     require(len(source_ids) == len(manifest['sources']), 'source IDs')
-    ids, paths, records, actual = set(), set(), [], {kind: 0 for kind in EXTRA}
+    paths, aggregate_bytes = set(), len(manifest_bytes)
+    described_counts = {kind: 0 for kind in EXTRA}
     for shard in shards:
         require(isinstance(shard, dict) and shard.get('kind') in EXTRA, 'descriptor kind')
         digest, path, kind = shard.get('sha256'), shard.get('path'), shard['kind']
@@ -45,6 +50,13 @@ def verify_signals_snapshot(manifest_bytes, read_shard, *, return_data=False):
         require(type(shard.get('bytes')) is int and 0 < shard['bytes'] <= MAX_BYTES
                 and type(shard.get('count')) is int and shard['count'] > 0, 'shard bounds')
         paths.add(path)
+        aggregate_bytes += shard['bytes']
+        described_counts[kind] += shard['count']
+        require(aggregate_bytes <= SIGNALS_ARCHIVE_MAX_BYTES, 'aggregate size')
+    require(described_counts == counts, 'descriptor total counts')
+    ids, records, actual = set(), [], {kind: 0 for kind in EXTRA}
+    for shard in shards:
+        digest, path, kind = shard['sha256'], shard['path'], shard['kind']
         body = read_shard(path)
         require(len(body) == shard['bytes'] and hashlib.sha256(body).hexdigest() == digest, 'shard size/checksum')
         payload = json.loads(body)

@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { readSignalArchiveFile } from "../scripts/signal-archive";
 import type { GitHubSignal, NewsSignal, ResearchSignal } from "../lib/research-signals";
 import {
   buildSignalDashboard,
@@ -343,10 +344,10 @@ test("empty scopes retain useful zero-valued categories and calendar bins", () =
   }
 });
 
-test("current archive chart partitions reconcile to the dynamic source populations", () => {
-  const data = JSON.parse(
-    readFileSync(new URL("../data/research-signals.json", import.meta.url), "utf8"),
-  ) as { generatedAt: string; records: ResearchSignal[] };
+test("current archive chart partitions reconcile to the dynamic source populations", async () => {
+  const data = await readSignalArchiveFile(
+    fileURLToPath(new URL("../data/research-signals.json", import.meta.url)),
+  );
   for (const kind of ["github", "news"] as const) {
     const result = buildSignalDashboard(data.records, kind, data.generatedAt);
     const expected = [

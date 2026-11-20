@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { readSignalArchiveFile } from "../scripts/signal-archive";
 import type { GitHubSignal, ResearchSignal } from "../lib/research-signals";
 import {
   buildGitHubDashboard,
@@ -382,10 +383,10 @@ test("long history uses monthly points while retaining exact window boundaries a
   assert.equal(buildGitHubDashboard(records, { range: 90 }, now, now).seriesGranularity, "day");
 });
 
-test("real archive populations reconcile without freezing counts as collection expands", () => {
-  const data = JSON.parse(
-    readFileSync(new URL("../data/research-signals.json", import.meta.url), "utf8"),
-  ) as { generatedAt: string; records: ResearchSignal[] };
+test("real archive populations reconcile without freezing counts as collection expands", async () => {
+  const data = await readSignalArchiveFile(
+    fileURLToPath(new URL("../data/research-signals.json", import.meta.url)),
+  );
   const github = data.records.filter((record) => record.kind === "github");
   const model = buildGitHubDashboard(data.records, { range: "all" }, data.generatedAt, data.generatedAt);
   assert.equal(model.global.total.count, new Set(github.map((record) => record.id)).size);

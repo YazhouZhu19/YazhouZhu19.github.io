@@ -80,7 +80,7 @@ jobs:
               cd tools/research-monitor
               stage 'Install locked dependencies'
               npm ci
-              node --import tsx --input-type=module -e 'import { SIGNALS_MAX_RECORDS, SIGNALS_MAX_BYTES } from "./lib/research-signals.ts"; console.log(JSON.stringify({maxRecords: SIGNALS_MAX_RECORDS, maxBytes: SIGNALS_MAX_BYTES}));' > "$diagnostics/signal-limits.json"
+              node --import tsx --input-type=module -e 'import { SIGNALS_MAX_RECORDS, SIGNALS_ARCHIVE_MAX_BYTES, SIGNALS_MAX_BYTES } from "./lib/research-signals.ts"; console.log(JSON.stringify({maxRecords: SIGNALS_MAX_RECORDS, maxBytes: SIGNALS_ARCHIVE_MAX_BYTES, legacyMaxBytes: SIGNALS_MAX_BYTES}));' > "$diagnostics/signal-limits.json"
               stage 'Prepare source archive baseline'
               mkdir -p "$RUNNER_TEMP/oevryn-archive-before/papers"
               cp data/papers.json "$RUNNER_TEMP/oevryn-archive-before/papers.json"
@@ -149,13 +149,13 @@ jobs:
           print('::warning::All sources failed; archiving fresh failure metadata while retaining the saved library. The job will report failure after saving.')
           PY
               fi
-              cp data/research-signals.json "$RUNNER_TEMP/research-signals-before.json"
+              node --import tsx scripts/signal-archive-cli.ts copy data/research-signals.json "$RUNNER_TEMP/signals-before/research-signals.json"
               signals_started_at="$(node -e 'console.log(new Date().toISOString())')"
               stage 'Collect and validate research signals'
               signals_exit=0
               GH_TOKEN="${{ github.token }}" npm run collect:signals || signals_exit=$?
               echo "$signals_exit" > "$RUNNER_TEMP/research-signals-exit"
-              node --import tsx scripts/check-signal-collection.ts "$RUNNER_TEMP/research-signals-before.json" data/research-signals.json "$signals_started_at" "$signals_exit"
+              node --import tsx scripts/check-signal-collection.ts "$RUNNER_TEMP/signals-before/research-signals.json" data/research-signals.json "$signals_started_at" "$signals_exit"
               stage 'Tests and formatting'
               npm test
               npm run format:check
@@ -175,8 +175,9 @@ jobs:
 
             stage 'Compact and verify source archives'
             (cd tools/research-monitor && node --import tsx scripts/compact-archive.ts data/papers.json "$RUNNER_TEMP/oevryn-archive-before/papers.json")
+            (cd tools/research-monitor && node --import tsx scripts/signal-archive-cli.ts compact data/research-signals.json "$RUNNER_TEMP/signals-before/research-signals.json")
             stage 'Commit verified source archives'
-            git add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ tools/research-monitor/data/research-signals.json
+            git add -- tools/research-monitor/data/papers.json tools/research-monitor/data/papers/ tools/research-monitor/data/research-signals.json tools/research-monitor/data/research-signals/
             node tools/research-monitor/scripts/check-file-sizes.mjs
             if ! git diff --cached --quiet; then
               git commit -m 'chore: refresh verified research source archives'

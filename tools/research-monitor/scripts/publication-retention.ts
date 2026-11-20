@@ -45,7 +45,7 @@ async function collectReferences(dataDirectory: string, optional: boolean, names
   }
   const body = await checkedFile(join(dataDirectory, signalManifest), optional);
   if (body) {
-    const manifest = parseSignalsManifest(JSON.parse(body.toString("utf8")));
+    const manifest = parseSignalsManifest(JSON.parse(body.toString("utf8")), body.length);
     for (const shard of manifest.shards)
       references.push({
         ...shard,

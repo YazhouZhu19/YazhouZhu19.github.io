@@ -1,18 +1,8 @@
-import { readFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  parseResearchSignalsData,
-  SIGNALS_MAX_BYTES,
-  type ResearchSignalsData,
-} from "../lib/research-signals";
-
-async function read(path: string) {
-  const bytes = await readFile(path);
-  if (bytes.length > SIGNALS_MAX_BYTES) throw new Error("Signal snapshot exceeds publication limit");
-  return parseResearchSignalsData(JSON.parse(bytes.toString("utf8")));
-}
+import { type ResearchSignalsData } from "../lib/research-signals";
+import { readSignalArchiveFile as read } from "./signal-archive";
 
 export function validateSignalCollection(
   before: ResearchSignalsData,

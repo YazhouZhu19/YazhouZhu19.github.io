@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { readSignalArchiveFile } from "../scripts/signal-archive";
 import type {
   NewsSignal,
   ResearchSignal,
@@ -436,10 +437,10 @@ test("empty populations and empty custom windows remain valid and do not invent 
   assertReconciled(window, 2);
 });
 
-test("real archive populations reconcile dynamically for both clocks without hardcoded record counts", () => {
-  const data = JSON.parse(
-    readFileSync(new URL("../data/research-signals.json", import.meta.url), "utf8"),
-  ) as { generatedAt: string; records: ResearchSignal[] };
+test("real archive populations reconcile dynamically for both clocks without hardcoded record counts", async () => {
+  const data = await readSignalArchiveFile(
+    fileURLToPath(new URL("../data/research-signals.json", import.meta.url)),
+  );
   const records = data.records.filter((record) => record.kind === "news");
   const full = buildNewsDashboard(data.records, { range: "all" }, data.generatedAt, data.generatedAt);
   assert.equal(full.global.total.count, new Set(records.map((record) => record.id)).size);

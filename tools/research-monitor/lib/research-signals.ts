@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-// A complete snapshot is loaded atomically. Reject oversized updates rather than
-// silently dropping older discoveries to make a publication fit.
-// The live archive reached 63.6 MiB; keep ingestion bounded while allowing growth.
-// Split browser loading and the complete-site publication budgets remain enforced.
+// Legacy single-file downloads remain bounded. Source archives use verified
+// 4 MiB shards; the aggregate and record limits reject growth without truncation.
+// Browser kind-lazy loading and complete-site budgets are enforced separately.
 export const SIGNALS_MAX_BYTES = 96 * 1024 * 1024;
-export const SIGNALS_MAX_RECORDS = 100000;
+export const SIGNALS_ARCHIVE_MAX_BYTES = 256 * 1024 * 1024;
+export const SIGNALS_MAX_RECORDS = 250000;
 export const SIGNALS_MAX_SOURCES = 160;
 
 /** Public metadata only. This module is safe to import in the browser. */
