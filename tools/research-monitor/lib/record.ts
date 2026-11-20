@@ -100,7 +100,7 @@ export function mergeRecord(old: Paper, incoming: Paper): Paper {
     firstSeenAt: earliest(old.firstSeenAt, incoming.firstSeenAt),
     venue: base.venue ?? fallback.venue,
     relatedDoi: base.relatedDoi ?? fallback.relatedDoi,
-    provenance: uniqueObjects([...old.provenance, ...incoming.provenance]).slice(-20),
+    provenance: uniqueObjects([...old.provenance, ...incoming.provenance]),
     versions: uniqueObjects([...(old.versions ?? []), ...(incoming.versions ?? [])]),
     ...classify(title, abstract),
   };

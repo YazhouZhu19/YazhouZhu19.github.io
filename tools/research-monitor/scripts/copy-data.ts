@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { readSnapshotFile } from "./snapshot-files";
 import { monitorDataSchema } from "../lib/local-api";
 import { writePublicSnapshotV3 } from "./public-snapshot";
-import { parseResearchSignalsData, SIGNALS_MAX_BYTES } from "../lib/research-signals";
+import { readSignalArchiveFile } from "./signal-archive";
 import { writeSignalsSnapshot, readSignalsSnapshot } from "./signals-snapshot";
 import { checkPublicationSize, prunePublishedShards } from "./publication-retention";
 
@@ -25,9 +25,7 @@ const compact = await writePublicSnapshotV3(
 );
 assert.deepEqual(await readSnapshotFile("dist/data/public-papers-v3.json"), data);
 await writeFile("dist/data/paper-overview.json", JSON.stringify(createPaperOverview(data)));
-const signalBytes = await readFile("data/research-signals.json");
-assert.ok(signalBytes.length <= SIGNALS_MAX_BYTES, "Signal snapshot exceeds publication limit");
-const signals = parseResearchSignalsData(JSON.parse(signalBytes.toString("utf8")));
+const signals = await readSignalArchiveFile("data/research-signals.json");
 await writeSignalsSnapshot(
   "dist/data/signals-v2/manifest.json",
   signals,

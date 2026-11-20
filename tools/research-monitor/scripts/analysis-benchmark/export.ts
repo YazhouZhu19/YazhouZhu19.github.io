@@ -5,14 +5,14 @@ import { readSnapshotFile } from "../snapshot-files";
 import { analyzeResearch, ANALYSIS_TAXONOMY as T } from "../../lib/integrated-analysis";
 import { groupWorks } from "../../lib/paper-works";
 import { paperScope } from "../../lib/paper-scope";
-import { parseResearchSignalsData } from "../../lib/research-signals";
+import { readSignalArchiveFile } from "../signal-archive";
 import type { Paper } from "../../lib/types";
 
 // A separate audit implementation, reconciled against the production output below.
 const protocol = JSON.parse(await readFile("eval/analysis-benchmark/protocol.json", "utf8"));
 const asOf: string = protocol.asOf;
 const snapshot = await readSnapshotFile("data/papers.json");
-const source = parseResearchSignalsData(JSON.parse(await readFile("data/research-signals.json", "utf8")));
+const source = await readSignalArchiveFile("data/research-signals.json");
 const rawPapers = snapshot.papers as Paper[];
 const valid = (v: string | null | undefined): v is string =>
   Boolean(

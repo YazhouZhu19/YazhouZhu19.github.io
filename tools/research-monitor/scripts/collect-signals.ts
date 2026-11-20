@@ -1,14 +1,9 @@
-import { randomUUID } from "node:crypto";
-import { mkdir, readFile, rename, stat, writeFile, rm } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { resolve } from "node:path";
 import { collectResearchSignals } from "../lib/collect-signals";
-import {
-  emptyResearchSignalsData,
-  parseResearchSignalsData,
-  SIGNALS_MAX_BYTES,
-} from "../lib/research-signals";
+import { emptyResearchSignalsData } from "../lib/research-signals";
 import { readSnapshotFile } from "./snapshot-files";
 import { signalsCapacityLines } from "./signals-capacity";
+import { readSignalArchive, writeSignalArchiveFile } from "./signal-archive";
 
 async function main() {
   let input = "data/research-signals.json",
@@ -64,18 +59,21 @@ async function main() {
   output = resolve(output);
   let previous;
   let previousBytes = 0;
+  let previousFormat: "legacy" | "sharded" = "sharded";
   try {
-    previousBytes = (await stat(input)).size;
-    if (previousBytes > SIGNALS_MAX_BYTES) throw new Error("Signals input exceeds the safe size limit");
-    previous = parseResearchSignalsData(JSON.parse(await readFile(input, "utf8")));
+    const archive = await readSignalArchive(input);
+    previous = archive.data;
+    previousBytes = archive.bytes;
+    previousFormat = archive.format;
   } catch (error: any) {
-    if (error.code === "ENOENT" && init) previous = emptyResearchSignalsData();
+    if (error.code === "ENOENT" && error.path === input && init) previous = emptyResearchSignalsData();
     else
       throw new Error(
         "Signals input missing or invalid; existing snapshot unchanged (first initialization requires --init)",
       );
   }
-  for (const line of signalsCapacityLines(previous.records.length, previousBytes, "input")) console.log(line);
+  for (const line of signalsCapacityLines(previous.records.length, previousBytes, "input", previousFormat))
+    console.log(line);
   // Exact public links in the saved paper archive recover projects missed by keywords.
   // An absent optional paper file does not prevent independent signal collection.
   let paperUrls: string[] = [];
@@ -111,19 +109,9 @@ async function main() {
     repositoryUrls: [...new Set([...paperUrls, ...relatedUrls])],
     githubToken: process.env.GH_TOKEN || process.env.GITHUB_TOKEN,
   });
-  const content = JSON.stringify(data) + "\n";
-  const outputBytes = Buffer.byteLength(content);
+  await writeSignalArchiveFile(output, data);
+  const { bytes: outputBytes } = await readSignalArchive(output);
   for (const line of signalsCapacityLines(data.records.length, outputBytes, "output")) console.log(line);
-  if (outputBytes > SIGNALS_MAX_BYTES)
-    throw new Error("Signals output exceeds the safe size limit; existing snapshot unchanged");
-  await mkdir(dirname(output), { recursive: true });
-  const temporary = `${output}.${randomUUID()}.tmp`;
-  try {
-    await writeFile(temporary, content);
-    await rename(temporary, output);
-  } finally {
-    await rm(temporary, { force: true });
-  }
   for (const source of data.sources)
     console.log(
       JSON.stringify({

@@ -64,6 +64,8 @@ npm run measure
 npm run preview
 ```
 
+Use `npm run build` followed by `npm run preview` to inspect complete local source data through the production manifests and lazy loaders. The Vite development server alone does not generate the public data transports. Signal source archives may be legacy flat files or verified source manifests with content-addressed shards; Node tools should use `scripts/signal-archive.ts`. See [SIGNALS.md](SIGNALS.md#source-archive-storage-and-local-tools) for validation, migration and backup commands.
+
 ### Resource budgets (Task P0.1)
 
 Every build ends with `scripts/measure-budget.ts`. It writes `dist/budget-report.json` and prints raw/gzip byte sizes for every JS/CSS resource, startup datasets and aggregate startup costs. A resource without an explicit budget, or any raw/gzip limit exceeded, fails the build. `npm run measure` repeats the check against an existing build. For an intentional budget review, `npx tsx scripts/measure-budget.ts --report-only` writes the same report without failing on budget violations; it does not change any limit. Missing files, invalid manifests and inconsistent declared shard sizes still fail.
@@ -127,7 +129,7 @@ kind/month columnar record shards verified by byte size and hash. The paper land
 not initialize this loader. Source overviews first load only this manifest; opening a library,
 changing its scope, drilling through a statistic, or selecting that source for AI evidence
 loads the relevant kind. Precomputed dates refer to the snapshot day, explicitly labeled in
-the UI. Existing `data/research-signals.json` remains published for compatibility.
+the UI. The old web-site `data/research-signals.json` URL remains a dated transition snapshot; current data comes from the independent data site's signals-v2 transport. The source repository's file of the same name is now a source archive manifest and must be read with its referenced shards.
 
 Both public loaders conditionally revalidate manifests. The 5-minute scheduler suspends while
 the page is hidden and backs off after failures to 10/20/40/60 minutes. Unchanged ETags avoid

@@ -2,16 +2,34 @@
 
 import json
 import os
+import hashlib
+import re
+import stat
 from collections import Counter
 from pathlib import Path
+from snapshot_checks import MAX_BYTES
+from signals_checks import SIGNALS_MAX_RECORDS, SIGNALS_ARCHIVE_MAX_BYTES
+
+SIGNALS_LEGACY_MAX_BYTES = 96 * 1024 * 1024
 
 
-def read_json(path, notes):
+def read_regular_bytes(path, max_bytes):
+    info = path.lstat()
+    if not stat.S_ISREG(info.st_mode) or info.st_size > max_bytes:
+        raise ValueError('not a regular file within the size limit')
+    with path.open('rb') as handle:
+        body = handle.read(max_bytes + 1)
+    if len(body) != info.st_size or len(body) > max_bytes:
+        raise ValueError('file changed while reading or exceeds the size limit')
+    return body
+
+
+def read_json(path, notes, max_bytes=None):
     if not path.is_file():
         notes.append(f'{path.name}: not completed (file absent)')
         return None
     try:
-        value = json.loads(path.read_text())
+        value = json.loads(read_regular_bytes(path, max_bytes) if max_bytes is not None else path.read_text())
         if not isinstance(value, dict):
             raise ValueError('expected an object')
         return value
@@ -33,6 +51,103 @@ def capacity(used, limit):
         'percent': round(used / limit * 100, 2) if known else None,
         'status': ('warning' if used * 5 >= limit * 4 else 'within capacity') if known else 'unknown',
     }
+
+
+def signal_archive_info(path, signals, notes):
+    """Measure complete active storage; incomplete shards must not look small."""
+    if signals is None:
+        return {}, None, None, 'unknown'
+    sharded = signals.get('schema') == 'research-monitor-signals-source-v1'
+    metadata = signals.get('metadata') if sharded else signals
+    archive_format = 'sharded' if sharded else 'flat' if 'schema' not in signals else 'unknown'
+    try:
+        if (not isinstance(metadata, dict) or type(metadata.get('schemaVersion')) is not int
+                or metadata['schemaVersion'] != 1
+                or not isinstance(metadata.get('generatedAt'), str)
+                or not isinstance(metadata.get('sources'), list)
+                or not isinstance(metadata.get('limitations'), list)
+                or any(not isinstance(item, str) for item in metadata['limitations'])
+                or (sharded and 'records' in metadata)):
+            raise ValueError('invalid source metadata')
+        source_ids = set()
+        for source in metadata['sources']:
+            if (not isinstance(source, dict) or not isinstance(source.get('id'), str) or not source['id']
+                    or source['id'] in source_ids or source.get('kind') not in ('github', 'news')
+                    or source.get('status') not in ('ok', 'partial', 'error', 'pending')):
+                raise ValueError('invalid or duplicate source identity/status')
+            source_ids.add(source['id'])
+        ids = set()
+
+        def check_records(records):
+            if not isinstance(records, list):
+                raise ValueError('invalid source records')
+            for record in records:
+                if (not isinstance(record, dict) or not isinstance(record.get('id'), str)
+                        or not record['id'] or record['id'] in ids
+                        or not isinstance(record.get('sourceId'), str) or record['sourceId'] not in source_ids):
+                    raise ValueError('invalid or duplicate record identity/source')
+                ids.add(record['id'])
+
+        info = path.lstat()
+        if not stat.S_ISREG(info.st_mode):
+            raise ValueError('source manifest is not a regular file')
+        if not sharded:
+            if (archive_format != 'flat' or not isinstance(signals.get('records'), list)
+                    or len(signals['records']) > SIGNALS_MAX_RECORDS or info.st_size > SIGNALS_LEGACY_MAX_BYTES):
+                raise ValueError('invalid legacy archive or capacity exceeded')
+            check_records(signals['records'])
+            return signals, len(signals['records']), info.st_size, 'flat'
+        if set(signals) != {'schema', 'metadata', 'totalRecords', 'shards'} or info.st_size > MAX_BYTES:
+            raise ValueError('invalid source manifest or manifest size')
+        total, shards = signals.get('totalRecords'), signals.get('shards')
+        if (type(total) is not int or not 0 <= total <= SIGNALS_MAX_RECORDS
+                or not isinstance(shards, list) or len(shards) > SIGNALS_MAX_RECORDS):
+            raise ValueError('invalid source counts or shards')
+        total_bytes, described_count, paths = info.st_size, 0, set()
+        for shard in shards:
+            if not isinstance(shard, dict) or set(shard) != {'path', 'sha256', 'bytes', 'count'}:
+                raise ValueError('invalid source shard descriptor')
+            digest, relative = shard.get('sha256'), shard.get('path')
+            size, count = shard.get('bytes'), shard.get('count')
+            if not (isinstance(digest, str) and re.fullmatch(r'[a-f0-9]{64}', digest)
+                    and relative == f'research-signals/{digest}.json' and relative not in paths
+                    and type(size) is int and 0 < size <= MAX_BYTES
+                    and type(count) is int and count > 0):
+                raise ValueError('invalid source shard path, size or count')
+            paths.add(relative)
+            total_bytes += size
+            described_count += count
+        if total_bytes > SIGNALS_ARCHIVE_MAX_BYTES or described_count != total:
+            raise ValueError('source aggregate size or total record count exceeds bounds')
+        # Preflight every descriptor before any shard is opened. A small valid
+        # manifest must never conceal an oversized or incomplete archive.
+        if shards:
+            directory_info = (path.parent / 'research-signals').lstat()
+            if not stat.S_ISDIR(directory_info.st_mode):
+                raise ValueError('source shard directory is missing or unsafe')
+        actual_count = 0
+        for shard in shards:
+            relative, size, count, digest = shard['path'], shard['bytes'], shard['count'], shard['sha256']
+            shard_path = path.parent / relative
+            if (not shard_path.is_file() or shard_path.is_symlink()
+                    or not shard_path.resolve().is_relative_to(path.parent.resolve())):
+                raise ValueError(f'missing or unsafe source shard: {relative}')
+            if shard_path.stat().st_size != size:
+                raise ValueError(f'source shard size mismatch: {relative}')
+            body = read_regular_bytes(shard_path, size)
+            if len(body) != size or hashlib.sha256(body).hexdigest() != digest:
+                raise ValueError(f'source shard checksum mismatch: {relative}')
+            records = json.loads(body)
+            if not isinstance(records, list) or len(records) != count:
+                raise ValueError(f'source shard count mismatch: {relative}')
+            check_records(records)
+            actual_count += len(records)
+        if actual_count != total:
+            raise ValueError('source total record count mismatch')
+        return metadata, total, total_bytes, 'sharded'
+    except (OSError, ValueError) as error:
+        notes.append(f'research-signals.json: capacity unknown ({error})')
+        return metadata if isinstance(metadata, dict) else {}, None, None, archive_format
 
 
 def collect_report(monitor, temp, outcome):
@@ -58,19 +173,24 @@ def collect_report(monitor, temp, outcome):
         paper_metadata = {}
         notes.append('papers.json: not completed (invalid metadata)')
     signal_path = monitor / 'data/research-signals.json'
-    signals = read_json(signal_path, notes)
+    signals = read_json(signal_path, notes, SIGNALS_LEGACY_MAX_BYTES)
+    signal_metadata, signal_count, signal_bytes, signal_format = signal_archive_info(signal_path, signals, notes)
     limits = read_json(diagnostics / 'signal-limits.json', notes)
     if not (limits and all(type(limits.get(key)) is int and limits[key] > 0 for key in ['maxRecords', 'maxBytes'])):
         if limits is not None:
             notes.append('signal-limits.json: capacity unknown (invalid hard limits)')
         limits = {}
-    signal_count = len(signals['records']) if signals and isinstance(signals.get('records'), list) else None
-    signal_bytes = signal_path.stat().st_size if signal_path.is_file() else None
+    byte_limit = limits.get('maxBytes')
+    if signal_format == 'flat':
+        byte_limit = limits.get('legacyMaxBytes')
+        if type(byte_limit) is not int or byte_limit <= 0:
+            notes.append('signal-limits.json: capacity unknown (missing or invalid legacy byte limit)')
+            byte_limit = None
     source_counts = Counter()
-    if signals and isinstance(signals.get('sources'), list):
+    if isinstance(signal_metadata.get('sources'), list):
         source_counts.update(
             source.get('status', 'unknown')
-            for source in signals['sources']
+            for source in signal_metadata['sources']
             if isinstance(source, dict) and isinstance(source.get('status', 'unknown'), str)
         )
     return {
@@ -90,11 +210,12 @@ def collect_report(monitor, temp, outcome):
         'signals': {
             'count': signal_count,
             'bytes': signal_bytes,
-            'generatedAt': signals.get('generatedAt') if signals else None,
+            'format': signal_format,
+            'generatedAt': signal_metadata.get('generatedAt'),
             'sourceStatuses': dict(sorted(source_counts.items())),
             'capacity': {
                 'records': capacity(signal_count, limits.get('maxRecords')),
-                'bytes': capacity(signal_bytes, limits.get('maxBytes')),
+                'bytes': capacity(signal_bytes, byte_limit),
             },
         },
         'notes': notes,
@@ -135,11 +256,12 @@ def render_summary(report):
         '| Dataset | Records | Source timestamp | Detail |',
         '| --- | ---: | --- | --- |',
         f"| Papers | {cell(papers['count'])} | {cell(papers['collectedAt'])} | status: {cell(papers['status'])}; last success: {cell(papers['lastSuccessfulSync'])} |",
-        f"| Research signals | {cell(signals['count'])} | {cell(signals['generatedAt'])} | {cell(signals['bytes'])} source bytes; source statuses: {cell(json.dumps(signals['sourceStatuses'], ensure_ascii=False))} |",
+        f"| Research signals | {cell(signals['count'])} | {cell(signals['generatedAt'])} | {cell(signals['format'])}; {cell(signals['bytes'])} source bytes; source statuses: {cell(json.dumps(signals['sourceStatuses'], ensure_ascii=False))} |",
         '',
         '### Research signal capacity',
         '',
         'Hard limits are imported from the collector configuration after dependency setup. Capacity warns at 80%; negative remaining values are preserved.',
+        'Active sharded bytes include the manifest and every referenced shard. Legacy flat archives use their separate byte limit. Missing or invalid archive evidence is reported as unknown.',
         '',
         '| Metric | Used | Hard limit | Remaining | Utilization | Status |',
         '| --- | ---: | ---: | ---: | ---: | --- |',

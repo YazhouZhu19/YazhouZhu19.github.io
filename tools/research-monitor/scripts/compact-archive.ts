@@ -1,26 +1,35 @@
 import assert from "node:assert/strict";
-import { lstat, readdir, rm } from "node:fs/promises";
+import { lstat, readFile, readdir, rm } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readSnapshotFile } from "./snapshot-files";
-import { readSnapshotManifest } from "./snapshot-install";
+import { parseSnapshotManifest } from "../lib/snapshot";
 import { writePublicSnapshotV3 } from "./public-snapshot";
 
 /** Internal archive only. Public compatibility generations are retained separately. */
 export async function compactArchive(file: string, previousPublicFile?: string) {
   const directory = dirname(file);
   const before = await readSnapshotFile(file);
-  // Validate every sibling before changing the archive or removing any files.
+  // Other archive formats share this directory. Validate every paper sibling
+  // before changing files, including paper-shaped documents with a broken schema.
   const siblings = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     if (!entry.isFile() || !entry.name.endsWith(".json")) continue;
     const candidate = join(directory, entry.name);
     if (resolve(candidate) === resolve(file)) continue;
-    const manifest = await readSnapshotManifest(candidate);
-    if (manifest) {
-      await readSnapshotFile(candidate);
-      siblings.push(manifest);
-    }
+    const value = JSON.parse(await readFile(candidate, "utf8"));
+    const paperCandidate =
+      /^(?:papers|public-papers-v\d+)\.json$/.test(entry.name) ||
+      (typeof value?.schema === "string" && value.schema.startsWith("research-monitor-shards-")) ||
+      value?.totalStored !== undefined ||
+      (Array.isArray(value?.shards) &&
+        value.shards.some(
+          (shard: any) => typeof shard?.path === "string" && shard.path.startsWith("papers/"),
+        ));
+    if (!paperCandidate) continue;
+    const manifest = parseSnapshotManifest(value);
+    await readSnapshotFile(candidate);
+    siblings.push(manifest);
   }
   // Collection writes v1, which has no dictionaries. Seed from the preceding
   // public v3 generation so newly discovered URLs do not renumber old shards.

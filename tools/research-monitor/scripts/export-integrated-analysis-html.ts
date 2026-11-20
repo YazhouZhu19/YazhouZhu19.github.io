@@ -3,12 +3,12 @@ import { resolve } from "node:path";
 import { readSnapshotFile } from "./snapshot-files";
 import { analyzeResearch } from "../lib/integrated-analysis";
 import { analyzePaperCodeLinks } from "../lib/paper-code-links";
-import { parseResearchSignalsData } from "../lib/research-signals";
+import { readSignalArchiveFile } from "./signal-archive";
 import type { Paper } from "../lib/types";
 import { analyzeLongitudinalHistory } from "../lib/longitudinal-analysis";
 import { readHistoryPacks } from "./research-history-files";
 const data = await readSnapshotFile("data/papers.json");
-const signals = parseResearchSignalsData(JSON.parse(await readFile("data/research-signals.json", "utf8")));
+const signals = await readSignalArchiveFile("data/research-signals.json");
 const { packs, fingerprints } = await readHistoryPacks();
 const history = analyzeLongitudinalHistory({ packs, papers: data.papers as Paper[], asOf: "2026-11-17" });
 const result = analyzeResearch({

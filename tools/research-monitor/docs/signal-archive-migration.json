@@ -1,0 +1,44 @@
+{
+  "sourceRevision": "b8c52b4badb2ce8363a44d125c267b32bf6c66f0",
+  "verifiedAt": "2026-11-20T02:44:12.326Z",
+  "papers": 12569,
+  "signals": 99533,
+  "shards": 23,
+  "sourceBytes": 94397495,
+  "archiveBytes": 94402289,
+  "maxShardBytes": 4194230,
+  "originalGitBlob": "ac04facfa03b79b9d8fd6483f1ec79a27bf27e73",
+  "fullFieldsEqual": true,
+  "serializedBytesEqual": true,
+  "metadataAndOrderPreserved": true,
+  "localSourceSync": {
+    "verifiedGitBlobs": 27,
+    "verifiedBytes": 171687378,
+    "remoteSourceRevision": "b8c52b4badb2ce8363a44d125c267b32bf6c66f0",
+    "method": "Authenticated GitHub API; exact blob and complete tree SHA verification before fast-forward"
+  },
+  "capacity": {
+    "recordLimit": 250000,
+    "aggregateByteLimit": 268435456,
+    "singleFileByteLimit": 4194304,
+    "legacyFlatByteLimit": 100663296,
+    "publicationBudgetUnchanged": true
+  },
+  "stressChecks": {
+    "kind": "Synthetic expansion of real payloads, never stored in production archives",
+    "realBaselineRecords": 97827,
+    "roundtripCounts": [
+      100001,
+      250000
+    ],
+    "nodeAndPythonFullFieldEquality": true,
+    "overLimit250001RejectedWithoutReplacingOldManifest": true
+  },
+  "uiChecks": {
+    "changedDesignValues": 0,
+    "sharedStyleRulesCompared": 241,
+    "targetedLayoutTests": 16,
+    "filterStateTests": 6,
+    "fontAndPalettePreserved": true
+  }
+}

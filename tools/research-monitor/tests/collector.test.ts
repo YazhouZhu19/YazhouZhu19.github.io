@@ -92,6 +92,78 @@ test("DOI merge keeps earlier firstSeen, authors, abstract, sources and version 
   assert.equal(merged.versions?.length, 2);
 });
 
+test("repeated collection retains all provenance beyond twenty entries while preserving metadata precedence", () => {
+  const history = Array.from({ length: 25 }, (_, index) => ({
+    collectedAt: "2026-09-02T00:00:00.000Z",
+    queryUrl: `https://example.org/archive?query=${index}`,
+    sourceRecordId: "123",
+  }));
+  const old = paper({
+    updatedAt: "2026-09-10",
+    version: 2,
+    versions: [{ version: 1 }, { version: 2 }],
+    originalAbstract: "<p>Original full evidence.</p>",
+    provenance: history,
+  });
+  const firstEvidence = {
+    collectedAt: now,
+    queryUrl: "https://example.org/new-first",
+    sourceRecordId: "123",
+  };
+  const secondEvidence = {
+    collectedAt: now,
+    queryUrl: "https://example.org/new-second",
+    sourceRecordId: "123",
+  };
+  const stale = paper({
+    updatedAt: "2026-09-09",
+    version: 1,
+    versions: [{ version: 1 }],
+    firstSeenAt: now,
+    title: "Stale title",
+    abstract: "Stale abstract",
+    provenance: [
+      structuredClone(history[0]),
+      structuredClone(history[24]),
+      firstEvidence,
+      structuredClone(firstEvidence),
+    ],
+  });
+  const first = mergePapers([old], [stale]).papers[0];
+  assert.deepEqual(first.provenance, [...history, firstEvidence]);
+  assert.equal(first.title, old.title);
+  assert.equal(first.abstract, old.abstract);
+  assert.equal(first.originalAbstract, old.originalAbstract);
+  assert.equal(first.version, 2);
+  assert.equal(first.firstSeenAt, old.firstSeenAt);
+  const fresh = paper({
+    updatedAt: "2026-09-16",
+    version: 3,
+    versions: [{ version: 2 }, { version: 3 }],
+    firstSeenAt: now,
+    title: "Updated medical image segmentation",
+    abstract: "",
+    authors: [],
+    provenance: [
+      structuredClone(history[12]),
+      structuredClone(firstEvidence),
+      secondEvidence,
+      structuredClone(secondEvidence),
+    ],
+  });
+  const second = mergePapers([first], [fresh]).papers[0];
+  assert.deepEqual(second.provenance, [...history, firstEvidence, secondEvidence]);
+  assert.equal(second.firstSeenAt, old.firstSeenAt);
+  assert.equal(second.version, 3);
+  assert.deepEqual(second.versions, [{ version: 1 }, { version: 2 }, { version: 3 }]);
+  assert.equal(second.title, fresh.title);
+  assert.equal(second.abstract, old.abstract);
+  assert.equal(second.originalAbstract, old.originalAbstract);
+  assert.deepEqual(second.authors, old.authors);
+  assert.deepEqual(mergePapers([second], [fresh]).papers[0], second);
+  assert.deepEqual(old.provenance, history);
+});
+
 test("arXiv version stable identity remains distinct from related publication DOI", () => {
   const first = parseArxiv(atom("2609.12345v1"), "https://export.arxiv.org/api/query", now).papers[0];
   const second = parseArxiv(atom(), "https://export.arxiv.org/api/query", now).papers[0];
