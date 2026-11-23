@@ -1,85 +1,82 @@
-name: Research monitor CI
+name: OEVRYN live release audit
 
 on:
-  pull_request:
-    paths:
-      - 'tools/research-monitor/**'
-      - '.github/workflows/research-monitor-ci.yml'
-      - '.github/workflows/research-monitor-sync.yml'
-      - '.github/workflows/research-monitor-pages.yml'
   workflow_dispatch:
+    inputs:
+      web_revision:
+        description: Final full source SHA deployed by the web site
+        required: true
+        type: string
+      data_revision:
+        description: Final full source SHA in the data deployment manifest
+        required: true
+        type: string
+      expected_data_json:
+        description: Exact deployment.json from the verified data release artifact
+        required: true
+        type: string
 
 permissions:
   contents: read
 
-concurrency:
-  group: research-monitor-ci-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  validate:
+  audit:
+    if: startsWith(github.ref, 'refs/heads/codex/diagnose-')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:
       run:
         working-directory: tools/research-monitor
         shell: bash
+    env:
+      OEVRYN_WEB_REVISION: ${{ inputs.web_revision }}
+      OEVRYN_DATA_REVISION: ${{ inputs.data_revision }}
+      OEVRYN_EXPECTED_DATA_JSON: ${{ inputs.expected_data_json }}
     steps:
-      - name: Check out proposed changes
+      - name: Check out diagnostic branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Node
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '22'
+          node-version: "22"
           cache: npm
           cache-dependency-path: tools/research-monitor/package-lock.json
 
+      - name: Prepare diagnostic output
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/oevryn-online-audit"
+          echo "OEVRYN_AUDIT_DIR=$RUNNER_TEMP/oevryn-online-audit" >> "$GITHUB_ENV"
+
       - name: Install locked dependencies
-        run: npm ci
-
-      - name: Check dependency security advisories
-        run: npm run audit:security
-
-      - name: Test and check formatting
         run: |
-          npm test
-          npm run format:check
-          python3 -m unittest discover -s tests -p '*_test.py'
+          set -euo pipefail
+          npm ci 2>&1 | tee "$OEVRYN_AUDIT_DIR/npm-ci.log"
 
-      - name: Build and enforce resource budgets
+      - name: Install Chromium for live checks
         run: |
-          node --import tsx scripts/compact-archive.ts
-          npm run build
-          node --import tsx scripts/check-analysis-publication.ts
-          npm run measure
-          site_bytes="$(du -sb dist | cut -f1)"
-          if [ "$site_bytes" -gt 800000000 ]; then
-            echo "::error::Generated site is $site_bytes bytes, exceeding the 800 MB publication budget."
-            exit 1
-          fi
-          echo "Publication apparent size: $site_bytes bytes (limit 800000000)." >> "$GITHUB_STEP_SUMMARY"
-          VITE_MONITOR_DATA_BASE_URL=https://yazhouzhu19.github.io/oevryn-data/ node --import tsx scripts/assemble-site.ts
+          set -euo pipefail
+          npx playwright install --with-deps chromium 2>&1 | tee "$OEVRYN_AUDIT_DIR/chromium-install.log"
 
-      - name: Evaluate frozen relevance evidence
-        id: evaluate
-        run: node --import tsx scripts/eval-classifier.ts
-
-      - name: Install Chromium for browser checks
-        run: npx playwright install --with-deps chromium
-
-      - name: Check local-fixture flows and accessibility
-        run: npm run e2e
-
-      - name: Publish evaluation job summary
-        if: always() && steps.evaluate.outcome == 'success'
+      - name: Check exact inputs and reviewed code
         run: |
-          if [ -f eval/report.md ]; then
-            {
-              echo '## Frozen-evidence evaluation'
-              echo
-              echo 'The report identifies its label status. AI-assisted or provisional labels do not satisfy the maintainer-reviewed gold gate.'
-              echo
-              cat eval/report.md
-            } >> "$GITHUB_STEP_SUMMARY"
-          fi
+          set -euo pipefail
+          node e2e/live-audit-preflight.mjs 2>&1 | tee "$OEVRYN_AUDIT_DIR/environment-check.log"
+          node --import tsx e2e/live-release-audit.ts --help
+
+      - name: Verify deployed releases and live browser flows
+        run: |
+          set -euo pipefail
+          node --import tsx e2e/live-release-audit.ts "$OEVRYN_WEB_REVISION" "$OEVRYN_DATA_REVISION" "$OEVRYN_AUDIT_DIR/expected-data-deployment.json" 2>&1 | tee "$OEVRYN_AUDIT_DIR/live-release-audit.log"
+
+      - name: Retain live reports and screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: oevryn-live-release-audit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/oevryn-online-audit/
+          if-no-files-found: warn
+          retention-days: 7
