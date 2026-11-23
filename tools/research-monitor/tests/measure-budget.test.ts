@@ -8,6 +8,7 @@ import { gzipSync } from "node:zlib";
 import { checkBudget, measureBuild, resourceKey, type BudgetConfig } from "../scripts/measure-budget";
 import { writeSnapshotFile } from "../scripts/snapshot-files";
 import { writePublicSnapshot, writePublicSnapshotV3 } from "../scripts/public-snapshot";
+import { decodeV3Paper, encodeV3Paper } from "../lib/snapshot-v3";
 
 const config: BudgetConfig = {
   schemaVersion: 1,
@@ -426,4 +427,135 @@ test("the reviewed production envelope covers run 42899828413 while preserving f
   assert.equal(production.limits.datasets.papers.fileRawBytes, 4 * 1024 * 1024);
   assert.equal(production.limits.datasets.papers.gzipBytes, 12733440);
   assert.equal(production.limits.datasets["paper-overview"].rawBytes, 14680064);
+});
+
+async function productionBudgetRegression() {
+  const production: BudgetConfig = JSON.parse(
+    await readFile(new URL("../budget.json", import.meta.url), "utf8"),
+  );
+  // Complete Actions measurements from the failed source sync, including every
+  // actual asset, startup resource and paper shard (not invented paper sizes).
+  const report: Parameters<typeof checkBudget>[0] = JSON.parse(
+    await readFile(new URL("fixtures/budget-run-45108255589.json", import.meta.url), "utf8"),
+  );
+  return { production, report };
+}
+
+test("real dated provenance fits the reviewed history allowance without granting credit to an unchanged count", async () => {
+  const { production, report } = await productionBudgetRegression();
+  const sample = JSON.parse(
+    await readFile(new URL("fixtures/provenance-wire-ec27.json", import.meta.url), "utf8"),
+  );
+  // Exact v3 tuple from a checksum-verified public shard. The query URL is
+  // already dictionary-mapped, as it is when production measures wire bytes.
+  const encoded = [0, { authors: [], provenance: [sample.tuple] }];
+  assert.deepEqual(encodeV3Paper(decodeV3Paper(encoded, []), new Map()), encoded);
+  const marginalBytes =
+    Buffer.byteLength(JSON.stringify([sample.tuple, sample.tuple])) -
+    Buffer.byteLength(JSON.stringify([sample.tuple]));
+  assert.equal(marginalBytes, 241);
+  report.assets = [];
+  report.initialData = [];
+  report.totals = {};
+  report.optionalData = [
+    {
+      id: "papers",
+      records: production.paperGrowth!.referenceRecords,
+      provenanceEntries: production.paperGrowth!.provenance!.referenceEntries,
+      rawBytes: production.limits.datasets.papers.rawBytes + marginalBytes,
+      gzipBytes: 0,
+      files: [],
+    },
+  ];
+  assert.ok(checkBudget(report, production).some((v) => v.startsWith("data:papers: rawBytes")));
+  report.optionalData[0].provenanceEntries!++;
+  assert.deepEqual(checkBudget(report, production), []);
+  const previous = structuredClone(production);
+  previous.paperGrowth!.provenance!.bytesPerEntry.rawBytes = 128;
+  assert.ok(checkBudget(report, previous).some((v) => v.startsWith("data:papers: rawBytes")));
+  report.optionalData[0].rawBytes =
+    production.limits.datasets.papers.rawBytes +
+    production.paperGrowth!.provenance!.bytesPerEntry.rawBytes +
+    1;
+  assert.ok(checkBudget(report, production).some((v) => v.startsWith("data:papers: rawBytes")));
+});
+
+test("the November 23 production regression passes only after the reviewed paper density correction", async () => {
+  const { production, report } = await productionBudgetRegression();
+  const previous = structuredClone(production);
+  previous.limits.datasets.papers.rawBytes = 65958912;
+  assert.deepEqual(checkBudget(report, previous), ["data:papers: rawBytes 95180802 exceeds 94809222"]);
+  assert.deepEqual(checkBudget(report, previous), report.violations);
+  assert.deepEqual(checkBudget(report, production), []);
+  assert.equal(production.limits.datasets.papers.gzipBytes, 12733440);
+  assert.equal(production.limits.datasets.papers.fileRawBytes, 4 * 1024 * 1024);
+  assert.equal(production.limits.datasets.papers.fileGzipBytes, 1024 * 1024);
+});
+
+test("the production paper envelope still rejects oversized archives and cannot grant startup or shard credit", async () => {
+  const { production, report } = await productionBudgetRegression();
+  const original = JSON.stringify(production);
+  const changes: [string, (copy: typeof report) => void][] = [
+    [
+      "data:papers: rawBytes",
+      (copy) => {
+        const papers = copy.optionalData!.find((data) => data.id === "papers")!;
+        papers.rawBytes =
+          Math.ceil(
+            (production.limits.datasets.papers.rawBytes * papers.records!) /
+              production.paperGrowth!.referenceRecords,
+          ) + 1;
+      },
+    ],
+    [
+      "data:papers: gzipBytes",
+      (copy) => {
+        const papers = copy.optionalData!.find((data) => data.id === "papers")!;
+        papers.gzipBytes =
+          Math.ceil(
+            (production.limits.datasets.papers.gzipBytes * papers.records!) /
+              production.paperGrowth!.referenceRecords,
+          ) + 1;
+      },
+    ],
+    [
+      "Paper count 30001 exceeds",
+      (copy) => {
+        copy.optionalData![0].records = 30001;
+      },
+    ],
+    [
+      "Paper provenance count 1000001 exceeds",
+      (copy) => {
+        copy.optionalData![0].provenanceEntries = 1000001;
+      },
+    ],
+    [
+      "total:initialJs:",
+      (copy) => {
+        copy.totals.initialJs.rawBytes = production.limits.totals.initialJs.rawBytes + 1;
+      },
+    ],
+    [
+      "data:paper-overview:",
+      (copy) => {
+        copy.initialData[0].rawBytes = 64 * 1024 * 1024 + 1;
+      },
+    ],
+    [
+      report.optionalData![0].files[1].path + ":",
+      (copy) => {
+        copy.optionalData![0].files[1].rawBytes = 4 * 1024 * 1024 + 1;
+      },
+    ],
+  ];
+  for (const [prefix, change] of changes) {
+    const copy = structuredClone(report);
+    change(copy);
+    assert.ok(
+      checkBudget(copy, production).some((violation) => violation.startsWith(prefix)),
+      prefix,
+    );
+  }
+  assert.equal(JSON.stringify(production), original);
 });
