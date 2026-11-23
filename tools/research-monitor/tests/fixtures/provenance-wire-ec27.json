@@ -1,0 +1,21 @@
+{
+  "sourceRevision": "ec27c17032090b8fbe20250eb0a8bc3981cd5ff2",
+  "manifestSha256": "bd2fa0a70e46e585d5e62bcc2b9eea0d27f14abd81a11f095a47fb9497935752",
+  "paperId": "doi:10.1002/ar.70400",
+  "shard": "papers/1b456259c07d5db786c9224b38a1981e498323e3e08e39b92ee535792d73aafd.json",
+  "tuple": [
+    2007,
+    "2026-11-20T03:35:33.630Z",
+    "reconstruction",
+    "43049594",
+    15,
+    {
+      "publicationDates": {
+        "firstPublicationDate": "2026-11-18",
+        "electronicPublicationDate": "2026-11-18",
+        "firstIndexDate": "2026-11-19"
+      },
+      "publicationDateField": "firstPublicationDate"
+    }
+  ]
+}

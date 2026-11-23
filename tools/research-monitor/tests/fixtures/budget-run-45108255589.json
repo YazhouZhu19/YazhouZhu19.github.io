@@ -1,0 +1,1182 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-11-23T04:01:36.471Z",
+  "compression": "gzip level 9, each HTTP resource compressed independently; bytes, not kB/KiB",
+  "notes": [
+    "Initial JS/CSS follows static imports of both locale entries plus configured first-view dynamic entries and startup worker assets; shared resources are counted once.",
+    "The initialData list mirrors current startup loading. Update it together with any loader change; all manifest-referenced shards are included.",
+    "Unreferenced archive generations and v1 compatibility files are excluded from startup transfer, but remain published.",
+    "Optional resources include later views and click-to-run WebLLM/AI workers. Model weights fetched from external providers are not build resources.",
+    "The measured initial total covers JS, CSS and configured startup data, excluding HTML, images, HTTP headers and external requests; gzip is an estimate, not a browser network trace.",
+    "Complete-paper totals allow bounded record growth plus additional provenance above the reviewed evidence density. Provenance growth never enlarges overview, code/CSS or per-file budgets."
+  ],
+  "assets": [
+    {
+      "path": "assets/ai-research-panel-B5BSXH9j.js",
+      "key": "assets/ai-research-panel.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 45655,
+      "gzipBytes": 17116
+    },
+    {
+      "path": "assets/ai-research-panel-C1o6Gkgl.css",
+      "key": "assets/ai-research-panel.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 9503,
+      "gzipBytes": 2058
+    },
+    {
+      "path": "assets/ai-worker-CJHkWsJw.js",
+      "key": "assets/ai-worker.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 6138553,
+      "gzipBytes": 2159928
+    },
+    {
+      "path": "assets/analysis-Ds8JIj7d.js",
+      "key": "assets/analysis.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 9930,
+      "gzipBytes": 4213
+    },
+    {
+      "path": "assets/analysis-store-BHaYMj4Z.js",
+      "key": "assets/analysis-store.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 12851,
+      "gzipBytes": 4521
+    },
+    {
+      "path": "assets/badge-CjtF0sbA.js",
+      "key": "assets/badge.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 1345,
+      "gzipBytes": 640
+    },
+    {
+      "path": "assets/button-CbckZXaZ.js",
+      "key": "assets/button.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 32539,
+      "gzipBytes": 10641
+    },
+    {
+      "path": "assets/check-BfgaQFNl.js",
+      "key": "assets/check.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 164,
+      "gzipBytes": 166
+    },
+    {
+      "path": "assets/chevron-down-CMvdWzBN.js",
+      "key": "assets/chevron-down.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 168,
+      "gzipBytes": 164
+    },
+    {
+      "path": "assets/classify-B2vjv_0d.js",
+      "key": "assets/classify.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 11706,
+      "gzipBytes": 5429
+    },
+    {
+      "path": "assets/createLucideIcon-DhkgGMyt.js",
+      "key": "assets/createLucideIcon.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 3145,
+      "gzipBytes": 1513
+    },
+    {
+      "path": "assets/dashboard-common-DG23p6yU.js",
+      "key": "assets/dashboard-common.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 2661,
+      "gzipBytes": 1291
+    },
+    {
+      "path": "assets/dashboard-common-DI7TrpTq.css",
+      "key": "assets/dashboard-common.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 24561,
+      "gzipBytes": 4155
+    },
+    {
+      "path": "assets/data-worker-BTCA82xm.js",
+      "key": "assets/data-worker.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 118296,
+      "gzipBytes": 36259
+    },
+    {
+      "path": "assets/dist-AdvS37xt.js",
+      "key": "assets/dist.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 40992,
+      "gzipBytes": 14766
+    },
+    {
+      "path": "assets/es2015-C_Z1mwFL.js",
+      "key": "assets/es2015.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 16937,
+      "gzipBytes": 6436
+    },
+    {
+      "path": "assets/foresight-7Y3HRUPv.js",
+      "key": "assets/foresight.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 61546,
+      "gzipBytes": 25295
+    },
+    {
+      "path": "assets/foresight-C9rG_I11.css",
+      "key": "assets/foresight.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 13861,
+      "gzipBytes": 2676
+    },
+    {
+      "path": "assets/github-dashboard-Bz0jaCep.js",
+      "key": "assets/github-dashboard.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 5979,
+      "gzipBytes": 2855
+    },
+    {
+      "path": "assets/github-dashboard-DHsubWeZ.css",
+      "key": "assets/github-dashboard.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 4851,
+      "gzipBytes": 1210
+    },
+    {
+      "path": "assets/github-dashboard-UlUSWKBy.js",
+      "key": "assets/github-dashboard.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 19007,
+      "gzipBytes": 7163
+    },
+    {
+      "path": "assets/information-screening-DMyp9tmu.js",
+      "key": "assets/information-screening.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 9721,
+      "gzipBytes": 4244
+    },
+    {
+      "path": "assets/information-screening-DP_6NMK1.css",
+      "key": "assets/information-screening.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 2571,
+      "gzipBytes": 799
+    },
+    {
+      "path": "assets/information-screening-worker-7minEPtb.js",
+      "key": "assets/information-screening-worker.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 136197,
+      "gzipBytes": 45725
+    },
+    {
+      "path": "assets/integrated-analysis-CajA3kf-.css",
+      "key": "assets/integrated-analysis.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 18395,
+      "gzipBytes": 3086
+    },
+    {
+      "path": "assets/integrated-analysis-DARGLdsl.js",
+      "key": "assets/integrated-analysis.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 64594,
+      "gzipBytes": 18871
+    },
+    {
+      "path": "assets/lib-tT-Fs5pP.js",
+      "key": "assets/lib.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 5910515,
+      "gzipBytes": 2112612
+    },
+    {
+      "path": "assets/locale-provider-C5Z2FetN.js",
+      "key": "assets/locale-provider.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 50141,
+      "gzipBytes": 19294
+    },
+    {
+      "path": "assets/main-C6_3mjB0.css",
+      "key": "assets/main.css",
+      "type": "css",
+      "initial": true,
+      "rawBytes": 84628,
+      "gzipBytes": 15070
+    },
+    {
+      "path": "assets/main-ClqFYzB6.js",
+      "key": "assets/main.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 106225,
+      "gzipBytes": 36742
+    },
+    {
+      "path": "assets/monitor-views-DDiiSyS8.css",
+      "key": "assets/monitor-views.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 24328,
+      "gzipBytes": 4160
+    },
+    {
+      "path": "assets/monitor-views-_F1E4F7J.js",
+      "key": "assets/monitor-views.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 15114,
+      "gzipBytes": 5939
+    },
+    {
+      "path": "assets/news-dashboard-B4dp2Epu.js",
+      "key": "assets/news-dashboard.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 4999,
+      "gzipBytes": 2321
+    },
+    {
+      "path": "assets/news-dashboard-Dvcz63LV.css",
+      "key": "assets/news-dashboard.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 1076,
+      "gzipBytes": 511
+    },
+    {
+      "path": "assets/news-dashboard-aHv0Otz9.js",
+      "key": "assets/news-dashboard.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 15498,
+      "gzipBytes": 6115
+    },
+    {
+      "path": "assets/notification-host-t_7a3GPl.js",
+      "key": "assets/notification-host.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 33795,
+      "gzipBytes": 9436
+    },
+    {
+      "path": "assets/paper-analysis-CqXBLNP2.css",
+      "key": "assets/paper-analysis.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 2662,
+      "gzipBytes": 673
+    },
+    {
+      "path": "assets/paper-analysis-D8aUkwRy.js",
+      "key": "assets/paper-analysis.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 2263,
+      "gzipBytes": 1193
+    },
+    {
+      "path": "assets/paper-code-links-B-TJdM-B.js",
+      "key": "assets/paper-code-links.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 6724,
+      "gzipBytes": 3249
+    },
+    {
+      "path": "assets/paper-code-links-worker-CRJW81S3.js",
+      "key": "assets/paper-code-links-worker.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 19031,
+      "gzipBytes": 8457
+    },
+    {
+      "path": "assets/paper-detail-sheet-DhP1y6G_.js",
+      "key": "assets/paper-detail-sheet.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 6811,
+      "gzipBytes": 3053
+    },
+    {
+      "path": "assets/paper-filters-D2yA_mEn.js",
+      "key": "assets/paper-filters.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 3158,
+      "gzipBytes": 1450
+    },
+    {
+      "path": "assets/paper-index-dTKOzPVU.js",
+      "key": "assets/paper-index.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 993,
+      "gzipBytes": 555
+    },
+    {
+      "path": "assets/paper-library-BVkpRxNp.js",
+      "key": "assets/paper-library.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 4971,
+      "gzipBytes": 2254
+    },
+    {
+      "path": "assets/paper-library-Bc0Hs91R.css",
+      "key": "assets/paper-library.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 150,
+      "gzipBytes": 109
+    },
+    {
+      "path": "assets/paper-library-DM2V1Wnh.css",
+      "key": "assets/paper-library.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 11845,
+      "gzipBytes": 2484
+    },
+    {
+      "path": "assets/paper-overview-D10baZpU.js",
+      "key": "assets/paper-overview.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 949,
+      "gzipBytes": 575
+    },
+    {
+      "path": "assets/paper-picker-D9es7BoL.js",
+      "key": "assets/paper-picker.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 476,
+      "gzipBytes": 309
+    },
+    {
+      "path": "assets/paper-works-DExpsPWd.js",
+      "key": "assets/paper-works.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 3467,
+      "gzipBytes": 1691
+    },
+    {
+      "path": "assets/preliminary-analysis-CXzjYmxE.js",
+      "key": "assets/preliminary-analysis.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 13503,
+      "gzipBytes": 5309
+    },
+    {
+      "path": "assets/preliminary-analysis-Dmg88fMs.css",
+      "key": "assets/preliminary-analysis.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 23389,
+      "gzipBytes": 3835
+    },
+    {
+      "path": "assets/preload-helper-B24EH4_j.js",
+      "key": "assets/preload-helper.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 1213,
+      "gzipBytes": 686
+    },
+    {
+      "path": "assets/public-paper-loader-COI1HhEC.js",
+      "key": "assets/public-paper-loader.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 2195,
+      "gzipBytes": 1069
+    },
+    {
+      "path": "assets/publication-date-xveLqjAu.js",
+      "key": "assets/publication-date.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 1013,
+      "gzipBytes": 550
+    },
+    {
+      "path": "assets/research-dashboard-DVEE_eIb.js",
+      "key": "assets/research-dashboard.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 16470,
+      "gzipBytes": 5913
+    },
+    {
+      "path": "assets/research-signals-FatiQH94.js",
+      "key": "assets/research-signals.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 4149,
+      "gzipBytes": 1767
+    },
+    {
+      "path": "assets/research-signals-view-DFuJ5-mZ.css",
+      "key": "assets/research-signals-view.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 26341,
+      "gzipBytes": 4169
+    },
+    {
+      "path": "assets/research-signals-view-DeLhHoqF.js",
+      "key": "assets/research-signals-view.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 69834,
+      "gzipBytes": 24069
+    },
+    {
+      "path": "assets/rolldown-runtime-Bh1tDfsg.js",
+      "key": "assets/rolldown-runtime.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 567,
+      "gzipBytes": 360
+    },
+    {
+      "path": "assets/schemas-DDF3y7Ol.js",
+      "key": "assets/schemas.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 91947,
+      "gzipBytes": 25728
+    },
+    {
+      "path": "assets/select-4OuIJz8k.js",
+      "key": "assets/select.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 29782,
+      "gzipBytes": 9859
+    },
+    {
+      "path": "assets/shard-cache-T2jMkE4y.js",
+      "key": "assets/shard-cache.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 5567,
+      "gzipBytes": 2158
+    },
+    {
+      "path": "assets/signal-dashboard-Cntzin4q.js",
+      "key": "assets/signal-dashboard.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 8567,
+      "gzipBytes": 3660
+    },
+    {
+      "path": "assets/signals-snapshot-_ZN-BFQt.js",
+      "key": "assets/signals-snapshot.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 8026,
+      "gzipBytes": 3186
+    },
+    {
+      "path": "assets/snapshot-v3-D5KuWMU1.js",
+      "key": "assets/snapshot-v3.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 1873,
+      "gzipBytes": 872
+    },
+    {
+      "path": "assets/source-dashboard-charts-BHTnzwTH.js",
+      "key": "assets/source-dashboard-charts.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 11188,
+      "gzipBytes": 4393
+    },
+    {
+      "path": "assets/source-dashboard-charts-Dr-JpRww.css",
+      "key": "assets/source-dashboard-charts.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 5711,
+      "gzipBytes": 1427
+    },
+    {
+      "path": "assets/spatial-chart-CyvZ6KTy.js",
+      "key": "assets/spatial-chart.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 12696,
+      "gzipBytes": 4631
+    },
+    {
+      "path": "assets/table-C1YDVqAj.js",
+      "key": "assets/table.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 1331,
+      "gzipBytes": 533
+    },
+    {
+      "path": "assets/team-foresight-Bf4fCRCB.js",
+      "key": "assets/team-foresight.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 27885,
+      "gzipBytes": 9937
+    },
+    {
+      "path": "assets/team-foresight-jHnSfxBa.css",
+      "key": "assets/team-foresight.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 13620,
+      "gzipBytes": 2567
+    },
+    {
+      "path": "assets/textarea-iu8usAhR.js",
+      "key": "assets/textarea.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 711,
+      "gzipBytes": 433
+    },
+    {
+      "path": "assets/trend-annotations-B7kwWSVT.js",
+      "key": "assets/trend-annotations.js",
+      "type": "js",
+      "initial": false,
+      "rawBytes": 4040,
+      "gzipBytes": 2058
+    },
+    {
+      "path": "assets/trend-annotations-DsBjj26z.css",
+      "key": "assets/trend-annotations.css",
+      "type": "css",
+      "initial": false,
+      "rawBytes": 10719,
+      "gzipBytes": 2479
+    },
+    {
+      "path": "assets/trend-statistics-CRLoS9VH.js",
+      "key": "assets/trend-statistics.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 2832,
+      "gzipBytes": 1470
+    },
+    {
+      "path": "assets/vendor-react-BTXfym9j.js",
+      "key": "assets/vendor-react.js",
+      "type": "js",
+      "initial": true,
+      "rawBytes": 189639,
+      "gzipBytes": 58850
+    }
+  ],
+  "initialData": [
+    {
+      "id": "paper-overview",
+      "files": [
+        {
+          "path": "data/paper-overview.json",
+          "role": "file",
+          "rawBytes": 17961284,
+          "gzipBytes": 4210346
+        }
+      ],
+      "rawBytes": 17961284,
+      "gzipBytes": 4210346
+    }
+  ],
+  "optionalData": [
+    {
+      "id": "papers",
+      "records": 13237,
+      "provenanceEntries": 176125,
+      "files": [
+        {
+          "path": "data/public-papers-v3.json",
+          "role": "manifest",
+          "rawBytes": 3891118,
+          "gzipBytes": 297611
+        },
+        {
+          "path": "data/papers/27b4565be519952f9ee6346f03dd880a7fe27615213d5ca3821a9208b936d11a.json",
+          "role": "shard",
+          "rawBytes": 4189207,
+          "gzipBytes": 735191
+        },
+        {
+          "path": "data/papers/daedaad1194a67d7a38689d98f468e4075e2cbf610427fcb47ed4fb10466e052.json",
+          "role": "shard",
+          "rawBytes": 4191840,
+          "gzipBytes": 639338
+        },
+        {
+          "path": "data/papers/060ecb350a438b40c8a45dbe41258e6a8a1a99c2abcb981dc9a195c1847a7e96.json",
+          "role": "shard",
+          "rawBytes": 4190275,
+          "gzipBytes": 657576
+        },
+        {
+          "path": "data/papers/4e4472b8703a52f8f0f87ac6f1193eb45810518aa657a08eb8cda77612ab7e8e.json",
+          "role": "shard",
+          "rawBytes": 4185532,
+          "gzipBytes": 652082
+        },
+        {
+          "path": "data/papers/cc267882146f6c458eb6cc3af482fb24a56ad5fdce19dfadeec6861c795963f8.json",
+          "role": "shard",
+          "rawBytes": 1523932,
+          "gzipBytes": 249710
+        },
+        {
+          "path": "data/papers/8b2fb64d751bde9f74c80e4f993b73135960fc9ef71ef8057ff1c63cd4de5df3.json",
+          "role": "shard",
+          "rawBytes": 4189398,
+          "gzipBytes": 845248
+        },
+        {
+          "path": "data/papers/27040b83bd871db21b420eda852a27dc7c5acabf727dccebf575a231acd0756a.json",
+          "role": "shard",
+          "rawBytes": 4187113,
+          "gzipBytes": 778152
+        },
+        {
+          "path": "data/papers/b7d4d0e41d66fad43fbc81cfdb026ea4581b3732ec8e742779c51db73334f8d5.json",
+          "role": "shard",
+          "rawBytes": 4188182,
+          "gzipBytes": 777624
+        },
+        {
+          "path": "data/papers/0d2ae293af6ab86faf5971d3dd7819d58089b63dc8b961e0ea9b95cb1f9314fa.json",
+          "role": "shard",
+          "rawBytes": 4190809,
+          "gzipBytes": 800800
+        },
+        {
+          "path": "data/papers/e1e5ccf542b74c76b03620b149930442f9062f8e499ed590acf4a295e6829369.json",
+          "role": "shard",
+          "rawBytes": 4188454,
+          "gzipBytes": 813705
+        },
+        {
+          "path": "data/papers/b4f90c9fc5270261a0cab1cfb5be67be91006386afa3ad07308297509b0f3d9a.json",
+          "role": "shard",
+          "rawBytes": 4194185,
+          "gzipBytes": 753820
+        },
+        {
+          "path": "data/papers/6bf5973800f3fb5c6a39b332540e600a4c77f6b943661597b63148efa5369d1f.json",
+          "role": "shard",
+          "rawBytes": 4190705,
+          "gzipBytes": 755339
+        },
+        {
+          "path": "data/papers/b7bf0a8332ddb898e0ba2adee06b859e267548e965e2d5e496c10aa8f282f5af.json",
+          "role": "shard",
+          "rawBytes": 1489534,
+          "gzipBytes": 260882
+        },
+        {
+          "path": "data/papers/80d668e7d6e48b55bab2d7806aa3936c1e890e3bbc3c2fd886a344212ac86305.json",
+          "role": "shard",
+          "rawBytes": 4192021,
+          "gzipBytes": 890513
+        },
+        {
+          "path": "data/papers/c8c38721c63d8b68f55c804a3677abe01d577edf0a234e8663acaf635061e127.json",
+          "role": "shard",
+          "rawBytes": 4189508,
+          "gzipBytes": 839976
+        },
+        {
+          "path": "data/papers/23de72b40641aabf4054d2e9d4922f68f5d02260214f7b2914c8322104d929bf.json",
+          "role": "shard",
+          "rawBytes": 4193738,
+          "gzipBytes": 850094
+        },
+        {
+          "path": "data/papers/9a1427d7c596a7735a381fc2e0579dfdfded1d46308e70af9c6d632675da8fac.json",
+          "role": "shard",
+          "rawBytes": 4192978,
+          "gzipBytes": 880742
+        },
+        {
+          "path": "data/papers/0f5b82b6ded2b0f88027d45906b44f0c4d41b637e457730b07d3d77de96ac778.json",
+          "role": "shard",
+          "rawBytes": 4187085,
+          "gzipBytes": 816823
+        },
+        {
+          "path": "data/papers/581a608393e67b813308e7690bc7a63d76d8da9f17d41d53b206a290552ed35c.json",
+          "role": "shard",
+          "rawBytes": 4188389,
+          "gzipBytes": 836221
+        },
+        {
+          "path": "data/papers/0a98addf67456a0e84f3ccd0b4c494995a62db036ffde070689375dc9df6e17c.json",
+          "role": "shard",
+          "rawBytes": 3838156,
+          "gzipBytes": 779752
+        },
+        {
+          "path": "data/papers/7712d73851227969dd2d7977edc18ef0640f9b47d45a4a3e95783fcde5bccd24.json",
+          "role": "shard",
+          "rawBytes": 4193249,
+          "gzipBytes": 828194
+        },
+        {
+          "path": "data/papers/9223d7ba45039b3918f6a962129acfc44ec3bbb5a48fdd37c646ec0c82b86139.json",
+          "role": "shard",
+          "rawBytes": 3274567,
+          "gzipBytes": 682567
+        },
+        {
+          "path": "data/papers/fdffd6bb4b520829bce0e664a98148291347b90c59677227488a50a4a6d85106.json",
+          "role": "shard",
+          "rawBytes": 1792115,
+          "gzipBytes": 353568
+        },
+        {
+          "path": "data/papers/07ebbb99f0af0f08ec046b6aeb961efdc21dcc69c8e143f5dd82f24db864eae8.json",
+          "role": "shard",
+          "rawBytes": 581440,
+          "gzipBytes": 130260
+        },
+        {
+          "path": "data/papers/9d5fbe5fd48e8c38ff518364777a68c8e204410d84ba23faa945f84130b2c599.json",
+          "role": "shard",
+          "rawBytes": 449947,
+          "gzipBytes": 98896
+        },
+        {
+          "path": "data/papers/ec796b24c750182cba8ed67e886558f5c0bce4e9489155e89481f120a401d276.json",
+          "role": "shard",
+          "rawBytes": 448654,
+          "gzipBytes": 95261
+        },
+        {
+          "path": "data/papers/7adf27d8103b0939c406f764685a87f2af2f01412210533982a34b29d2e246d2.json",
+          "role": "shard",
+          "rawBytes": 309856,
+          "gzipBytes": 70200
+        },
+        {
+          "path": "data/papers/10c7934a5d6443e1d24a6a87e713cd3401d88bb2b79eea38fdc50d43955a882f.json",
+          "role": "shard",
+          "rawBytes": 263652,
+          "gzipBytes": 55934
+        },
+        {
+          "path": "data/papers/539e75b4bed673ef5b6b63fac8421047b018dd85507369bff00f8cff2e92e55d.json",
+          "role": "shard",
+          "rawBytes": 761911,
+          "gzipBytes": 154413
+        },
+        {
+          "path": "data/papers/8186a8e0fdbabaa981725df95fc8e3740bb157f1ef7a94352addab9c0342b7ae.json",
+          "role": "shard",
+          "rawBytes": 132028,
+          "gzipBytes": 30329
+        },
+        {
+          "path": "data/papers/031c5f6583edddb37ae3f66e91850bea401fb9f82a5255dc1035cadfda9a7d18.json",
+          "role": "shard",
+          "rawBytes": 130694,
+          "gzipBytes": 26001
+        },
+        {
+          "path": "data/papers/2fa884bb86b51643356de461edeebc0aaad7ff842000b00420af61edf48f3dfe.json",
+          "role": "shard",
+          "rawBytes": 83430,
+          "gzipBytes": 17825
+        },
+        {
+          "path": "data/papers/22e70f38a1f964359a436153d7dbde09286b1e2161f95497e9fec558bd388c21.json",
+          "role": "shard",
+          "rawBytes": 86220,
+          "gzipBytes": 21063
+        },
+        {
+          "path": "data/papers/74c109d41276d4b003202de91931d9eecbfa90973ca8d6ae1250840504c4cace.json",
+          "role": "shard",
+          "rawBytes": 60174,
+          "gzipBytes": 14438
+        },
+        {
+          "path": "data/papers/c5ed5b5e80f3336a36df17284c324abc229056b7730da981518b52801dfafd54.json",
+          "role": "shard",
+          "rawBytes": 62114,
+          "gzipBytes": 15417
+        },
+        {
+          "path": "data/papers/9071818cc4064a49c95f056587db407a7ef97401cedcaf331505f757b0139434.json",
+          "role": "shard",
+          "rawBytes": 44616,
+          "gzipBytes": 11714
+        },
+        {
+          "path": "data/papers/3d6f7cf59fe037d0a2dc54d39837ebb269d5df588025be2a37926ec5d7f31622.json",
+          "role": "shard",
+          "rawBytes": 71904,
+          "gzipBytes": 17517
+        },
+        {
+          "path": "data/papers/8ccc2451b72663d02083c701a62e0ef0f03be98871abcb17ec131d4706f57401.json",
+          "role": "shard",
+          "rawBytes": 42450,
+          "gzipBytes": 10802
+        },
+        {
+          "path": "data/papers/55f553e4df0e6bfad41b4d63d7f163c8ca81a70fb4f6c569864a11a1de832490.json",
+          "role": "shard",
+          "rawBytes": 55838,
+          "gzipBytes": 13836
+        },
+        {
+          "path": "data/papers/8a8079ee04af12aa165588471629231b7831ab96b9f3a438c16ab6e5b603a370.json",
+          "role": "shard",
+          "rawBytes": 11299,
+          "gzipBytes": 3792
+        },
+        {
+          "path": "data/papers/2d1e8634976ecb4cdd45c0ed337aeef2d68bdf7b83dccf75ea95fc2e6e5bbe8d.json",
+          "role": "shard",
+          "rawBytes": 56709,
+          "gzipBytes": 14347
+        },
+        {
+          "path": "data/papers/5a82663b0dc8686b0597580bc7305d71cee7957c71976e452650e2a7dbbea878.json",
+          "role": "shard",
+          "rawBytes": 37531,
+          "gzipBytes": 9694
+        },
+        {
+          "path": "data/papers/56167466e885ced84aeaa014a45058c5efcfa9dc97815dd148f93a857dd55017.json",
+          "role": "shard",
+          "rawBytes": 16305,
+          "gzipBytes": 4472
+        },
+        {
+          "path": "data/papers/354529afe31588271dd41518565ab192c69e6863b1b3f91c8966d3545c388e32.json",
+          "role": "shard",
+          "rawBytes": 14292,
+          "gzipBytes": 4225
+        },
+        {
+          "path": "data/papers/9ade9dd1348904ecf80660fd4c5814beb8d1d4911a301b76f0596df14c92c2ee.json",
+          "role": "shard",
+          "rawBytes": 8927,
+          "gzipBytes": 3047
+        },
+        {
+          "path": "data/papers/605558910e43c977c59eba25cea5a95f634e263cee8bf89e7286fda54cb0b219.json",
+          "role": "shard",
+          "rawBytes": 27697,
+          "gzipBytes": 6201
+        },
+        {
+          "path": "data/papers/5e4bb079c72c563fda9d2f70b89671911909201442c5e97218f5bc48397ebe2b.json",
+          "role": "shard",
+          "rawBytes": 16653,
+          "gzipBytes": 5209
+        },
+        {
+          "path": "data/papers/0d392b796889058c790a87e1ce49cf72da4995573f200c464f8170190f93940b.json",
+          "role": "shard",
+          "rawBytes": 4622,
+          "gzipBytes": 1436
+        },
+        {
+          "path": "data/papers/526b70b7346681cb70671517a824113d9bc51a04157451aba9004ab83fba70ef.json",
+          "role": "shard",
+          "rawBytes": 7892,
+          "gzipBytes": 2661
+        },
+        {
+          "path": "data/papers/5567db8be4ba3b08e7a912ee9729d5003357a7a94df80abeeb706142f2b43f8b.json",
+          "role": "shard",
+          "rawBytes": 4087,
+          "gzipBytes": 1789
+        },
+        {
+          "path": "data/papers/19b6a749c892c96cfc6fb614d038b2713da7375fc179f28d01a230faf6a480da.json",
+          "role": "shard",
+          "rawBytes": 7133,
+          "gzipBytes": 2491
+        },
+        {
+          "path": "data/papers/1be0585d745ed0251a54c532f951e72f506494cb26758dac47105f72db2f8c92.json",
+          "role": "shard",
+          "rawBytes": 5736,
+          "gzipBytes": 1293
+        },
+        {
+          "path": "data/papers/9234a61e779bcd124dd00f85aadc0a2125e0269de053cb9a48589a744066518c.json",
+          "role": "shard",
+          "rawBytes": 2963,
+          "gzipBytes": 1410
+        },
+        {
+          "path": "data/papers/74a4b305bc6ea301e947f72450bd12b27c4b74aa973b4e283eb9e719a5b11561.json",
+          "role": "shard",
+          "rawBytes": 4607,
+          "gzipBytes": 1869
+        },
+        {
+          "path": "data/papers/56c09e4c3c9c059b8de16c1b0a23ba0e461ed46232dda8cdf26c7c75fe59ec69.json",
+          "role": "shard",
+          "rawBytes": 6416,
+          "gzipBytes": 1852
+        },
+        {
+          "path": "data/papers/a54ee33dc32c71ea77bd220a8c67b3145618e864112b07493aeb2a57297c7bc1.json",
+          "role": "shard",
+          "rawBytes": 4052,
+          "gzipBytes": 1584
+        },
+        {
+          "path": "data/papers/1ac6b2b8fb9cf11838b69c0f7601204d651db76b426491dedb17bbe29ee2e943.json",
+          "role": "shard",
+          "rawBytes": 2826,
+          "gzipBytes": 1287
+        },
+        {
+          "path": "data/papers/27756d4d93923d3c18a88dee6bc487fdfd2cfcde12965097b2a6d216264bba39.json",
+          "role": "shard",
+          "rawBytes": 2194,
+          "gzipBytes": 1155
+        },
+        {
+          "path": "data/papers/4456af22c3d3ac4f0aee92569c1b6caf8aca9e9c53cf98f58f8c4ed091415d2c.json",
+          "role": "shard",
+          "rawBytes": 14490,
+          "gzipBytes": 3528
+        },
+        {
+          "path": "data/papers/486105dd4072f26053b453e40cd7b0f5e9992d0d8df0336e325854f46480af54.json",
+          "role": "shard",
+          "rawBytes": 5365,
+          "gzipBytes": 2267
+        },
+        {
+          "path": "data/papers/730c400adba29009a583e77b07d03125859f22c02c25dc61af96ea67b728fdce.json",
+          "role": "shard",
+          "rawBytes": 5279,
+          "gzipBytes": 1915
+        },
+        {
+          "path": "data/papers/743799c6edff2a098d8f0a6650bb8e7652ef464446a7ddae3a79066312421b88.json",
+          "role": "shard",
+          "rawBytes": 4700,
+          "gzipBytes": 1519
+        },
+        {
+          "path": "data/papers/b5ce996680624e50b8bc994a5d08e54969a12ad07df79c820dfa929a2f85bea2.json",
+          "role": "shard",
+          "rawBytes": 1566,
+          "gzipBytes": 829
+        },
+        {
+          "path": "data/papers/20292c4e92c8d04e6c85fbe53d7f59af44bedb8d0b7e8ededbe44bd64146460c.json",
+          "role": "shard",
+          "rawBytes": 2149,
+          "gzipBytes": 886
+        },
+        {
+          "path": "data/papers/815b2fc7fdf37fcd3ba4538f06a33fbcb11c8a1e9c93150d514dd2116f12dffb.json",
+          "role": "shard",
+          "rawBytes": 2161,
+          "gzipBytes": 899
+        },
+        {
+          "path": "data/papers/278ac5d442bbfd1d86569186c1da130fe3372dd96c067ee5b9bd96159fd35cc8.json",
+          "role": "shard",
+          "rawBytes": 2233,
+          "gzipBytes": 902
+        },
+        {
+          "path": "data/papers/a762e67b9c8760ce50eab95e356b33d90e508a7cabdf7a171b8d5905b4b3fded.json",
+          "role": "shard",
+          "rawBytes": 2119,
+          "gzipBytes": 875
+        },
+        {
+          "path": "data/papers/bcca4ad1fa606719cad0c313856a714c58c10f01111a32c171c92020cd889aaa.json",
+          "role": "shard",
+          "rawBytes": 6567,
+          "gzipBytes": 1140
+        },
+        {
+          "path": "data/papers/792196b1898dd1d3a6c5fec1fa10f86cb8d3499ab1df7eb4f08c4ed306768c75.json",
+          "role": "shard",
+          "rawBytes": 2130,
+          "gzipBytes": 872
+        },
+        {
+          "path": "data/papers/a4ee5b3c8188d92571d71ee8ba6f8a411e77104389f0f23f6bf2bdd7329e2013.json",
+          "role": "shard",
+          "rawBytes": 2158,
+          "gzipBytes": 902
+        },
+        {
+          "path": "data/papers/497b1f7dd6ba38899e2da74d4821a3f50e60f71aa3b2bfba9d4ebafbcf709eb7.json",
+          "role": "shard",
+          "rawBytes": 2169,
+          "gzipBytes": 891
+        },
+        {
+          "path": "data/papers/206cafe3017afbe300b0bbcfbd126884872f0ee51d3ccbf3688e119de38d100d.json",
+          "role": "shard",
+          "rawBytes": 2163,
+          "gzipBytes": 901
+        },
+        {
+          "path": "data/papers/ac0808eaa13634d13eca5d4c335b372d0ba807311c89ba91a6efba7725f907b2.json",
+          "role": "shard",
+          "rawBytes": 2117,
+          "gzipBytes": 887
+        },
+        {
+          "path": "data/papers/95305adf73862000b1f3d8f2623e33c469d02417cd0cea47b05a88f0e1a2c35d.json",
+          "role": "shard",
+          "rawBytes": 2225,
+          "gzipBytes": 925
+        },
+        {
+          "path": "data/papers/52f3a76438009c7d914946687afa7225281eb52170bc820489f7ee4fb259e21a.json",
+          "role": "shard",
+          "rawBytes": 2177,
+          "gzipBytes": 913
+        },
+        {
+          "path": "data/papers/73a0d49808ae5ed2462a20dbfa03f48c67c4451ba9c5fa4914f2b3ac32255573.json",
+          "role": "shard",
+          "rawBytes": 2125,
+          "gzipBytes": 877
+        },
+        {
+          "path": "data/papers/c14064b00a0cfdae81c601a7925349a4084c45664f5b7459d3b6763802907e30.json",
+          "role": "shard",
+          "rawBytes": 2109,
+          "gzipBytes": 901
+        },
+        {
+          "path": "data/papers/0606063a7c87ecf2783a6d59d6923dbeedaed108589ff15763b55035900c97a8.json",
+          "role": "shard",
+          "rawBytes": 2262,
+          "gzipBytes": 923
+        },
+        {
+          "path": "data/papers/b227d817f3a08788639c39433f0cdfa70bdc9148973c600ec196df50962f12b6.json",
+          "role": "shard",
+          "rawBytes": 53579,
+          "gzipBytes": 13020
+        }
+      ],
+      "rawBytes": 95180802,
+      "gzipBytes": 17666020
+    },
+    {
+      "id": "analysis-summary",
+      "files": [
+        {
+          "path": "analysis-bootstrap-v2.json",
+          "role": "file",
+          "rawBytes": 868079,
+          "gzipBytes": 212326
+        }
+      ],
+      "rawBytes": 868079,
+      "gzipBytes": 212326
+    },
+    {
+      "id": "analysis-manifest",
+      "files": [
+        {
+          "path": "data/analysis-manifest-v2.json",
+          "role": "file",
+          "rawBytes": 648,
+          "gzipBytes": 403
+        }
+      ],
+      "rawBytes": 648,
+      "gzipBytes": 403
+    }
+  ],
+  "totals": {
+    "initialJs": {
+      "rawBytes": 551718,
+      "gzipBytes": 183912
+    },
+    "initialCss": {
+      "rawBytes": 84628,
+      "gzipBytes": 15070
+    },
+    "optionalJs": {
+      "rawBytes": 12870426,
+      "gzipBytes": 4566060
+    },
+    "optionalCss": {
+      "rawBytes": 193583,
+      "gzipBytes": 36398
+    },
+    "initialData": {
+      "rawBytes": 17961284,
+      "gzipBytes": 4210346
+    },
+    "initialMeasuredResources": {
+      "rawBytes": 18597630,
+      "gzipBytes": 4409328
+    }
+  },
+  "violations": ["data:papers: rawBytes 95180802 exceeds 94809222"]
+}
